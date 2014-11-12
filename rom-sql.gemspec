@@ -5,7 +5,7 @@ require 'rom/sql/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "rom-sql"
-  spec.version       = Rom::Sql::VERSION
+  spec.version       = ROM::SQL::VERSION
   spec.authors       = ["Piotr Solnica"]
   spec.email         = ["piotr.solnica@gmail.com"]
   spec.summary       = %q{TODO: Write a short summary. Required.}
