@@ -1,7 +1,5 @@
-require "rom/sql/version"
+require "sequel"
 
-module Rom
-  module Sql
-    # Your code goes here...
-  end
-end
+require "rom"
+require "rom/sql/version"
+require "rom/sql/adapter"

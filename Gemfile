@@ -1,4 +1,11 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in rom-sql.gemspec
 gemspec
+
+group :test do
+  gem 'rom', git: 'https://github.com/rom-rb/rom.git', branch: 'master'
+  gem 'rspec', '~> 3.1'
+  gem 'codeclimate-test-reporter', require: false
+  gem 'sqlite3', platforms: [:mri, :rbx]
+  gem 'jdbc-sqlite3', platforms: :jruby
+end
