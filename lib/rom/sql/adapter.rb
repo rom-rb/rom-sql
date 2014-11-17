@@ -5,40 +5,49 @@ end
 module ROM
   module SQL
 
-    module SequelExtension
-      def self.extended(relation)
-        relation.adapter_inclusions << AssociationMacros
-        relation.adapter_extensions << AssociationJoins
-      end
-    end
-
     module AssociationMacros
       def self.included(klass)
-        klass.class_eval { class << self; attr_accessor :__model__; end }
-        klass.__model__ = Class.new(Sequel::Model)
+        klass.class_eval { class << self; attr_accessor :model; end }
+        klass.model = Class.new(Sequel::Model)
 
         klass.extend(DSL)
       end
 
-      def __model__
-        self.class.__model__
+      def model
+        self.class.model
       end
 
       module DSL
         def one_to_many(name, options)
-          __model__.one_to_many(name, options.merge(class: send(name).__model__))
+          associations << [__method__, name, options.merge(relation: name)]
         end
+
+        def many_to_one(name, options = {})
+          associations << [__method__, name, options.merge(relation: Inflecto.pluralize(name).to_sym)]
+        end
+
+        def finalize(relations, relation)
+          associations.each do |type, name, options|
+            model.public_send(type, name, options.merge(class: relations[options[:relation]].model))
+          end
+          model.freeze
+          super
+        end
+
+        def associations
+          @associations ||= []
+        end
+
       end
     end
 
     module AssociationJoins
       def self.extended(relation)
-        relation.__model__.set_dataset(relation.dataset.clone)
-        relation.__model__.freeze
+        relation.model.set_dataset(relation.dataset.clone)
       end
 
       def association_join(name)
-        self.class.new(__model__.association_join(name).naked, header)
+        self.class.new(model.association_join(name).naked, header)
       end
     end
 
@@ -61,14 +70,15 @@ module ROM
       end
 
       def schema
-        tables.map do |table|
-          [
-            table,
-            dataset(table),
-            dataset(table).columns,
-            SequelExtension
-          ]
-        end
+        tables.map { |table| [table, dataset(table), dataset(table).columns] }
+      end
+
+      def extend_relation_class(klass)
+        klass.send(:include, AssociationMacros)
+      end
+
+      def extend_relation_instance(relation)
+        relation.extend(AssociationJoins)
       end
 
       private
