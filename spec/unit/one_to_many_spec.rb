@@ -1,25 +1,7 @@
 require 'spec_helper'
 
 describe 'Defining one-to-many association' do
-  let(:setup) { ROM.setup(sqlite: SEQUEL_TEST_DB_URI) }
-
-  before do
-    conn = setup.sqlite.connection
-
-    conn.create_table :users do
-      primary_key :id
-      String :name
-    end
-
-    conn.create_table :tasks do
-      primary_key :id
-      Integer :user_id
-      String :title
-    end
-
-    conn[:users].insert id: 1, name: 'Piotr'
-    conn[:tasks].insert id: 1, user_id: 1, title: 'Finish ROM'
-  end
+  include_context 'users and tasks'
 
   it 'extends relation with association methods' do
     setup.relation(:tasks)
@@ -35,8 +17,6 @@ describe 'Defining one-to-many association' do
         association_join(:tasks)
       end
     end
-
-    rom = setup.finalize
 
     users = rom.relations.users
 
