@@ -5,9 +5,6 @@ shared_context 'users and tasks' do
   let(:conn) { setup.sqlite.connection }
 
   before do
-    conn.drop_table?(:users)
-    conn.drop_table?(:tasks)
-
     conn.create_table :users do
       primary_key :id
       String :name

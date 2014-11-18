@@ -5,7 +5,7 @@ else
 end
 
 if USING_JRUBY
-  SEQUEL_TEST_DB_URI = "jdbc:sqlite::memory"
+  SEQUEL_TEST_DB_URI = "jdbc:sqlite::memory:"
 else
   SEQUEL_TEST_DB_URI = "sqlite::memory"
 end
