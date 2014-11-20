@@ -31,7 +31,7 @@ end
 
 setup.relation(:users) do
   def admins
-    where(active: true)
+    where(admin: true)
   end
 
   def by_name(name)
