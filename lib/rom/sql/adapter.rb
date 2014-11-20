@@ -1,71 +1,5 @@
-class Sequel::Dataset
-  alias_method :header, :columns
-end
-
 module ROM
   module SQL
-
-    module AssociationMacros
-      def self.included(klass)
-        klass.class_eval { class << self; attr_accessor :model; end }
-        klass.model = Class.new(Sequel::Model)
-
-        klass.extend(DSL)
-      end
-
-      def model
-        self.class.model
-      end
-
-      module DSL
-        def one_to_many(name, options)
-          associations << [__method__, name, options.merge(relation: name)]
-        end
-
-        def many_to_many(name, options = {})
-          associations << [__method__, name, options.merge(relation: name)]
-        end
-
-        def many_to_one(name, options = {})
-          associations << [__method__, name, options.merge(relation: Inflecto.pluralize(name).to_sym)]
-        end
-
-        def finalize(relations, relation)
-          associations.each do |*args, options|
-            model.public_send(*args, options.merge(class: relations[options[:relation]].model))
-          end
-          model.freeze
-          super
-        end
-
-        def associations
-          @associations ||= []
-        end
-
-      end
-    end
-
-    module AssociationJoins
-      def self.extended(relation)
-        relation.model.set_dataset(relation.dataset.clone)
-      end
-
-      def association_join(name)
-        self.class.new(model.association_join(name).naked, header)
-      end
-
-      def association_left_join(name)
-        self.class.new(model.association_left_join(name).naked, header)
-      end
-
-      def association_right_join(name)
-        self.class.new(model.association_right_join(name).naked, header)
-      end
-
-      def association_full_join(name)
-        self.class.new(model.association_full_join(name).naked, header)
-      end
-    end
 
     class Adapter < ROM::Adapter
       attr_reader :connection
@@ -90,11 +24,11 @@ module ROM
       end
 
       def extend_relation_class(klass)
-        klass.send(:include, AssociationMacros)
+        klass.send(:include, RelationInclusion)
       end
 
       def extend_relation_instance(relation)
-        relation.extend(AssociationJoins)
+        relation.extend(RelationExtension)
       end
 
       private
