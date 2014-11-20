@@ -1,4 +1,18 @@
+[gem]: https://rubygems.org/gems/rom-sql
+[travis]: https://travis-ci.org/rom-rb/rom-sql
+[gemnasium]: https://gemnasium.com/rom-rb/rom-sql
+[codeclimate]: https://codeclimate.com/github/rom-rb/rom-sql
+[inchpages]: http://inch-ci.org/github/rom-rb/rom-sql
+
 # ROM::SQL
+
+[![Gem Version](https://badge.fury.io/rb/rom-sql.svg)][gem]
+[![Build Status](https://travis-ci.org/rom-rb/rom-sql.svg?branch=master)][travis]
+[![Dependency Status](https://gemnasium.com/rom-rb/rom-sql.png)][gemnasium]
+[![Code Climate](https://codeclimate.com/github/rom-rb/rom-sql/badges/gpa.svg)][codeclimate]
+[![Test Coverage](https://codeclimate.com/github/rom-rb/rom-sql/badges/coverage.svg)][codeclimate]
+[![Inline docs](http://inch-ci.org/github/rom-rb/rom-sql.svg?branch=master)][inchpages]
+
 
 RDBMS suport for [Ruby Object Mapper](https://github.com/rom-rb/rom).
 
