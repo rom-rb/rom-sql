@@ -32,7 +32,13 @@ Or install it yourself as:
 
     $ gem install rom-sql
 
-## Synopsis
+## Setup
+
+ROM uses [Sequel](http://sequel.jeremyevans.net) under the hood and exposes its
+[Dataset API](http://sequel.jeremyevans.net/rdoc/files/doc/dataset_basics_rdoc.html)
+in relation objects. For schema migrations you can use its
+[Migration API](http://sequel.jeremyevans.net/rdoc/files/doc/migration_rdoc.html)
+which is available via repositories.
 
 ``` ruby
 setup = ROM.setup(sqlite: "sqlite::memory")
@@ -43,23 +49,48 @@ setup.sqlite.connection.create_table(:users) do
   Boolean :admin
 end
 
+setup.sqlite.connection.create_table(:tasks) do
+  primary_key :id
+  Integer :user_id
+  String :title
+end
+```
+
+## Relations
+
+ROM doesn't have a relationship concept like in ActiveRecord or Sequel. Instead
+it provides a convenient interface for building joined relations that can be
+mapped to [aggregate objects](http://martinfowler.com/bliki/Aggregate.html).
+
+There's no lazy-loading, eager-loading or any other magic happening behind the
+scenes. You're in full control of how data are fetched from the database and it's
+an explicit operation.
+
+``` ruby
+
+setup.relation(:tasks)
+
 setup.relation(:users) do
-  def admins
-    where(admin: true)
-  end
+  one_to_many :tasks, key: :user_id
 
   def by_name(name)
     where(name: name)
+  end
+
+  def with_tasks
+    association_join(:tasks)
   end
 end
 
 rom = setup.finalize
 
 users = rom.relations.users
+tasks = rom.relations.tasks
 
-users.insert(name: "Piotr", admin: true)
+users.insert(name: "Piotr")
+tasks.insert(title: "Be happy")
 
-users.admins.by_name("Piotr").to_a
+users.by_name("Piotr").with_tasks.to_a
 ```
 
 ## Contributing
