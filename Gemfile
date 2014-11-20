@@ -7,5 +7,5 @@ group :test do
   gem 'rspec', '~> 3.1'
   gem 'codeclimate-test-reporter', require: false
   gem 'pg', platforms: [:mri, :rbx]
-  gem 'jruby-pg', platforms: :jruby
+  gem 'pg_jruby', platforms: :jruby
 end
