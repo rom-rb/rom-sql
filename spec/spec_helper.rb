@@ -4,7 +4,6 @@ require "codeclimate-test-reporter"
 CodeClimate::TestReporter.start
 
 require 'rom-sql'
-require 'rom/sql/spec/support'
 
 root = Pathname(__FILE__).dirname
 

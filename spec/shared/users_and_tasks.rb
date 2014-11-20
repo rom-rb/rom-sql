@@ -1,10 +1,12 @@
 shared_context 'users and tasks' do
   subject(:rom) { setup.finalize }
 
-  let(:setup) { ROM.setup(sqlite: SEQUEL_TEST_DB_URI) }
-  let(:conn) { setup.sqlite.connection }
+  let(:setup) { ROM.setup(postgres: 'postgres://localhost/rom') }
+  let(:conn) { setup.postgres.connection }
 
   before do
+    [:users, :tasks, :tags, :task_tags].each { |name| conn.drop_table?(name) }
+
     conn.create_table :users do
       primary_key :id
       String :name
