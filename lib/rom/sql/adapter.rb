@@ -22,13 +22,17 @@ module ROM
           associations << [__method__, name, options.merge(relation: name)]
         end
 
+        def many_to_many(name, options = {})
+          associations << [__method__, name, options.merge(relation: name)]
+        end
+
         def many_to_one(name, options = {})
           associations << [__method__, name, options.merge(relation: Inflecto.pluralize(name).to_sym)]
         end
 
         def finalize(relations, relation)
-          associations.each do |type, name, options|
-            model.public_send(type, name, options.merge(class: relations[options[:relation]].model))
+          associations.each do |*args, options|
+            model.public_send(*args, options.merge(class: relations[options[:relation]].model))
           end
           model.freeze
           super
