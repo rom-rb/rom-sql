@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = ROM::SQL::VERSION
   spec.authors       = ["Piotr Solnica"]
   spec.email         = ["piotr.solnica@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
-  spec.homepage      = ""
+  spec.summary       = %q{RDBMS support for ROM}
+  spec.description   = spec.summary
+  spec.homepage      = "http://rom-rb.org"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")

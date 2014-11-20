@@ -1,6 +1,6 @@
-# Rom::Sql
+# ROM::SQL
 
-TODO: Write a gem description
+RDBMS suport for [Ruby Object Mapper](https://github.com/rom-rb/rom).
 
 ## Installation
 
@@ -18,9 +18,35 @@ Or install it yourself as:
 
     $ gem install rom-sql
 
-## Usage
+## Synopsis
 
-TODO: Write usage instructions here
+``` ruby
+setup = ROM.setup(sqlite: "sqlite::memory")
+
+setup.sqlite.connection.create_table(:users) do
+  primary_key :id
+  String :name
+  Boolean :admin
+end
+
+setup.relation(:users) do
+  def admins
+    where(active: true)
+  end
+
+  def by_name(name)
+    where(name: name)
+  end
+end
+
+rom = setup.finalize
+
+users = rom.relations.users
+
+users.insert(name: "Piotr", admin: true)
+
+users.admins.by_name("Piotr").to_a
+```
 
 ## Contributing
 
