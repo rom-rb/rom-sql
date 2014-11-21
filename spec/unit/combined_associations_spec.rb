@@ -20,30 +20,49 @@ describe 'Defining multiple associations' do
         left_key: :task_id,
         right_key: :tag_id
 
-      def with_tags
-        association_left_join(:tags)
+      def with_user_and_tags
+        all.with_tags.with_user
       end
 
-      def with_user
-        association_join(:user)
+      def all
+        select(:tasks__id, :tasks__title)
       end
 
       def by_tag(name)
-        with_tags.where(tags__name: name)
+        where(tags__name: name)
       end
+
+      def with_tags
+        association_left_join(:tags).select_append(:tags__name___tag_name)
+      end
+
+      def with_user
+        association_join(:user).select_append(:user__name___user_name)
+      end
+
+      def sorted_by_tag_name
+        order(Sequel.desc(:tasks__title))
+      end
+
     end
 
-    tasks = rom.relations.tasks.with_tags.with_user.
-      select(:tasks__id, :tasks__title, :tags__name___tag_name, :user__name___user_name)
-
-    expect(tasks.to_a).to eql([
-      { id: 1, user_name: 'Piotr', title: 'Finish ROM', tag_name: 'important' },
-      { id: 2, user_name: 'Piotr', title: 'Go to sleep', tag_name: nil }
+    expect(rom.relations.tasks.with_user_and_tags.to_a).to eql([
+      { id: 1, title: 'Finish ROM', user_name: 'Piotr', tag_name: 'important' },
+      { id: 2, title: 'Go to sleep', user_name: 'Piotr',  tag_name: nil }
     ])
 
-    expect(rom.relations.tasks.with_user.select(:tasks__id, :tasks__title, :user__name).to_a).to eql([
-      { id: 1, title: 'Finish ROM', name: 'Piotr' },
-      { id: 2, title: 'Go to sleep', name: 'Piotr'  }
+    expect(rom.relations.tasks.with_user_and_tags.sorted_by_tag_name.to_a).to eql([
+      { id: 2, title: 'Go to sleep', user_name: 'Piotr',  tag_name: nil },
+      { id: 1, title: 'Finish ROM', user_name: 'Piotr', tag_name: 'important' }
+    ])
+
+    expect(rom.relations.tasks.with_user_and_tags.by_tag('important').to_a).to eql([
+      { id: 1, title: 'Finish ROM', user_name: 'Piotr', tag_name: 'important' }
+    ])
+
+    expect(rom.relations.tasks.all.with_user.to_a).to eql([
+      { id: 1, title: 'Finish ROM', user_name: 'Piotr' },
+      { id: 2, title: 'Go to sleep', user_name: 'Piotr'  }
     ])
 
     expect(rom.relations.tasks.where(title: 'Go to sleep').to_a).to eql(
