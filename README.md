@@ -133,7 +133,7 @@ users.insert(name: "Piotr")
 tasks.insert(title: "Be happy")
 
 rom.read(:users).with_tasks.by_name("Piotr").to_a
-[#<User:0x007fb31542a098 @id=1, @name="Piotr", @tasks=[{:title=>"Be happy"}]>]
+# => [#<User:0x007fb31542a098 @id=1, @name="Piotr", @tasks=[{:title=>"Be happy"}]>]
 ```
 
 ## ROADMAP
