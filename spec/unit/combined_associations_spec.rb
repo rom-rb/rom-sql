@@ -25,7 +25,7 @@ describe 'Defining multiple associations' do
       end
 
       def with_user
-        association_join(:user).select(:user__name___user_name)
+        association_join(:user)
       end
 
       def by_tag(name)
@@ -41,7 +41,13 @@ describe 'Defining multiple associations' do
       { id: 2, user_name: 'Piotr', title: 'Go to sleep', tag_name: nil }
     ])
 
-    expect(tasks).to respond_to(:association_join)
+    expect(rom.relations.tasks.with_user.select(:tasks__id, :tasks__title, :user__name).to_a).to eql([
+      { id: 1, title: 'Finish ROM', name: 'Piotr' },
+      { id: 2, title: 'Go to sleep', name: 'Piotr'  }
+    ])
 
+    expect(rom.relations.tasks.where(title: 'Go to sleep').to_a).to eql(
+      [{ id: 2, user_id: 1, title: 'Go to sleep'}]
+    )
   end
 end
