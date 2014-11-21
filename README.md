@@ -41,7 +41,7 @@ in relation objects. For schema migrations you can use its
 which is available via repositories.
 
 ``` ruby
-setup = ROM.setup(sqlite: "postgres://localhost/rom")
+setup = ROM.setup(sqlite: "memory::sqlite")
 
 setup.sqlite.connection.create_table(:users) do
   primary_key :id
