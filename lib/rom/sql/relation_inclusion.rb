@@ -6,6 +6,8 @@ module ROM
       def self.included(klass)
         klass.extend(AssociationDSL)
 
+        klass.send(:undef_method, :select)
+
         klass.class_eval {
           class << self
             attr_accessor :model
