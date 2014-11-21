@@ -2,6 +2,7 @@ module ROM
   module SQL
 
     module RelationInclusion
+      include RelationExtension
 
       def self.included(klass)
         klass.class_eval { class << self; attr_accessor :model; end }
@@ -28,10 +29,14 @@ module ROM
         end
 
         def finalize(relations, relation)
+          relation.model.set_dataset(relation.dataset)
+
           associations.each do |*args, options|
             model.public_send(*args, options.merge(class: relations[options[:relation]].model))
           end
+
           model.freeze
+
           super
         end
 
