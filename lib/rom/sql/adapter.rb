@@ -27,6 +27,10 @@ module ROM
         klass.send(:include, RelationInclusion)
       end
 
+      def extend_relation_instance(relation)
+        relation.extend(RelationExtension)
+      end
+
       private
 
       def tables

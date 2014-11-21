@@ -2,20 +2,26 @@ module ROM
   module SQL
 
     module RelationInclusion
-      include RelationExtension
 
       def self.included(klass)
-        klass.class_eval { class << self; attr_accessor :model; end }
-        klass.model = Class.new(Sequel::Model)
-
         klass.extend(AssociationDSL)
+
+        klass.class_eval {
+          class << self
+            attr_accessor :model
+          end
+
+          self.model = Class.new(Sequel::Model)
+        }
       end
 
-      def model
-        self.class.model
+      def initialize(*args)
+        super
+        @model = self.class.model
       end
 
       module AssociationDSL
+
         def one_to_many(name, options)
           associations << [__method__, name, options.merge(relation: name)]
         end
@@ -29,10 +35,11 @@ module ROM
         end
 
         def finalize(relations, relation)
-          relation.model.set_dataset(relation.dataset)
-
           associations.each do |*args, options|
-            model.public_send(*args, options.merge(class: relations[options[:relation]].model))
+            model = relation.model
+            other = relations[options.fetch(:relation)].model
+
+            model.public_send(*args, options.merge(class: other))
           end
 
           model.freeze
