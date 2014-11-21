@@ -41,7 +41,7 @@ in relation objects. For schema migrations you can use its
 which is available via repositories.
 
 ``` ruby
-setup = ROM.setup(sqlite: "sqlite::memory")
+setup = ROM.setup(sqlite: "postgres://localhost/rom")
 
 setup.sqlite.connection.create_table(:users) do
   primary_key :id
@@ -90,13 +90,64 @@ tasks = rom.relations.tasks
 users.insert(name: "Piotr")
 tasks.insert(title: "Be happy")
 
-users.by_name("Piotr").with_tasks.to_a
+puts users.by_name("Piotr").with_tasks.to_a.inspect
+# => [{:id=>1, :name=>"Piotr", :user_id=>1, :title=>"Be happy"}]
 ```
 
-## Contributing
+## Mapping
 
-1. Fork it ( https://github.com/[my-github-username]/rom-sql/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+Mapping joined relations can be simplified using `wrap` and `group` in-memory
+operations:
+
+``` ruby
+setup.relation(:tasks)
+
+setup.relation(:users) do
+  one_to_many :tasks, key: :user_id
+
+  def by_name(name)
+    where(name: name)
+  end
+
+  def with_tasks
+    in_memory { group(association_join(:tasks), tasks: [:title]) }
+  end
+end
+
+setup.mappers do
+  define(:users) do
+    model name: 'User'
+
+    group :tasks do
+      attribute :title
+    end
+  end
+end
+
+rom = setup.finalize
+
+users = rom.relations.users
+tasks = rom.relations.tasks
+
+users.insert(name: "Piotr")
+tasks.insert(title: "Be happy")
+
+rom.read(:users).with_tasks.by_name("Piotr").to_a
+[#<User:0x007fb31542a098 @id=1, @name="Piotr", @tasks=[{:title=>"Be happy"}]>]
+```
+
+## ROADMAP
+
+On a very high level:
+
+* Make it dead simple to join relations and support all types of joins
+* Make it dead simple to select and alias column names
+* Discover conventions for typical query scenarios and make common things trivial,
+  less common things simple and super rare cases possible
+* Make mapper interface smart enough to figure out when columns are aliased
+
+For details please refer to [issues](https://github.com/rom-rb/rom-sql/issues).
+
+## License
+
+See `LICENSE` file.
