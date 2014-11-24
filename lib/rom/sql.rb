@@ -6,3 +6,5 @@ require "rom/sql/header"
 require "rom/sql/relation_extension"
 require "rom/sql/relation_inclusion"
 require "rom/sql/adapter"
+
+require "rom/sql/support/sequel_dataset_ext"
