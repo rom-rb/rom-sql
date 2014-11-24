@@ -23,6 +23,40 @@ module ROM
         @header = dataset.header
       end
 
+      def association_join(*args)
+        send(:append_association, __method__, *args)
+      end
+
+      def association_left_join(*args)
+        send(:append_association, __method__, *args)
+      end
+
+      private
+
+      def append_association(type, name, options = {})
+        self.class.new(
+          dataset.public_send(type, name).
+          select_append(*columns_for_association(name, options))
+        )
+      end
+
+      def columns_for_association(name, options)
+        col_names = options[:select]
+
+        return send(Inflecto.pluralize(name)).qualified_columns unless col_names
+
+        relations = col_names.is_a?(Hash) ? col_names.keys : [name]
+
+        columns = relations.each_with_object([]) do |rel_name, a|
+          relation = send(Inflecto.pluralize(rel_name))
+          names = col_names.is_a?(Hash) ? col_names[rel_name] : col_names
+
+          a.concat(relation.select(*names).prefix.qualified_columns)
+        end
+
+        columns
+      end
+
       module AssociationDSL
 
         def one_to_many(name, options)

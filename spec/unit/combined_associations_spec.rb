@@ -13,7 +13,7 @@ describe 'Defining multiple associations' do
 
     setup.relation(:tasks) do
 
-      many_to_one :user, key: :user_id
+      many_to_one :users, key: :user_id
 
       many_to_many :tags,
         join_table: :task_tags,
@@ -25,7 +25,7 @@ describe 'Defining multiple associations' do
       end
 
       def all
-        select(:tasks__id, :tasks__title)
+        select(:id, :title).qualified
       end
 
       def by_tag(name)
@@ -33,11 +33,11 @@ describe 'Defining multiple associations' do
       end
 
       def with_tags
-        association_left_join(:tags).select_append(:tags__name___tag_name)
+        association_left_join(:tags, select: :name)
       end
 
       def with_user
-        association_join(:user).select_append(:user__name___user_name)
+        association_join(:users, select: :name)
       end
 
       def sorted_by_tag_name
