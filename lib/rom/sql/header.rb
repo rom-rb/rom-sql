@@ -3,6 +3,7 @@ module ROM
 
     class Header
       include Charlatan.new(:columns)
+      include Equalizer.new(:columns, :name)
 
       attr_reader :table
 
