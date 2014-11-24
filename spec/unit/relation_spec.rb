@@ -57,4 +57,11 @@ describe ROM::Relation do
       expect(columns).to eql([:users__id___user_id])
     end
   end
+
+  describe '#inspect' do
+    it 'includes dataset and header' do
+      expect(users.inspect).to include('header')
+      expect(users.inspect).to include('dataset')
+    end
+  end
 end
