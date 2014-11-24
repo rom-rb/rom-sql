@@ -36,6 +36,12 @@ describe ROM::Relation do
 
       expect(prefixed.to_a).to eql([{ user_id: 1, user_name: 'Piotr'}])
     end
+
+    it 'uses singularized table name as the default prefix' do
+      prefixed = users.sorted.prefix
+
+      expect(prefixed.to_a).to eql([{ user_id: 1, user_name: 'Piotr'}])
+    end
   end
 
   describe '#qualified_columns' do

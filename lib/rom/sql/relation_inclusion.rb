@@ -31,7 +31,7 @@ module ROM
         new(:select, header.rename(options))
       end
 
-      def prefix(col_prefix)
+      def prefix(col_prefix = Inflecto.singularize(name))
         rename(header.prefix(col_prefix).to_h)
       end
 
