@@ -1,6 +1,8 @@
 module ROM
   module SQL
 
+    # Sequel-specific relation extensions
+    #
     module RelationInclusion
 
       def self.included(klass)
@@ -23,16 +25,51 @@ module ROM
         @header = dataset.header
       end
 
+      # Join configured association.
+      #
+      # Uses INNER JOIN type.
+      #
+      # @example
+      #
+      #   setup.relation(:tasks)
+      #
+      #   setup.relations(:users) do
+      #     one_to_many :tasks, key: :user_id
+      #
+      #     def with_tasks
+      #       association_join(:tasks, select: [:title])
+      #     end
+      #   end
+      #
+      # @api public
       def association_join(*args)
         send(:append_association, __method__, *args)
       end
 
+      # Join configured association
+      #
+      # Uses LEFT JOIN type.
+      #
+      # @example
+      #
+      #   setup.relation(:tasks)
+      #
+      #   setup.relations(:users) do
+      #     one_to_many :tasks, key: :user_id
+      #
+      #     def with_tasks
+      #       association_left_join(:tasks, select: [:title])
+      #     end
+      #   end
+      #
+      # @api public
       def association_left_join(*args)
         send(:append_association, __method__, *args)
       end
 
       private
 
+      # @api private
       def append_association(type, name, options = {})
         self.class.new(
           dataset.public_send(type, name).
@@ -40,6 +77,7 @@ module ROM
         )
       end
 
+      # @api private
       def columns_for_association(name, options)
         col_names = options[:select]
 
