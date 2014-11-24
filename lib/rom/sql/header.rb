@@ -1,0 +1,53 @@
+module ROM
+  module SQL
+
+    class Header
+      include Charlatan.new(:columns)
+
+      attr_reader :table
+
+      def initialize(columns, table)
+        super
+        @table = table
+      end
+
+      def to_ary
+        columns
+      end
+      alias_method :to_a, :to_ary
+
+      def to_h
+        columns.each_with_object({}) { |col, h|
+          left, right = col.to_s.split('___')
+          h[left.to_sym] = (right || left).to_sym
+        }
+      end
+
+      def project(*names)
+        find_all { |col| names.include?(col) }
+      end
+
+      def qualified
+        map { |col| :"#{table}__#{col}" }
+      end
+
+      def rename(options)
+        map { |col|
+          new_name = options[col]
+
+          if new_name
+            :"#{col}___#{new_name}"
+          else
+            col
+          end
+        }
+      end
+
+      def prefix(col_prefix)
+        rename(Hash[map { |col| [col, :"#{col_prefix}_#{col}"] }])
+      end
+
+    end
+
+  end
+end

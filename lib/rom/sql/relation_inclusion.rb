@@ -20,6 +20,29 @@ module ROM
       def initialize(*args)
         super
         @model = self.class.model
+        @header = Header.new(header, name) if header.is_a?(Array)
+      end
+
+      def project(*names)
+        new(:select, header.project(*names))
+      end
+
+      def rename(options)
+        new(:select, header.rename(options))
+      end
+
+      def prefix(col_prefix)
+        rename(header.prefix(col_prefix).to_h)
+      end
+
+      def qualified_columns
+        header.qualified.to_a
+      end
+
+      private
+
+      def new(method, header)
+        self.class.new(dataset.public_send(method, *header), header)
       end
 
       module AssociationDSL
