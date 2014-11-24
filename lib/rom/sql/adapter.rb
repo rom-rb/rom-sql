@@ -20,7 +20,7 @@ module ROM
       end
 
       def schema
-        tables.map { |table| [table, dataset(table), dataset(table).columns] }
+        tables.map { |table| [table, dataset(table), columns(table)] }
       end
 
       def extend_relation_class(klass)
@@ -35,6 +35,10 @@ module ROM
 
       def tables
         connection.tables
+      end
+
+      def columns(table)
+        dataset(table).columns
       end
 
       def dataset(table)
