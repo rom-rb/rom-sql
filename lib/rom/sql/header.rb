@@ -1,6 +1,7 @@
 module ROM
   module SQL
 
+    # @private
     class Header
       include Charlatan.new(:columns)
       include Equalizer.new(:columns, :table)
