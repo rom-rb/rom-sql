@@ -41,7 +41,7 @@ in relation objects. For schema migrations you can use its
 which is available via repositories.
 
 ``` ruby
-setup = ROM.setup(sqlite: "memory::sqlite")
+setup = ROM.setup(sqlite: "sqlite::memory")
 
 setup.sqlite.connection.create_table(:users) do
   primary_key :id
@@ -87,8 +87,8 @@ rom = setup.finalize
 users = rom.relations.users
 tasks = rom.relations.tasks
 
-users.insert(name: "Piotr")
-tasks.insert(title: "Be happy")
+users.insert(id: 1, name: "Piotr")
+tasks.insert(user_id: 1, title: "Be happy")
 
 puts users.by_name("Piotr").with_tasks.to_a.inspect
 # => [{:id=>1, :name=>"Piotr", :user_id=>1, :title=>"Be happy"}]
