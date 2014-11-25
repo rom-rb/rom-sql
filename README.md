@@ -118,9 +118,7 @@ setup.mappers do
   define(:users) do
     model name: 'User'
 
-    group :tasks do
-      attribute :title
-    end
+    group tasks: [:title]
   end
 end
 
@@ -129,8 +127,8 @@ rom = setup.finalize
 users = rom.relations.users
 tasks = rom.relations.tasks
 
-users.insert(name: "Piotr")
-tasks.insert(title: "Be happy")
+users.insert(id: 1, name: "Piotr")
+tasks.insert(user_id: 1, title: "Be happy")
 
 rom.read(:users).with_tasks.by_name("Piotr").to_a
 # => [#<User:0x007fb31542a098 @id=1, @name="Piotr", @tasks=[{:title=>"Be happy"}]>]
