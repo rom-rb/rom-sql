@@ -1,4 +1,8 @@
 module Commands
+  ERRORS = [
+    Sequel::UniqueConstraintViolation,
+    Sequel::NotNullConstraintViolation
+  ].freeze
 
   class Create
     include Concord.new(:relation, :input, :validator)
@@ -13,8 +17,13 @@ module Commands
       validation = validator.call(attributes)
 
       if validation.success?
-        pk = relation.insert(attributes.to_h)
-        relation.where(relation.model.primary_key => pk).first
+        begin
+          pk = relation.insert(attributes.to_h)
+          relation.where(relation.model.primary_key => pk).first
+        rescue *ERRORS => e
+          validation.errors << e.message
+          validation
+        end
       else
         validation
       end

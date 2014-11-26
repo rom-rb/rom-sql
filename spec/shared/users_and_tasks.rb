@@ -10,6 +10,7 @@ shared_context 'users and tasks' do
     conn.create_table :users do
       primary_key :id
       String :name
+      index :name, unique: true
     end
 
     conn.create_table :tasks do
