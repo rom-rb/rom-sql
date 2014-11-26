@@ -22,7 +22,12 @@ module ROM
       end
 
       def command(name, relation, definition)
-        Commands::Create.build(relation, definition)
+        case name
+        when :create then Commands::Create.build(relation, definition)
+        when :update then Commands::Update.build(relation, definition)
+        else
+          raise ArgumentError, "#{name} is not a supported command"
+        end
       end
 
       def schema
