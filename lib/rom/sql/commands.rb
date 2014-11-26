@@ -13,8 +13,8 @@ module Commands
       validation = validator.call(attributes)
 
       if validation.success?
-        id = relation.insert(attributes.to_h)
-        relation.where(id: id).first
+        pk = relation.insert(attributes.to_h)
+        relation.where(relation.model.primary_key => pk).first
       else
         validation
       end
@@ -34,9 +34,9 @@ module Commands
       validation = validator.call(attributes)
 
       if validation.success?
-        ids = relation.map { |tuple| tuple[:id] }
+        pks = relation.map { |t| t[relation.model.primary_key] }
         relation.update(attributes.to_h)
-        relation.unfiltered.where(id: ids)
+        relation.unfiltered.where(relation.model.primary_key => pks)
       else
         validation
       end
