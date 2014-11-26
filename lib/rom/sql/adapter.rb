@@ -1,3 +1,5 @@
+require 'rom/sql/commands'
+
 module ROM
   module SQL
 
@@ -17,6 +19,10 @@ module ROM
 
       def [](name)
         connection[name]
+      end
+
+      def command(name, relation, definition)
+        Commands::Create.build(relation, definition)
       end
 
       def schema
