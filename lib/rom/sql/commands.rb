@@ -4,6 +4,16 @@ module Commands
     Sequel::NotNullConstraintViolation
   ].freeze
 
+  Result = Struct.new(:value, :errors) {
+    def on_success(&block)
+      block.call(value) if value
+    end
+
+    def on_errors(&block)
+      block.call(errors) if errors.any?
+    end
+  }
+
   class Create
     include Concord.new(:relation, :input, :validator)
 
@@ -16,17 +26,18 @@ module Commands
 
       validation = validator.call(attributes)
 
-      if validation.success?
-        begin
-          pk = relation.insert(attributes.to_h)
-          relation.where(relation.model.primary_key => pk).first
-        rescue *ERRORS => e
-          validation.errors << e.message
-          validation
+      value =
+        if validation.success?
+          begin
+            pk = relation.insert(attributes.to_h)
+            relation.where(relation.model.primary_key => pk).first
+          rescue *ERRORS => e
+            validation.errors << e.message
+            nil
+          end
         end
-      else
-        validation
-      end
+
+      Result.new(value, validation.errors)
     end
   end
 
@@ -42,13 +53,14 @@ module Commands
 
       validation = validator.call(attributes)
 
-      if validation.success?
-        pks = relation.map { |t| t[relation.model.primary_key] }
-        relation.update(attributes.to_h)
-        relation.unfiltered.where(relation.model.primary_key => pks)
-      else
-        validation
-      end
+      value =
+        if validation.success?
+          pks = relation.map { |t| t[relation.model.primary_key] }
+          relation.update(attributes.to_h)
+          relation.unfiltered.where(relation.model.primary_key => pks)
+        end
+
+      Result.new(value, validation.errors)
     end
 
     def new(*args, &block)
