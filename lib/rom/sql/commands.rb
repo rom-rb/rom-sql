@@ -7,10 +7,12 @@ module Commands
   Result = Struct.new(:value, :errors) {
     def on_success(&block)
       block.call(value) if value
+      self
     end
 
     def on_errors(&block)
       block.call(errors) if errors.any?
+      self
     end
   }
 

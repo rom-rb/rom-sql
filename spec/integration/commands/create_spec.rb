@@ -35,20 +35,41 @@ describe 'Commands / Create' do
   end
 
   it 'works' do
-    command.execute(id: 2, name: 'Jane').on_success { |tuple|
-      expect(tuple).to eql(id: 2, name: 'Jane')
+    failure = false
+
+    command.execute(id: 2, name: 'Jane').
+      on_success { |tuple|
+        expect(tuple).to eql(id: 2, name: 'Jane')
+    }.on_errors { |errors|
+      failure = true
     }
+
+    expect(failure).to be(false)
   end
 
   it 'handles not-null constraint violation error' do
-    command.execute(id: nil, name: 'Jane').on_errors { |errors|
-      expect(errors.first).to include('null value in column "id" violates not-null constraint')
+    success = false
+
+    command.execute(id: nil, name: 'Jane').
+      on_errors { |errors|
+        expect(errors.first).to include('null value in column "id" violates not-null constraint')
+    }.on_success { |tuple|
+      success = true
     }
+
+    expect(success).to be(false)
   end
 
   it 'handles uniqueness constraint violation error' do
-    command.execute(id: 2, name: 'Piotr').on_errors { |errors|
+    success = false
+
+    command.execute(id: 2, name: 'Piotr').
+      on_errors { |errors|
       expect(errors.first).to include('Key (name)=(Piotr) already exists')
+    }.on_success { |tuples|
+      success = true
     }
+
+    expect(success).to be(false)
   end
 end
