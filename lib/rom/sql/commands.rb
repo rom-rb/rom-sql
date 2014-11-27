@@ -70,4 +70,21 @@ module Commands
     end
   end
 
+  class Delete
+    include Concord.new(:relation, :target)
+
+    def self.build(relation, target = relation)
+      new(relation, target)
+    end
+
+    def execute
+      target.delete
+      relation
+    end
+
+    def new(*args, &block)
+      self.class.new(relation, relation.public_send(*args, &block))
+    end
+  end
+
 end

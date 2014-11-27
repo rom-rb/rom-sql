@@ -1,3 +1,5 @@
+require 'logger'
+
 require 'rom/sql/commands'
 
 module ROM
@@ -25,6 +27,7 @@ module ROM
         case name
         when :create then Commands::Create.build(relation, definition)
         when :update then Commands::Update.build(relation, definition)
+        when :delete then Commands::Delete.build(relation)
         else
           raise ArgumentError, "#{name} is not a supported command"
         end
