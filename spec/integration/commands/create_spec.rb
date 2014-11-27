@@ -52,7 +52,7 @@ describe 'Commands / Create' do
 
     command.execute(id: nil, name: 'Jane').
       on_errors { |errors|
-        expect(errors.first).to include('null value in column "id" violates not-null constraint')
+        expect(errors.first).to be_instance_of(Sequel::NotNullConstraintViolation)
     }.on_success { |tuple|
       success = true
     }
@@ -65,7 +65,7 @@ describe 'Commands / Create' do
 
     command.execute(id: 2, name: 'Piotr').
       on_errors { |errors|
-      expect(errors.first).to include('Key (name)=(Piotr) already exists')
+      expect(errors.first).to be_instance_of(Sequel::UniqueConstraintViolation)
     }.on_success { |tuples|
       success = true
     }

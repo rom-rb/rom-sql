@@ -34,7 +34,7 @@ module Commands
             pk = relation.insert(attributes.to_h)
             relation.where(relation.model.primary_key => pk).first
           rescue *ERRORS => e
-            validation.errors << e.message
+            validation.errors << e
             nil
           end
         end
