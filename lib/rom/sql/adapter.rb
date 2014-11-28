@@ -19,6 +19,10 @@ module ROM
         connection[name]
       end
 
+      def logger=(logger)
+        connection.loggers << logger
+      end
+
       def schema
         tables.map { |table| [table, dataset(table), columns(table)] }
       end

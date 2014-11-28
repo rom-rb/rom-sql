@@ -6,6 +6,9 @@ if RUBY_ENGINE == 'rbx'
 end
 
 require 'rom-sql'
+require 'logger'
+
+LOGGER = Logger.new(File.open('./log/test.log', 'a'))
 
 root = Pathname(__FILE__).dirname
 

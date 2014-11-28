@@ -7,6 +7,8 @@ shared_context 'users and tasks' do
   before do
     [:users, :tasks, :tags, :task_tags].each { |name| conn.drop_table?(name) }
 
+    setup.postgres.use_logger(LOGGER)
+
     conn.create_table :users do
       primary_key :id
       String :name
