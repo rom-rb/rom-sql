@@ -1,8 +1,5 @@
 shared_context 'users and tasks' do
-  subject(:rom) { setup.finalize }
-
-  let(:setup) { ROM.setup(postgres: 'postgres://localhost/rom') }
-  let(:conn) { setup.postgres.connection }
+  include_context 'database setup'
 
   before do
     [:users, :tasks, :tags, :task_tags].each { |name| conn.drop_table?(name) }
