@@ -6,7 +6,26 @@ module ROM
     class RailsLogSubscriber < ActiveSupport::LogSubscriber
 
       def sql(event)
-        debug "#{event.payload[:name]} (#{event.duration}) #{event.payload[:sql]}"
+        return unless logger.debug?
+
+        payload = event.payload
+
+        name = format('%s (%.1fms)', payload[:name], event.duration)
+        sql  = payload[:sql].squeeze(' ')
+        binds = payload[:binds].to_a.inspect if payload[:binds]
+
+        if odd?
+          name = color(name, :cyan, true)
+          sql  = color(sql, nil, true)
+        else
+          name = color(name, :magenta, true)
+        end
+
+        debug "  #{name}  #{sql}  #{binds}"
+      end
+
+      def odd?
+        @odd_or_even = !@odd_or_even
       end
 
     end
