@@ -2,7 +2,7 @@ module ROM
   module SQL
 
     class Adapter < ROM::Adapter
-      attr_reader :connection
+      attr_reader :connection, :logger
 
       def self.schemes
         [:ado, :amalgalite, :cubrid, :db2, :dbi, :do, :fdbsql, :firebird, :ibmdb,
@@ -20,6 +20,7 @@ module ROM
       end
 
       def logger=(logger)
+        @logger = logger
         connection.loggers << logger
       end
 
