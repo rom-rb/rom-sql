@@ -9,7 +9,7 @@ module Sequel
       ActiveSupport::Notifications.instrument(
         'sql.rom',
         :sql => sql,
-        :name => self.class,
+        :name => instrumentation_name,
         :binds => args
       ) do
         log_yield_without_instrumentation(sql, args, &block)
@@ -18,6 +18,12 @@ module Sequel
 
     alias_method :log_yield_without_instrumentation, :log_yield
     alias_method :log_yield, :log_yield_with_instrumentation
+
+    private
+
+    def instrumentation_name
+      "ROM[#{database_type}]"
+    end
 
   end
 end
