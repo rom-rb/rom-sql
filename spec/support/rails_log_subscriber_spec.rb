@@ -1,0 +1,29 @@
+require 'spec_helper'
+
+require 'rom/sql/support/active_support_notifications'
+require 'rom/sql/support/rails_log_subscriber'
+
+require 'active_support/log_subscriber/test_helper'
+
+describe 'Rails log subscriber' do
+  include ActiveSupport::LogSubscriber::TestHelper
+
+  include_context 'database setup'
+
+  let(:test_query) do
+    %(SELECT * FROM "users" WHERE name = 'notification test')
+  end
+
+  let(:logger) { ActiveSupport::LogSubscriber::TestHelper::MockLogger.new }
+
+  before do
+    set_logger(logger)
+    rom.postgres.use_logger(logger)
+  end
+
+  it 'works' do
+    rom.postgres.connection.run(test_query)
+
+    expect(logger.logged(:debug).last).to include(test_query)
+  end
+end
