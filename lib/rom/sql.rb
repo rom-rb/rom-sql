@@ -8,3 +8,8 @@ require "rom/sql/relation_inclusion"
 require "rom/sql/adapter"
 
 require "rom/sql/support/sequel_dataset_ext"
+
+if defined?(Rails)
+  require "rom/sql/support/active_support_notifications"
+  require 'rom/sql/support/rails_log_subscriber'
+end
