@@ -3,6 +3,8 @@ require 'spec_helper'
 describe 'Commands / Delete' do
   include_context 'users and tasks'
 
+  subject(:users) { rom.commands.users }
+
   before do
     setup.relation(:users) do
       def by_name(name)
@@ -18,18 +20,14 @@ describe 'Commands / Delete' do
   end
 
   it 'deletes all tuples' do
-    command = rom.command(:users).delete
+    result = users.try { delete }
 
-    result = command.execute
-
-    expect(result.to_a).to match_array([])
+    expect(result.value.to_a).to match_array([])
   end
 
   it 'deletes all tuples in a restricted relation' do
-    command = rom.command(:users).delete(:by_name, 'Jane')
+    result = users.try { delete(:by_name, 'Jane').execute }
 
-    result = command.execute
-
-    expect(result.to_a).to match_array([{ id: 2, name: 'Jane' }])
+    expect(result.value.to_a).to match_array([{ id: 2, name: 'Jane' }])
   end
 end

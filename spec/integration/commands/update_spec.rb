@@ -3,23 +3,7 @@ require 'spec_helper'
 describe 'Commands / Update' do
   include_context 'users and tasks'
 
-  before do
-    UserUpdateValidator = Class.new do
-      attr_reader :errors
-
-      def self.call(input)
-        new
-      end
-
-      def initialize
-        @errors = errors
-      end
-
-      def success?
-        true
-      end
-    end
-  end
+  subject(:users) { rom.commands.users }
 
   it 'works' do
     setup.relation(:users) do
@@ -31,14 +15,12 @@ describe 'Commands / Update' do
     setup.commands(:users) do
       define(:update) do
         input Hash
-        validator UserUpdateValidator
+        validator Proc.new {}
       end
     end
 
-    command = rom.command(:users).update(:by_name, 'Piotr')
+    result = users.try { update(:by_name, 'Piotr').set(name: 'Peter') }
 
-    command.execute(name: 'Peter').on_success { |tuples|
-      expect(tuples.to_a).to match_array([{ id: 1, name: 'Peter' }])
-    }
+    expect(result.value.to_a).to match_array([{ id: 1, name: 'Peter' }])
   end
 end

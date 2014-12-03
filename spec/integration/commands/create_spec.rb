@@ -3,25 +3,7 @@ require 'spec_helper'
 describe 'Commands / Create' do
   include_context 'users and tasks'
 
-  subject(:command) { rom.command(:users).create }
-
-  before :all do
-    UserValidator = Class.new do
-      attr_reader :errors
-
-      def self.call(input)
-        new
-      end
-
-      def initialize
-        @errors = []
-      end
-
-      def success?
-        true
-      end
-    end
-  end
+  subject(:users) { rom.commands.users }
 
   before do
     setup.relation(:users)
@@ -29,47 +11,28 @@ describe 'Commands / Create' do
     setup.commands(:users) do
       define(:create) do
         input Hash
-        validator UserValidator
+        validator Proc.new {}
       end
     end
   end
 
   it 'works' do
-    failure = false
-
-    command.execute(id: 2, name: 'Jane').
-      on_success { |tuple|
-        expect(tuple).to eql(id: 2, name: 'Jane')
-    }.on_errors { |errors|
-      failure = true
+    users.try {
+      create(id: 2, name: 'Jane')
+    } >-> users {
+      expect(users.to_a).to match_array([{ id: 2, name: 'Jane' }])
     }
-
-    expect(failure).to be(false)
   end
 
   it 'handles not-null constraint violation error' do
-    success = false
+    result = users.try { create(id: nil, name: 'Jane') }
 
-    command.execute(id: nil, name: 'Jane').
-      on_errors { |errors|
-        expect(errors.first).to be_instance_of(Sequel::NotNullConstraintViolation)
-    }.on_success { |tuple|
-      success = true
-    }
-
-    expect(success).to be(false)
+    expect(result.error).to be_instance_of(Sequel::NotNullConstraintViolation)
   end
 
   it 'handles uniqueness constraint violation error' do
-    success = false
+    result = users.try { create(id: 3, name: 'Piotr') }
 
-    command.execute(id: 2, name: 'Piotr').
-      on_errors { |errors|
-      expect(errors.first).to be_instance_of(Sequel::UniqueConstraintViolation)
-    }.on_success { |tuples|
-      success = true
-    }
-
-    expect(success).to be(false)
+    expect(result.error).to be_instance_of(Sequel::UniqueConstraintViolation)
   end
 end

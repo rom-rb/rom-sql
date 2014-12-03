@@ -25,21 +25,11 @@ module Commands
 
     def execute(tuple)
       attributes = input[tuple]
+      validator.call(attributes)
 
-      validation = validator.call(attributes)
+      pk = relation.insert(attributes.to_h)
 
-      value =
-        if validation.success?
-          begin
-            pk = relation.insert(attributes.to_h)
-            relation.where(relation.model.primary_key => pk).first
-          rescue *ERRORS => e
-            validation.errors << e
-            nil
-          end
-        end
-
-      Result.new(value, validation.errors)
+      relation.where(relation.model.primary_key => pk)
     end
   end
 
@@ -52,18 +42,14 @@ module Commands
 
     def execute(tuple)
       attributes = input[tuple]
+      validator.call(attributes)
 
-      validation = validator.call(attributes)
+      pks = relation.map { |t| t[relation.model.primary_key] }
 
-      value =
-        if validation.success?
-          pks = relation.map { |t| t[relation.model.primary_key] }
-          relation.update(attributes.to_h)
-          relation.unfiltered.where(relation.model.primary_key => pks)
-        end
-
-      Result.new(value, validation.errors)
+      relation.update(attributes.to_h)
+      relation.unfiltered.where(relation.model.primary_key => pks)
     end
+    alias_method :set, :execute
 
     def new(*args, &block)
       self.class.new(relation.public_send(*args, &block), input, validator)
