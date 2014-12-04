@@ -1,6 +1,12 @@
 require "sequel"
-
 require "rom"
+
+module ROM
+  module SQL
+    ConstraintError = Class.new(ROM::CommandError)
+  end
+end
+
 require "rom/sql/version"
 require "rom/sql/header"
 require "rom/sql/relation_extension"
