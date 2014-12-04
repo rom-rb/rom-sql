@@ -28,13 +28,13 @@ describe 'Commands / Create' do
     result = users.try { create(id: nil, name: 'Jane') }
 
     expect(result.error).to be_instance_of(ROM::SQL::ConstraintError)
-    expect(result.error.message).to match(/NotNull/)
+    expect(result.error.message).to match(/not-null/)
   end
 
   it 'handles uniqueness constraint violation error' do
     result = users.try { create(id: 3, name: 'Piotr') }
 
     expect(result.error).to be_instance_of(ROM::SQL::ConstraintError)
-    expect(result.error.message).to match(/Unique/)
+    expect(result.error.message).to match(/unique/)
   end
 end
