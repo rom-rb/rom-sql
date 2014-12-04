@@ -27,12 +27,14 @@ describe 'Commands / Create' do
   it 'handles not-null constraint violation error' do
     result = users.try { create(id: nil, name: 'Jane') }
 
-    expect(result.error).to be_instance_of(Sequel::NotNullConstraintViolation)
+    expect(result.error).to be_instance_of(ROM::SQL::ConstraintError)
+    expect(result.error.message).to match(/NotNull/)
   end
 
   it 'handles uniqueness constraint violation error' do
     result = users.try { create(id: 3, name: 'Piotr') }
 
-    expect(result.error).to be_instance_of(Sequel::UniqueConstraintViolation)
+    expect(result.error).to be_instance_of(ROM::SQL::ConstraintError)
+    expect(result.error.message).to match(/Unique/)
   end
 end
