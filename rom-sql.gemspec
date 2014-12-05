@@ -5,7 +5,7 @@ require 'rom/sql/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "rom-sql"
-  spec.version       = ROM::SQL::VERSION
+  spec.version       = ROM::SQL::VERSION.dup
   spec.authors       = ["Piotr Solnica"]
   spec.email         = ["piotr.solnica@gmail.com"]
   spec.summary       = %q{RDBMS support for ROM}
@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "sequel", "~> 4.17"
   spec.add_runtime_dependency "equalizer", "~> 0.0", ">= 0.0.9"
-  spec.add_runtime_dependency "rom", "~> 0.3", "~> 0.3.0"
+  spec.add_runtime_dependency "rom", "~> 0.4", "~> 0.4.0"
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake", "~> 10.0"
