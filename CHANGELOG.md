@@ -1,4 +1,9 @@
-## v0.1.2 to-be-released
+## v0.2.0 to-be-released
+
+### Added
+
+* Command API (solnic)
+* Support for ActiveSupport::Notifications with a log subscriber (solnic)
 
 [Compare v0.1.1...master](https://github.com/rom-rb/rom-sql/compare/v0.1.1...master)
 
