@@ -28,16 +28,6 @@ module ROM
         connection.loggers << logger
       end
 
-      def command(name, relation, definition)
-        case name
-        when :create then Commands::Create.build(relation, definition)
-        when :update then Commands::Update.build(relation, definition)
-        when :delete then Commands::Delete.build(relation)
-        else
-          raise ArgumentError, "#{name} is not a supported command"
-        end
-      end
-
       def schema
         tables.map { |table| [table, dataset(table), columns(table)] }
       end
@@ -48,6 +38,10 @@ module ROM
 
       def extend_relation_instance(relation)
         relation.extend(RelationExtension)
+      end
+
+      def command_namespace
+        SQL::Commands
       end
 
       private

@@ -6,24 +6,7 @@ module ROM
         Sequel::NotNullConstraintViolation
       ].freeze
 
-      Result = Struct.new(:value, :errors) {
-        def on_success(&block)
-          block.call(value) if value
-          self
-        end
-
-        def on_errors(&block)
-          block.call(errors) if errors.any?
-          self
-        end
-      }
-
-      class Create
-        include Concord.new(:relation, :input, :validator)
-
-        def self.build(relation, definition)
-          new(relation, definition.input, definition.validator)
-        end
+      class Create < ROM::Commands::Create
 
         def execute(tuple)
           attributes = input[tuple]
@@ -37,12 +20,7 @@ module ROM
         end
       end
 
-      class Update
-        include Concord.new(:relation, :input, :validator)
-
-        def self.build(relation, definition)
-          new(relation, definition.input, definition.validator)
-        end
+      class Update < ROM::Commands::Update
 
         def execute(tuple)
           attributes = input[tuple]
@@ -53,28 +31,16 @@ module ROM
           relation.update(attributes.to_h)
           relation.unfiltered.where(relation.model.primary_key => pks)
         end
-        alias_method :set, :execute
 
-        def new(*args, &block)
-          self.class.new(relation.public_send(*args, &block), input, validator)
-        end
       end
 
-      class Delete
-        include Concord.new(:relation, :target)
-
-        def self.build(relation, target = relation)
-          new(relation, target)
-        end
+      class Delete < ROM::Commands::Delete
 
         def execute
           target.delete
           relation
         end
 
-        def new(*args, &block)
-          self.class.new(relation, relation.public_send(*args, &block))
-        end
       end
 
     end
