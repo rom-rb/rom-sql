@@ -32,6 +32,10 @@ module ROM
         tables.map { |table| [table, dataset(table), columns(table)] }
       end
 
+      def dataset?(name)
+        tables.include?(name)
+      end
+
       def extend_relation_class(klass)
         klass.send(:include, RelationInclusion)
       end
