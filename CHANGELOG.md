@@ -4,6 +4,7 @@
 
 * Command API (solnic)
 * Support for ActiveSupport::Notifications with a log subscriber (solnic)
+* New `ROM::SQL::Adapter#dataset?(name)` checking if a given table exists (solnic)
 
 [Compare v0.1.1...master](https://github.com/rom-rb/rom-sql/compare/v0.1.1...master)
 
