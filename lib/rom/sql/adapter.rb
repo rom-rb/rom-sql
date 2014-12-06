@@ -6,7 +6,7 @@ module ROM
   module SQL
 
     class Adapter < ROM::Adapter
-      attr_reader :connection, :logger
+      attr_reader :logger
 
       def self.schemes
         [:ado, :amalgalite, :cubrid, :db2, :dbi, :do, :fdbsql, :firebird, :ibmdb,
