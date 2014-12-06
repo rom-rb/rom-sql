@@ -10,18 +10,15 @@ describe 'Commands / Create' do
 
     setup.commands(:users) do
       define(:create) do
-        input Hash
-        validator Proc.new {}
+        result :one
       end
     end
   end
 
   it 'works' do
-    users.try {
-      create(id: 2, name: 'Jane')
-    } >-> users {
-      expect(users.to_a).to match_array([{ id: 2, name: 'Jane' }])
-    }
+    result = users.try { create(id: 2, name: 'Jane') }
+
+    expect(result.value).to eql(id: 2, name: 'Jane')
   end
 
   it 'handles not-null constraint violation error' do
