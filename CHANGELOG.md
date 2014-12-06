@@ -1,4 +1,4 @@
-## v0.2.0 to-be-released
+## v0.2.0 2014-11-06
 
 ### Added
 
@@ -6,7 +6,7 @@
 * Support for ActiveSupport::Notifications with a log subscriber (solnic)
 * New `ROM::SQL::Adapter#dataset?(name)` checking if a given table exists (solnic)
 
-[Compare v0.1.1...master](https://github.com/rom-rb/rom-sql/compare/v0.1.1...master)
+[Compare v0.1.1...v0.2.0](https://github.com/rom-rb/rom-sql/compare/v0.1.1...v0.2.0)
 
 ## v0.1.1 2014-11-24
 
