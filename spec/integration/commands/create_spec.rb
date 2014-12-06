@@ -12,13 +12,27 @@ describe 'Commands / Create' do
       define(:create) do
         result :one
       end
+
+      define(:create_many, type: :create) do
+        result :many
+      end
     end
   end
 
-  it 'works' do
+  it 'returns a single tuple when result is set to :one' do
     result = users.try { create(id: 2, name: 'Jane') }
 
     expect(result.value).to eql(id: 2, name: 'Jane')
+  end
+
+  it 'returns tuples when result is set to :many' do
+    result = users.try {
+      create_many([{ id: 2, name: 'Jane' }, { id: 3, name: 'Jack' }])
+    }
+
+    expect(result.value.to_a).to match_array([
+      { id: 2, name: 'Jane' }, { id: 3, name: 'Jack' }
+    ])
   end
 
   it 'handles not-null constraint violation error' do
