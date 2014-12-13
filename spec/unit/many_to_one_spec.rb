@@ -8,11 +8,15 @@ describe 'Defining many-to-one association' do
       many_to_one :users, key: :user_id
 
       def all
-        select(:id, :title).rename(title: :task_title).qualified
+        select(:id, :title)
       end
 
       def with_user
         association_join(:users, select: [:name])
+      end
+
+      def embed_user
+        embed(:users, select: [:name])
       end
     end
 
@@ -21,7 +25,11 @@ describe 'Defining many-to-one association' do
     tasks = rom.relations.tasks
 
     expect(tasks.all.with_user.to_a).to eql(
-      [{ id: 1, user_name: 'Piotr', task_title: 'Finish ROM' }]
+      [{ id: 1, name: 'Piotr', title: 'Finish ROM' }]
+    )
+
+    expect(tasks.all.embed_user.to_a).to eql(
+      [{ id: 1, title: 'Finish ROM', user: { name: 'Piotr' } }]
     )
   end
 end

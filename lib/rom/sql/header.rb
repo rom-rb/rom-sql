@@ -25,6 +25,10 @@ module ROM
         }
       end
 
+      def names
+        map { |col| :"#{col.to_s.split('___').last}" }
+      end
+
       def project(*names)
         find_all { |col| names.include?(col) }
       end

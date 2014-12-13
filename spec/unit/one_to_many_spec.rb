@@ -14,14 +14,26 @@ describe 'Defining one-to-many association' do
       end
 
       def with_tasks
-        association_join(:tasks)
+        association_join(:tasks, select: [:id, :title])
+      end
+
+      def embed_tasks
+        embed(:tasks, select: [:id, :title])
+      end
+
+      def all
+        select(:id, :name)
       end
     end
 
     users = rom.relations.users
 
     expect(users.with_tasks.by_name("Piotr").to_a).to eql(
-      [{ id: 1, user_id: 1, name: 'Piotr', title: 'Finish ROM' }]
+      [{ id: 1, name: 'Piotr', tasks_id: 1, title: 'Finish ROM' }]
+    )
+
+    expect(users.all.embed_tasks.by_name("Piotr").to_a).to eql(
+      [{ id: 1, name: 'Piotr', tasks: [{ tasks_id: 1, title: 'Finish ROM' }] }]
     )
   end
 end

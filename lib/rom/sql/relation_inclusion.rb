@@ -25,6 +25,31 @@ module ROM
         @header = dataset.header
       end
 
+      def embed(name, options)
+        select = options.fetch(:select)
+
+        type = model.association_reflection(name)[:type]
+
+        meth, as =
+          if type == :many_to_one
+            [:wrap, Inflecto.singularize(name).to_sym]
+          else
+            [:group, name]
+          end
+
+        joined = association_join(name, select: select)
+
+        embedded_header = joined.header.map { |col|
+          if col.respond_to?(:table) && col.table == name
+            col.column
+          elsif col.respond_to?(:expression) && col.expression.table == name
+            col.aliaz
+          end
+        }.compact
+
+        in_memory { send(meth, joined, as => embedded_header) }
+      end
+
       # Join configured association.
       #
       # Uses INNER JOIN type.
@@ -42,8 +67,8 @@ module ROM
       #   end
       #
       # @api public
-      def association_join(*args)
-        send(:append_association, __method__, *args)
+      def association_join(name, options = {})
+        graph_join(name, :inner, options)
       end
 
       # Join configured association
@@ -63,36 +88,39 @@ module ROM
       #   end
       #
       # @api public
-      def association_left_join(*args)
-        send(:append_association, __method__, *args)
-      end
-
-      private
-
-      # @api private
-      def append_association(type, name, options = {})
-        self.class.new(
-          dataset.public_send(type, name).
-          select_append(*columns_for_association(name, options))
-        )
+      def association_left_join(name, options = {})
+        graph_join(name, :left_outter, options)
       end
 
       # @api private
-      def columns_for_association(name, options)
-        col_names = options[:select]
+      def primary_key
+        model.primary_key
+      end
 
-        return send(Inflecto.pluralize(name)).qualified_columns unless col_names
+      # @api private
+      def graph_join(name, join_type, options = {})
+        assoc = model.association_reflection(name)
 
-        relations = col_names.is_a?(Hash) ? col_names.keys : [name]
+        key = assoc[:key]
+        type = assoc[:type]
 
-        columns = relations.each_with_object([]) do |rel_name, a|
-          relation = send(Inflecto.pluralize(rel_name))
-          names = col_names.is_a?(Hash) ? col_names[rel_name] : col_names
+        if type == :many_to_many
+          graph(assoc[:join_table], { assoc[:left_key] => primary_key }, select: [], implicit_qualifier: self.name).
+            graph(name, { primary_key => assoc[:right_key] }, options)
+        else
+          join_keys =
+            if type == :many_to_one
+              { primary_key => key }
+            else
+              { key => primary_key }
+            end
 
-          a.concat(relation.select(*names).prefix.qualified_columns)
+          graph(
+            name,
+            join_keys,
+            options.merge(join_type: join_type, implicit_qualifier: self.name)
+          )
         end
-
-        columns
       end
 
       module AssociationDSL
