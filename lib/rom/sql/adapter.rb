@@ -41,7 +41,9 @@ module ROM
       end
 
       def extend_relation_instance(relation)
-        relation.extend(RelationExtension)
+        model = relation.model
+        model.set_dataset(relation.dataset)
+        model.dataset.naked!
       end
 
       def command_namespace

@@ -9,6 +9,7 @@ module ROM
         klass.extend(AssociationDSL)
 
         klass.send(:undef_method, :select)
+        klass.send(:attr_reader, :model)
 
         klass.class_eval {
           class << self
