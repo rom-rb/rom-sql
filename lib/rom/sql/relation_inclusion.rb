@@ -123,8 +123,22 @@ module ROM
         type = assoc[:type]
 
         if type == :many_to_many
-          graph(assoc[:join_table], { assoc[:left_key] => primary_key }, select: [], implicit_qualifier: self.name).
-            graph(name, { primary_key => assoc[:right_key] }, options)
+          select = options[:select] || {}
+
+          l_select, r_select =
+            if select.is_a?(Hash)
+              [select[assoc[:join_table]] || [], select[name]]
+            else
+              [[], select]
+            end
+
+          l_graph = graph(
+            assoc[:join_table],
+            { assoc[:left_key] => primary_key },
+            select: l_select, implicit_qualifier: self.name
+          )
+
+          l_graph.graph(name, { primary_key => assoc[:right_key] }, select: r_select)
         else
           join_keys =
             if type == :many_to_one

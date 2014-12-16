@@ -19,6 +19,12 @@ describe 'Defining many-to-one association' do
         association_left_join(:tags, select: [:name])
       end
 
+      def with_tags_and_tag_id
+        association_left_join(:tags, select: {
+          tags: [:name], task_tags: [:tag_id]
+        })
+      end
+
       def by_tag(name)
         with_tags.where(name: name)
       end
@@ -35,6 +41,11 @@ describe 'Defining many-to-one association' do
     expect(tasks.all.with_tags.to_a).to eql([
       { id: 1, title: 'Finish ROM', name: 'important' },
       { id: 2, title: 'Go to sleep', name: nil }
+    ])
+
+    expect(tasks.all.with_tags_and_tag_id.to_a).to eql([
+      { id: 1, title: 'Finish ROM', tag_id: 1, name: 'important' },
+      { id: 2, title: 'Go to sleep', tag_id: nil, name: nil }
     ])
 
     expect(tasks.all.by_tag("important").to_a).to eql([
