@@ -26,6 +26,23 @@ module ROM
         @header = dataset.header
       end
 
+      # "Wrap" or "group" associated tuples depending on the association definition
+      #
+      # @example
+      #
+      #   setup.relation(:tasks) do
+      #     many_to_one :users, key: :user_id
+      #
+      #     def with_user
+      #       embed(:users, select: [:name])
+      #     end
+      #   end
+      #
+      # @param [Symbol] name the name of the association
+      # @param [Hash] options option hash
+      # @option options [Array] :select List of attribute names for wrap/group operation
+      #
+      # @api public
       def embed(name, options)
         select = options.fetch(:select)
 
