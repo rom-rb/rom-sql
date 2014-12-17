@@ -26,48 +26,6 @@ module ROM
         @header = dataset.header
       end
 
-      # "Wrap" or "group" associated tuples depending on the association definition
-      #
-      # @example
-      #
-      #   setup.relation(:tasks) do
-      #     many_to_one :users, key: :user_id
-      #
-      #     def with_user
-      #       embed(:users, select: [:name])
-      #     end
-      #   end
-      #
-      # @param [Symbol] name the name of the association
-      # @param [Hash] options option hash
-      # @option options [Array] :select List of attribute names for wrap/group operation
-      #
-      # @api public
-      def embed(name, options)
-        select = options.fetch(:select)
-
-        type = model.association_reflection(name)[:type]
-
-        meth, as =
-          if type == :many_to_one
-            [:wrap, Inflecto.singularize(name).to_sym]
-          else
-            [:group, name]
-          end
-
-        joined = association_join(name, select: select)
-
-        embedded_header = joined.header.map { |col|
-          if col.respond_to?(:table) && col.table == name
-            col.column
-          elsif col.respond_to?(:expression) && col.expression.table == name
-            col.aliaz
-          end
-        }.compact
-
-        in_memory { send(meth, joined, as => embedded_header) }
-      end
-
       # Join configured association.
       #
       # Uses INNER JOIN type.

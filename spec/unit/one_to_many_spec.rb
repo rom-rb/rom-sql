@@ -17,12 +17,16 @@ describe 'Defining one-to-many association' do
         association_join(:tasks, select: [:id, :title])
       end
 
-      def embed_tasks
-        embed(:tasks, select: [:id, :title])
-      end
-
       def all
         select(:id, :name)
+      end
+    end
+
+    setup.mappers do
+      define(:users)
+
+      define(:with_tasks, parent: :users) do
+        group tasks: [:tasks_id, :title]
       end
     end
 
@@ -32,7 +36,7 @@ describe 'Defining one-to-many association' do
       [{ id: 1, name: 'Piotr', tasks_id: 1, title: 'Finish ROM' }]
     )
 
-    expect(users.all.embed_tasks.by_name("Piotr").to_a).to eql(
+    expect(rom.read(:users).all.with_tasks.by_name("Piotr").to_a).to eql(
       [{ id: 1, name: 'Piotr', tasks: [{ tasks_id: 1, title: 'Finish ROM' }] }]
     )
   end
