@@ -58,27 +58,13 @@ end
 
 ## Relations
 
-ROM doesn't have a relationship concept like in ActiveRecord or Sequel. Instead
-it provides a convenient interface for building joined relations that can be
-mapped to [aggregate objects](http://martinfowler.com/bliki/Aggregate.html).
-
-There's no lazy-loading, eager-loading or any other magic happening behind the
-scenes. You're in full control of how data are fetched from the database and it's
-an explicit operation.
-
 ``` ruby
 
 setup.relation(:tasks)
 
 setup.relation(:users) do
-  one_to_many :tasks, key: :user_id
-
   def by_name(name)
     where(name: name)
-  end
-
-  def with_tasks
-    association_join(:tasks)
   end
 end
 
@@ -94,10 +80,19 @@ puts users.by_name("Piotr").with_tasks.to_a.inspect
 # => [{:id=>1, :name=>"Piotr", :user_id=>1, :title=>"Be happy"}]
 ```
 
-## Mapping
+## Mapping joins to aggregates
 
-Mapping joined relations can be simplified using `wrap` and `group` in-memory
-operations:
+ROM doesn't have a relationship concept like in ActiveRecord or Sequel. Instead
+it provides a convenient interface for building joined relations that can be
+mapped to [aggregate objects](http://martinfowler.com/bliki/Aggregate.html).
+
+There's no lazy-loading, eager-loading or any other magic happening behind the
+scenes. You're in full control of how data are fetched from the database and it's
+an explicit operation.
+
+Sequel's association DSL is available in relation definitions which enables
+`association_join` interface inside relations. To map joined results to
+aggregate objects `wrap` and `group` mapping transformation can be used
 
 ``` ruby
 setup.relation(:tasks)
@@ -110,7 +105,7 @@ setup.relation(:users) do
   end
 
   def with_tasks
-    in_memory { group(association_join(:tasks), tasks: [:title]) }
+    association_join(:tasks, select: [:title])
   end
 end
 
