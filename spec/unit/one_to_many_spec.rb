@@ -14,7 +14,7 @@ describe 'Defining one-to-many association' do
       end
 
       def with_tasks
-        association_join(:tasks, select: [:id, :title])
+        association_left_join(:tasks, select: [:id, :title])
       end
 
       def all

@@ -65,7 +65,7 @@ module ROM
       #
       # @api public
       def association_left_join(name, options = {})
-        graph_join(name, :left_outter, options)
+        graph_join(name, :left_outer, options)
       end
 
       # @api private
