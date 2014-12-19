@@ -38,8 +38,9 @@ module ROM
       class Delete < ROM::Commands::Delete
 
         def execute
+          deleted = target.to_a
           target.delete
-          relation
+          deleted
         end
 
       end

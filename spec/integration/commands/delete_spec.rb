@@ -8,7 +8,7 @@ describe 'Commands / Delete' do
   before do
     setup.relation(:users) do
       def by_name(name)
-        where(name: 'Piotr')
+        where(name: name)
       end
     end
 
@@ -22,12 +22,12 @@ describe 'Commands / Delete' do
   it 'deletes all tuples' do
     result = users.try { delete }
 
-    expect(result.value.to_a).to match_array([])
+    expect(result.value.to_a).to match_array([{ id: 1, name: 'Piotr' }, { id: 2, name: 'Jane' }])
   end
 
   it 'deletes all tuples in a restricted relation' do
     result = users.try { delete(:by_name, 'Jane').execute }
 
-    expect(result.value.to_a).to match_array([{ id: 2, name: 'Jane' }])
+    expect(result.value).to match_array([{ id: 2, name: 'Jane' }])
   end
 end
