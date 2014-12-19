@@ -1,11 +1,11 @@
-## v0.3.0 to-be-released
+## v0.3.0 2014-12-19
 
 ### Changed
 
 * `association_join` now uses Sequel's `graph` interface which qualifies columns automatically (solnic)
 * Delete command returns deleted tuples (solnic)
 
-[Compare v0.2.0...master](https://github.com/rom-rb/rom-sql/compare/v0.2.0...master)
+[Compare v0.2.0...v0.3.0](https://github.com/rom-rb/rom-sql/compare/v0.2.0...v0.3.0)
 
 ## v0.2.0 2014-12-06
 
