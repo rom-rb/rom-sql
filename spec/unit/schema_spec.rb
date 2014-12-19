@@ -26,7 +26,7 @@ describe 'Inferring schema from database' do
       rom = setup.finalize
       schema = rom.schema
 
-      expect(schema.postgres).to be(nil)
+      expect { schema.postgres }.to raise_error(NoMethodError)
     end
   end
 end
