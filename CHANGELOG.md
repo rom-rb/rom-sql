@@ -1,3 +1,9 @@
+## v0.3.1 2014-12-20
+
+### Added
+
+* `Adapter#disconnect` (solnic)
+
 ## v0.3.0 2014-12-19
 
 ### Changed
