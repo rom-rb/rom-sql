@@ -15,4 +15,12 @@ describe ROM::Adapter do
       expect(adapter.dataset?(:not_here)).to be(false)
     end
   end
+
+  describe '#disconnect' do
+    it 'disconnects via sequel connection' do
+      # FIXME: no idea how to test it in a different way
+      expect(adapter.connection).to receive(:disconnect)
+      adapter.disconnect
+    end
+  end
 end

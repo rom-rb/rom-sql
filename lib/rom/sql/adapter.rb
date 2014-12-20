@@ -19,6 +19,10 @@ module ROM
         @connection = ::Sequel.connect(uri.to_s)
       end
 
+      def disconnect
+        connection.disconnect
+      end
+
       def [](name)
         connection[name]
       end
