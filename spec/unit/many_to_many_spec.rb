@@ -9,7 +9,6 @@ describe 'Defining many-to-one association' do
 
   it 'extends relation with association methods' do
     setup.relation(:tasks) do
-
       many_to_many :tags,
         join_table: :task_tags,
         left_key: :task_id,

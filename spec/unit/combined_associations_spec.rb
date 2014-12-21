@@ -12,7 +12,6 @@ describe 'Defining multiple associations' do
     setup.relation(:tags)
 
     setup.relation(:tasks) do
-
       many_to_one :users, key: :user_id
 
       many_to_many :tags,
@@ -43,7 +42,6 @@ describe 'Defining multiple associations' do
       def sorted_by_tags_name
         order(Sequel.desc(:tags__name))
       end
-
     end
 
     tasks = rom.relations.tasks
