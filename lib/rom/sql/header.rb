@@ -1,6 +1,5 @@
 module ROM
   module SQL
-
     # @private
     class Header
       include Charlatan.new(:columns)
@@ -53,6 +52,5 @@ module ROM
         rename(Hash[map { |col| [col, :"#{col_prefix}_#{col}"] }])
       end
     end
-
   end
 end

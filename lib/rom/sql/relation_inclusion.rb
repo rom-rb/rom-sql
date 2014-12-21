@@ -1,10 +1,8 @@
 module ROM
   module SQL
-
     # Sequel-specific relation extensions
     #
     module RelationInclusion
-
       def self.included(klass)
         klass.extend(AssociationDSL)
 
@@ -114,7 +112,6 @@ module ROM
       end
 
       module AssociationDSL
-
         def one_to_many(name, options)
           associations << [__method__, name, options.merge(relation: name)]
         end
@@ -143,9 +140,7 @@ module ROM
         def associations
           @associations ||= []
         end
-
       end
     end
-
   end
 end

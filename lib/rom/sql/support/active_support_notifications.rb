@@ -2,7 +2,6 @@ require 'sequel/database/logging'
 require 'active_support/notifications'
 
 module Sequel
-
   class Database
     def log_yield_with_instrumentation(sql, args = nil, &block)
       ActiveSupport::Notifications.instrument(

@@ -4,7 +4,6 @@ require 'rom/sql/commands'
 
 module ROM
   module SQL
-
     class Adapter < ROM::Adapter
       attr_reader :logger
 
@@ -84,6 +83,5 @@ module ROM
 
       ROM::Adapter.register(self)
     end
-
   end
 end

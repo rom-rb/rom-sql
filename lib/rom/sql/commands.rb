@@ -39,7 +39,6 @@ module ROM
           deleted
         end
       end
-
     end
   end
 end
