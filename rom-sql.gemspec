@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = ROM::SQL::VERSION.dup
   spec.authors       = ["Piotr Solnica"]
   spec.email         = ["piotr.solnica@gmail.com"]
-  spec.summary       = %q{RDBMS support for ROM}
+  spec.summary       = %q(RDBMS support for ROM)
   spec.description   = spec.summary
   spec.homepage      = "http://rom-rb.org"
   spec.license       = "MIT"
