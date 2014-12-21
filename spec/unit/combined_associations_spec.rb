@@ -66,7 +66,7 @@ describe 'Defining multiple associations' do
     ])
 
     expect(tasks.where(title: 'Go to sleep').to_a).to eql(
-      [{ id: 2, user_id: 1, title: 'Go to sleep'}]
+      [{ id: 2, user_id: 1, title: 'Go to sleep' }]
     )
   end
 end
