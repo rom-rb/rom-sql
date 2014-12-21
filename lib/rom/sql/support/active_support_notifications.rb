@@ -4,7 +4,6 @@ require 'active_support/notifications'
 module Sequel
 
   class Database
-
     def log_yield_with_instrumentation(sql, args = nil, &block)
       ActiveSupport::Notifications.instrument(
         'sql.rom',
@@ -24,6 +23,5 @@ module Sequel
     def instrumentation_name
       "ROM[#{database_type}]"
     end
-
   end
 end

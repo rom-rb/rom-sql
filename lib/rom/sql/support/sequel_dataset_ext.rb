@@ -1,6 +1,5 @@
 module Sequel
   class Dataset
-
     def header
       ROM::SQL::Header.new(opts.fetch(:select) { columns }, opts[:from].first)
     end
@@ -30,6 +29,5 @@ module Sequel
     def default_prefix
       Inflecto.singularize(opts[:from].first)
     end
-
   end
 end

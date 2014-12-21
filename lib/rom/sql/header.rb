@@ -52,7 +52,6 @@ module ROM
       def prefix(col_prefix)
         rename(Hash[map { |col| [col, :"#{col_prefix}_#{col}"] }])
       end
-
     end
 
   end

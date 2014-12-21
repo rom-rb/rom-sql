@@ -7,7 +7,6 @@ module ROM
       ].freeze
 
       class Create < ROM::Commands::Create
-
         def execute(tuples)
           pks = Array([tuples]).flatten.map do |tuple|
             attributes = input[tuple]
@@ -22,7 +21,6 @@ module ROM
       end
 
       class Update < ROM::Commands::Update
-
         def execute(tuple)
           attributes = input[tuple]
           validator.call(attributes)
@@ -32,17 +30,14 @@ module ROM
           relation.update(attributes.to_h)
           relation.unfiltered.where(relation.model.primary_key => pks)
         end
-
       end
 
       class Delete < ROM::Commands::Delete
-
         def execute
           deleted = target.to_a
           target.delete
           deleted
         end
-
       end
 
     end
