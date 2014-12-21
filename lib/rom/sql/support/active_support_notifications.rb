@@ -6,9 +6,9 @@ module Sequel
     def log_yield_with_instrumentation(sql, args = nil, &block)
       ActiveSupport::Notifications.instrument(
         'sql.rom',
-        :sql => sql,
-        :name => instrumentation_name,
-        :binds => args
+        sql: sql,
+        name: instrumentation_name,
+        binds: args
       ) do
         log_yield_without_instrumentation(sql, args, &block)
       end
