@@ -8,9 +8,9 @@ module ROM
       attr_reader :logger
 
       def self.schemes
-        [:ado, :amalgalite, :cubrid, :db2, :dbi, :do, :fdbsql, :firebird, :ibmdb,
-         :informix, :jdbc, :mysql, :mysql2, :odbc, :openbase, :oracle, :postgres,
-         :sqlanywhere, :sqlite, :swift, :tinytds]
+        [:ado, :amalgalite, :cubrid, :db2, :dbi, :do, :fdbsql, :firebird,
+         :ibmdb, :informix, :jdbc, :mysql, :mysql2, :odbc, :openbase, :oracle,
+         :postgres, :sqlanywhere, :sqlite, :swift, :tinytds]
       end
 
       def initialize(*args)
