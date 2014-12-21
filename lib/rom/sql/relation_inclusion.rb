@@ -11,13 +11,13 @@ module ROM
         klass.send(:undef_method, :select)
         klass.send(:attr_reader, :model)
 
-        klass.class_eval {
+        klass.class_eval do
           class << self
             attr_accessor :model
           end
 
           self.model = Class.new(Sequel::Model)
-        }
+        end
       end
 
       def initialize(*args)

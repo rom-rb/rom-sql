@@ -19,10 +19,10 @@ module ROM
       alias_method :to_a, :to_ary
 
       def to_h
-        columns.each_with_object({}) { |col, h|
+        columns.each_with_object({}) do |col, h|
           left, right = col.to_s.split('___')
           h[left.to_sym] = (right || left).to_sym
-        }
+        end
       end
 
       def names
@@ -38,7 +38,7 @@ module ROM
       end
 
       def rename(options)
-        map { |col|
+        map do |col|
           new_name = options[col]
 
           if new_name
@@ -46,7 +46,7 @@ module ROM
           else
             col
           end
-        }
+        end
       end
 
       def prefix(col_prefix)
