@@ -22,7 +22,8 @@ describe 'Commands / Delete' do
   it 'deletes all tuples' do
     result = users.try { delete }
 
-    expect(result.value.to_a).to match_array([{ id: 1, name: 'Piotr' }, { id: 2, name: 'Jane' }])
+    expect(result.value.to_a)
+      .to match_array([{ id: 1, name: 'Piotr' }, { id: 2, name: 'Jane' }])
   end
 
   it 'deletes all tuples in a restricted relation' do

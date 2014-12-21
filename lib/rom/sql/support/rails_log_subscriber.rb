@@ -2,9 +2,7 @@ require 'active_support/log_subscriber'
 
 module ROM
   module SQL
-
     class RailsLogSubscriber < ActiveSupport::LogSubscriber
-
       def sql(event)
         return unless logger.debug?
 
@@ -27,9 +25,7 @@ module ROM
       def odd?
         @odd_or_even = !@odd_or_even
       end
-
     end
-
   end
 end
 

@@ -18,7 +18,7 @@ describe ROM::Relation do
       projected = users.sorted.project(:name)
 
       expect(projected.header).to match_array([:name])
-      expect(projected.to_a).to eql([{ name: 'Piotr'}])
+      expect(projected.to_a).to eql([{ name: 'Piotr' }])
     end
   end
 
@@ -26,7 +26,7 @@ describe ROM::Relation do
     it 'projects the dataset using new column names' do
       renamed = users.sorted.rename(id: :user_id, name: :user_name)
 
-      expect(renamed.to_a).to eql([{ user_id: 1, user_name: 'Piotr'}])
+      expect(renamed.to_a).to eql([{ user_id: 1, user_name: 'Piotr' }])
     end
   end
 
@@ -34,13 +34,13 @@ describe ROM::Relation do
     it 'projects the dataset using new column names' do
       prefixed = users.sorted.prefix(:user)
 
-      expect(prefixed.to_a).to eql([{ user_id: 1, user_name: 'Piotr'}])
+      expect(prefixed.to_a).to eql([{ user_id: 1, user_name: 'Piotr' }])
     end
 
     it 'uses singularized table name as the default prefix' do
       prefixed = users.sorted.prefix
 
-      expect(prefixed.to_a).to eql([{ user_id: 1, user_name: 'Piotr'}])
+      expect(prefixed.to_a).to eql([{ user_id: 1, user_name: 'Piotr' }])
     end
   end
 

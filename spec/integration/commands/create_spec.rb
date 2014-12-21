@@ -26,9 +26,9 @@ describe 'Commands / Create' do
   end
 
   it 'returns tuples when result is set to :many' do
-    result = users.try {
+    result = users.try do
       create_many([{ id: 2, name: 'Jane' }, { id: 3, name: 'Jack' }])
-    }
+    end
 
     expect(result.value.to_a).to match_array([
       { id: 2, name: 'Jane' }, { id: 3, name: 'Jack' }

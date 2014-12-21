@@ -11,7 +11,7 @@ describe 'ActiveSupport::Notifications support' do
 
     sql = nil
 
-    ActiveSupport::Notifications.subscribe('sql.rom') do |name, start, finish, id, payload|
+    ActiveSupport::Notifications.subscribe('sql.rom') do |_name, _start, _finish, _id, payload|
       sql = payload[:sql]
     end
 

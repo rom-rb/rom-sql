@@ -15,7 +15,7 @@ describe 'Commands / Update' do
     setup.commands(:users) do
       define(:update) do
         input Hash
-        validator Proc.new {}
+        validator proc {}
       end
     end
 

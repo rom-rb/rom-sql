@@ -31,6 +31,5 @@ shared_context 'database setup' do
       Integer :tag_id
       Integer :task_id
     end
-
   end
 end

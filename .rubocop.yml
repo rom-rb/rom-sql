@@ -1,0 +1,41 @@
+# FIXME: Lower by refactoring biggest offenders
+Metrics/AbcSize:
+  Max: 27
+
+# FIXME: Lower by refactoring biggest offenders
+Metrics/MethodLength:
+  Max: 32
+
+# FIXME: Lower by refactoring biggest offenders
+Metrics/PerceivedComplexity:
+  Max: 9
+
+# This file is not worth fixing
+Metrics/LineLength:
+  Exclude:
+    - spec/support/active_support_notifications_spec.rb
+
+# The enforced style doesn’t match Vim’s defaults
+Style/AlignParameters:
+  Enabled: false
+
+# Documentation checked by Inch CI
+Style/Documentation:
+  Enabled: false
+
+# This is a shim file for those who require 'rom-mongo'
+Style/FileName:
+  Exclude:
+    - lib/rom-sql.rb
+
+# The default style doesn’t match Vim’s defaults
+Style/IndentHash:
+  EnforcedStyle: consistent
+
+# Even a single escaped slash can be confusing
+Style/RegexpLiteral:
+  MaxSlashes: 0
+
+# Accept both single and double quotes
+Style/StringLiterals:
+  Enabled: false

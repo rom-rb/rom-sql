@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = ROM::SQL::VERSION.dup
   spec.authors       = ["Piotr Solnica"]
   spec.email         = ["piotr.solnica@gmail.com"]
-  spec.summary       = %q{RDBMS support for ROM}
+  spec.summary       = 'RDBMS support for ROM'
   spec.description   = spec.summary
   spec.homepage      = "http://rom-rb.org"
   spec.license       = "MIT"
@@ -24,4 +24,5 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake", "~> 10.0"
+  spec.add_development_dependency "rubocop", "~> 0.28.0"
 end
