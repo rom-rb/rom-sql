@@ -13,6 +13,13 @@ module ROM
          :postgres, :sqlanywhere, :sqlite, :swift, :tinytds]
       end
 
+      def self.normalize_scheme(input)
+        scheme = input.dup
+        scheme = 'sqlite' if scheme == 'sqlite3'
+        scheme.prepend('jdbc:') if RUBY_ENGINE == 'jruby'
+        scheme
+      end
+
       def initialize(*args)
         super
         @connection = ::Sequel.connect(uri.to_s)

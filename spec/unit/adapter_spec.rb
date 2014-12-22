@@ -3,8 +3,15 @@ require 'spec_helper'
 describe ROM::Adapter do
   subject(:adapter) { rom.postgres.adapter }
 
-  let(:setup) { ROM.setup(postgres: "postgres://localhost/rom") }
+  let(:setup) { ROM.setup(postgres: 'postgres://localhost/rom') }
   let(:rom) { setup.finalize }
+
+  describe 'setting up' do
+    it 'works with database.yml-style hash' do
+      setup = ROM.setup(adapter: 'postgres', database: 'rom')
+      expect(setup[:default]).to eql(setup.repositories[:default])
+    end
+  end
 
   describe '#dataset?' do
     it 'returns true if a table exists' do
