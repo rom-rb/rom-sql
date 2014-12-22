@@ -23,8 +23,7 @@ describe ROM::Config do
         database: 'testing',
         username: 'piotr',
         hostname: 'localhost',
-        password: 'secret',
-        root: root
+        password: 'secret'
       }
 
       config = ROM::Config.build(db_config)
