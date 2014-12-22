@@ -3,7 +3,7 @@ require 'spec_helper'
 describe ROM::Config do
   let(:root) { '/somewhere' }
 
-  describe '.rewrite_config' do
+  describe '.build' do
     it 'rewrites database config hash to a URI for sqlite' do
       db_config = { adapter: 'sqlite', database: 'testing.sqlite', root: root }
 
