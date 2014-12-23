@@ -16,7 +16,11 @@ module ROM
       def self.normalize_scheme(input)
         scheme = input.dup
         scheme = 'sqlite' if scheme == 'sqlite3'
-        scheme.prepend('jdbc:') if RUBY_ENGINE == 'jruby'
+
+        if RUBY_ENGINE == 'jruby' && scheme != 'postgres'
+          scheme.prepend('jdbc:')
+        end
+
         scheme
       end
 
