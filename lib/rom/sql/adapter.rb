@@ -91,8 +91,6 @@ module ROM
       def map_schema_type(type)
         connection.class::SCHEMA_TYPE_CLASSES.fetch(type)
       end
-
-      ROM::Adapter.register(self)
     end
   end
 end
