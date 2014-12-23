@@ -22,7 +22,7 @@ module ROM
 
       def initialize(*args)
         super
-        @connection = ::Sequel.connect(uri.to_s)
+        @connection = ::Sequel.connect(uri.to_s, options)
       end
 
       def disconnect

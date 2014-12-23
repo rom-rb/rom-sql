@@ -11,6 +11,21 @@ describe ROM::Adapter do
       setup = ROM.setup(adapter: 'postgres', database: 'rom')
       expect(setup[:default]).to eql(setup.repositories[:default])
     end
+
+    it 'accepts additional options' do
+      test = false
+
+      setup = ROM.setup(
+        adapter: 'postgres',
+        database: 'rom',
+        test: true,
+        after_connect: proc { test = true }
+      )
+
+      setup.finalize
+
+      expect(test).to be(true)
+    end
   end
 
   describe '#dataset?' do
