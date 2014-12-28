@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
-  gem 'rom', git: 'https://github.com/rom-rb/rom.git', branch: 'master'
+  gem 'rom', '~> 0.5.0', github: 'rom-rb/rom', branch: 'master'
   gem 'virtus'
   gem 'activesupport'
   gem 'rspec', '~> 3.1'
