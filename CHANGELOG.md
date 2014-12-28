@@ -3,6 +3,7 @@
 ### Added
 
 * `Adapter#disconnect` (solnic)
+* Support for extra connection options (solnic)
 
 [Compare v0.3.0...master](https://github.com/rom-rb/rom-sql/compare/v0.3.0...master)
 
