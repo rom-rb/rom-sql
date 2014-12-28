@@ -1,8 +1,10 @@
-## v0.3.1 2014-12-20
+## v0.3.1 to-be-released
 
 ### Added
 
 * `Adapter#disconnect` (solnic)
+
+[Compare v0.3.0...master](https://github.com/rom-rb/rom-sql/compare/v0.3.0...master)
 
 ## v0.3.0 2014-12-19
 
