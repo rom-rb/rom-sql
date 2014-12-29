@@ -25,7 +25,7 @@ module ROM
       end
 
       def self.database_file?(scheme)
-        [:sqlite, :sqlite3].include?(scheme.to_sym)
+        scheme.to_s.include?('sqlite')
       end
 
       def initialize(*args)
