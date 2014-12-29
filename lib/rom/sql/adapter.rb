@@ -24,6 +24,10 @@ module ROM
         scheme
       end
 
+      def self.database_file?(scheme)
+        [:sqlite, :sqlite3].include?(scheme.to_sym)
+      end
+
       def initialize(*args)
         super
         @connection = ::Sequel.connect(uri.to_s, options)
