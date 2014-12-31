@@ -27,7 +27,7 @@ describe 'Commands / Delete' do
   end
 
   it 'deletes all tuples in a restricted relation' do
-    result = users.try { delete(:by_name, 'Jane').execute }
+    result = users.try { delete(:by_name, 'Jane') }
 
     expect(result.value).to match_array([{ id: 2, name: 'Jane' }])
   end
