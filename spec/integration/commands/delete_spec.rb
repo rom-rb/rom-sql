@@ -13,22 +13,24 @@ describe 'Commands / Delete' do
     end
 
     setup.commands(:users) do
-      define(:delete)
+      define(:delete) do
+        result :one
+      end
     end
 
     rom.relations.users.insert(id: 2, name: 'Jane')
   end
 
-  it 'deletes all tuples' do
+  it 'raises error when tuple count does not match expectation' do
     result = users.try { delete }
 
-    expect(result.value.to_a)
-      .to match_array([{ id: 1, name: 'Piotr' }, { id: 2, name: 'Jane' }])
+    expect(result.value).to be(nil)
+    expect(result.error).to be_instance_of(ROM::TupleCountMismatchError)
   end
 
   it 'deletes all tuples in a restricted relation' do
     result = users.try { delete(:by_name, 'Jane') }
 
-    expect(result.value).to match_array([{ id: 2, name: 'Jane' }])
+    expect(result.value).to eql({ id: 2, name: 'Jane' })
   end
 end

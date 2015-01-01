@@ -6,7 +6,18 @@ module ROM
         Sequel::NotNullConstraintViolation
       ].freeze
 
+      module TupleCount
+        # TODO: we need an interface for "target_count" here
+        def assert_tuple_count
+          if result == :one && target.count > 1
+            raise TupleCountMismatchError, "#{inspect} expects one tuple"
+          end
+        end
+      end
+
       class Create < ROM::Commands::Create
+        include TupleCount
+
         def execute(tuples)
           pks = Array([tuples]).flatten.map do |tuple|
             attributes = input[tuple]
@@ -21,6 +32,8 @@ module ROM
       end
 
       class Update < ROM::Commands::Update
+        include TupleCount
+
         def execute(tuple)
           attributes = input[tuple]
           validator.call(attributes)
@@ -33,6 +46,8 @@ module ROM
       end
 
       class Delete < ROM::Commands::Delete
+        include TupleCount
+
         def execute
           deleted = target.to_a
           target.delete
