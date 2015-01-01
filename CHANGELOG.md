@@ -1,3 +1,11 @@
+## v0.3.2 2015-01-01
+
+### Fixed
+
+* Checking tuple count in commands (solnic)
+
+[Compare v0.3.1...v0.3.2](https://github.com/rom-rb/rom-sql/compare/v0.3.1...v0.3.2)
+
 ## v0.3.1 2014-12-31
 
 ### Added
