@@ -1,3 +1,9 @@
+## v0.3.3 to-be-released
+
+### Fixed
+
+* Indentation in Rails logger (morgoth)
+
 ## v0.3.2 2015-01-01
 
 ### Fixed
