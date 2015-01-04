@@ -19,7 +19,7 @@ module ROM
           name = color(name, :magenta, true)
         end
 
-        debug "   #{name}  #{sql}  #{binds}"
+        debug "  #{name}  #{sql}  #{binds}"
       end
 
       def odd?
