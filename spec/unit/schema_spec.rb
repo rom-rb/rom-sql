@@ -17,7 +17,7 @@ describe 'Inferring schema from database' do
       schema = rom.schema
 
       expect(schema.people.to_a).to eql(rom.postgres.people.to_a)
-      expect(schema.people.header).to eql([:id, :name])
+      expect(schema.people.header.columns).to eql([:id, :name])
     end
   end
 
