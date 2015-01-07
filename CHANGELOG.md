@@ -1,8 +1,14 @@
 ## v0.3.3 to-be-released
 
+### Added
+
+* Support for 'postgresql' scheme name which makes it work next to ActiveRecord (solnic)
+
 ### Fixed
 
 * Indentation in Rails logger (morgoth)
+
+[Compare v0.3.2...master](https://github.com/rom-rb/rom-sql/compare/v0.3.1...master)
 
 ## v0.3.2 2015-01-01
 
