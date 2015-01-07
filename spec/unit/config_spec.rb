@@ -17,6 +17,19 @@ describe ROM::Config do
       end
     end
 
+    it 'rewrites AR-style postgresql config to Sequel' do
+      db_config = { adapter: 'postgresql', database: 'testing' }
+
+      config = ROM::Config.build(db_config)
+
+      if RUBY_ENGINE == 'jruby'
+        expect(config)
+          .to eql(default: 'jdbc:postgres://localhost/testing')
+      else
+        expect(config).to eql(default: 'postgres://localhost/testing')
+      end
+    end
+
     it 'rewrites database config hash to a URI for mysql' do
       db_config = {
         adapter: 'mysql',

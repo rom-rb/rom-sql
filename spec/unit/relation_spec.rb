@@ -59,8 +59,7 @@ describe ROM::Relation do
   end
 
   describe '#inspect' do
-    it 'includes dataset and header' do
-      expect(users.inspect).to include('header')
+    it 'includes dataset' do
       expect(users.inspect).to include('dataset')
     end
   end

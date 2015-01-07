@@ -10,12 +10,13 @@ module ROM
       def self.schemes
         [:ado, :amalgalite, :cubrid, :db2, :dbi, :do, :fdbsql, :firebird,
          :ibmdb, :informix, :jdbc, :mysql, :mysql2, :odbc, :openbase, :oracle,
-         :postgres, :sqlanywhere, :sqlite, :sqlite3, :swift, :tinytds]
+         :postgres, :postgresql, :sqlanywhere, :sqlite, :sqlite3, :swift, :tinytds]
       end
 
       def self.normalize_scheme(input)
         scheme = input.dup
         scheme = 'sqlite' if scheme == 'sqlite3'
+        scheme = 'postgres' if scheme == 'postgresql'
 
         if RUBY_ENGINE == 'jruby' && scheme != 'postgres'
           scheme.prepend('jdbc:')
