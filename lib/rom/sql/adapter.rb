@@ -29,8 +29,7 @@ module ROM
         scheme.to_s.include?('sqlite')
       end
 
-      def initialize(*args)
-        super
+      def setup_connection
         @connection = ::Sequel.connect(uri.to_s, options)
       end
 
