@@ -3,13 +3,15 @@ require 'spec_helper'
 describe 'Inferring schema from database' do
   let(:setup) { ROM.setup(postgres: "postgres://localhost/rom") }
 
+  let(:conn) { setup.postgres.adapter.connection }
+
   context "when database schema exists" do
-    after { rom.postgres.connection.drop_table?(:people) }
+    before { conn.drop_table?(:people) }
 
     let(:rom) { setup.finalize }
 
     it "infers the schema from the database relations" do
-      setup.postgres.connection.create_table :people do
+      conn.create_table :people do
         primary_key :id
         String :name
       end

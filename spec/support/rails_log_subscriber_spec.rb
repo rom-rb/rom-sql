@@ -22,7 +22,7 @@ describe 'Rails log subscriber' do
   end
 
   it 'works' do
-    rom.postgres.connection.run(test_query)
+    conn.run(test_query)
 
     expect(logger.logged(:debug).last).to include(test_query)
   end

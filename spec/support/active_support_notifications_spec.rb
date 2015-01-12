@@ -15,7 +15,7 @@ describe 'ActiveSupport::Notifications support' do
       sql = payload[:sql]
     end
 
-    rom.postgres.connection.run(%(SELECT * FROM "users" WHERE name = 'notification test'))
+    conn.run(%(SELECT * FROM "users" WHERE name = 'notification test'))
 
     expect(sql).to eql(%(SELECT * FROM "users" WHERE name = 'notification test'))
   end

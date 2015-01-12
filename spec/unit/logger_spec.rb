@@ -7,6 +7,6 @@ describe 'Logger' do
     repository = rom.postgres
 
     expect(repository.logger).to be(LOGGER)
-    expect(repository.connection.loggers).to include(LOGGER)
+    expect(conn.loggers).to include(LOGGER)
   end
 end
