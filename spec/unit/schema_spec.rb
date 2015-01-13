@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe 'Inferring schema from database' do
-  let(:setup) { ROM.setup(postgres: "postgres://localhost/rom") }
+  let(:setup) { ROM.setup("postgres://localhost/rom") }
 
-  let(:conn) { setup.postgres.adapter.connection }
+  let(:conn) { setup.default.adapter.connection }
 
   context "when database schema exists" do
     before { conn.drop_table?(:people) }
@@ -16,19 +16,15 @@ describe 'Inferring schema from database' do
         String :name
       end
 
-      schema = rom.schema
-
-      expect(schema.people.to_a).to eql(rom.postgres.people.to_a)
-      expect(schema.people.header.columns).to eql([:id, :name])
+      expect(rom.relations.people.to_a).to eql(rom.default.people.to_a)
     end
   end
 
   context "for empty database schemas" do
     it "returns an empty schema" do
       rom = setup.finalize
-      schema = rom.schema
 
-      expect { schema.postgres }.to raise_error(NoMethodError)
+      expect { rom.not_here }.to raise_error(NoMethodError)
     end
   end
 end

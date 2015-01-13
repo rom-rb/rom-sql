@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe ROM::Adapter do
-  subject(:adapter) { rom.postgres.adapter }
+  subject(:adapter) { rom.default.adapter }
 
-  let(:setup) { ROM.setup(postgres: 'postgres://localhost/rom') }
+  let(:setup) { ROM.setup('postgres://localhost/rom') }
   let(:rom) { setup.finalize }
 
   describe 'setting up' do

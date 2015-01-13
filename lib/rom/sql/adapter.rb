@@ -47,7 +47,11 @@ module ROM
       end
 
       def schema
-        tables.map { |table| [table, dataset(table), columns(table)] }
+        tables
+      end
+
+      def dataset(table)
+        connection[table]
       end
 
       def dataset?(name)
@@ -76,10 +80,6 @@ module ROM
 
       def columns(table)
         dataset(table).columns
-      end
-
-      def dataset(table)
-        connection[table]
       end
 
       def attributes(table)

@@ -1,11 +1,11 @@
 shared_context 'database setup' do
   subject(:rom) { setup.finalize }
 
-  let(:setup) { ROM.setup(postgres: 'postgres://localhost/rom') }
-  let(:conn) { setup.postgres.adapter.connection }
+  let(:setup) { ROM.setup('postgres://localhost/rom') }
+  let(:conn) { setup.default.adapter.connection }
 
   before do
-    setup.postgres.use_logger(LOGGER)
+    setup.default.use_logger(LOGGER)
 
     [:users, :tasks, :tags, :task_tags].each { |name| conn.drop_table?(name) }
 

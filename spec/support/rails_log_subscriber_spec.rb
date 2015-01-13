@@ -18,7 +18,7 @@ describe 'Rails log subscriber' do
 
   before do
     set_logger(logger)
-    rom.postgres.use_logger(logger)
+    rom.default.use_logger(logger)
   end
 
   it 'works' do
