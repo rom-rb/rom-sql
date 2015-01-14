@@ -47,7 +47,7 @@ module ROM
       end
 
       def schema
-        tables
+        connection.tables
       end
 
       def dataset(table)
@@ -55,7 +55,7 @@ module ROM
       end
 
       def dataset?(name)
-        tables.include?(name)
+        schema.include?(name)
       end
 
       def extend_relation_class(klass)
@@ -70,30 +70,6 @@ module ROM
 
       def command_namespace
         SQL::Commands
-      end
-
-      private
-
-      def tables
-        connection.tables
-      end
-
-      def columns(table)
-        dataset(table).columns
-      end
-
-      def attributes(table)
-        map_attribute_types connection.schema(table)
-      end
-
-      def map_attribute_types(attrs)
-        attrs.map do |column, opts|
-          [column, { type: map_schema_type(opts[:type]) }]
-        end.to_h
-      end
-
-      def map_schema_type(type)
-        connection.class::SCHEMA_TYPE_CLASSES.fetch(type)
       end
     end
   end
