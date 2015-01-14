@@ -21,7 +21,6 @@ module ROM
       def initialize(*args)
         super
         @model = self.class.model
-        @header = dataset.header
       end
 
       # Join configured association.
