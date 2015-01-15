@@ -2,7 +2,7 @@ shared_context 'database setup' do
   subject(:rom) { setup.finalize }
 
   let(:setup) { ROM.setup('postgres://localhost/rom') }
-  let(:conn) { setup.default.adapter.connection }
+  let(:conn) { setup.default.connection }
 
   before do
     setup.default.use_logger(LOGGER)

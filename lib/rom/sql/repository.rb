@@ -1,10 +1,11 @@
 require 'logger'
 
+require 'rom/repository'
 require 'rom/sql/commands'
 
 module ROM
   module SQL
-    class Adapter < ROM::Adapter
+    class Repository < ROM::Repository
       attr_reader :logger
 
       def self.schemes
@@ -41,7 +42,7 @@ module ROM
         connection[name]
       end
 
-      def logger=(logger)
+      def use_logger(logger)
         @logger = logger
         connection.loggers << logger
       end

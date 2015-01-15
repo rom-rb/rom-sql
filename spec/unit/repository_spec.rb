@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe ROM::Adapter do
-  subject(:adapter) { rom.repositories[:default].adapter }
+describe ROM::Repository do
+  subject(:repository) { rom.repositories[:default] }
 
   let(:setup) { ROM.setup('postgres://localhost/rom') }
   let(:rom) { setup.finalize }
@@ -33,19 +33,19 @@ describe ROM::Adapter do
       # we must slow down a bit as it fails randomly otherwise
       rom
       sleep 0.5
-      expect(adapter.dataset?(:users)).to be(true)
+      expect(repository.dataset?(:users)).to be(true)
     end
 
     it 'returns false if a table does not exist' do
-      expect(adapter.dataset?(:not_here)).to be(false)
+      expect(repository.dataset?(:not_here)).to be(false)
     end
   end
 
   describe '#disconnect' do
     it 'disconnects via sequel connection' do
       # FIXME: no idea how to test it in a different way
-      expect(adapter.connection).to receive(:disconnect)
-      adapter.disconnect
+      expect(repository.connection).to receive(:disconnect)
+      repository.disconnect
     end
   end
 end

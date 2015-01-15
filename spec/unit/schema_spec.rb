@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'Inferring schema from database' do
   let(:setup) { ROM.setup("postgres://localhost/rom") }
 
-  let(:conn) { setup.default.adapter.connection }
+  let(:conn) { setup.default.connection }
 
   context "when database schema exists" do
     before { conn.drop_table?(:people) }
@@ -16,7 +16,7 @@ describe 'Inferring schema from database' do
         String :name
       end
 
-      expect(rom.relations.people.to_a).to eql(rom.repositories[:default].people.to_a)
+      expect(rom.relations.people.to_a).to eql(rom.repositories[:default][:people].to_a)
     end
   end
 

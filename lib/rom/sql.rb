@@ -10,7 +10,7 @@ end
 require "rom/sql/version"
 require "rom/sql/header"
 require "rom/sql/relation_inclusion"
-require "rom/sql/adapter"
+require "rom/sql/repository"
 
 require "rom/sql/support/sequel_dataset_ext"
 
