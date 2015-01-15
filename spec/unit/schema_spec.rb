@@ -16,7 +16,7 @@ describe 'Inferring schema from database' do
         String :name
       end
 
-      expect(rom.relations.people.to_a).to eql(rom.default.people.to_a)
+      expect(rom.relations.people.to_a).to eql(rom.repositories[:default].people.to_a)
     end
   end
 
