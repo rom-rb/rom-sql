@@ -21,6 +21,10 @@ module ROM
         self.class.model
       end
 
+      def unique?(criteria)
+        where(criteria).count.zero?
+      end
+
       # Join configured association.
       #
       # Uses INNER JOIN type.

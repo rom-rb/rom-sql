@@ -3,7 +3,8 @@ require 'spec_helper'
 describe ROM::Relation do
   include_context 'users and tasks'
 
-  subject(:users) { rom.relations.users }
+  let(:users) { rom.relations.users }
+  let(:tasks) { rom.relations.tasks }
 
   before do
     setup.relation(:users) do
@@ -61,6 +62,19 @@ describe ROM::Relation do
   describe '#inspect' do
     it 'includes dataset' do
       expect(users.inspect).to include('dataset')
+    end
+  end
+
+  describe '#unique?' do
+    before { tasks.delete }
+
+    it 'returns true when there is only one tuple matching criteria' do
+      expect(tasks.unique?(title: 'Task One')).to be(true)
+    end
+
+    it 'returns true when there are more than one tuple matching criteria' do
+      tasks.insert(title: 'Task One')
+      expect(tasks.unique?(title: 'Task One')).to be(false)
     end
   end
 end
