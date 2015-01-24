@@ -1,5 +1,8 @@
 # encoding: utf-8
 
+require 'bundler'
+Bundler.setup
+
 if RUBY_ENGINE == 'rbx'
   require "codeclimate-test-reporter"
   CodeClimate::TestReporter.start

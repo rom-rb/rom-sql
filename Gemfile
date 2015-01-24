@@ -12,3 +12,10 @@ group :test do
   gem 'pg', platforms: [:mri, :rbx]
   gem 'pg_jruby', platforms: :jruby
 end
+
+group :tools do
+  gem 'guard'
+  gem 'guard-rspec'
+  gem 'guard-rubocop'
+  gem 'rubocop', '~> 0.28'
+end
