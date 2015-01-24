@@ -6,28 +6,6 @@ describe ROM::Repository do
   let(:setup) { ROM.setup('postgres://localhost/rom') }
   let(:rom) { setup.finalize }
 
-  describe 'setting up' do
-    it 'works with database.yml-style hash' do
-      setup = ROM.setup(adapter: 'postgres', database: 'rom')
-      expect(setup[:default]).to eql(setup.repositories[:default])
-    end
-
-    it 'accepts additional options' do
-      test = false
-
-      setup = ROM.setup(
-        adapter: 'postgres',
-        database: 'rom',
-        test: true,
-        after_connect: proc { test = true }
-      )
-
-      setup.finalize
-
-      expect(test).to be(true)
-    end
-  end
-
   describe '#dataset?' do
     it 'returns true if a table exists' do
       # we must slow down a bit as it fails randomly otherwise
