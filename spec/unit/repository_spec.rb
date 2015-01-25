@@ -1,9 +1,17 @@
 require 'spec_helper'
 
-describe ROM::Repository do
+require 'rom/lint/spec'
+
+describe ROM::SQL::Repository do
   include_context 'users and tasks'
 
   let(:repository) { rom.repositories[:default] }
+
+  it_behaves_like 'a rom repository' do
+    let(:identifier) { :sql }
+    let(:repository) { ROM::SQL::Repository }
+    let(:uri) { 'postgres://localhost/rom' }
+  end
 
   describe '#dataset?' do
     it 'returns true if a table exists' do
