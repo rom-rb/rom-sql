@@ -13,11 +13,12 @@ rvm:
   - 2.2
   - rbx-2
   - jruby
+  - jruby-head
   - ruby-head
 matrix:
   allow_failures:
     - rvm: ruby-head
-    - rvm: jruby
+    - rvm: jruby-head
 notifications:
   webhooks:
     urls:
