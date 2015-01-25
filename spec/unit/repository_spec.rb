@@ -10,7 +10,7 @@ describe ROM::Repository do
     it 'returns true if a table exists' do
       # we must slow down a bit as it fails randomly otherwise
       rom
-      sleep 0.5
+      sleep 1.0
       expect(repository.dataset?(:users)).to be(true)
     end
 
