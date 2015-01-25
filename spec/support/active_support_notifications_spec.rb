@@ -15,8 +15,9 @@ describe 'ActiveSupport::Notifications support' do
       sql = payload[:sql]
     end
 
-    conn.run(%(SELECT * FROM "users" WHERE name = 'notification test'))
+    query = %(SELECT * FROM "users" WHERE name = 'notification test')
+    conn.run(query)
 
-    expect(sql).to eql(%(SELECT * FROM "users" WHERE name = 'notification test'))
+    expect(sql).to eql(query)
   end
 end
