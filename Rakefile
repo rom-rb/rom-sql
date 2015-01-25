@@ -1,10 +1,18 @@
 require "rspec/core/rake_task"
-require "rubocop/rake_task"
-
-task default: [:spec, :rubocop]
 
 RSpec::Core::RakeTask.new(:spec)
+task default: [:ci]
 
-RuboCop::RakeTask.new do |task|
-  task.options << "--display-cop-names"
+desc "Run CI tasks"
+task ci: [:spec]
+
+begin
+  require "rubocop/rake_task"
+
+  Rake::Task[:default].enhance [:rubocop]
+
+  RuboCop::RakeTask.new do |task|
+    task.options << "--display-cop-names"
+  end
+rescue LoadError
 end
