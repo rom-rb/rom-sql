@@ -1,16 +1,12 @@
 require 'spec_helper'
 
 describe ROM::Repository do
-  subject(:repository) { rom.repositories[:default] }
+  include_context 'users and tasks'
 
-  let(:setup) { ROM.setup(:sql, 'postgres://localhost/rom') }
-  let(:rom) { setup.finalize }
+  let(:repository) { rom.repositories[:default] }
 
   describe '#dataset?' do
     it 'returns true if a table exists' do
-      # we must slow down a bit as it fails randomly otherwise
-      rom
-      sleep 0.5
       expect(repository.dataset?(:users)).to be(true)
     end
 
