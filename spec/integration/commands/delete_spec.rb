@@ -31,6 +31,6 @@ describe 'Commands / Delete' do
   it 'deletes all tuples in a restricted relation' do
     result = users.try { delete(:by_name, 'Jane') }
 
-    expect(result.value).to eql({ id: 2, name: 'Jane' })
+    expect(result.value).to eql(id: 2, name: 'Jane')
   end
 end

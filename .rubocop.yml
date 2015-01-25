@@ -72,3 +72,7 @@ Style/StringLiterals:
 # Allow def self.foo; @foo; end
 Style/TrivialAccessors:
   Enabled: false
+
+# Allow rom-sql
+Style/FileName:
+    Enabled: false

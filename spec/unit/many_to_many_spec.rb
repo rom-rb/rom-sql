@@ -20,8 +20,8 @@ describe 'Defining many-to-one association' do
 
       def with_tags_and_tag_id
         association_left_join(:tags, select: {
-          tags: [:name], task_tags: [:tag_id]
-        })
+                                tags: [:name], task_tags: [:tag_id]
+                              })
       end
 
       def by_tag(name)
