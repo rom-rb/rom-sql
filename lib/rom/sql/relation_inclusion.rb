@@ -81,37 +81,44 @@ module ROM
 
         if type == :many_to_many
           select = options[:select] || {}
-
-          l_select, r_select =
-            if select.is_a?(Hash)
-              [select[assoc[:join_table]] || [], select[name]]
-            else
-              [[], select]
-            end
-
-          l_graph = graph(
-            assoc[:join_table],
-            { assoc[:left_key] => primary_key },
-            select: l_select, implicit_qualifier: self.name
-          )
-
-          l_graph.graph(
-            name, { primary_key => assoc[:right_key] }, select: r_select
-          )
+          graph_join_many_to_many(name, assoc, select)
         else
-          join_keys =
-            if type == :many_to_one
-              { primary_key => key }
-            else
-              { key => primary_key }
-            end
-
-          graph(
-            name,
-            join_keys,
-            options.merge(join_type: join_type, implicit_qualifier: self.name)
-          )
+          graph_join_other(name, key, type, join_type, options)
         end
+      end
+
+      private
+
+      def graph_join_many_to_many(name, assoc, select)
+        l_select, r_select =
+          if select.is_a?(Hash)
+            [select[assoc[:join_table]] || [], select[name]]
+          else
+            [[], select]
+          end
+
+        l_graph = graph(
+          assoc[:join_table],
+          { assoc[:left_key] => primary_key },
+          select: l_select, implicit_qualifier: self.name
+        )
+
+        l_graph.graph(
+          name, { primary_key => assoc[:right_key] }, select: r_select
+        )
+      end
+
+      def graph_join_other(name, key, type, join_type, options)
+        join_keys =
+          if type == :many_to_one
+            { primary_key => key }
+          else
+            { key => primary_key }
+          end
+
+        graph(name, join_keys,
+          options.merge(join_type: join_type, implicit_qualifier: self.name)
+        )
       end
 
       module AssociationDSL
