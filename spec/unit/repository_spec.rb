@@ -3,7 +3,7 @@ require 'spec_helper'
 describe ROM::Repository do
   subject(:repository) { rom.repositories[:default] }
 
-  let(:setup) { ROM.setup('postgres://localhost/rom') }
+  let(:setup) { ROM.setup(:sql, 'postgres://localhost/rom') }
   let(:rom) { setup.finalize }
 
   describe '#dataset?' do

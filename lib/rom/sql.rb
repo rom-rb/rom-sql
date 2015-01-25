@@ -18,3 +18,5 @@ if defined?(Rails)
   require "rom/sql/support/active_support_notifications"
   require 'rom/sql/support/rails_log_subscriber'
 end
+
+ROM.register_adapter(:sql, ROM::SQL)

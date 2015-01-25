@@ -1,7 +1,7 @@
 shared_context 'database setup' do
   subject(:rom) { setup.finalize }
 
-  let(:setup) { ROM.setup('postgres://localhost/rom') }
+  let(:setup) { ROM.setup(:sql, 'postgres://localhost/rom') }
   let(:conn) { setup.default.connection }
 
   before do

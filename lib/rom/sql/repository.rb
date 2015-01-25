@@ -8,29 +8,11 @@ module ROM
     class Repository < ROM::Repository
       attr_reader :logger
 
-      def self.schemes
-        [:ado, :amalgalite, :cubrid, :db2, :dbi, :do, :fdbsql, :firebird,
-         :ibmdb, :informix, :jdbc, :mysql, :mysql2, :odbc, :openbase, :oracle,
-         :postgres, :postgresql, :sqlanywhere, :sqlite, :sqlite3, :swift, :tinytds]
-      end
-
-      def self.normalize_scheme(input)
-        scheme = input.dup
-        scheme = 'sqlite' if scheme == 'sqlite3'
-        scheme = 'postgres' if scheme == 'postgresql'
-
-        if RUBY_ENGINE == 'jruby' && scheme != 'postgres'
-          scheme.prepend('jdbc:')
-        end
-
-        scheme
-      end
-
       def self.database_file?(scheme)
         scheme.to_s.include?('sqlite')
       end
 
-      def setup
+      def initialize(uri, options={})
         @connection = ::Sequel.connect(uri.to_s, options)
       end
 

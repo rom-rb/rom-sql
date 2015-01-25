@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'Inferring schema from database' do
-  let(:setup) { ROM.setup("postgres://localhost/rom") }
+  let(:setup) { ROM.setup(:sql, 'postgres://localhost/rom') }
 
   let(:conn) { setup.default.connection }
 
