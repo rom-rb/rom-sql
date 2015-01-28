@@ -3,7 +3,8 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
-  gem 'rom', '~> 0.5.0', github: 'rom-rb/rom', branch: 'master'
+  gem 'rom', '~> 0.5.0', github: 'rom-rb/rom', branch: 'setup-dsl-refactor'
+  gem 'minitest'
   gem 'virtus'
   gem 'activesupport'
   gem 'rspec', '~> 3.1'
@@ -13,6 +14,7 @@ group :test do
 end
 
 group :tools do
+  gem 'byebug'
   gem 'guard'
   gem 'guard-rspec'
   gem 'guard-rubocop'

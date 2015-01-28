@@ -15,7 +15,8 @@ module ROM
         end
       end
 
-      class Create < ROM::Commands::Create
+      module Create
+        include ROM::Commands::Create
         include TupleCount
 
         def execute(tuples)
@@ -31,7 +32,8 @@ module ROM
         end
       end
 
-      class Update < ROM::Commands::Update
+      module Update
+        include ROM::Commands::Update
         include TupleCount
 
         def execute(tuple)
@@ -45,7 +47,8 @@ module ROM
         end
       end
 
-      class Delete < ROM::Commands::Delete
+      module Delete
+        include ROM::Commands::Delete
         include TupleCount
 
         def execute

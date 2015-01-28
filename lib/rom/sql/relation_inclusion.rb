@@ -4,17 +4,24 @@ module ROM
     #
     module RelationInclusion
       def self.included(klass)
-        klass.extend(AssociationDSL)
-
-        klass.send(:undef_method, :select)
-
         klass.class_eval do
+          extend AssociationDSL
+
+          undef_method :select
+
           class << self
             attr_accessor :model
           end
 
           self.model = Class.new(Sequel::Model)
         end
+      end
+
+      def exposed_relations
+        super + (dataset.public_methods & public_methods) -
+          Object.public_instance_methods -
+          Relation.public_instance_methods -
+          RelationInclusion.public_instance_methods
       end
 
       def model
