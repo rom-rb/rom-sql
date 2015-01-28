@@ -9,6 +9,7 @@ if RUBY_ENGINE == 'rbx'
 end
 
 require 'rom-sql'
+require 'pg'
 require 'logger'
 
 begin
