@@ -4,8 +4,6 @@ describe 'Defining one-to-many association' do
   include_context 'users and tasks'
 
   it 'extends relation with association methods' do
-    setup.relation(:tasks)
-
     setup.relation(:users) do
       one_to_many :tasks, key: :user_id
 
