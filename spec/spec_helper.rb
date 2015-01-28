@@ -10,7 +10,11 @@ end
 
 require 'rom-sql'
 require 'logger'
-require 'byebug'
+
+begin
+  require 'byebug'
+rescue LoadError
+end
 
 LOGGER = Logger.new(File.open('./log/test.log', 'a'))
 
