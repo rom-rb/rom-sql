@@ -8,14 +8,9 @@ if RUBY_ENGINE == 'rbx'
   CodeClimate::TestReporter.start
 end
 
-require 'rom-sql'
 require 'pg'
+require 'rom-sql'
 require 'logger'
-
-begin
-  require 'byebug'
-rescue LoadError
-end
 
 LOGGER = Logger.new(File.open('./log/test.log', 'a'))
 
