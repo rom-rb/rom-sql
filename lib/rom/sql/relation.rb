@@ -2,26 +2,30 @@ module ROM
   module SQL
     # Sequel-specific relation extensions
     #
-    module RelationInclusion
+    module Relation
       def self.included(klass)
         klass.class_eval do
+          extend ClassMethods
           extend AssociationDSL
 
           undef_method :select
+        end
+      end
 
-          class << self
-            attr_accessor :model
-          end
+      module ClassMethods
+        attr_reader :model
 
-          self.model = Class.new(Sequel::Model)
+        def inherited(klass)
+          super
+          klass.instance_variable_set('@model', Class.new(Sequel::Model))
         end
       end
 
       def exposed_relations
         super + (dataset.public_methods & public_methods) -
           Object.public_instance_methods -
-          Relation.public_instance_methods -
-          RelationInclusion.public_instance_methods
+          ROM::Relation.public_instance_methods -
+          SQL::Relation.public_instance_methods
       end
 
       def model
