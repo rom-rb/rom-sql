@@ -4,8 +4,8 @@ require "fileutils"
 namespace :db do
   desc "Perform migration reset (full erase and migration up)"
   task reset: :load_setup do
-    @migration.run(target: 0)
-    @migration.run
+    ROM::SQL::Migration.run(target: 0)
+    ROM::SQL::Migration.run
     puts "<= db:migrate:reset executed"
   end
 
@@ -13,17 +13,17 @@ namespace :db do
   task migrate: :load_setup do
     version = ENV['VERSION']
     if version.nil?
-      @migration.run
+      ROM::SQL::Migration.run
       puts "<= db:migrate executed"
     else
-      @migration.run(target: version.to_i)
+      ROM::SQL::Migration.run(target: version.to_i)
       puts "<= db:migrate version=[#{version}] executed"
     end
   end
 
   desc "Perform migration down (erase all data)"
   task down: :load_setup do
-    @migration.run(target: 0)
+    ROM::SQL::Migration.run(target: 0)
     puts "<= db:migrate:down executed"
   end
 
@@ -39,7 +39,7 @@ namespace :db do
     version = ENV["VERSION"] || Time.now.utc.strftime("%Y%m%d%H%M%S")
 
     filename = "#{version}_#{name}.rb"
-    dirname  = @migration.path
+    dirname  = ROM::SQL::Migration.path
     path     = File.join(dirname, filename)
 
     FileUtils.mkdir_p(dirname)

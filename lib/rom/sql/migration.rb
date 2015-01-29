@@ -5,18 +5,20 @@ module ROM
 
       DEFAULT_PATH = 'db/migrate'
 
-      attr_accessor :path, :connection
+      class << self
+        attr_accessor :path, :connection
 
-      def path
-        @path || DEFAULT_PATH
-      end
+        def path
+          @path || DEFAULT_PATH
+        end
 
-      def run(options = {})
-        ::Sequel::Migrator.run(connection, path, options)
-      end
+        def run(options = {})
+          ::Sequel::Migrator.run(connection, path, options)
+        end
 
-      def self.create(&block)
-        ::Sequel.migration(&block)
+        def create(&block)
+          ::Sequel.migration(&block)
+        end
       end
     end
   end

@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe ROM::SQL::Migration do
-  context '#run' do
-    let(:migration) { ROM::SQL::Migration.new }
+  let(:migration) { ROM::SQL::Migration }
 
+  context '#run' do
     it 'calls Sequel migration code' do
       migration.path = 'foo/bar'
       migration.connection = double
@@ -17,9 +17,9 @@ describe ROM::SQL::Migration do
   end
 
   context '#path' do
-    let(:migration) { ROM::SQL::Migration.new }
-
     it 'returns default path if non provided' do
+      migration.path = nil
+
       expect(migration.path).to eq ROM::SQL::Migration::DEFAULT_PATH
     end
   end
