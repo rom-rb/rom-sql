@@ -1,2 +1,2 @@
 require 'rom/sql'
-require 'rom/rake_task'
+require 'rom/sql/rake_task'
