@@ -8,8 +8,9 @@ if RUBY_ENGINE == 'rbx'
   CodeClimate::TestReporter.start
 end
 
-require 'pg'
 require 'rom-sql'
+# FIXME: why do we need to require it manually??
+require 'sequel/adapters/postgres'
 require 'logger'
 
 LOGGER = Logger.new(File.open('./log/test.log', 'a'))
