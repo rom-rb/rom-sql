@@ -6,7 +6,8 @@ module ROM
       DEFAULT_PATH = 'db/migrate'
 
       class << self
-        attr_accessor :path, :connection
+        attr_writer :path
+        attr_accessor :connection
 
         def path
           @path || DEFAULT_PATH
