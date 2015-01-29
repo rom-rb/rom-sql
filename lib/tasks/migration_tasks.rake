@@ -30,7 +30,8 @@ namespace :db do
   desc "Create a migration (parameters: NAME, VERSION)"
   task create_migration: :load_setup do
     unless ENV["NAME"]
-      puts "No NAME specified. Example usage: `rake db:create_migration NAME=create_users`"
+      puts "No NAME specified. Example usage:
+        `rake db:create_migration NAME=create_users`"
       exit
     end
 
