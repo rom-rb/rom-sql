@@ -2,23 +2,44 @@ module ROM
   module SQL
     # Sequel-specific relation extensions
     #
-    module Relation
-      def self.included(klass)
-        klass.class_eval do
-          extend ClassMethods
-          extend AssociationDSL
+    class Relation < ROM::Relation
+      undef_method :select
 
-          undef_method :select
+      def self.inherited(klass)
+        klass.class_eval do
+          class << self
+            attr_reader :model, :associations
+          end
         end
+        klass.instance_variable_set('@model', Class.new(Sequel::Model))
+        klass.instance_variable_set('@associations', [])
+        super
       end
 
-      module ClassMethods
-        attr_reader :model
+      def self.one_to_many(name, options)
+        associations << [__method__, name, options.merge(relation: name)]
+      end
 
-        def inherited(klass)
-          super
-          klass.instance_variable_set('@model', Class.new(Sequel::Model))
+      def self.many_to_many(name, options = {})
+        associations << [__method__, name, options.merge(relation: name)]
+      end
+
+      def self.many_to_one(name, options = {})
+        new_options = options.merge(relation: Inflecto.pluralize(name).to_sym)
+        associations << [__method__, name, new_options]
+      end
+
+      def self.finalize(relations, relation)
+        associations.each do |*args, options|
+          model = relation.model
+          other = relations[options.fetch(:relation)].model
+
+          model.public_send(*args, options.merge(class: other))
         end
+
+        model.freeze
+
+        super
       end
 
       def exposed_relations
@@ -130,38 +151,6 @@ module ROM
         graph(name, join_keys,
           options.merge(join_type: join_type, implicit_qualifier: self.name)
         )
-      end
-
-      module AssociationDSL
-        def one_to_many(name, options)
-          associations << [__method__, name, options.merge(relation: name)]
-        end
-
-        def many_to_many(name, options = {})
-          associations << [__method__, name, options.merge(relation: name)]
-        end
-
-        def many_to_one(name, options = {})
-          new_options = options.merge(relation: Inflecto.pluralize(name).to_sym)
-          associations << [__method__, name, new_options]
-        end
-
-        def finalize(relations, relation)
-          associations.each do |*args, options|
-            model = relation.model
-            other = relations[options.fetch(:relation)].model
-
-            model.public_send(*args, options.merge(class: other))
-          end
-
-          model.freeze
-
-          super
-        end
-
-        def associations
-          @associations ||= []
-        end
       end
     end
   end
