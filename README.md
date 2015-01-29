@@ -41,15 +41,15 @@ in relation objects. For schema migrations you can use its
 which is available via repositories.
 
 ``` ruby
-setup = ROM.setup(:sql, sqlite: "sqlite::memory")
+setup = ROM.setup(:sql, "sqlite::memory")
 
-setup.sqlite.connection.create_table(:users) do
+setup.default.connection.create_table(:users) do
   primary_key :id
   String :name
   Boolean :admin
 end
 
-setup.sqlite.connection.create_table(:tasks) do
+setup.default.connection.create_table(:tasks) do
   primary_key :id
   Integer :user_id
   String :title
@@ -60,15 +60,15 @@ end
 
 ``` ruby
 
-setup.relation(:tasks)
+class Users < ROM::Relation[:sql]
+  base_name :users
 
-setup.relation(:users) do
   def by_name(name)
     where(name: name)
   end
 end
 
-rom = setup.finalize
+rom = ROM.finalize.env
 
 users = rom.relations.users
 tasks = rom.relations.tasks
@@ -95,9 +95,9 @@ Sequel's association DSL is available in relation definitions which enables
 aggregate objects `wrap` and `group` mapping transformation can be used
 
 ``` ruby
-setup.relation(:tasks)
+ROM.setup(:sql, "sqlite::memory")
 
-setup.relation(:users) do
+class Users < ROM::Relation[:sql]
   one_to_many :tasks, key: :user_id
 
   def by_name(name)
@@ -109,15 +109,15 @@ setup.relation(:users) do
   end
 end
 
-setup.mappers do
-  define(:users) do
-    model name: 'User'
+class UserMapper < ROM::Mapper
+  relation :users
 
-    group tasks: [:title]
-  end
+  model name: 'User'
+
+  group tasks: [:title]
 end
 
-rom = setup.finalize
+rom = ROM.finalize.env
 
 users = rom.relations.users
 tasks = rom.relations.tasks
@@ -130,14 +130,6 @@ rom.read(:users).with_tasks.by_name("Piotr").to_a
 ```
 
 ## ROADMAP
-
-On a very high level:
-
-* Make it dead simple to join relations and support all types of joins
-* Make it dead simple to select and alias column names
-* Discover conventions for typical query scenarios and make common things trivial,
-  less common things simple and super rare cases possible
-* Make mapper interface smart enough to figure out when columns are aliased
 
 For details please refer to [issues](https://github.com/rom-rb/rom-sql/issues).
 
