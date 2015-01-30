@@ -9,11 +9,8 @@ module ROM
       ].freeze
 
       module TupleCount
-        # TODO: we need an interface for "target_count" here
-        def assert_tuple_count
-          if result == :one && target.count > 1
-            raise TupleCountMismatchError, "#{inspect} expects one tuple"
-          end
+        def tuple_count
+          target.count
         end
       end
 
