@@ -6,12 +6,12 @@ namespace :db do
   task reset: :load_setup do
     ROM::SQL::Migration.run(target: 0)
     ROM::SQL::Migration.run
-    puts "<= db:migrate:reset executed"
+    puts "<= db:reset executed"
   end
 
-  desc "Migrate the database (options: VERSION=x)"
-  task migrate: :load_setup do
-    version = ENV['VERSION']
+  desc "Migrate the database (options [version_number])]"
+  task :migrate, [:version] => :load_setup do |_, args|
+    version = args[:version]
     if version.nil?
       ROM::SQL::Migration.run
       puts "<= db:migrate executed"
@@ -22,21 +22,22 @@ namespace :db do
   end
 
   desc "Perform migration down (erase all data)"
-  task down: :load_setup do
+  task clean: :load_setup do
     ROM::SQL::Migration.run(target: 0)
-    puts "<= db:migrate:down executed"
+    puts "<= db:clean executed"
   end
 
   desc "Create a migration (parameters: NAME, VERSION)"
-  task create_migration: :load_setup do
-    unless ENV["NAME"]
+  task :create_migration, [:name, :version] => :load_setup do |_, args|
+    name, version = args[:name], args[:version]
+
+    if name.nil?
       puts "No NAME specified. Example usage:
-        `rake db:create_migration NAME=create_users`"
+        `rake db:create_migration[create_users]`"
       exit
     end
 
-    name    = ENV["NAME"]
-    version = ENV["VERSION"] || Time.now.utc.strftime("%Y%m%d%H%M%S")
+    version ||= Time.now.utc.strftime("%Y%m%d%H%M%S")
 
     filename = "#{version}_#{name}.rb"
     dirname  = ROM::SQL::Migration.path

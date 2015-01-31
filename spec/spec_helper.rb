@@ -25,7 +25,9 @@ RSpec.configure do |config|
   end
 
   config.after do
-    [ROM::Relation, ROM::Mapper, ROM::Command].each { |klass| clear_descendants(klass) }
+    [ROM::Relation, ROM::Mapper, ROM::Command].each do |klass|
+      clear_descendants(klass)
+    end
 
     added_constants = Object.constants - @constants
     added_constants.each { |name| Object.send(:remove_const, name) }
