@@ -1,13 +1,18 @@
 shared_context 'database setup' do
   subject(:rom) { setup.finalize }
 
-  let(:setup) { ROM.setup(:sql, 'postgres://localhost/rom') }
-  let(:conn) { setup.default.connection }
+  let(:uri) { 'postgres://localhost/rom' }
+  let(:conn) { Sequel.connect(uri) }
+  let(:setup) { ROM.setup(:sql, uri) }
+
+  def drop_tables
+    [:users, :tasks, :tags, :task_tags].each { |name| conn.drop_table?(name) }
+  end
 
   before do
-    setup.default.use_logger(LOGGER)
+    conn.loggers << LOGGER
 
-    [:users, :tasks, :tags, :task_tags].each { |name| conn.drop_table?(name) }
+    drop_tables
 
     conn.create_table :users do
       primary_key :id

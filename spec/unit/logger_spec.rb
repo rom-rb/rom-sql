@@ -6,6 +6,8 @@ describe 'Logger' do
   it 'sets up a logger for sequel' do
     repository = rom.repositories[:default]
 
+    repository.use_logger(LOGGER)
+
     expect(repository.logger).to be(LOGGER)
     expect(conn.loggers).to include(LOGGER)
   end
