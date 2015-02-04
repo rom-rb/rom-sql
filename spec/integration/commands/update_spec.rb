@@ -27,6 +27,14 @@ describe 'Commands / Update' do
     relation.insert(name: 'Piotr')
   end
 
+  it 'updates everything when there is no original tuple' do
+    result = users.try do |c|
+      c.update(:by_id, piotr[:id]).set(peter)
+    end
+
+    expect(result.value.to_a).to match_array([{ id: 1, name: 'Peter' }])
+  end
+
   it 'updates when attributes changed' do
     result = users.try do |c|
       c.update(:by_id, piotr[:id]).change(piotr).to(peter)
