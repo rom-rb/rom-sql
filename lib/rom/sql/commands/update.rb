@@ -10,6 +10,15 @@ module ROM
 
         alias_method :to, :call
 
+        def self.build(relation, options = {})
+          case relation.db.database_type
+          when :postgres
+            Postgres::Update.new(relation, self.options.merge(options))
+          else
+            super
+          end
+        end
+
         def execute(tuple)
           attributes = input[tuple]
           validator.call(attributes)
@@ -17,9 +26,7 @@ module ROM
           changed = diff(attributes.to_h)
 
           if changed.any?
-            pks = relation.map { |t| t[relation.model.primary_key] }
-            relation.update(changed)
-            relation.unfiltered.where(relation.model.primary_key => pks)
+            update(changed)
           else
             []
           end
@@ -27,6 +34,12 @@ module ROM
 
         def change(original)
           self.class.new(relation, options.merge(original: original))
+        end
+
+        def update
+          pks = relation.map { |t| t[relation.model.primary_key] }
+          relation.update(changed)
+          relation.unfiltered.where(relation.model.primary_key => pks).to_a
         end
 
         private
