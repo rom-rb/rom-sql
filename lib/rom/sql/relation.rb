@@ -30,6 +30,9 @@ module ROM
       end
 
       def self.finalize(relations, relation)
+        model.set_dataset(relation.dataset)
+        model.dataset.naked!
+
         associations.each do |*args, options|
           model = relation.model
           other = relations[options.fetch(:relation)].model

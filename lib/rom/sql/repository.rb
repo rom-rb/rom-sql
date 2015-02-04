@@ -38,16 +38,6 @@ module ROM
         schema.include?(name)
       end
 
-      def extend_relation_class(klass)
-        klass.send(:include, RelationInclusion)
-      end
-
-      def extend_relation_instance(relation)
-        model = relation.model
-        model.set_dataset(relation.dataset)
-        model.dataset.naked!
-      end
-
       def command_namespace
         SQL::Commands
       end
