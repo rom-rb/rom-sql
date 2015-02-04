@@ -17,9 +17,9 @@ module ROM
 
         def execute(tuples)
           insert_tuples = Array([tuples]).flatten.map do |tuple|
-            attributes = input[tuple.to_h]
+            attributes = input[tuple]
             validator.call(attributes)
-            attributes
+            attributes.to_h
           end
 
           insert(insert_tuples)

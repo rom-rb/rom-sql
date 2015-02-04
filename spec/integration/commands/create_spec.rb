@@ -6,10 +6,19 @@ describe 'Commands / Create' do
   subject(:users) { rom.commands.users }
 
   before do
-    setup.relation(:users)
+    class Params
+      include Virtus.model
+      attribute :id
+      attribute :name
+
+      def self.[](input)
+        new(input)
+      end
+    end
 
     setup.commands(:users) do
       define(:create) do
+        input Params
         result :one
       end
 
@@ -21,18 +30,6 @@ describe 'Commands / Create' do
 
   it 'returns a single tuple when result is set to :one' do
     result = users.try { create(id: 2, name: 'Jane') }
-
-    expect(result.value).to eql(id: 2, name: 'Jane')
-  end
-
-  it 'coerces tuple via to_h when inserting' do
-    input = Class.new {
-      include Virtus.model
-      attribute :id
-      attribute :name
-    }.new(id: 2, name: 'Jane')
-
-    result = users.try { create(input) }
 
     expect(result.value).to eql(id: 2, name: 'Jane')
   end
