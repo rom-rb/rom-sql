@@ -27,7 +27,7 @@ module ROM
 
         def insert(tuples)
           pks = tuples.map { |tuple| relation.insert(tuple) }
-          relation.where(relation.model.primary_key => pks)
+          relation.where(relation.primary_key => pks)
         end
       end
     end
