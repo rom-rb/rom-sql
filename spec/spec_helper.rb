@@ -9,6 +9,7 @@ if RUBY_ENGINE == 'rbx'
 end
 
 require 'rom-sql'
+require 'rom/sql/rake_task'
 # FIXME: why do we need to require it manually??
 require 'sequel/adapters/postgres'
 require 'logger'
