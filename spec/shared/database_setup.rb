@@ -16,7 +16,7 @@ shared_context 'database setup' do
 
     conn.create_table :users do
       primary_key :id
-      String :name
+      String :name, null: false
       index :name, unique: true
     end
 

@@ -6,8 +6,12 @@ module ROM
       module Postgres
         class Create < Commands::Create
           def insert(tuples)
+            pk = Array(relation.model.primary_key)
+            keys = nil
+
             tuples.map do |tuple|
-              relation.dataset.returning(*tuple.keys).insert(tuple)
+              keys ||= pk + tuple.keys
+              relation.dataset.returning(*keys).insert(tuple)
             end.flatten
           end
         end
