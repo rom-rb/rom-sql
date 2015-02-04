@@ -4,8 +4,6 @@ module ROM
   module SQL
     module Commands
       class Update < ROM::Commands::Update
-        include TupleCount
-
         option :original, type: Hash, reader: true
 
         alias_method :to, :call

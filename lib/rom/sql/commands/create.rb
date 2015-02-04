@@ -4,8 +4,6 @@ module ROM
   module SQL
     module Commands
       class Create < ROM::Commands::Create
-        include TupleCount
-
         def self.build(relation, options = {})
           case relation.db.database_type
           when :postgres
