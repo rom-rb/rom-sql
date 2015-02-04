@@ -26,7 +26,12 @@ describe 'Commands / Create' do
   end
 
   it 'coerces tuple via to_h when inserting' do
-    input = OpenStruct.new(id: 2, name: 'Jane')
+    input = Class.new {
+      include Virtus.model
+      attribute :id
+      attribute :name
+    }.new(id: 2, name: 'Jane')
+
     result = users.try { create(input) }
 
     expect(result.value).to eql(id: 2, name: 'Jane')
