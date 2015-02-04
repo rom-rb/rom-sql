@@ -34,9 +34,9 @@ module ROM
           self.class.new(relation, options.merge(original: original))
         end
 
-        def update
+        def update(tuple)
           pks = relation.map { |t| t[relation.model.primary_key] }
-          relation.update(changed)
+          relation.update(tuple)
           relation.unfiltered.where(relation.model.primary_key => pks).to_a
         end
 
