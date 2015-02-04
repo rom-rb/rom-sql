@@ -25,6 +25,13 @@ describe 'Commands / Create' do
     expect(result.value).to eql(id: 2, name: 'Jane')
   end
 
+  it 'coerces tuple via to_h when inserting' do
+    input = OpenStruct.new(id: 2, name: 'Jane')
+    result = users.try { create(input) }
+
+    expect(result.value).to eql(id: 2, name: 'Jane')
+  end
+
   it 'returns tuples when result is set to :many' do
     result = users.try do
       create_many([{ id: 2, name: 'Jane' }, { id: 3, name: 'Jack' }])
