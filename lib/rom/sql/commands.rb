@@ -7,12 +7,6 @@ module ROM
         Sequel::UniqueConstraintViolation,
         Sequel::NotNullConstraintViolation
       ].freeze
-
-      module TupleCount
-        def tuple_count
-          target.count
-        end
-      end
     end
   end
 end

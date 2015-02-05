@@ -4,8 +4,6 @@ module ROM
   module SQL
     module Commands
       class Create < ROM::Commands::Create
-        include TupleCount
-
         def self.build(relation, options = {})
           case relation.db.database_type
           when :postgres
@@ -29,7 +27,7 @@ module ROM
 
         def insert(tuples)
           pks = tuples.map { |tuple| relation.insert(tuple) }
-          relation.where(relation.model.primary_key => pks)
+          relation.where(relation.primary_key => pks)
         end
       end
     end
