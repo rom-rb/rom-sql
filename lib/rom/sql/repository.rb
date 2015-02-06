@@ -38,8 +38,21 @@ module ROM
         schema.include?(name)
       end
 
-      def command_namespace
-        SQL::Commands
+      def extend_command_class(klass, dataset)
+        type = dataset.db.database_type
+
+        if type == :postgres
+          ext =
+            if klass < Commands::Create
+              Commands::Postgres::Create
+            elsif klass < Commands::Update
+              Commands::Postgres::Update
+            end
+
+          klass.send(:include, ext) if ext
+        end
+
+        klass
       end
     end
   end

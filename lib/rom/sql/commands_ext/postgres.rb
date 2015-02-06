@@ -5,7 +5,7 @@ module ROM
   module SQL
     module Commands
       module Postgres
-        class Create < Commands::Create
+        module Create
           def insert(tuples)
             tuples.map do |tuple|
               relation.dataset.returning(*relation.columns).insert(tuple)
@@ -13,7 +13,7 @@ module ROM
           end
         end
 
-        class Update < Commands::Update
+        module Update
           def update(tuple)
             relation.dataset.returning(*relation.columns).update(tuple)
           end

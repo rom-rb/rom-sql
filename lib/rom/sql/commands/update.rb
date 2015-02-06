@@ -8,15 +8,6 @@ module ROM
 
         alias_method :to, :call
 
-        def self.build(relation, options = {})
-          case relation.db.database_type
-          when :postgres
-            Postgres::Update.new(relation, self.options.merge(options))
-          else
-            super
-          end
-        end
-
         def execute(tuple)
           attributes = input[tuple]
           validator.call(attributes)

@@ -4,15 +4,6 @@ module ROM
   module SQL
     module Commands
       class Create < ROM::Commands::Create
-        def self.build(relation, options = {})
-          case relation.db.database_type
-          when :postgres
-            Postgres::Create.new(relation, self.options.merge(options))
-          else
-            super
-          end
-        end
-
         def execute(tuples)
           insert_tuples = Array([tuples]).flatten.map do |tuple|
             attributes = input[tuple]
