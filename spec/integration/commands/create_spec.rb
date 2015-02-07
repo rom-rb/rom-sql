@@ -30,14 +30,14 @@ describe 'Commands / Create' do
   end
 
   it 'returns a single tuple when result is set to :one' do
-    result = users.try { create(name: 'Jane') }
+    result = users.try { users.create.call(name: 'Jane') }
 
     expect(result.value).to eql(id: 1, name: 'Jane')
   end
 
   it 'returns tuples when result is set to :many' do
     result = users.try do
-      create_many([{ name: 'Jane' }, { name: 'Jack' }])
+      users.create_many.call([{ name: 'Jane' }, { name: 'Jack' }])
     end
 
     expect(result.value.to_a).to match_array([
@@ -46,7 +46,7 @@ describe 'Commands / Create' do
   end
 
   it 'handles not-null constraint violation error' do
-    result = users.try { create(name: nil) }
+    result = users.try { users.create.call(name: nil) }
 
     expect(result.error).to be_instance_of(ROM::SQL::ConstraintError)
     expect(result.error.message).to match(/not-null/)
@@ -54,9 +54,9 @@ describe 'Commands / Create' do
 
   it 'handles uniqueness constraint violation error' do
     result = users.try {
-      create(name: 'Jane')
+      users.create.call(name: 'Jane')
     } >-> user {
-      users.try { create(name: user[:name]) }
+      users.try { users.create.call(name: user[:name]) }
     }
 
     expect(result.error).to be_instance_of(ROM::SQL::ConstraintError)

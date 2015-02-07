@@ -28,16 +28,16 @@ describe 'Commands / Update' do
   end
 
   it 'updates everything when there is no original tuple' do
-    result = users.try do |c|
-      c.update(:by_id, piotr[:id]).set(peter)
+    result = users.try do
+      users.update.by_id(piotr[:id]).set(peter)
     end
 
     expect(result.value.to_a).to match_array([{ id: 1, name: 'Peter' }])
   end
 
   it 'updates when attributes changed' do
-    result = users.try do |c|
-      c.update(:by_id, piotr[:id]).change(piotr).to(peter)
+    result = users.try do
+      users.update.by_id(piotr[:id]).change(piotr).to(peter)
     end
 
     expect(result.value.to_a).to match_array([{ id: 1, name: 'Peter' }])
@@ -49,8 +49,8 @@ describe 'Commands / Update' do
     expect(relation).to receive(:by_id).with(piotr[:id]).and_return(piotr_rel)
     expect(piotr_rel).not_to receive(:update)
 
-    result = users.try do |c|
-      c.update(:by_id, piotr[:id]).change(piotr).to(name: piotr[:name])
+    result = users.try do
+      users.update.by_id(piotr[:id]).change(piotr).to(name: piotr[:name])
     end
 
     expect(result.value.to_a).to be_empty
