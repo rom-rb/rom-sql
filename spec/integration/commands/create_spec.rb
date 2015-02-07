@@ -27,6 +27,50 @@ describe 'Commands / Create' do
         result :many
       end
     end
+
+    setup.relation(:users)
+  end
+
+  context '#transaction' do
+    it 'create record if nothing was raised' do
+      result = users.create.transaction {
+        users.create.call(name: 'Jane')
+      }
+
+      expect(result.value).to eq(id: 1, name: 'Jane')
+    end
+
+    it 'allows for nested transactions' do
+      result = users.create.transaction {
+        users.create.transaction {
+          users.create.call(name: 'Jane')
+        }
+      }
+
+      expect(result.value).to eq(id: 1, name: 'Jane')
+    end
+
+    it 'create nothing if anything was raised' do
+      result = users.create.transaction(rollback: :always) {
+        users.create.call(name: 'Jane')
+      }
+
+      expect(result.value).to be_nil
+    end
+
+    it 'create nothing if anything was raised in any nested transaction' do
+      expect {
+        expect {
+          users.create.transaction {
+            users.create.call(name: 'John')
+            users.create.transaction {
+              users.create.call(name: 'Jane')
+              raise Exception
+            }
+          }
+        }.to raise_error(Exception)
+      }.to_not change { rom.relations.users.count }
+    end
   end
 
   it 'returns a single tuple when result is set to :one' do

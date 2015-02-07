@@ -1,9 +1,12 @@
 require 'rom/sql/commands'
+require 'rom/sql/commands/transaction'
 
 module ROM
   module SQL
     module Commands
       class Update < ROM::Commands::Update
+        include Transaction
+
         option :original, type: Hash, reader: true
 
         alias_method :to, :call
@@ -45,7 +48,6 @@ module ROM
             tuple
           end
         end
-
       end
     end
   end
