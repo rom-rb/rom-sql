@@ -226,7 +226,8 @@ module ROM
       #
       # @example
       #   users.delete # deletes all
-      #   users.where(name: 'Jane').delete # delete tuples from restricted relation
+      #   users.where(name: 'Jane').delete # delete tuples
+      #                                      from restricted relation
       #
       # @return [Relation]
       #

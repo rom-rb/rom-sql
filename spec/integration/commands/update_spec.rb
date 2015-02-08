@@ -27,6 +27,25 @@ describe 'Commands / Update' do
     relation.insert(name: 'Piotr')
   end
 
+  context '#transaction' do
+    it 'update record if there was no errors' do
+      result = users.update.transaction do
+        users.update.by_id(piotr[:id]).set(peter)
+      end
+
+      expect(result.value).to eq([{ id: 1, name: 'Peter' }])
+    end
+
+    it 'updates nothing if error was raised' do
+      users.update.transaction do
+        users.update.by_id(piotr[:id]).set(peter)
+        raise ROM::SQL::Rollback
+      end
+
+      expect(relation.first[:name]).to eq('Piotr')
+    end
+  end
+
   it 'updates everything when there is no original tuple' do
     result = users.try do
       users.update.by_id(piotr[:id]).set(peter)

@@ -21,6 +21,25 @@ describe 'Commands / Delete' do
     rom.relations.users.insert(id: 2, name: 'Jane')
   end
 
+  context '#transaction' do
+    it 'delete in normal way if no error raised' do
+      expect {
+        users.delete.transaction do
+          users.delete.by_name('Jane').call
+        end
+      }.to change { rom.relations.users.count }.by(-1)
+    end
+
+    it 'delete nothing if error was raised' do
+      expect {
+        users.delete.transaction do
+          users.delete.by_name('Jane').call
+          raise ROM::SQL::Rollback
+        end
+      }.to_not change { rom.relations.users.count }
+    end
+  end
+
   it 'raises error when tuple count does not match expectation' do
     result = users.try { users.delete.call }
 

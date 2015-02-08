@@ -80,8 +80,8 @@ describe 'MigrationTasks' do
         expect(File).to receive(:write).with(path, /ROM::SQL::Migration/)
 
         expect {
-          Rake::Task["db:create_migration"].execute(Rake::TaskArguments.new(
-            [:name], [name]))
+          Rake::Task["db:create_migration"].execute(
+            Rake::TaskArguments.new([:name], [name]))
         }.to output(path+"\n").to_stdout
       end
 
@@ -90,8 +90,8 @@ describe 'MigrationTasks' do
         expect(File).to receive(:write).with(path, /ROM::SQL::Migration/)
 
         expect {
-          Rake::Task["db:create_migration"].execute(Rake::TaskArguments.new(
-            [:name, :version], [name, version]))
+          Rake::Task["db:create_migration"].execute(
+            Rake::TaskArguments.new([:name, :version], [name, version]))
         }.to output(path+"\n").to_stdout
       end
     end
