@@ -59,6 +59,11 @@ module ROM
           end
         end
 
+        # @api private
+        def graph(*args)
+          __new__(dataset.__send__(__method__, *args))
+        end
+
         private
 
         def graph_join_many_to_many(name, assoc, select)
