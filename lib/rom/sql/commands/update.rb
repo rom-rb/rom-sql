@@ -26,9 +26,14 @@ module ROM
         end
 
         def update(tuple)
-          pks = relation.map { |t| t[relation.model.primary_key] }
-          relation.update(tuple)
-          relation.unfiltered.where(relation.model.primary_key => pks).to_a
+          pks = relation.map { |t| t[primary_key] }
+          dataset = relation.dataset
+          dataset.update(tuple)
+          dataset.unfiltered.where(primary_key => pks).to_a
+        end
+
+        def primary_key
+          relation.primary_key
         end
 
         private
