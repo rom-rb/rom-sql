@@ -19,9 +19,16 @@ module ROM
       # @api private
       def initialize(dataset, registry = {})
         super
-        opts = dataset.opts
-        @table = opts[:from].first
-        @header = Header.new(opts[:select] || dataset.columns, table)
+        @table = dataset.opts[:from].first
+      end
+
+      # Return a header for this relation
+      #
+      # @return [Header]
+      #
+      # @api private
+      def header
+        @header ||= Header.new(dataset.opts[:select] || dataset.columns, table)
       end
 
       # Return raw column names
