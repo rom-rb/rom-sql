@@ -20,6 +20,14 @@ describe ROM::Relation do
     end
   end
 
+  describe '#map' do
+    it 'yields tuples' do
+      result = []
+      users.map { |tuple| result << tuple }
+      expect(result).to eql([{ id: 1, name: 'Piotr' }])
+    end
+  end
+
   describe '#project' do
     it 'projects the dataset using new column names' do
       projected = users.sorted.project(:name)

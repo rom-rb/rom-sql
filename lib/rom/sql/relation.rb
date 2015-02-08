@@ -166,6 +166,16 @@ module ROM
         __new__(dataset.__send__(__method__, *args, &block))
       end
 
+      # Map tuples from the relation
+      #
+      # @example
+      #   users.map { |user| ... }
+      #
+      # @api public
+      def map(&block)
+        to_enum.map(&block)
+      end
+
       # Insert tuple into relation
       #
       # @example
