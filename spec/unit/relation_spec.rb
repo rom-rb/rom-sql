@@ -14,6 +14,12 @@ describe ROM::Relation do
     end
   end
 
+  describe '#exposed_relations' do
+    it 'returns publicy defined relations' do
+      expect(users.exposed_relations).to eql([:sorted])
+    end
+  end
+
   describe '#project' do
     it 'projects the dataset using new column names' do
       projected = users.sorted.project(:name)
