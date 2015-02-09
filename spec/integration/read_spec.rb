@@ -53,7 +53,7 @@ describe 'Reading relations' do
     end
 
     setup.relation(:user_task_counts) do
-      base_name :users
+      dataset :users
       register_as :user_task_counts
       one_to_many :tasks, key: :user_id
 
