@@ -1,2 +1,2 @@
 require 'rake'
-load File.dirname(__FILE__)+'/../../tasks/migration_tasks.rake'
+load 'rom/sql/tasks/migration_tasks.rake'
