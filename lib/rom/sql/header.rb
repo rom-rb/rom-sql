@@ -2,13 +2,12 @@ module ROM
   module SQL
     # @private
     class Header
-      include Charlatan.new(:columns)
       include Equalizer.new(:columns, :table)
 
-      attr_reader :table
+      attr_reader :columns, :table
 
       def initialize(columns, table)
-        super
+        @columns = columns
         @table = table
       end
 
@@ -25,19 +24,19 @@ module ROM
       end
 
       def names
-        map { |col| :"#{col.to_s.split('___').last}" }
+        columns.map { |col| :"#{col.to_s.split('___').last}" }
       end
 
       def project(*names)
-        find_all { |col| names.include?(col) }
+        self.class.new(columns.find_all { |col| names.include?(col) }, table)
       end
 
       def qualified
-        map { |col| :"#{table}__#{col}" }
+        self.class.new(columns.map { |col| :"#{table}__#{col}" }, table)
       end
 
       def rename(options)
-        map do |col|
+        self.class.new(columns.map { |col|
           new_name = options[col]
 
           if new_name
@@ -45,11 +44,11 @@ module ROM
           else
             col
           end
-        end
+        }, table)
       end
 
       def prefix(col_prefix)
-        rename(Hash[map { |col| [col, :"#{col_prefix}_#{col}"] }])
+        rename(Hash[columns.map { |col| [col, :"#{col_prefix}_#{col}"] }])
       end
     end
   end
