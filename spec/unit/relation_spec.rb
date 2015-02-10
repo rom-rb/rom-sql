@@ -28,6 +28,31 @@ describe ROM::Relation do
     end
   end
 
+  describe '#inner_join' do
+    it 'joins relations using inner join' do
+      conn[:users].insert(id: 2, name: 'Jane')
+
+      result = users.inner_join(:tasks, user_id: :id).select(:name, :title)
+
+      expect(result.to_a).to match_array([
+        { name: 'Piotr', title: 'Finish ROM' }
+      ])
+    end
+  end
+
+  describe '#left_join' do
+    it 'joins relations using left outer join' do
+      conn[:users].insert(id: 2, name: 'Jane')
+
+      result = users.left_join(:tasks, user_id: :id).select(:name, :title)
+
+      expect(result.to_a).to match_array([
+        { name: 'Piotr', title: 'Finish ROM' },
+        { name: 'Jane', title: nil }
+      ])
+    end
+  end
+
   describe '#project' do
     it 'projects the dataset using new column names' do
       projected = users.sorted.project(:name)

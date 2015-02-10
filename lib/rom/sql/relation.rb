@@ -195,6 +195,68 @@ module ROM
         to_enum.map(&block)
       end
 
+      # Join other relation using inner join
+      #
+      # @param [Symbol] relation name
+      # @param [Hash] join keys
+      #
+      # @return [Relation]
+      #
+      # @api public
+      def inner_join(*args, &block)
+        __new__(dataset.__send__(__method__, *args, &block))
+      end
+
+      # Join other relation using left outer join
+      #
+      # @param [Symbol] relation name
+      # @param [Hash] join keys
+      #
+      # @return [Relation]
+      #
+      # @api public
+      def left_join(*args, &block)
+        __new__(dataset.__send__(__method__, *args, &block))
+      end
+
+      # Group by specific columns
+      #
+      # @example
+      #   tasks.group(:user_id)
+      #
+      # @return [Relation]
+      #
+      # @api public
+      def group(*args, &block)
+        __new__(dataset.__send__(__method__, *args, &block))
+      end
+
+      # Group by specific columns and count by group
+      #
+      # @example
+      #   tasks.group_and_count(:user_id)
+      #   # => [{ user_id: 1, count: 2 }, { user_id: 2, count: 3 }]
+      #
+      # @return [Relation]
+      #
+      # @api public
+      def group_and_count(*args, &block)
+        __new__(dataset.__send__(__method__, *args, &block))
+      end
+
+      # Select and group by specific columns
+      #
+      # @example
+      #   tasks.select_group(:user_id)
+      #   # => [{ user_id: 1 }, { user_id: 2 }]
+      #
+      # @return [Relation]
+      #
+      # @api public
+      def select_group(*args, &block)
+        __new__(dataset.__send__(__method__, *args, &block))
+      end
+
       # Insert tuple into relation
       #
       # @example
@@ -252,44 +314,6 @@ module ROM
       # @api public
       def unique?(criteria)
         where(criteria).count.zero?
-      end
-
-      # Group by specific columns
-      #
-      # @example
-      #   tasks.group(:user_id)
-      #
-      # @return [Relation]
-      #
-      # @api public
-      def group(*args, &block)
-        __new__(dataset.__send__(__method__, *args, &block))
-      end
-
-      # Group by specific columns and count by group
-      #
-      # @example
-      #   tasks.group_and_count(:user_id)
-      #   # => [{ user_id: 1, count: 2 }, { user_id: 2, count: 3 }]
-      #
-      # @return [Relation]
-      #
-      # @api public
-      def group_and_count(*args, &block)
-        __new__(dataset.__send__(__method__, *args, &block))
-      end
-
-      # Select and group by specific columns
-      #
-      # @example
-      #   tasks.select_group(:user_id)
-      #   # => [{ user_id: 1 }, { user_id: 2 }]
-      #
-      # @return [Relation]
-      #
-      # @api public
-      def select_group(*args, &block)
-        __new__(dataset.__send__(__method__, *args, &block))
       end
     end
   end
