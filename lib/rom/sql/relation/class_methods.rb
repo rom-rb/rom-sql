@@ -22,7 +22,7 @@ module ROM
         end
 
         def many_to_one(name, options = {})
-          new_options = options.merge(relation: Inflecto.pluralize(name).to_sym)
+          new_options = options.merge(relation: Inflector.pluralize(name).to_sym)
           associations << [__method__, name, new_options]
         end
 
