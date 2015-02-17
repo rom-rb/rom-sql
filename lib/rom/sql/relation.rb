@@ -51,7 +51,7 @@ module ROM
       end
 
       # @api public
-      def prefix(name = Inflecto.singularize(table))
+      def prefix(name = Inflector.singularize(table))
         rename(header.prefix(name).to_h)
       end
 
