@@ -67,6 +67,7 @@ module ROM
         # @api public
         def page(num)
           num = num.to_i
+          num = 1 if num < 1
           next_pager = pager.at(num)
           __new__(next_pager.dataset, pager: next_pager)
         end
@@ -79,6 +80,7 @@ module ROM
         # @api public
         def per_page(num)
           num = num.to_i
+          num = self.class.per_page if num < 1
           next_pager = pager.at(pager.current_page, num)
           __new__(next_pager.dataset, pager: next_pager)
         end
