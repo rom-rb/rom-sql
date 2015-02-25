@@ -15,17 +15,27 @@ describe 'Plugin / Pagination' do
     end
   end
 
-  subject(:users) { rom.relation(:users).page(1) }
+  describe '#per_page' do
+    it 'returns paginated relation with provided limit' do
+      users = rom.relation(:users).page(2).per_page(5)
 
-  describe '#page' do
-    it 'returns paginated relation' do
-      expect(users.relation.dataset.opts[:offset]).to eql(0)
-      expect(users.relation.dataset.opts[:limit]).to eql(4)
+      expect(users.relation.dataset.opts[:offset]).to eql(5)
+      expect(users.relation.dataset.opts[:limit]).to eql(5)
+
+      expect(users.pager.current_page).to eql(2)
+
+      expect(users.pager.total).to be(9)
+      expect(users.pager.total_pages).to be(2)
+
+      expect(users.pager.next_page).to be(nil)
+      expect(users.pager.prev_page).to be(1)
     end
   end
 
   describe '#pager' do
     it 'returns a pager with pagination meta-info' do
+      users = rom.relation(:users).page(1)
+
       expect(users.pager.total).to be(9)
       expect(users.pager.total_pages).to be(3)
 

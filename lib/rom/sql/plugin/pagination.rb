@@ -35,10 +35,10 @@ module ROM
             (total / per_page) + 1
           end
 
-          def at(num)
+          def at(num, per_page = options[:per_page])
             self.class.new(
               dataset.offset((num-1)*per_page).limit(per_page),
-              options.merge(current_page: num)
+              options.merge(current_page: num, per_page: per_page)
             )
           end
         end
@@ -67,6 +67,17 @@ module ROM
         # @api public
         def page(num)
           next_pager = pager.at(num)
+          __new__(next_pager.dataset, pager: next_pager)
+        end
+
+        # Set limit for pagination
+        #
+        # @example
+        #   rom.relation(:users).page(2).per_page(10)
+        #
+        # @api public
+        def per_page(num)
+          next_pager = pager.at(pager.current_page, num)
           __new__(next_pager.dataset, pager: next_pager)
         end
       end
