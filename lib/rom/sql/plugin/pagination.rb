@@ -36,19 +36,21 @@ module ROM
         end
 
         def self.included(klass)
-          klass.defines :per_page
-          klass.option :current_page
-        end
-
-        attr_reader :pager
-
-        def initialize(dataset, options = {})
           super
-          @pager = Pager.new(
-            dataset,
-            current_page: options[:current_page],
-            per_page: self.class.per_page
-          )
+
+          klass.class_eval do
+            defines :per_page
+
+            option :current_page
+
+            option :pager, reader: true, default: proc { |relation|
+              Pager.new(
+                relation.dataset,
+                current_page: relation.options[:current_page],
+                per_page: relation.class.per_page
+              )
+            }
+          end
         end
 
         def page(num)
