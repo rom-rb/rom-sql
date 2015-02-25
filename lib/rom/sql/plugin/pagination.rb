@@ -53,6 +53,16 @@ module ROM
           end
         end
 
+        # Paginate a relation
+        #
+        # @example
+        #   rom.relation(:users).class.per_page(10)
+        #   rom.relation(:users).page(1)
+        #   rom.relation(:users).pager # => info about pagination
+        #
+        # @return [Relation]
+        #
+        # @api public
         def page(num)
           per_page = self.class.per_page
           paginated = dataset.offset((num-1)*per_page).limit(per_page)
