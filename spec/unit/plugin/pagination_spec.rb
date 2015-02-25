@@ -43,6 +43,7 @@ describe 'Plugin / Pagination' do
 
       expect(users.pager.next_page).to be(nil)
       expect(users.pager.prev_page).to be(1)
+      expect(users.pager.limit_value).to eql(5)
     end
   end
 
