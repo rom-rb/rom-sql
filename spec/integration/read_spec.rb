@@ -100,7 +100,7 @@ describe 'Reading relations' do
 
     users_with_task_count = rom.read(:user_task_counts).all
     expect(users_with_task_count.to_a).to eq([
-      UserTaskCount.new(id: 1, name: "Piotr", task_count:2)
+      UserTaskCount.new(id: 1, name: "Piotr", task_count: 2)
     ])
   end
 end

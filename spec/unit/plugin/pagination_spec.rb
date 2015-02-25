@@ -15,7 +15,21 @@ describe 'Plugin / Pagination' do
     end
   end
 
+  describe '#page' do
+    it 'allow to call with stringify number' do
+      expect {
+        rom.relation(:users).page('5')
+      }.to_not raise_error
+    end
+  end
+
   describe '#per_page' do
+    it 'allow to call with stringify number' do
+      expect {
+        rom.relation(:users).per_page('5')
+      }.to_not raise_error
+    end
+
     it 'returns paginated relation with provided limit' do
       users = rom.relation(:users).page(2).per_page(5)
 
