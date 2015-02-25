@@ -23,21 +23,29 @@ describe 'Plugin / Pagination' do
     end
 
     it 'fallbacks to 1 if number < 1 given' do
-      expect {
-        users = rom.relation(:users).page(0)
+      users = rom.relation(:users).page(0)
 
-        expect(users.relation.dataset.opts[:offset]).to eql(0)
-      }.to_not raise_error
+      expect(users.relation.dataset.opts[:offset]).to eql(0)
+    end
+
+    it 'fallbacks to 1 if called with nil' do
+      users = rom.relation(:users).page(nil)
+
+      expect(users.relation.dataset.opts[:offset]).to eql(0)
     end
   end
 
   describe '#per_page' do
     it 'fallbacks to default value from relation if number < 1 given' do
-      expect {
-        users = rom.relation(:users).per_page(0)
+      users = rom.relation(:users).per_page(0)
 
-        expect(users.relation.dataset.opts[:limit]).to eql(4)
-      }.to_not raise_error
+      expect(users.relation.dataset.opts[:limit]).to eql(4)
+    end
+
+    it 'fallbacks to default value from relation if called with nil' do
+      users = rom.relation(:users).per_page(nil)
+
+      expect(users.relation.dataset.opts[:limit]).to eql(4)
     end
 
     it 'allow to call with stringify number' do
