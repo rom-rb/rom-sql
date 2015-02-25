@@ -26,14 +26,16 @@ describe 'Plugin / Pagination' do
 
   describe '#pager' do
     it 'returns a pager with pagination meta-info' do
-      expect(users.pager.current_page).to be(1)
       expect(users.pager.total).to be(9)
       expect(users.pager.total_pages).to be(3)
+
+      expect(users.pager.current_page).to be(1)
       expect(users.pager.next_page).to be(2)
       expect(users.pager.prev_page).to be(nil)
 
       users = rom.relation(:users).page(2)
 
+      expect(users.pager.current_page).to be(2)
       expect(users.pager.next_page).to be(3)
       expect(users.pager.prev_page).to be(1)
 

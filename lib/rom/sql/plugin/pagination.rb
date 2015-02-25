@@ -4,8 +4,9 @@ module ROM
       module Pagination
         class Pager
           include Options
+          include Equalizer.new(:current_page, :per_page)
 
-          option :current_page, reader: true
+          option :current_page, reader: true, default: 1
           option :per_page, reader: true
 
           attr_reader :dataset
@@ -33,6 +34,13 @@ module ROM
           def total_pages
             (total / per_page) + 1
           end
+
+          def at(num)
+            self.class.new(
+              dataset.offset((num-1)*per_page).limit(per_page),
+              options.merge(current_page: num)
+            )
+          end
         end
 
         def self.included(klass)
@@ -41,14 +49,8 @@ module ROM
           klass.class_eval do
             defines :per_page
 
-            option :current_page
-
             option :pager, reader: true, default: proc { |relation|
-              Pager.new(
-                relation.dataset,
-                current_page: relation.options[:current_page],
-                per_page: relation.class.per_page
-              )
+              Pager.new(relation.dataset, per_page: relation.class.per_page)
             }
           end
         end
@@ -64,9 +66,8 @@ module ROM
         #
         # @api public
         def page(num)
-          per_page = self.class.per_page
-          paginated = dataset.offset((num-1)*per_page).limit(per_page)
-          self.class.new(paginated, current_page: num)
+          next_pager = pager.at(num)
+          __new__(next_pager.dataset, pager: next_pager)
         end
       end
     end
