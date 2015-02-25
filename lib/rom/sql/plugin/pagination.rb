@@ -37,21 +37,24 @@ module ROM
 
         def self.included(klass)
           klass.defines :per_page
+          klass.option :current_page
         end
 
         attr_reader :pager
 
-        def initialize(dataset, registry, current_page = nil)
-          super(dataset, registry)
+        def initialize(dataset, options = {})
+          super
           @pager = Pager.new(
-            dataset, current_page: current_page, per_page: self.class.per_page
+            dataset,
+            current_page: options[:current_page],
+            per_page: self.class.per_page
           )
         end
 
         def page(num)
           per_page = self.class.per_page
           paginated = dataset.offset((num-1)*per_page).limit(per_page)
-          self.class.new(paginated, __registry__, num)
+          self.class.new(paginated, current_page: num)
         end
       end
     end
