@@ -55,7 +55,7 @@ module ROM
               Pager.new(relation.dataset, per_page: relation.class.per_page)
             }
 
-            exposed_relations.update(Hash[[:pager, :page, :per_page].product([true])])
+            exposed_relations.merge([:pager, :page, :per_page])
           end
         end
 
