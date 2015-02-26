@@ -14,12 +14,6 @@ describe ROM::Relation do
     end
   end
 
-  describe '#exposed_relations' do
-    it 'returns publicy defined relations' do
-      expect(users.exposed_relations).to eql([:sorted])
-    end
-  end
-
   describe '#map' do
     it 'yields tuples' do
       result = []

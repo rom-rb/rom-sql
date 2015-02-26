@@ -54,6 +54,8 @@ module ROM
             option :pager, reader: true, default: proc { |relation|
               Pager.new(relation.dataset, per_page: relation.class.per_page)
             }
+
+            exposed_relations.update(Hash[[:pager, :page, :per_page].product([true])])
           end
         end
 
