@@ -14,7 +14,7 @@
 
 * Indentation in Rails logger (morgoth)
 
-[Compare v0.3.2...master](https://github.com/rom-rb/rom-sql/compare/v0.3.1...master)
+[Compare v0.3.2...master](https://github.com/rom-rb/rom-sql/compare/v0.3.2...master)
 
 ## v0.3.2 2015-01-01
 
