@@ -1,8 +1,14 @@
-## v0.3.3 to-be-released
+## v0.4.0 to-be-released
 
 ### Added
 
-* Support for 'postgresql' scheme name which makes it work next to ActiveRecord (solnic)
+* `ROM::SQL::Relation` which explictly defines an interface on top of Sequel (solnic + mcls)
+* Experimental migration API using sequel/migrations (gotar)
+* Pagination plugin (solnic)
+
+### Changed
+
+* Use ROM's own inflector which uses either ActiveSupport or Inflecto backends (mjtko)
 
 ### Fixed
 
