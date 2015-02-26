@@ -41,6 +41,8 @@ module ROM
               options.merge(current_page: num, per_page: per_page)
             )
           end
+
+          alias_method :limit_value, :per_page
         end
 
         def self.included(klass)
@@ -82,6 +84,7 @@ module ROM
           next_pager = pager.at(pager.current_page, num)
           __new__(next_pager.dataset, pager: next_pager)
         end
+
       end
     end
   end
