@@ -125,6 +125,18 @@ module ROM
         __new__(dataset.__send__(__method__, *args, &block))
       end
 
+      # Returns a copy of the relation with a SQL DISTINCT clause.
+      #
+      # @example
+      #   users.distinct(:country)
+      #
+      # @return [Relation]
+      #
+      # @api public
+      def distinct(*args, &block)
+        __new__(dataset.__send__(__method__, *args, &block))
+      end
+
       # Restrict a relation to match criteria
       #
       # @example
@@ -134,6 +146,18 @@ module ROM
       #
       # @api public
       def where(*args, &block)
+        __new__(dataset.__send__(__method__, *args, &block))
+      end
+
+      # Restrict a relation to not match criteria
+      #
+      # @example
+      #   users.exclude(name: 'Jane')
+      #
+      # @return [Relation]
+      #
+      # @api public
+      def exclude(*args, &block)
         __new__(dataset.__send__(__method__, *args, &block))
       end
 

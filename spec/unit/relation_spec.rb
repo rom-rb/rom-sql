@@ -14,6 +14,21 @@ describe ROM::Relation do
     end
   end
 
+  describe '#distinct' do
+    it 'delegates to dataset and returns a new relation' do
+      expect(users.dataset).to receive(:distinct).with(:name).and_call_original
+      expect(users.distinct(:name)).to_not eq(users)
+    end
+  end
+
+  describe '#exclude' do
+    it 'delegates to dataset and returns a new relation' do
+      expect(users.dataset).to receive(:exclude).with(name: 'Piotr')
+                                                .and_call_original
+      expect(users.exclude(name: 'Piotr')).to_not eq(users)
+    end
+  end
+
   describe '#map' do
     it 'yields tuples' do
       result = []
