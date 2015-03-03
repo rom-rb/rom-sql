@@ -6,8 +6,23 @@ require 'rom/sql/commands'
 module ROM
   module SQL
     class Repository < ROM::Repository
-      attr_reader :logger, :schema
+      # Return optionally configured logger
+      #
+      # @return [Object] logger
+      #
+      # @api public
+      attr_reader :logger
 
+      # Returns a list of datasets inferred from table names
+      #
+      # @return [Array] array with table names
+      #
+      # @api public
+      attr_reader :schema
+
+      # @param [String,Symbol] scheme
+      #
+      # @api public
       def self.database_file?(scheme)
         scheme.to_s.include?('sqlite')
       end
@@ -23,12 +38,12 @@ module ROM
       # @overload connect(connection)
       #   Re-uses connection instance
       #
-      #   @param [Sequel::Database] connection instance
+      #   @param [Sequel::Database] connection a connection instance
       #
       # @example
       #   repository = ROM::SQL::Repository.new('postgres://localhost/rom')
       #
-      #   # or re-use connection
+      #   # or reuse connection
       #   DB = Sequel.connect('postgres://localhost/rom')
       #   repository = ROM::SQL::Repository.new(DB)
       #
@@ -38,27 +53,64 @@ module ROM
         @schema = connection.tables
       end
 
+      # Disconnect from database
+      #
+      # @api public
       def disconnect
         connection.disconnect
       end
 
+      # Return dataset with the given name
+      #
+      # @param [String] name dataset name
+      #
+      # @return [Dataset]
+      #
+      # @api public
       def [](name)
         connection[name]
       end
 
+      # Setup a logger
+      #
+      # @param [Object] logger
+      #
+      # @see Sequel::Database#loggers
+      #
+      # @api public
       def use_logger(logger)
         @logger = logger
         connection.loggers << logger
       end
 
-      def dataset(table)
-        connection[table]
+      # Return dataset with the given name
+      #
+      # @param [String] name a dataset name
+      #
+      # @return [Dataset]
+      #
+      # @api public
+      def dataset(name)
+        connection[name]
       end
 
+      # Check if dataset exists
+      #
+      # @param [String] name dataset name
+      #
+      # @api public
       def dataset?(name)
         schema.include?(name)
       end
 
+      # Extend database-specific behavior
+      #
+      # @param [Class] klass command class
+      # @param [Object] dataset a dataset that will be used
+      #
+      # Note: Currently, only postgres is supported.
+      #
+      # @api public
       def extend_command_class(klass, dataset)
         type = dataset.db.database_type
 
@@ -78,7 +130,7 @@ module ROM
 
       private
 
-      # Connect to database or re-uses connection instance
+      # Connect to database or reuse established connection instance
       #
       # @return [Database::Sequel] a connection instance
       #
