@@ -39,6 +39,7 @@ shared_context 'database setup' do
   end
 
   after do
+    rom.repositories[:default].disconnect
     conn.disconnect
   end
 end

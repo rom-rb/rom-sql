@@ -24,6 +24,8 @@ describe ROM::SQL::Repository do
   end
 
   describe '#disconnect' do
+    let(:repository) { ROM::SQL::Repository.new(uri) }
+
     it 'disconnects via sequel connection' do
       # FIXME: no idea how to test it in a different way
       expect(repository.connection).to receive(:disconnect)
