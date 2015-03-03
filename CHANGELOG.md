@@ -7,6 +7,7 @@
 * `Update#change` interface for skipping execution when there's no diff (solnic)
 * Experimental migration API using sequel/migrations (gotar)
 * Pagination plugin (solnic)
+* Allow reuse of established Sequel connections (splattael)
 
 ### Changed
 
