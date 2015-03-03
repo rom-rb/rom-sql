@@ -23,8 +23,8 @@ describe ROM::Relation do
 
   describe '#exclude' do
     it 'delegates to dataset and returns a new relation' do
-      expect(users.dataset).to receive(:exclude).with(name: 'Piotr')
-                                                .and_call_original
+      expect(users.dataset)
+        .to receive(:exclude).with(name: 'Piotr').and_call_original
       expect(users.exclude(name: 'Piotr')).to_not eq(users)
     end
   end

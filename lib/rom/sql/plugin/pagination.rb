@@ -86,7 +86,6 @@ module ROM
           next_pager = pager.at(pager.current_page, num)
           __new__(next_pager.dataset, pager: next_pager)
         end
-
       end
     end
   end
