@@ -3,6 +3,8 @@
 ### Added
 
 * `ROM::SQL::Relation` which explictly defines an interface on top of Sequel (solnic + mcls)
+* Postgres-specific Create and Update commands that support RETURNING (gotar + solnic)
+* `Update#change` interface for skipping execution when there's no diff (solnic)
 * Experimental migration API using sequel/migrations (gotar)
 * Pagination plugin (solnic)
 
