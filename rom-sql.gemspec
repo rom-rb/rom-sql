@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "sequel", "~> 4.18"
   spec.add_runtime_dependency "equalizer", "~> 0.0", ">= 0.0.9"
-  spec.add_runtime_dependency "rom", "~> 0.6.0.beta1"
+  spec.add_runtime_dependency "rom", "~> 0.6.0.beta3"
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake", "~> 10.0"
