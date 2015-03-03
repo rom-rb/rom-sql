@@ -37,4 +37,8 @@ shared_context 'database setup' do
       Integer :task_id
     end
   end
+
+  after do
+    conn.disconnect
+  end
 end
