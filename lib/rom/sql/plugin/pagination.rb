@@ -4,17 +4,16 @@ module ROM
       module Pagination
         class Pager
           include Options
-          include Equalizer.new(:current_page, :per_page)
+          include Equalizer.new(:dataset, :options)
 
           option :current_page, reader: true, default: 1
           option :per_page, reader: true
 
           attr_reader :dataset
-          attr_reader :current_page
 
           def initialize(dataset, options = {})
-            @dataset = dataset
             super
+            @dataset = dataset
           end
 
           def next_page
@@ -35,10 +34,13 @@ module ROM
             (total / per_page) + 1
           end
 
-          def at(num, per_page = options[:per_page])
+          def at(dataset, current_page, per_page = self.per_page)
+            current_page = current_page.to_i
+            per_page = per_page.to_i
+
             self.class.new(
-              dataset.offset((num-1)*per_page).limit(per_page),
-              options.merge(current_page: num, per_page: per_page)
+              dataset.offset((current_page-1)*per_page).limit(per_page),
+              current_page: current_page, per_page: per_page
             )
           end
 
@@ -70,8 +72,7 @@ module ROM
         #
         # @api public
         def page(num)
-          num = num.to_i
-          next_pager = pager.at(num)
+          next_pager = pager.at(dataset, num)
           __new__(next_pager.dataset, pager: next_pager)
         end
 
@@ -82,8 +83,7 @@ module ROM
         #
         # @api public
         def per_page(num)
-          num = num.to_i
-          next_pager = pager.at(pager.current_page, num)
+          next_pager = pager.at(dataset, pager.current_page, num)
           __new__(next_pager.dataset, pager: next_pager)
         end
       end

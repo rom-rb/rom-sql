@@ -21,6 +21,12 @@ describe 'Plugin / Pagination' do
         rom.relation(:users).page('5')
       }.to_not raise_error
     end
+
+    it 'preserves existing modifiers' do
+      expect(
+        rom.relation(:users) { |r| r.where(name: 'User 2') }.page(1).to_a.size
+      ).to be(1)
+    end
   end
 
   describe '#per_page' do
