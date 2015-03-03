@@ -3,7 +3,7 @@ shared_context 'database setup' do
 
   let(:uri) { 'postgres://localhost/rom' }
   let(:conn) { Sequel.connect(uri) }
-  let(:setup) { ROM.setup(:sql, uri) }
+  let(:setup) { ROM.setup(:sql, conn) }
 
   def drop_tables
     [:users, :tasks, :tags, :task_tags].each { |name| conn.drop_table?(name) }
@@ -39,7 +39,6 @@ shared_context 'database setup' do
   end
 
   after do
-    rom.repositories[:default].disconnect
     conn.disconnect
   end
 end

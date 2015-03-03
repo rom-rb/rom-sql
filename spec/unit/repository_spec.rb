@@ -28,6 +28,7 @@ describe ROM::SQL::Repository do
 
     it 'disconnects via sequel connection' do
       # FIXME: no idea how to test it in a different way
+      # FIXME: we are leaking connection here
       expect(repository.connection).to receive(:disconnect)
       repository.disconnect
     end
