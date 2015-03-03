@@ -1,5 +1,5 @@
 module ROM
   module SQL
-    VERSION = "0.4.0.beta1".freeze
+    VERSION = "0.4.0.beta2".freeze
   end
 end
