@@ -87,7 +87,7 @@ describe 'Reading relations' do
   end
 
   it 'loads domain objects' do
-    user = rom.read(:users).with_tasks.by_name('Piotr').to_a.first
+    user = rom.relation(:users).as(:users).with_tasks.by_name('Piotr').to_a.first
 
     expect(user).to eql(
       User.new(
@@ -98,7 +98,8 @@ describe 'Reading relations' do
   it 'works with grouping and aggregates' do
     rom.relations[:tasks].insert(id: 2, user_id: 1, title: 'Get Milk')
 
-    users_with_task_count = rom.read(:user_task_counts).all
+    users_with_task_count = rom.relation(:user_task_counts).as(:user_task_counts).all
+
     expect(users_with_task_count.to_a).to eq([
       UserTaskCount.new(id: 1, name: "Piotr", task_count: 2)
     ])

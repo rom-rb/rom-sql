@@ -34,7 +34,10 @@ describe 'Defining one-to-many association' do
       [{ id: 1, name: 'Piotr', tasks_id: 1, title: 'Finish ROM' }]
     )
 
-    expect(rom.read(:users).all.with_tasks.by_name("Piotr").to_a).to eql(
+    result = rom.relation(:users).map_with(:with_tasks)
+      .all.with_tasks.by_name("Piotr").to_a
+
+    expect(result).to eql(
       [{ id: 1, name: 'Piotr', tasks: [{ tasks_id: 1, title: 'Finish ROM' }] }]
     )
   end
