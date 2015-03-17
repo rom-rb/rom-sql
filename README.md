@@ -13,8 +13,11 @@
 [![Test Coverage](https://codeclimate.com/github/rom-rb/rom-sql/badges/coverage.svg)][codeclimate]
 [![Inline docs](http://inch-ci.org/github/rom-rb/rom-sql.svg?branch=master)][inchpages]
 
-
 RDBMS suport for [Ruby Object Mapper](https://github.com/rom-rb/rom).
+
+## Issues
+
+Please report any issues in the main [rom-rb/rom](https://github.com/rom-rb/rom/issues) issue tracker.
 
 ## Installation
 
