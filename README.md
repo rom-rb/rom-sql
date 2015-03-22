@@ -77,7 +77,7 @@ tasks = rom.relations.tasks
 users.insert(id: 1, name: "Piotr")
 tasks.insert(user_id: 1, title: "Be happy")
 
-puts users.by_name("Piotr").with_tasks.to_a.inspect
+puts rom.relation(:users).by_name("Piotr").with_tasks.to_a.inspect
 # => [{:id=>1, :name=>"Piotr", :user_id=>1, :title=>"Be happy"}]
 ```
 
