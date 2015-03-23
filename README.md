@@ -112,6 +112,7 @@ end
 
 class UserMapper < ROM::Mapper
   relation :users
+  register_as :model
 
   model name: 'User'
 
@@ -126,7 +127,7 @@ tasks = rom.relations.tasks
 users.insert(id: 1, name: "Piotr")
 tasks.insert(user_id: 1, title: "Be happy")
 
-rom.read(:users).with_tasks.by_name("Piotr").to_a
+rom.relation(:users).as(:model).with_tasks.by_name("Piotr").to_a
 # => [#<User:0x007fb31542a098 @id=1, @name="Piotr", @tasks=[{:title=>"Be happy"}]>]
 ```
 
