@@ -80,7 +80,7 @@ module ROM
       # Get last tuple from the relation
       #
       # @example
-      #   users.first
+      #   users.last
       #
       # @return [Relation]
       #
