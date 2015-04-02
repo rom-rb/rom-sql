@@ -106,4 +106,16 @@ describe 'Commands / Create' do
     expect(result.error).to be_instance_of(ROM::SQL::ConstraintError)
     expect(result.error.message).to match(/unique/)
   end
+
+  it 'handles database errors' do
+    Params.attribute :bogus_field
+
+
+    result = users.try{
+      users.create.call(name: 'some name', bogus_field: 23)
+    }
+
+    expect(result.error).to be_instance_of(ROM::SQL::DatabaseError)
+    expect(result.error.original_exception).to be_instance_of(Sequel::DatabaseError)
+  end
 end
