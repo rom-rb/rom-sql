@@ -1,4 +1,5 @@
 require 'rom/sql/commands'
+require 'rom/sql/commands/error_wrapper'
 require 'rom/sql/commands/transaction'
 
 module ROM
@@ -6,6 +7,7 @@ module ROM
     module Commands
       class Create < ROM::Commands::Create
         include Transaction
+        prepend ErrorWrapper
 
         def execute(tuples)
           insert_tuples = Array([tuples]).flatten.map do |tuple|
@@ -15,10 +17,6 @@ module ROM
           end
 
           insert(insert_tuples)
-        rescue *ERRORS => e
-          raise ConstraintError, e.message
-        rescue Sequel::DatabaseError => e
-          raise ROM::SQL::DatabaseError.new(e, e.message)
         end
 
         def insert(tuples)

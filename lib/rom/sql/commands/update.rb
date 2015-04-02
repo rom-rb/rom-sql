@@ -1,4 +1,5 @@
 require 'rom/sql/commands'
+require 'rom/sql/commands/error_wrapper'
 require 'rom/sql/commands/transaction'
 
 module ROM
@@ -6,6 +7,7 @@ module ROM
     module Commands
       class Update < ROM::Commands::Update
         include Transaction
+        prepend ErrorWrapper
 
         option :original, type: Hash, reader: true
 
