@@ -4,6 +4,15 @@ require "rom"
 module ROM
   module SQL
     ConstraintError = Class.new(ROM::CommandError)
+
+    class DatabaseError < ROM::CommandError
+      attr_reader :original_exception
+
+      def initialize(error, message)
+        super(message)
+        @original_exception = error
+      end
+    end
   end
 end
 
