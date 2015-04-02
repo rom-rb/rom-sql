@@ -5,7 +5,8 @@ module ROM
     module Commands
       ERRORS = [
         Sequel::UniqueConstraintViolation,
-        Sequel::NotNullConstraintViolation
+        Sequel::NotNullConstraintViolation,
+        Sequel::DatabaseError
       ].freeze
     end
   end
