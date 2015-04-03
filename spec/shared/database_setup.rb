@@ -6,7 +6,9 @@ shared_context 'database setup' do
   let(:setup) { ROM.setup(:sql, conn) }
 
   def drop_tables
-    [:users, :tasks, :tags, :task_tags].each { |name| conn.drop_table?(name) }
+    [:users, :tasks, :tags, :task_tags, :schema_migrations].each do |name|
+      conn.drop_table?(name)
+    end
   end
 
   before do

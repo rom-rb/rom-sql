@@ -48,7 +48,6 @@ describe ROM::SQL::Repository do
       end
 
       it 'runs migrations from a specified directory' do
-        pending 'for some reason sequel picks up incorrect version'
         ROM.env.repositories[:default].run_migrations
       end
     end
