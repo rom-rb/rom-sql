@@ -22,13 +22,15 @@ LOGGER = Logger.new(File.open('./log/test.log', 'a'))
 DB_URI = 'postgres://localhost/rom'
 
 root = Pathname(__FILE__).dirname
-TMP_PATH = root.join('../tmp').realpath
+TMP_PATH = root.join('../tmp')
 
 Dir[root.join('shared/*.rb').to_s].each { |f| require f }
 
 RSpec.configure do |config|
   config.before(:suite) do
-    FileUtils.rm_r(TMP_PATH.join('test'))
+    tmp_test_dir = TMP_PATH.join('test')
+    FileUtils.rm_r(tmp_test_dir) if File.exist?(tmp_test_dir)
+    FileUtils.mkdir_p(tmp_test_dir)
   end
 
   config.before do
