@@ -43,23 +43,8 @@ namespace :db do
       exit
     end
 
-    version ||= Time.now.utc.strftime("%Y%m%d%H%M%S")
+    path = repository.migrator.create_file(*[name, version].compact)
 
-    filename = "#{version}_#{name}.rb"
-    dirname = repository.migrator.path
-    path = File.join(dirname, filename)
-
-    FileUtils.mkdir_p(dirname)
-
-    content = <<-CONTENT
-ROM.env.repositories[:default].migration do
-  change do
-  end
-end
-    CONTENT
-
-    File.write path, content
-
-    puts path
+    puts "<= migration file created #{path}"
   end
 end

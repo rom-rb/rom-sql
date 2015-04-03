@@ -1,12 +1,12 @@
 shared_context 'database setup' do
   subject(:rom) { setup.finalize }
 
-  let(:uri) { 'postgres://localhost/rom' }
+  let(:uri) { DB_URI }
   let(:conn) { Sequel.connect(uri) }
   let(:setup) { ROM.setup(:sql, conn) }
 
   def drop_tables
-    [:users, :tasks, :tags, :task_tags, :schema_migrations].each do |name|
+    [:users, :tasks, :tags, :task_tags, :rabbits, :carrots, :schema_migrations].each do |name|
       conn.drop_table?(name)
     end
   end

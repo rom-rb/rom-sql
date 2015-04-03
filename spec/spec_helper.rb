@@ -19,12 +19,18 @@ rescue LoadError
 end
 
 LOGGER = Logger.new(File.open('./log/test.log', 'a'))
+DB_URI = 'postgres://localhost/rom'
 
 root = Pathname(__FILE__).dirname
+TMP_PATH = root.join('../tmp').realpath
 
 Dir[root.join('shared/*.rb').to_s].each { |f| require f }
 
 RSpec.configure do |config|
+  config.before(:suite) do
+    FileUtils.rm_r(TMP_PATH.join('test'))
+  end
+
   config.before do
     @constants = Object.constants
   end

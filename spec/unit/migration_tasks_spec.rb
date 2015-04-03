@@ -77,30 +77,22 @@ describe 'MigrationTasks' do
       let(:filename) { "#{version}_#{name}.rb" }
       let(:path) { File.join(dirname, filename) }
 
-      before do
-        expect(migrator).to receive(:path).and_return(dirname)
-      end
-
       it 'calls proper commands with default VERSION' do
-        time = double(utc: double(strftime: '001'))
-        expect(Time).to receive(:now).and_return(time)
-        expect(FileUtils).to receive(:mkdir_p).with(dirname)
-        expect(File).to receive(:write).with(path, /ROM.env.repositories\[:default\]/)
+        expect(migrator).to receive(:create_file).with(name).and_return(path)
 
         expect {
           Rake::Task["db:create_migration"].execute(
             Rake::TaskArguments.new([:name], [name]))
-        }.to output(path+"\n").to_stdout
+        }.to output("<= migration file created #{path}\n").to_stdout
       end
 
       it 'calls proper commands with manualy set VERSION' do
-        expect(FileUtils).to receive(:mkdir_p).with(dirname)
-        expect(File).to receive(:write).with(path, /ROM.env.repositories\[:default\]/)
+        expect(migrator).to receive(:create_file).with(name, version).and_return(path)
 
         expect {
           Rake::Task["db:create_migration"].execute(
             Rake::TaskArguments.new([:name, :version], [name, version]))
-        }.to output(path+"\n").to_stdout
+        }.to output("<= migration file created #{path}\n").to_stdout
       end
     end
   end
