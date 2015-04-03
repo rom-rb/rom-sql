@@ -53,9 +53,13 @@ module ROM
       #
       # @api public
       def initialize(uri, options = {})
-        @connection = connect(uri, options)
+        repo_options = self.class.option_definitions.names
+        conn_options = options.reject { |k,_| repo_options.include?(k) }
+
+        @connection = connect(uri, conn_options)
         @schema = connection.tables
-        super
+
+        super(uri, options.reject { |k,_| conn_options.keys.include?(k) })
       end
 
       # Disconnect from database
