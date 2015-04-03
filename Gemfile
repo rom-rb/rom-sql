@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
+  gem 'byebug', platforms: :mri
   gem 'rom', '~> 0.6.0.beta', github: 'rom-rb/rom', branch: 'master'
   gem 'virtus'
   gem 'activesupport'

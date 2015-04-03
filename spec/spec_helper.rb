@@ -13,6 +13,10 @@ require 'rom/sql/rake_task'
 # FIXME: why do we need to require it manually??
 require 'sequel/adapters/postgres'
 require 'logger'
+begin
+  require 'byebug'
+rescue LoadError
+end
 
 LOGGER = Logger.new(File.open('./log/test.log', 'a'))
 
