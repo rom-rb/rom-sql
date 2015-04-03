@@ -8,7 +8,9 @@ describe ROM::SQL::Repository do
       subject(:repository) { rom.repositories[:default] }
 
       after do
-        repository.connection.drop_table?(:rabbits)
+        [:rabbits, :carrots].each do |name|
+          repository.connection.drop_table?(name)
+        end
       end
 
       it 'allows creating and running migrations' do
