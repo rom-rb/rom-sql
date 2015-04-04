@@ -2,10 +2,15 @@ require 'spec_helper'
 
 describe ROM::SQL::Repository do
   describe 'migration' do
-    include_context 'database setup'
+    let(:conn) { Sequel.connect(DB_URI) }
 
     context 'creating migrations inline' do
-      subject(:repository) { rom.repositories[:default] }
+      subject(:repository) { ROM.env.repositories[:default] }
+
+      before do
+        ROM.setup(:sql, conn)
+        ROM.finalize
+      end
 
       after do
         [:rabbits, :carrots].each do |name|
