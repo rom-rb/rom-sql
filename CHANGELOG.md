@@ -1,3 +1,12 @@
+## v0.4.1 2015-04-04
+
+### Added
+
+* Database error handling for update and delete commands (kwando + solnic)
+* Migration interface as a repository plugin (gotar + solnic)
+
+[Compare v0.4.0...v0.4.1](https://github.com/rom-rb/rom-sql/compare/v0.4.0...v0.4.1)
+
 ## v0.4.0 2015-03-22
 
 ### Added
