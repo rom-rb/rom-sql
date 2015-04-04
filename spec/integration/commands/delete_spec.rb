@@ -52,4 +52,16 @@ describe 'Commands / Delete' do
 
     expect(result.value).to eql(id: 2, name: 'Jane')
   end
+
+  it 'handles database errors' do
+    command = users.delete.by_name('Jane')
+
+    expect(command.relation).to receive(:delete).and_raise(Sequel::DatabaseError)
+
+    result = users.try { command.call }
+
+    expect(result.value).to be(nil)
+    expect(result.error).to be_a(ROM::SQL::DatabaseError)
+    expect(result.error.original_exception).to be_a(Sequel::DatabaseError)
+  end
 end

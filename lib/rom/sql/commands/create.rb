@@ -7,7 +7,7 @@ module ROM
     module Commands
       class Create < ROM::Commands::Create
         include Transaction
-        prepend ErrorWrapper
+        include ErrorWrapper
 
         def execute(tuples)
           insert_tuples = Array([tuples]).flatten.map do |tuple|

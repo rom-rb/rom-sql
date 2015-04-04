@@ -7,11 +7,12 @@ module ROM
     module Commands
       class Update < ROM::Commands::Update
         include Transaction
-        prepend ErrorWrapper
+        include ErrorWrapper
 
         option :original, type: Hash, reader: true
 
         alias_method :to, :call
+        alias_method :set, :call
 
         def execute(tuple)
           attributes = input[tuple]

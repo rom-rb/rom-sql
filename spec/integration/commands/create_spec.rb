@@ -110,10 +110,7 @@ describe 'Commands / Create' do
   it 'handles database errors' do
     Params.attribute :bogus_field
 
-
-    result = users.try{
-      users.create.call(name: 'some name', bogus_field: 23)
-    }
+    result = users.try { users.create.call(name: 'some name', bogus_field: 23) }
 
     expect(result.error).to be_instance_of(ROM::SQL::DatabaseError)
     expect(result.error.original_exception).to be_instance_of(Sequel::DatabaseError)

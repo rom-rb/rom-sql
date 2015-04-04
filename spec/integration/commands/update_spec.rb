@@ -74,4 +74,14 @@ describe 'Commands / Update' do
 
     expect(result.value.to_a).to be_empty
   end
+
+  it 'handles database errors' do
+    result = users.try do
+      users.update.by_id(piotr[:id]).set(bogus_field: '#trollface')
+    end
+
+    expect(result.value).to be(nil)
+    expect(result.error).to be_a(ROM::SQL::DatabaseError)
+    expect(result.error.original_exception).to be_a(Sequel::DatabaseError)
+  end
 end

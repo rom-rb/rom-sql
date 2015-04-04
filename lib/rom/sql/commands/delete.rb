@@ -7,7 +7,7 @@ module ROM
     module Commands
       class Delete < ROM::Commands::Delete
         include Transaction
-        prepend ErrorWrapper
+        include ErrorWrapper
 
         def execute
           deleted = target.to_a
