@@ -2,6 +2,35 @@ require 'rom/sql/migration/migrator'
 
 module ROM
   module SQL
+    # Create a database migration for a specific repository
+    #
+    # @example
+    #   ROM.setup(
+    #     default: [:sql, 'sqlite::memory'],
+    #     other: [:sql, 'postgres://localhost/test']
+    #   )
+    #
+    #   ROM.finalize
+    #
+    #   ROM::SQL.migration do
+    #     change do
+    #       create_table(:users) do
+    #         primary_key :id
+    #         String :name
+    #       end
+    #     end
+    #   end
+    #
+    #   # for a non-default repository
+    #   ROM::SQL.migration(:other) do
+    #     # ...
+    #   end
+    #
+    # @api public
+    def self.migration(repository = :default, &block)
+      ROM.env.repositories[repository].migration(&block)
+    end
+
     module Migration
       Sequel.extension :migration
 

@@ -14,7 +14,7 @@ describe ROM::SQL::Repository do
       end
 
       it 'allows creating and running migrations' do
-        migration = repository.migration do
+        migration = ROM::SQL.migration do
           up do
             create_table(:rabbits) do
               primary_key :id

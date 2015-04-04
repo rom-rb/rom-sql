@@ -1,4 +1,4 @@
-ROM.env.repositories[:default].migration do
+ROM::SQL.migration do
   change do
   end
 end
