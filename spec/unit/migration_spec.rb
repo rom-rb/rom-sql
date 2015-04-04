@@ -20,7 +20,7 @@ describe ROM::SQL::Migration do
     it 'returns default path if non provided' do
       migration.path = nil
 
-      expect(migration.path).to eq ROM::SQL::Migration::DEFAULT_PATH
+      expect(migration.path).to eq ROM::SQL::Migration::Migrator::DEFAULT_PATH
     end
   end
 

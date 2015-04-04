@@ -23,6 +23,20 @@ describe ROM::SQL::Repository do
     end
   end
 
+  describe 'using options' do
+    it 'allows custom sequel-specific options' do
+      migrator = double('migrator')
+
+      expect(Sequel).to receive(:connect)
+        .with(DB_URI, host: '127.0.0.1')
+        .and_return(conn)
+
+      repository = ROM::SQL::Repository.new(DB_URI, migrator: migrator, host: '127.0.0.1')
+
+      expect(repository.options).to eql(migrator: migrator)
+    end
+  end
+
   describe '#disconnect' do
     let(:repository) { ROM::SQL::Repository.new(uri) }
 

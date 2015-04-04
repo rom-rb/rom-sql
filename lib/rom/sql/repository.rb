@@ -1,11 +1,15 @@
 require 'logger'
 
 require 'rom/repository'
+require 'rom/sql/migration'
 require 'rom/sql/commands'
 
 module ROM
   module SQL
     class Repository < ROM::Repository
+      include Options
+      include Migration
+
       # Return optionally configured logger
       #
       # @return [Object] logger
@@ -49,8 +53,13 @@ module ROM
       #
       # @api public
       def initialize(uri, options = {})
-        @connection = connect(uri, options)
+        repo_options = self.class.option_definitions.names
+        conn_options = options.reject { |k,_| repo_options.include?(k) }
+
+        @connection = connect(uri, conn_options)
         @schema = connection.tables
+
+        super(uri, options.reject { |k,_| conn_options.keys.include?(k) })
       end
 
       # Disconnect from database

@@ -3,32 +3,38 @@ require "fileutils"
 
 namespace :db do
   desc "Perform migration reset (full erase and migration up)"
-  task reset: :load_setup do
-    ROM::SQL::Migration.run(target: 0)
-    ROM::SQL::Migration.run
+  task reset: :setup do
+    repository = ROM.env.repositories[:default]
+    repository.run_migrations(target: 0)
+    repository.run_migrations
     puts "<= db:reset executed"
   end
 
   desc "Migrate the database (options [version_number])]"
-  task :migrate, [:version] => :load_setup do |_, args|
+  task :migrate, [:version] => :setup do |_, args|
+    repository = ROM.env.repositories[:default]
     version = args[:version]
+
     if version.nil?
-      ROM::SQL::Migration.run
+      repository.run_migrations
       puts "<= db:migrate executed"
     else
-      ROM::SQL::Migration.run(target: version.to_i)
+      repository.run_migrations(target: version.to_i)
       puts "<= db:migrate version=[#{version}] executed"
     end
   end
 
   desc "Perform migration down (erase all data)"
-  task clean: :load_setup do
-    ROM::SQL::Migration.run(target: 0)
+  task clean: :setup do
+    repository = ROM.env.repositories[:default]
+
+    repository.run_migrations(target: 0)
     puts "<= db:clean executed"
   end
 
   desc "Create a migration (parameters: NAME, VERSION)"
-  task :create_migration, [:name, :version] => :load_setup do |_, args|
+  task :create_migration, [:name, :version] => :setup do |_, args|
+    repository = ROM.env.repositories[:default]
     name, version = args[:name], args[:version]
 
     if name.nil?
@@ -37,20 +43,8 @@ namespace :db do
       exit
     end
 
-    version ||= Time.now.utc.strftime("%Y%m%d%H%M%S")
+    path = repository.migrator.create_file(*[name, version].compact)
 
-    filename = "#{version}_#{name}.rb"
-    dirname  = ROM::SQL::Migration.path
-    path     = File.join(dirname, filename)
-
-    FileUtils.mkdir_p(dirname)
-    File.write path, <<-MIGRATION
-ROM::SQL::Migration.create do
-  change do
-  end
-end
-    MIGRATION
-
-    puts path
+    puts "<= migration file created #{path}"
   end
 end
