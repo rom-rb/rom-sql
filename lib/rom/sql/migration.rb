@@ -43,10 +43,24 @@ module ROM
         end
       end
 
+      # @see ROM::SQL.migration
+      #
+      # @api public
       def migration(&block)
         migrator.migration(&block)
       end
 
+      # Run migrations for a given repository
+      #
+      # @example
+      #   ROM.setup(:sql, ['sqlite::memory'])
+      #   ROM.finalize
+      #   ROM.env.repositories[:default].run_migrations
+      #
+      #
+      # @param [Hash] options The options used by Sequel migrator
+      #
+      # @api public
       def run_migrations(options = {})
         migrator.run(options)
       end
@@ -61,10 +75,12 @@ module ROM
         end
 
         def run(options = {})
+          warn "ROM::SQL::Migration.run is deprecated please ROM::SQL::Repository#run_migrations (#{caller[0]})"
           ::Sequel::Migrator.run(connection, path, options)
         end
 
         def create(&block)
+          warn "ROM::SQL::Migration.create is deprecated please use ROM::SQL.migration (#{caller[0]})"
           ::Sequel.migration(&block)
         end
       end
