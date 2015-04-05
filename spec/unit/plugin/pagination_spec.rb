@@ -53,6 +53,18 @@ describe 'Plugin / Pagination' do
     end
   end
 
+  describe '#total_pages' do
+    it 'returns a single page when elements are a perfect fit' do
+      users = rom.relation(:users).page(1).per_page(3)
+      expect(users.pager.total_pages).to eql(3)
+    end
+
+    it 'returns the exact number of pages to accommodate all elements' do      
+      users = rom.relation(:users).per_page(9)
+      expect(users.pager.total_pages).to eql(1)
+    end
+  end
+
   describe '#pager' do
     it 'returns a pager with pagination meta-info' do
       users = rom.relation(:users).page(1)

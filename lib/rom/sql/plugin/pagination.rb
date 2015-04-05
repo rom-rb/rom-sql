@@ -31,7 +31,7 @@ module ROM
           end
 
           def total_pages
-            (total / per_page) + 1
+            (total / per_page.to_f).ceil
           end
 
           def at(dataset, current_page, per_page = self.per_page)
