@@ -4,7 +4,7 @@ gemspec
 
 group :test do
   gem 'byebug', platforms: :mri
-  gem 'rom', '~> 0.6.0.beta', github: 'rom-rb/rom', branch: 'master'
+  gem 'rom', '~> 0.6.0.beta', github: 'pdswan/rom', branch: 'better-association-join-error-message'
   gem 'virtus'
   gem 'activesupport'
   gem 'rspec', '~> 3.1'
