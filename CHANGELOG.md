@@ -1,3 +1,13 @@
+### Added
+
+* Better error message when accessing undefined associations (pdswan)
+
+### Fixed
+
+* Correct `ROM::SQL::Plugin::Pagination::Pager#total_pages` when total is not evenly divisible by page size (larribas)
+
+[Compare v0.4.1...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.4.1...HEAD)
+
 ## v0.4.1 2015-04-04
 
 ### Added
