@@ -45,17 +45,23 @@ module ROM
         end
 
         # @api private
-        def graph_join(name, join_type, options = {})
-          assoc = model.association_reflection(name)
+        def graph_join(assoc_name, join_type, options = {})
+          assoc = model.association_reflection(assoc_name)
+
+          if assoc.nil?
+            raise NoAssociationError,
+              "Association #{assoc_name.inspect} has not been " \
+              "defined for relation #{name.inspect}"
+          end
 
           key = assoc[:key]
           type = assoc[:type]
 
           if type == :many_to_many
             select = options[:select] || {}
-            graph_join_many_to_many(name, assoc, select)
+            graph_join_many_to_many(assoc_name, assoc, select)
           else
-            graph_join_other(name, key, type, join_type, options)
+            graph_join_other(assoc_name, key, type, join_type, options)
           end
         end
 

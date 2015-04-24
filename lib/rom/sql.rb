@@ -3,6 +3,7 @@ require "rom"
 
 module ROM
   module SQL
+    NoAssociationError = Class.new(StandardError)
     ConstraintError = Class.new(ROM::CommandError)
 
     class DatabaseError < ROM::CommandError
