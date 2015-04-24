@@ -13,7 +13,7 @@ describe 'Association errors' do
 
       expect {
         rom.relations.users.with_undefined
-      }.to raise_error ROM::NoAssociationError, 'Association :undefined has not been defined for relation :users'
+      }.to raise_error ROM::SQL::NoAssociationError, 'Association :undefined has not been defined for relation :users'
     end
   end
 end
