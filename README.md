@@ -44,6 +44,9 @@ in relation objects. For schema migrations you can use its
 which is available via repositories.
 
 ``` ruby
+require "rom-sql"
+require "sqlite3"
+
 setup = ROM.setup(:sql, "sqlite::memory")
 
 setup.default.connection.create_table(:users) do
@@ -69,6 +72,9 @@ class Users < ROM::Relation[:sql]
   end
 end
 
+class Tasks < ROM::Relation[:sql]
+end
+
 rom = ROM.finalize.env
 
 users = rom.relations.users
@@ -77,8 +83,8 @@ tasks = rom.relations.tasks
 users.insert(id: 1, name: "Piotr")
 tasks.insert(user_id: 1, title: "Be happy")
 
-puts rom.relation(:users).by_name("Piotr").with_tasks.to_a.inspect
-# => [{:id=>1, :name=>"Piotr", :user_id=>1, :title=>"Be happy"}]
+puts rom.relation(:users).by_name("Piotr").to_a.inspect
+# => [{:id=>1, :name=>"Piotr", :user_id=>1}]
 ```
 
 ## Mapping joins to aggregates
@@ -126,6 +132,9 @@ tasks = rom.relations.tasks
 
 users.insert(id: 1, name: "Piotr")
 tasks.insert(user_id: 1, title: "Be happy")
+
+rom.relation(:users).with_tasks.by_name("Piotr").to_a
+# => [{:id=>1, :name=>"Piotr", :admin=>nil, :title=>"Be happy"}]
 
 rom.relation(:users).as(:model).with_tasks.by_name("Piotr").to_a
 # => [#<User:0x007fb31542a098 @id=1, @name="Piotr", @tasks=[{:title=>"Be happy"}]>]
