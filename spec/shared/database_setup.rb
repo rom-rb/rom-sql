@@ -3,6 +3,7 @@ shared_context 'database setup' do
 
   let(:uri) { DB_URI }
   let(:conn) { Sequel.connect(uri) }
+
   let(:setup) { ROM.setup(:sql, conn) }
 
   def drop_tables

@@ -28,3 +28,7 @@ if defined?(Rails)
 end
 
 ROM.register_adapter(:sql, ROM::SQL)
+
+ROM.plugins do
+  register :pagination, ROM::SQL::Plugin::Pagination, type: :relation
+end

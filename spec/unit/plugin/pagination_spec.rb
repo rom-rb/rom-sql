@@ -9,7 +9,7 @@ describe 'Plugin / Pagination' do
     9.times { |i| conn[:users].insert(name: "User #{i}") }
 
     setup.relation(:users) do
-      include ROM::SQL::Plugin::Pagination # meh such constants not wow
+      use :pagination
 
       per_page 4
     end
@@ -59,7 +59,7 @@ describe 'Plugin / Pagination' do
       expect(users.pager.total_pages).to eql(3)
     end
 
-    it 'returns the exact number of pages to accommodate all elements' do      
+    it 'returns the exact number of pages to accommodate all elements' do
       users = rom.relation(:users).per_page(9)
       expect(users.pager.total_pages).to eql(1)
     end
