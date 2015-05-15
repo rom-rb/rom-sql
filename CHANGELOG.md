@@ -1,3 +1,5 @@
+## v0.4.2 to-be-released
+
 ### Added
 
 * Better error message when accessing undefined associations (pdswan)
