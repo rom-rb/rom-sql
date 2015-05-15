@@ -2,6 +2,8 @@
 
 ### Added
 
+* Support for setting custom association name (solnic)
+* Support for `:conditions` option in association definition (solnic)
 * Better error message when accessing undefined associations (pdswan)
 
 ### Fixed
