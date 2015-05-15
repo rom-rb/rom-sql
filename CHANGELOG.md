@@ -6,7 +6,9 @@
 
 ### Fixed
 
-* Correct `ROM::SQL::Plugin::Pagination::Pager#total_pages` when total is not evenly divisible by page size (larribas)
+* Correct `ROM::SQL::Plugin::Pagination::Pager#total_pages` when total is not
+  evenly divisible by page size (larribas)
+* `association_join` behaves correctly when dataset is different than register_as (nepalez)
 
 [Compare v0.4.1...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.4.1...HEAD)
 
