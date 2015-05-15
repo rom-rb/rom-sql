@@ -58,12 +58,17 @@ module ROM
           type = assoc[:type]
           table_name = assoc[:class].table_name
 
-          if type == :many_to_many
-            select = options[:select] || {}
-            graph_join_many_to_many(table_name, assoc, select)
-          else
-            graph_join_other(table_name, key, type, join_type, options)
-          end
+          graph_rel =
+            if type == :many_to_many
+              select = options[:select] || {}
+              graph_join_many_to_many(table_name, assoc, select)
+            else
+              graph_join_other(table_name, key, type, join_type, options)
+            end
+
+          graph_rel = graph_rel.where(assoc[:conditions]) if assoc[:conditions]
+
+          graph_rel
         end
 
         # @api private

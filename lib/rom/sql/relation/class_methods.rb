@@ -14,11 +14,11 @@ module ROM
         end
 
         def one_to_many(name, options)
-          associations << [__method__, name, options.merge(relation: name)]
+          associations << [__method__, name, { relation: name }.merge(options)]
         end
 
         def many_to_many(name, options = {})
-          associations << [__method__, name, options.merge(relation: name)]
+          associations << [__method__, name, { relation: name }.merge(options)]
         end
 
         def many_to_one(name, options = {})
@@ -31,10 +31,9 @@ module ROM
           model.set_dataset(relation.dataset)
           model.dataset.naked!
 
-          associations.each do |*args, options|
-            model = relation.model
-            other = relations[options.fetch(:relation)].model
-
+          associations.each do |*args, assoc_opts|
+            options = Hash[assoc_opts]
+            other = relations[options.delete(:relation) || args[1]].model
             model.public_send(*args, options.merge(class: other))
           end
 

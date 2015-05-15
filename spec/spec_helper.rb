@@ -10,8 +10,11 @@ end
 
 require 'rom-sql'
 require 'rom/sql/rake_task'
+
 # FIXME: why do we need to require it manually??
 require 'sequel/adapters/postgres'
+require 'active_support/inflector'
+
 require 'logger'
 begin
   require 'byebug'
