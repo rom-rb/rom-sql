@@ -4,7 +4,8 @@ gemspec
 
 group :test do
   gem 'byebug', platforms: :mri
-  gem 'rom', '~> 0.6.0', github: 'rom-rb/rom', branch: 'master'
+  gem 'rom', github: 'rom-rb/rom', branch: 'master'
+  gem 'transproc', github: 'solnic/transproc', branch: 'master'
   gem 'virtus'
   gem 'activesupport'
   gem 'rspec', '~> 3.1'
