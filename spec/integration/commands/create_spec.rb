@@ -86,6 +86,23 @@ describe 'Commands / Create' do
       }.to_not change { rom.relations.users.count }
     end
 
+    it 'creates nothing if constraint error was raised' do
+      expect {
+        passed = false
+
+        result = users.create.transaction {
+          users.create.call(name: 'Jane')
+          users.create.call(name: 'Jane')
+        } >-> value {
+          passed = true
+        }
+
+        expect(result.value).to be(nil)
+        expect(result.error).to_not be(nil)
+        expect(passed).to be(false)
+      }.to_not change { rom.relations.users.count }
+    end
+
     it 'creates nothing if anything was raised in any nested transaction' do
       expect {
         expect {
