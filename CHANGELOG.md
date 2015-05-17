@@ -1,4 +1,4 @@
-## v0.4.2 to-be-released
+## v0.4.2 2015-05-17
 
 ### Added
 
@@ -12,7 +12,11 @@
   evenly divisible by page size (larribas)
 * `association_join` behaves correctly when dataset is different than register_as (nepalez)
 
-[Compare v0.4.1...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.4.1...HEAD)
+### Changed
+
+* `transaction` returns command failure objects when there was a rollback (solnic)
+
+[Compare v0.4.1...v0.4.2](https://github.com/rom-rb/rom-sql/compare/v0.4.1...v0.4.2)
 
 ## v0.4.1 2015-04-04
 
