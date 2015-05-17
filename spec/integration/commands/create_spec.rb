@@ -32,7 +32,7 @@ describe 'Commands / Create' do
   end
 
   context '#transaction' do
-    it 'create record if nothing was raised' do
+    it 'creates record if nothing was raised' do
       result = users.create.transaction {
         users.create.call(name: 'Jane')
       }
@@ -50,11 +50,29 @@ describe 'Commands / Create' do
       expect(result.value).to eq(id: 1, name: 'Jane')
     end
 
-    it 'create nothing if anything was raised' do
+    it 'creates nothing if anything was raised' do
       expect {
         passed = false
 
-        result = users.create.transaction(rollback: :always) {
+        result = users.create.transaction {
+          users.create.call(name: 'Jane')
+          users.create.call(name: 'John')
+          raise StandardError, 'whooops'
+        } >-> value {
+          passed = true
+        }
+
+        expect(result.value).to be(nil)
+        expect(result.error.message).to eql('whooops')
+        expect(passed).to be(false)
+      }.to_not change { rom.relations.users.count }
+    end
+
+    it 'creates nothing if rollback was raised' do
+      expect {
+        passed = false
+
+        result = users.create.transaction {
           users.create.call(name: 'Jane')
           users.create.call(name: 'John')
           raise ROM::SQL::Rollback
@@ -63,11 +81,12 @@ describe 'Commands / Create' do
         }
 
         expect(result.value).to be(nil)
+        expect(result.error).to be(nil)
         expect(passed).to be(false)
       }.to_not change { rom.relations.users.count }
     end
 
-    it 'create nothing if anything was raised in any nested transaction' do
+    it 'creates nothing if anything was raised in any nested transaction' do
       expect {
         expect {
           users.create.transaction {
