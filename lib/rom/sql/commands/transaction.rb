@@ -24,7 +24,7 @@ module ROM
           else
             ROM::Commands::Result::Failure.new(result)
           end
-        rescue => e
+        rescue ROM::CommandError => e
           ROM::Commands::Result::Failure.new(e)
         end
       end

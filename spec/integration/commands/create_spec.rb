@@ -20,6 +20,11 @@ describe 'Commands / Create' do
     setup.commands(:users) do
       define(:create) do
         input Params
+
+        validator -> tuple {
+          raise ROM::CommandError.new('name cannot be empty') if tuple[:name] == ''
+        }
+
         result :one
       end
 
@@ -50,20 +55,19 @@ describe 'Commands / Create' do
       expect(result.value).to eq(id: 1, name: 'Jane')
     end
 
-    it 'creates nothing if anything was raised' do
+    it 'creates nothing if command error was raised' do
       expect {
         passed = false
 
         result = users.create.transaction {
           users.create.call(name: 'Jane')
-          users.create.call(name: 'John')
-          raise StandardError, 'whooops'
+          users.create.call(name: '')
         } >-> value {
           passed = true
         }
 
         expect(result.value).to be(nil)
-        expect(result.error.message).to eql('whooops')
+        expect(result.error.message).to eql('name cannot be empty')
         expect(passed).to be(false)
       }.to_not change { rom.relations.users.count }
     end
