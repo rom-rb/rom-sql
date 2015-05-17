@@ -7,9 +7,13 @@ module ROM
         ROM::SQL::Rollback = Class.new(Sequel::Rollback)
 
         def transaction(options = {}, &block)
-          ROM::Commands::Result::Success.new(
-            relation.dataset.db.transaction(options, &block)
-          )
+          result = relation.dataset.db.transaction(options, &block)
+
+          if result
+            ROM::Commands::Result::Success.new(result)
+          else
+            ROM::Commands::Result::Failure.new(result)
+          end
         end
       end
     end

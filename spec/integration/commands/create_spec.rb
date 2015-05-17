@@ -51,11 +51,20 @@ describe 'Commands / Create' do
     end
 
     it 'create nothing if anything was raised' do
-      result = users.create.transaction(rollback: :always) {
-        users.create.call(name: 'Jane')
-      }
+      expect {
+        passed = false
 
-      expect(result.value).to be_nil
+        result = users.create.transaction(rollback: :always) {
+          users.create.call(name: 'Jane')
+          users.create.call(name: 'John')
+          raise ROM::SQL::Rollback
+        } >-> value {
+          passed = true
+        }
+
+        expect(result.value).to be(nil)
+        expect(passed).to be(false)
+      }.to_not change { rom.relations.users.count }
     end
 
     it 'create nothing if anything was raised in any nested transaction' do
