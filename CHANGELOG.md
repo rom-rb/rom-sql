@@ -1,3 +1,11 @@
+## v0.4.3 2015-05-17
+
+### Fixed
+
+* `transaction` doesn't swallow errors now other than CommandError (solnic)
+
+[Compare v0.4.2...v0.4.3](https://github.com/rom-rb/rom-sql/compare/v0.4.2...v0.4.3)
+
 ## v0.4.2 2015-05-17
 
 ### Added
