@@ -54,7 +54,6 @@ module ROM
               "defined for relation #{name.inspect}"
           end
 
-          key = assoc[:key]
           type = assoc[:type]
           table_name = assoc[:class].table_name
 
@@ -63,7 +62,7 @@ module ROM
               select = options[:select] || {}
               graph_join_many_to_many(table_name, assoc, select)
             else
-              graph_join_other(table_name, key, type, join_type, options)
+              graph_join_other(table_name, assoc, type, join_type, options)
             end
 
           graph_rel = graph_rel.where(assoc[:conditions]) if assoc[:conditions]
@@ -97,13 +96,16 @@ module ROM
           )
         end
 
-        def graph_join_other(name, key, type, join_type, options)
+        def graph_join_other(name, assoc, type, join_type, options)
+          key = assoc[:key]
+          on_conditions = assoc[:on] || {}
+
           join_keys =
             if type == :many_to_one
               { primary_key => key }
             else
               { key => primary_key }
-            end
+            end.merge(on_conditions)
 
           graph(
             name, join_keys,

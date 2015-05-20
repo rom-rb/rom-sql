@@ -3,9 +3,14 @@ require 'spec_helper'
 describe 'Defining many-to-one association' do
   include_context 'users and tasks'
 
+  before do
+    conn[:users].insert id: 2, name: 'Jane'
+    conn[:tasks].insert id: 2, user_id: 2, title: 'Task one'
+  end
+
   it 'extends relation with association methods' do
     setup.relation(:tasks) do
-      many_to_one :users, key: :user_id
+      many_to_one :users, key: :user_id, on: { name: 'Piotr' }
 
       def all
         select(:id, :title)

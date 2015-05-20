@@ -4,6 +4,9 @@ describe 'Defining one-to-many association' do
   include_context 'users and tasks'
 
   before do
+    conn[:users].insert id: 2, name: 'Jane'
+    conn[:tasks].insert id: 2, user_id: 2, title: 'Task one'
+
     setup.mappers do
       define(:users)
 
@@ -15,7 +18,7 @@ describe 'Defining one-to-many association' do
 
   it 'extends relation with association methods' do
     setup.relation(:users) do
-      one_to_many :tasks, key: :user_id
+      one_to_many :tasks, key: :user_id, on: { title: 'Finish ROM' }
 
       def by_name(name)
         where(name: name)
