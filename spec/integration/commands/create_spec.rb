@@ -225,5 +225,17 @@ describe 'Commands / Create' do
 
       expect(result).to match_array(id: 1, user_id: 1, title: 'Task one')
     end
+
+    it 'raises when already defined' do
+      expect {
+        setup.commands(:tasks) do
+          define(:create) do
+            result :one
+            associates :user, key: [:user_id, :id]
+            associates :user, key: [:user_id, :id]
+          end
+        end
+      }.to raise_error(ArgumentError, /user/)
+    end
   end
 end

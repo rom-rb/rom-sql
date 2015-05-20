@@ -12,6 +12,13 @@ module ROM
         include Transaction
         include ErrorWrapper
 
+        defines :associations
+
+        def self.inherited(klass)
+          super
+          klass.associations []
+        end
+
         # Set command to associate tuples with a parent tuple using provided keys
         #
         # @example
@@ -34,6 +41,13 @@ module ROM
         #
         # @api public
         def self.associates(name, options)
+          if associations.include?(name)
+            raise(
+              ArgumentError,
+              "#{name} association is already defined for #{self.class}"
+            )
+          end
+
           option :association, reader: true, default: -> command { options }
 
           define_method(:execute) do |tuples, parent|
@@ -45,6 +59,8 @@ module ROM
 
             super(input_tuples)
           end
+
+          associations << name
         end
 
         # Inserts provided tuples into the database table
