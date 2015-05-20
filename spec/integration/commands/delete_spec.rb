@@ -53,7 +53,7 @@ describe 'Commands / Delete' do
     expect(result.value).to eql(id: 2, name: 'Jane')
   end
 
-  it 'handles database errors' do
+  it 're-raises database error' do
     command = users.delete.by_name('Jane')
 
     expect(command.relation).to receive(:delete).and_raise(
