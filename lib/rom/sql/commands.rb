@@ -1,16 +1,5 @@
 require 'rom/commands'
 
-module ROM
-  module SQL
-    module Commands
-      ERRORS = [
-        Sequel::UniqueConstraintViolation,
-        Sequel::NotNullConstraintViolation
-      ].freeze
-    end
-  end
-end
-
 require 'rom/sql/commands/create'
 require 'rom/sql/commands/update'
 require 'rom/sql/commands/delete'
