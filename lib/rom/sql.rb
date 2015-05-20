@@ -4,16 +4,8 @@ require "rom"
 module ROM
   module SQL
     NoAssociationError = Class.new(StandardError)
-    ConstraintError = Class.new(ROM::CommandError)
-
-    class DatabaseError < ROM::CommandError
-      attr_reader :original_exception
-
-      def initialize(error, message)
-        super(message)
-        @original_exception = error
-      end
-    end
+    ConstraintError = Class.new(StandardError)
+    DatabaseError = Class.new(Sequel::DatabaseError)
   end
 end
 

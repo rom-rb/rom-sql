@@ -92,18 +92,19 @@ describe 'Commands / Create' do
 
     it 'creates nothing if constraint error was raised' do
       expect {
-        passed = false
+        begin
+          passed = false
 
-        result = users.create.transaction {
-          users.create.call(name: 'Jane')
-          users.create.call(name: 'Jane')
-        } >-> value {
-          passed = true
-        }
-
-        expect(result.value).to be(nil)
-        expect(result.error).to_not be(nil)
-        expect(passed).to be(false)
+          users.create.transaction {
+            users.create.call(name: 'Jane')
+            users.create.call(name: 'Jane')
+          } >-> value {
+            passed = true
+          }
+        rescue => error
+          expect(error).to be_instance_of(ROM::SQL::ConstraintError)
+          expect(passed).to be(false)
+        end
       }.to_not change { rom.relations.users.count }
     end
 
@@ -139,29 +140,25 @@ describe 'Commands / Create' do
   end
 
   it 'handles not-null constraint violation error' do
-    result = users.try { users.create.call(name: nil) }
-
-    expect(result.error).to be_instance_of(ROM::SQL::ConstraintError)
-    expect(result.error.message).to match(/not-null/)
+    expect {
+      users.try { users.create.call(name: nil) }
+    }.to raise_error(ROM::SQL::ConstraintError, /not-null/)
   end
 
   it 'handles uniqueness constraint violation error' do
-    result = users.try {
-      users.create.call(name: 'Jane')
-    } >-> user {
-      users.try { users.create.call(name: user[:name]) }
-    }
-
-    expect(result.error).to be_instance_of(ROM::SQL::ConstraintError)
-    expect(result.error.message).to match(/unique/)
+    expect {
+      users.try {
+        users.create.call(name: 'Jane')
+      } >-> user {
+        users.try { users.create.call(name: user[:name]) }
+      }
+    }.to raise_error(ROM::SQL::ConstraintError, /unique/)
   end
 
   it 'handles database errors' do
-    Params.attribute :bogus_field
-
-    result = users.try { users.create.call(name: 'some name', bogus_field: 23) }
-
-    expect(result.error).to be_instance_of(ROM::SQL::DatabaseError)
-    expect(result.error.original_exception).to be_instance_of(Sequel::DatabaseError)
+    expect {
+      Params.attribute :bogus_field
+      users.try { users.create.call(name: 'some name', bogus_field: 23) }
+    }.to raise_error(ROM::SQL::DatabaseError)
   end
 end

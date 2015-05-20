@@ -7,7 +7,7 @@ module ROM
         rescue *ERRORS => e
           raise ConstraintError, e.message
         rescue Sequel::DatabaseError => e
-          raise DatabaseError.new(e, e.message)
+          raise DatabaseError, e.message
         end
       end
     end

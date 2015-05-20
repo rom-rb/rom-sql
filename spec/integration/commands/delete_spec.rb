@@ -56,12 +56,12 @@ describe 'Commands / Delete' do
   it 'handles database errors' do
     command = users.delete.by_name('Jane')
 
-    expect(command.relation).to receive(:delete).and_raise(Sequel::DatabaseError)
+    expect(command.relation).to receive(:delete).and_raise(
+      Sequel::DatabaseError, 'totally wrong'
+    )
 
-    result = users.try { command.call }
-
-    expect(result.value).to be(nil)
-    expect(result.error).to be_a(ROM::SQL::DatabaseError)
-    expect(result.error.original_exception).to be_a(Sequel::DatabaseError)
+    expect {
+      users.try { command.call }
+    }.to raise_error(ROM::SQL::DatabaseError, /totally wrong/)
   end
 end

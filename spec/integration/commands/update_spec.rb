@@ -76,12 +76,8 @@ describe 'Commands / Update' do
   end
 
   it 'handles database errors' do
-    result = users.try do
-      users.update.by_id(piotr[:id]).set(bogus_field: '#trollface')
-    end
-
-    expect(result.value).to be(nil)
-    expect(result.error).to be_a(ROM::SQL::DatabaseError)
-    expect(result.error.original_exception).to be_a(Sequel::DatabaseError)
+    expect {
+      users.try { users.update.by_id(piotr[:id]).set(bogus_field: '#trollface') }
+    }.to raise_error(ROM::SQL::DatabaseError, /UndefinedColumn/)
   end
 end
