@@ -6,6 +6,15 @@ require 'rom/sql/commands'
 
 module ROM
   module SQL
+    # SQL repository
+    #
+    # @example
+    #   db = Sequel.connect(:sqlite)
+    #   repository = ROM::SQL::Repository.new(db)
+    #
+    #   users = repository.dataset(:users)
+    #
+    # @api public
     class Repository < ROM::Repository
       include Options
       include Migration
