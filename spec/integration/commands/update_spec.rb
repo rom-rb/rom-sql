@@ -1,9 +1,10 @@
 require 'spec_helper'
+require 'anima'
 
 describe 'Commands / Update' do
   include_context 'database setup'
 
-  subject(:users) { rom.commands.users }
+  subject(:users) { rom.command(:users) }
 
   let(:relation) { rom.relations.users }
   let(:piotr) { relation.by_name('Piotr').first }
@@ -24,13 +25,21 @@ describe 'Commands / Update' do
       define(:update)
     end
 
+    User = Class.new { include Anima.new(:id, :name) }
+
+    setup.mappers do
+      register :users, entity: -> tuples { tuples.map { |tuple| User.new(tuple) } }
+    end
+
     relation.insert(name: 'Piotr')
   end
+
+  after { Object.send(:remove_const, :User) }
 
   context '#transaction' do
     it 'update record if there was no errors' do
       result = users.update.transaction do
-        users.update.by_id(piotr[:id]).set(peter)
+        users.update.by_id(piotr[:id]).call(peter)
       end
 
       expect(result.value).to eq([{ id: 1, name: 'Peter' }])
@@ -38,7 +47,7 @@ describe 'Commands / Update' do
 
     it 'updates nothing if error was raised' do
       users.update.transaction do
-        users.update.by_id(piotr[:id]).set(peter)
+        users.update.by_id(piotr[:id]).call(peter)
         raise ROM::SQL::Rollback
       end
 
@@ -48,7 +57,7 @@ describe 'Commands / Update' do
 
   it 'updates everything when there is no original tuple' do
     result = users.try do
-      users.update.by_id(piotr[:id]).set(peter)
+      users.update.by_id(piotr[:id]).call(peter)
     end
 
     expect(result.value.to_a).to match_array([{ id: 1, name: 'Peter' }])
@@ -56,10 +65,10 @@ describe 'Commands / Update' do
 
   it 'updates when attributes changed' do
     result = users.try do
-      users.update.by_id(piotr[:id]).change(piotr).to(peter)
+      users.as(:entity).update.by_id(piotr[:id]).change(User.new(piotr)).call(peter)
     end
 
-    expect(result.value.to_a).to match_array([{ id: 1, name: 'Peter' }])
+    expect(result.value.to_a).to match_array([User.new(id: 1, name: 'Peter')])
   end
 
   it 'does not update when attributes did not change' do
@@ -77,7 +86,7 @@ describe 'Commands / Update' do
 
   it 'handles database errors' do
     expect {
-      users.try { users.update.by_id(piotr[:id]).set(bogus_field: '#trollface') }
+      users.try { users.update.by_id(piotr[:id]).call(bogus_field: '#trollface') }
     }.to raise_error(ROM::SQL::DatabaseError, /UndefinedColumn/)
   end
 end

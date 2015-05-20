@@ -4,6 +4,7 @@ gemspec
 
 group :test do
   gem 'byebug', platforms: :mri
+  gem 'anima'
   gem 'rom', github: 'rom-rb/rom', branch: 'master'
   gem 'virtus'
   gem 'activesupport'

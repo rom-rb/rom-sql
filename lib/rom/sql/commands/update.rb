@@ -1,3 +1,5 @@
+require 'rom/support/deprecations'
+
 require 'rom/sql/commands'
 require 'rom/sql/commands/error_wrapper'
 require 'rom/sql/commands/transaction'
@@ -6,13 +8,16 @@ module ROM
   module SQL
     module Commands
       class Update < ROM::Commands::Update
+        include Deprecations
+
         include Transaction
         include ErrorWrapper
 
-        option :original, type: Hash, reader: true
+        option :original, reader: true
 
         alias_method :to, :call
-        alias_method :set, :call
+
+        deprecate :set, :call
 
         def execute(tuple)
           attributes = input[tuple]
@@ -28,7 +33,7 @@ module ROM
         end
 
         def change(original)
-          self.class.new(relation, options.merge(original: original))
+          self.class.new(relation, options.merge(original: original.to_h))
         end
 
         def update(tuple)
