@@ -1,3 +1,18 @@
+## v0.5.0 to-be-released
+
+### Added
+
+* Support for NotNullConstraintError (solnic)
+* Support for UniqueConstraintConstraintError (solnic)
+* Support for ForeignKeyConstraintError (solnic)
+* Support for CheckConstraintError (solnic)
+
+### Changed
+
+* Constraint errors are no longer command errors (solnic)
+
+[Compare v0.4.3...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.4.2...HEAD)
+
 ## v0.4.3 2015-05-17
 
 ### Fixed
