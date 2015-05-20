@@ -6,10 +6,12 @@
 * Support for UniqueConstraintConstraintError (solnic)
 * Support for ForeignKeyConstraintError (solnic)
 * Support for CheckConstraintError (solnic)
+* `Commands::Update#original` supports objects coercible to_h now (solnic)
 
 ### Changed
 
 * Constraint errors are no longer command errors (solnic)
+* `Commands::Update#set` has been deprecated (solnic)
 
 [Compare v0.4.3...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.4.2...HEAD)
 
