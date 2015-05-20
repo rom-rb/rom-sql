@@ -4,6 +4,8 @@ module ROM
       module ErrorWrapper
         def call(*args)
           super
+        rescue Sequel::CheckConstraintViolation => e
+          raise CheckConstraintError, e.message
         rescue *ERRORS => e
           raise ConstraintError, e.message
         rescue Sequel::DatabaseError => e

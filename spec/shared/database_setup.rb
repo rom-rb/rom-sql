@@ -21,6 +21,7 @@ shared_context 'database setup' do
       primary_key :id
       String :name, null: false
       index :name, unique: true
+      check { char_length(name) > 2 }
     end
 
     conn.create_table :tasks do

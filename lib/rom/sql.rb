@@ -4,8 +4,11 @@ require "rom"
 module ROM
   module SQL
     NoAssociationError = Class.new(StandardError)
-    ConstraintError = Class.new(StandardError)
+
     DatabaseError = Class.new(Sequel::DatabaseError)
+
+    ConstraintError = Class.new(StandardError)
+    CheckConstraintError = Class.new(ConstraintError)
   end
 end
 

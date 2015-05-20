@@ -155,6 +155,14 @@ describe 'Commands / Create' do
     }.to raise_error(ROM::SQL::ConstraintError, /unique/)
   end
 
+  it 're-raises check constraint violation error' do
+    expect {
+      users.try {
+        users.create.call(name: 'J')
+      }
+    }.to raise_error(ROM::SQL::CheckConstraintError, /name/)
+  end
+
   it 're-raises database errors' do
     expect {
       Params.attribute :bogus_field
