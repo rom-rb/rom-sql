@@ -183,4 +183,47 @@ describe 'Commands / Create' do
       users.try { users.create.call(name: 'some name', bogus_field: 23) }
     }.to raise_error(ROM::SQL::DatabaseError)
   end
+
+  describe '.associates' do
+    it 'sets foreign key prior execution for many tuples' do
+      setup.commands(:tasks) do
+        define(:create) do
+          associates :user, key: [:user_id, :id]
+        end
+      end
+
+      create_user = rom.command(:users).create.with(name: 'Jade')
+
+      create_task = rom.command(:tasks).create.with([
+        { title: 'Task one' }, { title: 'Task two' }
+      ])
+
+      command = create_user >> create_task
+
+      result = command.call
+
+      expect(result).to match_array([
+        { id: 1, user_id: 1, title: 'Task one' },
+        { id: 2, user_id: 1, title: 'Task two' }
+      ])
+    end
+
+    it 'sets foreign key prior execution for one tuple' do
+      setup.commands(:tasks) do
+        define(:create) do
+          result :one
+          associates :user, key: [:user_id, :id]
+        end
+      end
+
+      create_user = rom.command(:users).create.with(name: 'Jade')
+      create_task = rom.command(:tasks).create.with(title: 'Task one')
+
+      command = create_user >> create_task
+
+      result = command.call
+
+      expect(result).to match_array(id: 1, user_id: 1, title: 'Task one')
+    end
+  end
 end
