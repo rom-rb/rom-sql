@@ -5,13 +5,32 @@ module ROM
   module SQL
     NoAssociationError = Class.new(StandardError)
 
-    DatabaseError = Class.new(Sequel::DatabaseError)
+    class Error < StandardError
+      attr_reader :original_exception
 
-    ConstraintError = Class.new(StandardError)
+      def initialize(original_exception)
+        super(original_exception.message)
+        @original_exception = original_exception
+        set_backtrace(original_exception.backtrace)
+      end
+    end
+
+    DatabaseError = Class.new(Error)
+
+    ConstraintError = Class.new(Error)
+
     NotNullConstraintError = Class.new(ConstraintError)
     UniqueConstraintError = Class.new(ConstraintError)
     ForeignKeyConstraintError = Class.new(ConstraintError)
     CheckConstraintError = Class.new(ConstraintError)
+
+    ERROR_MAP = {
+      Sequel::DatabaseError => DatabaseError,
+      Sequel::NotNullConstraintViolation => NotNullConstraintError,
+      Sequel::UniqueConstraintViolation => UniqueConstraintError,
+      Sequel::ForeignKeyConstraintViolation => ForeignKeyConstraintError,
+      Sequel::CheckConstraintViolation => CheckConstraintError
+    }.freeze
   end
 end
 

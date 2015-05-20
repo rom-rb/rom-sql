@@ -4,16 +4,8 @@ module ROM
       module ErrorWrapper
         def call(*args)
           super
-        rescue Sequel::NotNullConstraintViolation => e
-          raise NotNullConstraintError, e.message
-        rescue Sequel::UniqueConstraintViolation => e
-          raise UniqueConstraintError, e.message
-        rescue Sequel::CheckConstraintViolation => e
-          raise CheckConstraintError, e.message
-        rescue Sequel::ForeignKeyConstraintViolation => e
-          raise ForeignKeyConstraintError, e.message
-        rescue Sequel::DatabaseError => e
-          raise DatabaseError, e.message
+        rescue *ERROR_MAP.keys => e
+          raise ERROR_MAP[e.class], e
         end
       end
     end
