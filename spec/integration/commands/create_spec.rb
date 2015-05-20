@@ -5,6 +5,7 @@ describe 'Commands / Create' do
   include_context 'database setup'
 
   subject(:users) { rom.commands.users }
+  subject(:tasks) { rom.commands.tasks }
 
   before do
     class Params
@@ -33,7 +34,12 @@ describe 'Commands / Create' do
       end
     end
 
+    setup.commands(:tasks) do
+      define(:create)
+    end
+
     setup.relation(:users)
+    setup.relation(:tasks)
   end
 
   context '#transaction' do
@@ -161,6 +167,14 @@ describe 'Commands / Create' do
         users.create.call(name: 'J')
       }
     }.to raise_error(ROM::SQL::CheckConstraintError, /name/)
+  end
+
+  it 're-raises fk constraint violation error' do
+    expect {
+      tasks.try {
+        tasks.create.call(user_id: 918273645)
+      }
+    }.to raise_error(ROM::SQL::ForeignKeyConstraintError, /user_id/)
   end
 
   it 're-raises database errors' do

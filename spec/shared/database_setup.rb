@@ -7,7 +7,7 @@ shared_context 'database setup' do
   let(:setup) { ROM.setup(:sql, conn) }
 
   def drop_tables
-    [:users, :tasks, :tags, :task_tags, :rabbits, :carrots, :schema_migrations].each do |name|
+    [:tasks, :users, :tags, :task_tags, :rabbits, :carrots, :schema_migrations].each do |name|
       conn.drop_table?(name)
     end
   end
@@ -26,7 +26,7 @@ shared_context 'database setup' do
 
     conn.create_table :tasks do
       primary_key :id
-      Integer :user_id
+      foreign_key :user_id, :users
       String :title
     end
 

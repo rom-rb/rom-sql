@@ -10,6 +10,8 @@ module ROM
           raise UniqueConstraintError, e.message
         rescue Sequel::CheckConstraintViolation => e
           raise CheckConstraintError, e.message
+        rescue Sequel::ForeignKeyConstraintViolation => e
+          raise ForeignKeyConstraintError, e.message
         rescue Sequel::DatabaseError => e
           raise DatabaseError, e.message
         end

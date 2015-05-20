@@ -10,6 +10,7 @@ module ROM
     ConstraintError = Class.new(StandardError)
     NotNullConstraintError = Class.new(ConstraintError)
     UniqueConstraintError = Class.new(ConstraintError)
+    ForeignKeyConstraintError = Class.new(ConstraintError)
     CheckConstraintError = Class.new(ConstraintError)
   end
 end
