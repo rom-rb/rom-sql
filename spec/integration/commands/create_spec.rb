@@ -102,7 +102,7 @@ describe 'Commands / Create' do
             passed = true
           }
         rescue => error
-          expect(error).to be_instance_of(ROM::SQL::ConstraintError)
+          expect(error).to be_instance_of(ROM::SQL::UniqueConstraintError)
           expect(passed).to be(false)
         end
       }.to_not change { rom.relations.users.count }
@@ -142,7 +142,7 @@ describe 'Commands / Create' do
   it 're-raises not-null constraint violation error' do
     expect {
       users.try { users.create.call(name: nil) }
-    }.to raise_error(ROM::SQL::ConstraintError, /not-null/)
+    }.to raise_error(ROM::SQL::NotNullConstraintError, /not-null/)
   end
 
   it 're-raises uniqueness constraint violation error' do
@@ -152,7 +152,7 @@ describe 'Commands / Create' do
       } >-> user {
         users.try { users.create.call(name: user[:name]) }
       }
-    }.to raise_error(ROM::SQL::ConstraintError, /unique/)
+    }.to raise_error(ROM::SQL::UniqueConstraintError, /unique/)
   end
 
   it 're-raises check constraint violation error' do

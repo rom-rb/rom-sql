@@ -8,6 +8,8 @@ module ROM
     DatabaseError = Class.new(Sequel::DatabaseError)
 
     ConstraintError = Class.new(StandardError)
+    NotNullConstraintError = Class.new(ConstraintError)
+    UniqueConstraintError = Class.new(ConstraintError)
     CheckConstraintError = Class.new(ConstraintError)
   end
 end
