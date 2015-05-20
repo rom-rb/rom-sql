@@ -84,9 +84,9 @@ describe 'Commands / Update' do
     expect(result.value.to_a).to be_empty
   end
 
-  it 'handles database errors' do
+  it 're-reaises database errors' do
     expect {
       users.try { users.update.by_id(piotr[:id]).call(bogus_field: '#trollface') }
-    }.to raise_error(ROM::SQL::DatabaseError, /UndefinedColumn/)
+    }.to raise_error(ROM::SQL::DatabaseError, /bogus_field/)
   end
 end
