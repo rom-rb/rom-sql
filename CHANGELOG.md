@@ -2,6 +2,7 @@
 
 ### Added
 
+* `associates` macro for `Create` command (solnic)
 * Support for NotNullConstraintError (solnic)
 * Support for UniqueConstraintConstraintError (solnic)
 * Support for ForeignKeyConstraintError (solnic)
