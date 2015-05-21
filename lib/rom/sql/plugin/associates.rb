@@ -1,6 +1,8 @@
 module ROM
   module SQL
     module Plugin
+      # Make a command that automaticaly sets FK attribute on input tuples
+      #
       # @api private
       module Associates
         # @api private
@@ -10,6 +12,16 @@ module ROM
         end
 
         module InstanceMethods
+          # Set fk on tuples from parent tuple
+          #
+          # @param [Array<Hash>, Hash] tuples The input tuple(s)
+          # @param [Hash] parent The parent tuple with its pk already set
+          #
+          # @return [Array<Hash>,Hash]
+          #
+          # @overload SQL::Commands::Create#execute
+          #
+          # @api public
           def execute(tuples, parent)
             fk, pk = association[:key]
 
