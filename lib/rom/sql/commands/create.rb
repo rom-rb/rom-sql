@@ -9,10 +9,12 @@ module ROM
       #
       # @api public
       class Create < ROM::Commands::Create
+        adapter :sql
+
         include Transaction
         include ErrorWrapper
 
-        use :associates, adapter: :sql
+        use :associates
 
         # Inserts provided tuples into the database table
         #

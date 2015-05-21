@@ -8,6 +8,8 @@ module ROM
   module SQL
     module Commands
       class Update < ROM::Commands::Update
+        adapter :sql
+
         include Deprecations
 
         include Transaction

@@ -9,6 +9,8 @@ module ROM
     # Sequel-specific relation extensions
     #
     class Relation < ROM::Relation
+      adapter :sql
+
       extend ClassMethods
 
       include Inspection

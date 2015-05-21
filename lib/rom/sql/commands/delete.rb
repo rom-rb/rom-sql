@@ -6,6 +6,8 @@ module ROM
   module SQL
     module Commands
       class Delete < ROM::Commands::Delete
+        adapter :sql
+
         include Transaction
         include ErrorWrapper
 
