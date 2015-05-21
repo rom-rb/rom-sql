@@ -12,56 +12,7 @@ module ROM
         include Transaction
         include ErrorWrapper
 
-        defines :associations
-
-        def self.inherited(klass)
-          super
-          klass.associations []
-        end
-
-        # Set command to associate tuples with a parent tuple using provided keys
-        #
-        # @example
-        #   class CreateTask < ROM::Commands::Create[:sql]
-        #     relation :tasks
-        #     associates :user, [:user_id, :id]
-        #   end
-        #
-        #   create_user = rom.command(:user).create.with(name: 'Jane')
-        #
-        #   create_tasks = rom.command(:tasks).create
-        #     .with [{ title: 'One' }, { title: 'Two' } ]
-        #
-        #   command = create_user >> create_tasks
-        #   command.call
-        #
-        # @param [Symbol] name The name of associated table
-        # @param [Hash] options The options
-        # @option options [Array] :key The association keys
-        #
-        # @api public
-        def self.associates(name, options)
-          if associations.include?(name)
-            raise(
-              ArgumentError,
-              "#{name} association is already defined for #{self.class}"
-            )
-          end
-
-          option :association, reader: true, default: -> command { options }
-
-          define_method(:execute) do |tuples, parent|
-            fk, pk = association[:key]
-
-            input_tuples = with_input_tuples(tuples).map { |tuple|
-              tuple.merge(fk => parent.fetch(pk))
-            }
-
-            super(input_tuples)
-          end
-
-          associations << name
-        end
+        use :associates, adapter: :sql
 
         # Inserts provided tuples into the database table
         #

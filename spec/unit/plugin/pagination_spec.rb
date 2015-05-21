@@ -9,7 +9,7 @@ describe 'Plugin / Pagination' do
     9.times { |i| conn[:users].insert(name: "User #{i}") }
 
     setup.relation(:users) do
-      use :pagination
+      use :pagination, adapter: :sql
 
       per_page 4
     end

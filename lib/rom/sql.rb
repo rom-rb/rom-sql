@@ -34,6 +34,16 @@ module ROM
   end
 end
 
+require 'rom/sql/plugin/associates'
+require 'rom/sql/plugin/pagination'
+
+ROM.plugins do
+  adapter :sql do
+    register :pagination, ROM::SQL::Plugin::Pagination, type: :relation
+    register :associates, ROM::SQL::Plugin::Associates, type: :command
+  end
+end
+
 require "rom/sql/version"
 require "rom/sql/relation"
 require "rom/sql/repository"
@@ -45,7 +55,3 @@ if defined?(Rails)
 end
 
 ROM.register_adapter(:sql, ROM::SQL)
-
-ROM.plugins do
-  register :pagination, ROM::SQL::Plugin::Pagination, type: :relation
-end

@@ -4,8 +4,6 @@ require 'rom/sql/relation/class_methods'
 require 'rom/sql/relation/inspection'
 require 'rom/sql/relation/associations'
 
-require 'rom/sql/plugin/pagination'
-
 module ROM
   module SQL
     # Sequel-specific relation extensions
