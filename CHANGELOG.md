@@ -1,4 +1,4 @@
-## v0.5.0 to-be-released
+## v0.5.0 2015-05-22
 
 ### Added
 
@@ -13,6 +13,7 @@
 
 * Constraint errors are no longer command errors (solnic)
 * `Commands::Update#set` has been deprecated (solnic)
+* `Commands::Update#to` has been deprecated (solnic)
 
 [Compare v0.4.3...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.4.2...HEAD)
 
