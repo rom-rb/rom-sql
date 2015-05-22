@@ -18,7 +18,7 @@ module ROM
 
         # Inserts provided tuples into the database table
         #
-        # @api private
+        # @api public
         def execute(tuples)
           insert_tuples = with_input_tuples(tuples) do |tuple|
             attributes = input[tuple]
@@ -28,6 +28,8 @@ module ROM
 
           insert(insert_tuples)
         end
+
+        private
 
         # Executes insert statement and returns inserted tuples
         #

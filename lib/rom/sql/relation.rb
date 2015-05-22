@@ -16,7 +16,13 @@ module ROM
       include Inspection
       include Associations
 
-      attr_reader :header, :table
+      # @attr_reader [Header] header Internal lazy-initialized header
+      attr_reader :header
+
+      # Name of the table used in FROM clause
+      #
+      # @attr_reader [Symbol] table
+      attr_reader :table
 
       # @api private
       def initialize(dataset, registry = {})
@@ -24,44 +30,74 @@ module ROM
         @table = dataset.opts[:from].first
       end
 
-      # Return a header for this relation
+      # Project a relation
       #
-      # @return [Header]
+      # This method is intended to be used internally within a relation object
       #
-      # @api private
-      def header
-        @header ||= Header.new(dataset.opts[:select] || dataset.columns, table)
-      end
-
-      # Return raw column names
+      # @example
+      #   rom.relation(:users) { |r| r.project(:id, :name) }
       #
-      # @return [Array<Symbol>]
+      # @param [Symbol] names A list of symbol column names
       #
-      # @api private
-      def columns
-        dataset.columns
-      end
-
+      # @return [Relation]
+      #
       # @api public
       def project(*names)
         select(*header.project(*names))
       end
 
+      # Rename columns in a relation
+      #
+      # This method is intended to be used internally within a relation object
+      #
+      # @example
+      #   rom.relation(:users) { |r| r.rename(name: :user_name) }
+      #
+      # @param [Hash] options A name => new_name map
+      #
+      # @return [Relation]
+      #
       # @api public
       def rename(options)
         select(*header.rename(options))
       end
 
+      # Prefix all columns in a relation
+      #
+      # This method is intended to be used internally within a relation object
+      #
+      # @example
+      #   rom.relation(:users) { |r| r.prefix(:user) }
+      #
+      # @param [Symbol] name The prefix
+      #
+      # @return [Relation]
+      #
       # @api public
       def prefix(name = Inflector.singularize(table))
         rename(header.prefix(name).to_h)
       end
 
+      # Qualifies all columns in a relation
+      #
+      # This method is intended to be used internally within a relation object
+      #
+      # @example
+      #   rom.relation(:users) { |r| r.qualified }
+      #
+      # @return [Relation]
+      #
       # @api public
       def qualified
         select(*qualified_columns)
       end
 
+      # Return a list of qualified column names
+      #
+      # This method is intended to be used internally within a relation object
+      #
+      # @return [Relation]
+      #
       # @api public
       def qualified_columns
         header.qualified.to_a
@@ -340,6 +376,24 @@ module ROM
       # @api public
       def unique?(criteria)
         where(criteria).count.zero?
+      end
+
+      # Return a header for this relation
+      #
+      # @return [Header]
+      #
+      # @api private
+      def header
+        @header ||= Header.new(dataset.opts[:select] || dataset.columns, table)
+      end
+
+      # Return raw column names
+      #
+      # @return [Array<Symbol>]
+      #
+      # @api private
+      def columns
+        dataset.columns
       end
     end
   end
