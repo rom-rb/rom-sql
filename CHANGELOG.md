@@ -11,7 +11,8 @@
 
 ### Changed
 
-* Constraint errors are no longer command errors (solnic)
+* [BREAKING] Constraint errors are no longer command errors which means `try` and
+  `transaction` blocks will not catch them (solnic)
 * `Commands::Update#set` has been deprecated (solnic)
 * `Commands::Update#to` has been deprecated (solnic)
 
