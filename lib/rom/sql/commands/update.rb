@@ -20,9 +20,8 @@ module ROM
 
         option :original, reader: true
 
-        alias_method :to, :call
-
         deprecate :set, :call
+        deprecate :to, :call
 
         # Updates existing tuple in a relation
         #

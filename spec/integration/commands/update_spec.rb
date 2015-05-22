@@ -78,7 +78,7 @@ describe 'Commands / Update' do
     expect(piotr_rel).not_to receive(:update)
 
     result = users.try do
-      users.update.by_id(piotr[:id]).change(piotr).to(name: piotr[:name])
+      users.update.by_id(piotr[:id]).change(piotr).call(name: piotr[:name])
     end
 
     expect(result.value.to_a).to be_empty
