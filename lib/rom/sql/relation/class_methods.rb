@@ -97,6 +97,8 @@ module ROM
         #
         # @api private
         def finalize(relations, relation)
+          return unless relation.dataset.db.table_exists?(dataset)
+
           model.set_dataset(relation.dataset)
           model.dataset.naked!
 

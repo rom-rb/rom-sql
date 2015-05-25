@@ -59,4 +59,30 @@ describe ROM::SQL::Repository do
       end
     end
   end
+
+  context 'setting up' do
+    include_context 'database setup'
+
+    it 'skips settings up associations when tables are missing' do
+      ROM.setup(:sql, uri)
+
+      ROM.relation(:foos) do
+        one_to_many :bars, key: :foo_id
+      end
+
+      expect { ROM.finalize }.not_to raise_error
+    end
+
+    it 'skips finalization a relation when table is missing' do
+      ROM.setup(:sql, uri)
+
+      class Foos < ROM::Relation[:sql]
+        dataset :foos
+        one_to_many :bars, key: :foo_id
+      end
+
+      expect { ROM.finalize }.not_to raise_error
+      expect { Foos.model.dataset }.to raise_error(Sequel::Error, /no dataset/i)
+    end
+  end
 end
