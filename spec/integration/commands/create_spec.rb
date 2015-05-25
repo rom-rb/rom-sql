@@ -184,6 +184,13 @@ describe 'Commands / Create' do
     }.to raise_error(ROM::SQL::DatabaseError)
   end
 
+  it 'supports [] syntax instead of call' do
+    expect {
+      Params.attribute :bogus_field
+      users.try { users.create[name: 'some name', bogus_field: 23] }
+    }.to raise_error(ROM::SQL::DatabaseError)
+  end
+
   describe '.associates' do
     it 'sets foreign key prior execution for many tuples' do
       setup.commands(:tasks) do

@@ -13,6 +13,8 @@ module ROM
         rescue *ERROR_MAP.keys => e
           raise ERROR_MAP[e.class], e
         end
+
+        alias :[] :call
       end
     end
   end
