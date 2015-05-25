@@ -1,3 +1,11 @@
+## v0.5.1 to-be-released
+
+### Changed
+
+* relations won't be finalized when table(s) is/are missing (solnic)
+
+[Compare v0.5.0...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.5.0...HEAD)
+
 ## v0.5.0 2015-05-22
 
 ### Added
