@@ -4,6 +4,10 @@
 
 * relations won't be finalized when table(s) is/are missing (solnic)
 
+### Fixed
+
+* Wrap errors when calling commands with `[]`-syntax (kwando)
+
 [Compare v0.5.0...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.5.0...HEAD)
 
 ## v0.5.0 2015-05-22
