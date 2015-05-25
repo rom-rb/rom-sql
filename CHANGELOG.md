@@ -8,7 +8,7 @@
 
 * Wrap errors when calling commands with `[]`-syntax (kwando)
 
-[Compare v0.5.0...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.5.0...HEAD)
+[Compare v0.5.0...v0.5.1](https://github.com/rom-rb/rom-sql/compare/v0.5.0...v0.5.1)
 
 ## v0.5.0 2015-05-22
 
@@ -29,7 +29,7 @@
 * `Commands::Update#set` has been deprecated (solnic)
 * `Commands::Update#to` has been deprecated (solnic)
 
-[Compare v0.4.3...0.5.0](https://github.com/rom-rb/rom-sql/compare/v0.4.2...0.5.0)
+[Compare v0.4.3...v0.5.0](https://github.com/rom-rb/rom-sql/compare/v0.4.2...v0.5.0)
 
 ## v0.4.3 2015-05-17
 
