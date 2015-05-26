@@ -5,7 +5,7 @@ describe ROM::SQL::Repository do
     let(:conn) { Sequel.connect(DB_URI) }
 
     context 'creating migrations inline' do
-      subject(:repository) { ROM.env.repositories[:default] }
+      subject(:repository) { ROM.env.gateways[:default] }
 
       before do
         ROM.setup(:sql, conn)
@@ -55,7 +55,7 @@ describe ROM::SQL::Repository do
       end
 
       it 'runs migrations from a specified directory' do
-        ROM.env.repositories[:default].run_migrations
+        ROM.env.gateways[:default].run_migrations
       end
     end
   end

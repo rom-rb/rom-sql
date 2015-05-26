@@ -4,7 +4,7 @@ describe 'Logger' do
   include_context 'database setup'
 
   it 'sets up a logger for sequel' do
-    repository = rom.repositories[:default]
+    repository = rom.gateways[:default]
 
     repository.use_logger(LOGGER)
 

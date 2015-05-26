@@ -28,7 +28,7 @@ module ROM
     #
     # @api public
     def self.migration(repository = :default, &block)
-      ROM.env.repositories[repository].migration(&block)
+      ROM.env.gateways[repository].migration(&block)
     end
 
     module Migration
@@ -55,7 +55,7 @@ module ROM
       # @example
       #   ROM.setup(:sql, ['sqlite::memory'])
       #   ROM.finalize
-      #   ROM.env.repositories[:default].run_migrations
+      #   ROM.env.gateways[:default].run_migrations
       #
       #
       # @param [Hash] options The options used by Sequel migrator

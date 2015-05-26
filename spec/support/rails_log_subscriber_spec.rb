@@ -18,7 +18,7 @@ describe 'Rails log subscriber' do
 
   before do
     set_logger(logger)
-    rom.repositories[:default].use_logger(logger)
+    rom.gateways[:default].use_logger(logger)
   end
 
   it 'works' do

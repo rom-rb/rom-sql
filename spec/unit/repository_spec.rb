@@ -5,7 +5,7 @@ require 'rom/lint/spec'
 describe ROM::SQL::Repository do
   include_context 'users and tasks'
 
-  let(:repository) { rom.repositories[:default] }
+  let(:repository) { rom.gateways[:default] }
 
   it_behaves_like 'a rom repository' do
     let(:identifier) { :sql }
