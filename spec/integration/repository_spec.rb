@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ROM::SQL::Repository do
+describe ROM::SQL::Gateway do
   describe 'migration' do
     let(:conn) { Sequel.connect(DB_URI) }
 
