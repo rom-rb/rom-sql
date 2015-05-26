@@ -41,7 +41,7 @@ ROM uses [Sequel](http://sequel.jeremyevans.net) under the hood and exposes its
 [Dataset API](http://sequel.jeremyevans.net/rdoc/files/doc/dataset_basics_rdoc.html)
 in relation objects. For schema migrations you can use its
 [Migration API](http://sequel.jeremyevans.net/rdoc/files/doc/migration_rdoc.html)
-which is available via repositories.
+which is available via gateways.
 
 ``` ruby
 require "rom-sql"

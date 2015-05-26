@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe ROM::SQL::Repository do
+describe ROM::SQL::Gateway do
   describe 'migration' do
     let(:conn) { Sequel.connect(DB_URI) }
 
     context 'creating migrations inline' do
-      subject(:repository) { ROM.env.repositories[:default] }
+      subject(:gateway) { ROM.env.gateways[:default] }
 
       before do
         ROM.setup(:sql, conn)
@@ -14,7 +14,7 @@ describe ROM::SQL::Repository do
 
       after do
         [:rabbits, :carrots].each do |name|
-          repository.connection.drop_table?(name)
+          gateway.connection.drop_table?(name)
         end
       end
 
@@ -32,13 +32,13 @@ describe ROM::SQL::Repository do
           end
         end
 
-        migration.apply(repository.connection, :up)
+        migration.apply(gateway.connection, :up)
 
-        expect(repository.connection[:rabbits]).to be_a(Sequel::Dataset)
+        expect(gateway.connection[:rabbits]).to be_a(Sequel::Dataset)
 
-        migration.apply(repository.connection, :down)
+        migration.apply(gateway.connection, :down)
 
-        expect(repository.connection.tables).to_not include(:rabbits)
+        expect(gateway.connection.tables).to_not include(:rabbits)
       end
     end
 
@@ -55,7 +55,7 @@ describe ROM::SQL::Repository do
       end
 
       it 'runs migrations from a specified directory' do
-        ROM.env.repositories[:default].run_migrations
+        ROM.env.gateways[:default].run_migrations
       end
     end
   end

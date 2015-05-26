@@ -1,21 +1,21 @@
 require 'logger'
 
-require 'rom/repository'
+require 'rom/gateway'
 require 'rom/sql/migration'
 require 'rom/sql/commands'
 
 module ROM
   module SQL
-    # SQL repository
+    # SQL gateway
     #
     # @example
     #   db = Sequel.connect(:sqlite)
-    #   repository = ROM::SQL::Repository.new(db)
+    #   gateway = ROM::SQL::Gateway.new(db)
     #
-    #   users = repository.dataset(:users)
+    #   users = gateway.dataset(:users)
     #
     # @api public
-    class Repository < ROM::Repository
+    class Gateway < ROM::Gateway
       include Options
       include Migration
 
@@ -40,7 +40,7 @@ module ROM
         scheme.to_s.include?('sqlite')
       end
 
-      # SQL repository interface
+      # SQL gateway interface
       #
       # @overload connect(uri, options)
       #   Connects to database via uri passing options
@@ -54,11 +54,11 @@ module ROM
       #   @param [Sequel::Database] connection a connection instance
       #
       # @example
-      #   repository = ROM::SQL::Repository.new('postgres://localhost/rom')
+      #   gateway = ROM::SQL::Gateway.new('postgres://localhost/rom')
       #
       #   # or reuse connection
       #   DB = Sequel.connect('postgres://localhost/rom')
-      #   repository = ROM::SQL::Repository.new(DB)
+      #   gateway = ROM::SQL::Gateway.new(DB)
       #
       # @api public
       def initialize(uri, options = {})
