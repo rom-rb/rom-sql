@@ -7,7 +7,7 @@ describe 'ActiveSupport::Notifications support' do
   include_context 'database setup'
 
   it 'works' do
-    rom.repositories[:default].use_logger(LOGGER)
+    rom.gateways[:default].use_logger(LOGGER)
 
     sql = nil
 

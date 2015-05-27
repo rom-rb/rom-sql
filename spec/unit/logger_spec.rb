@@ -4,11 +4,11 @@ describe 'Logger' do
   include_context 'database setup'
 
   it 'sets up a logger for sequel' do
-    repository = rom.repositories[:default]
+    gateway = rom.gateways[:default]
 
-    repository.use_logger(LOGGER)
+    gateway.use_logger(LOGGER)
 
-    expect(repository.logger).to be(LOGGER)
+    expect(gateway.logger).to be(LOGGER)
     expect(conn.loggers).to include(LOGGER)
   end
 end

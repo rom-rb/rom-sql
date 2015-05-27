@@ -6,7 +6,7 @@ describe 'Inferring schema from database' do
   context "when database schema exists" do
     it "infers the schema from the database relations" do
       expect(rom.relations.users.to_a)
-        .to eql(rom.repositories[:default][:users].to_a)
+        .to eql(rom.gateways[:default][:users].to_a)
     end
   end
 

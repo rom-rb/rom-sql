@@ -46,7 +46,7 @@ end
 
 require "rom/sql/version"
 require "rom/sql/relation"
-require "rom/sql/repository"
+require "rom/sql/gateway"
 require "rom/sql/migration"
 
 if defined?(Rails)

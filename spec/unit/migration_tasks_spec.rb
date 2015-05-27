@@ -12,7 +12,7 @@ describe 'MigrationTasks' do
     ROM.finalize
   end
 
-  let(:migrator) { ROM.env.repositories[:default].migrator }
+  let(:migrator) { ROM.env.gateways[:default].migrator }
 
   context 'db:reset' do
     it 'calls proper commands' do
