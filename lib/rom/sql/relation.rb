@@ -199,6 +199,21 @@ module ROM
         __new__(dataset.__send__(__method__, *args, &block))
       end
 
+      # Inverts a request
+      #
+      # @example
+      #   users.exclude(name: 'Jane').invert
+      #
+      #   # this is the same as:
+      #   users.where(name: 'Jane')
+      #
+      # @return [Relation]
+      #
+      # @api public
+      def invert(*args, &block)
+        __new__(dataset.__send__(__method__, *args, &block))
+      end
+
       # Set order for the relation
       #
       # @example

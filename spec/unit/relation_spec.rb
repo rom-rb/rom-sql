@@ -29,6 +29,13 @@ describe ROM::Relation do
     end
   end
 
+  describe '#invert' do
+    it 'delegates to dataset and returns a new relation' do
+      expect(users.dataset).to receive(:invert).and_call_original
+      expect(users.invert).to_not eq(users)
+    end
+  end
+
   describe '#map' do
     it 'yields tuples' do
       result = []
