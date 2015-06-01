@@ -20,8 +20,8 @@ module ROM
         #
         # @api public
         def execute
-          deleted = target.to_a
-          target.delete
+          deleted = relation.to_a
+          relation.delete
           deleted
         end
       end
