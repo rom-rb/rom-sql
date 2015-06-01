@@ -55,7 +55,7 @@ module ROM
         #
         # @api public
         def change(original)
-          self.class.new(relation, options.merge(original: original.to_h))
+          self.class.build(relation, options.merge(original: original.to_h))
         end
 
         private

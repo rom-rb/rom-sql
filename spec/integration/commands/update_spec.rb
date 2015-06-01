@@ -72,13 +72,12 @@ describe 'Commands / Update' do
   end
 
   it 'does not update when attributes did not change' do
-    piotr_rel = double('piotr_rel').as_null_object
-
-    expect(relation).to receive(:by_id).with(piotr[:id]).and_return(piotr_rel)
-    expect(piotr_rel).not_to receive(:update)
-
     result = users.try do
-      users.update.by_id(piotr[:id]).change(piotr).call(name: piotr[:name])
+      command = users.update.by_id(piotr[:id]).change(piotr)
+
+      expect(command.relation).not_to receive(:update)
+
+      command.call(name: piotr[:name])
     end
 
     expect(result.value.to_a).to be_empty
