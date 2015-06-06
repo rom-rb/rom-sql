@@ -93,12 +93,29 @@ module ROM
           associations << [__method__, name, new_options]
         end
 
+        # Specify the table for the model
+        #
+        # @example
+        #   class Tasks < ROM::Relation[:sql]
+        #     table_name :user_tasks
+        #   end
+        #
+        # @param [Symbol] name The name of the table. Specify a schema
+        #                      like so: :schema_name__table_name
+        #
+        # @api public
+        def table_name(name)
+          @table_name = name
+        end
+
         # Finalize the relation by setting up its associations (if any)
         #
         # @api private
         def finalize(relations, relation)
+          dataset(@table_name) if @table_name
           return unless relation.dataset.db.table_exists?(dataset)
 
+          relation.dataset.opts[:from] = [@table_name] if @table_name
           model.set_dataset(relation.dataset)
           model.dataset.naked!
 
