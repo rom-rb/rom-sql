@@ -46,7 +46,7 @@ module ROM
           # @example
           #   class CreateTask < ROM::Commands::Create[:sql]
           #     relation :tasks
-          #     associates :user, [:user_id, :id]
+          #     associates :user, key: [:user_id, :id]
           #   end
           #
           #   create_user = rom.command(:user).create.with(name: 'Jane')
