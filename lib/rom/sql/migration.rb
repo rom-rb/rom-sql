@@ -28,7 +28,8 @@ module ROM
     #
     # @api public
     def self.migration(gateway = :default, &block)
-      ROM.env.gateways[gateway].migration(&block)
+      gateways = ROM.boot ? ROM.boot.gateways : ROM.env.gateways
+      gateways[gateway].migration(&block)
     end
 
     # Return first sql gateway for migrations
