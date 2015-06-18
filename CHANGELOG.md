@@ -2,6 +2,7 @@
 
 ### Changed
 
+* migration tasks no longer require entire ROM env (solnic)
 * relations won't be finalized when table(s) is/are missing (solnic)
 
 ### Fixed
