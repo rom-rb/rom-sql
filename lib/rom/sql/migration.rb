@@ -31,6 +31,17 @@ module ROM
       ROM.env.gateways[gateway].migration(&block)
     end
 
+    # Return first sql gateway for migrations
+    #
+    # This is used by migration tasks, they only support a single sql gateway
+    #
+    # @api private
+    def self.gateway
+      ROM.gateways
+        .keys
+        .detect { |gateway| gateway.instance_of?(Gateway) }
+    end
+
     module Migration
       Sequel.extension :migration
 

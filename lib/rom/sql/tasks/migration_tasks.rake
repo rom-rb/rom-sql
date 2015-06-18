@@ -4,7 +4,7 @@ require "fileutils"
 namespace :db do
   desc "Perform migration reset (full erase and migration up)"
   task reset: :setup do
-    gateway = ROM.env.gateways[:default]
+    gateway = ROM::SQL.gateway
     gateway.run_migrations(target: 0)
     gateway.run_migrations
     puts "<= db:reset executed"
@@ -12,7 +12,7 @@ namespace :db do
 
   desc "Migrate the database (options [version_number])]"
   task :migrate, [:version] => :setup do |_, args|
-    gateway = ROM.env.gateways[:default]
+    gateway = ROM::SQL.gateway
     version = args[:version]
 
     if version.nil?
@@ -26,7 +26,7 @@ namespace :db do
 
   desc "Perform migration down (erase all data)"
   task clean: :setup do
-    gateway = ROM.env.gateways[:default]
+    gateway = ROM::SQL.gateway
 
     gateway.run_migrations(target: 0)
     puts "<= db:clean executed"
@@ -34,7 +34,7 @@ namespace :db do
 
   desc "Create a migration (parameters: NAME, VERSION)"
   task :create_migration, [:name, :version] => :setup do |_, args|
-    gateway = ROM.env.gateways[:default]
+    gateway = ROM::SQL.gateway
     name, version = args[:name], args[:version]
 
     if name.nil?
