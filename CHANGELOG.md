@@ -1,9 +1,9 @@
-## v0.5.1 to-be-released
+## v0.5.1 2015-06-22
 
 ### Changed
 
-* migration tasks no longer require entire ROM env (solnic)
-* relations won't be finalized when table(s) is/are missing (solnic)
+* Migration tasks no longer require entire ROM env (solnic)
+* Relations won't be finalized when table(s) is/are missing (solnic)
 
 ### Fixed
 
