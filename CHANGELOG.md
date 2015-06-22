@@ -1,8 +1,20 @@
-## v0.5.1 2015-06-22
+## v0.5.2 2015-06-22
+
+### Added
+
+* `Relation#invert` operation (nepalez)
 
 ### Changed
 
 * Migration tasks no longer require entire ROM env (solnic)
+* `Repository` => `Gateway` rename for ROM 0.8.0 compatibility (solnic)
+
+[Compare v0.5.1...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.5.1...HEAD)
+
+## v0.5.1 2015-05-25
+
+### Changed
+
 * Relations won't be finalized when table(s) is/are missing (solnic)
 
 ### Fixed
