@@ -9,7 +9,7 @@
 * Migration tasks no longer require entire ROM env (solnic)
 * `Repository` => `Gateway` rename for ROM 0.8.0 compatibility (solnic)
 
-[Compare v0.5.1...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.5.1...HEAD)
+[Compare v0.5.1...v0.5.2](https://github.com/rom-rb/rom-sql/compare/v0.5.1...v0.5.2)
 
 ## v0.5.1 2015-05-25
 
