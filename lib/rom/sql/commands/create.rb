@@ -26,7 +26,11 @@ module ROM
             attributes.to_h
           end
 
-          insert(insert_tuples)
+          if insert_tuples.length > 1
+            multi_insert(insert_tuples)
+          else
+            insert(insert_tuples)
+          end
         end
 
         private
@@ -37,6 +41,14 @@ module ROM
         def insert(tuples)
           pks = tuples.map { |tuple| relation.insert(tuple) }
           relation.where(relation.primary_key => pks)
+        end
+
+        # Executes multi_insert statement and returns inserted tuples
+        #
+        # @api private
+        def multi_insert(tuples)
+          pks = relation.multi_insert(tuples, return: :primary_key)
+          relation.where(relation.primary_key => pks).to_a
         end
 
         # Yields tuples for insertion or return an enumerator

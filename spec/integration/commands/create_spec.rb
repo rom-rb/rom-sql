@@ -51,6 +51,16 @@ describe 'Commands / Create' do
       expect(result.value).to eq(id: 1, name: 'Jane')
     end
 
+    it 'creates multiple records if nothing was raised' do
+      result = users.create.transaction {
+        users.create_many.call([{name: 'Jane'}, {name: 'Jack'}])
+      }
+
+      expect(result.value).to match_array([
+        { id: 1, name: 'Jane' }, { id: 2, name: 'Jack' }
+      ])
+    end
+
     it 'allows for nested transactions' do
       result = users.create.transaction {
         users.create.transaction {
