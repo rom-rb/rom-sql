@@ -11,6 +11,10 @@ module ROM
               relation.dataset.returning(*relation.columns).insert(tuple)
             end.flatten
           end
+
+          def multi_insert(tuples)
+            relation.dataset.returning(*relation.columns).multi_insert(tuples)
+          end
         end
 
         module Update

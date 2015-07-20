@@ -348,6 +348,20 @@ module ROM
         dataset.insert(*args, &block)
       end
 
+      # Multi insert tuples into relation
+      #
+      # @example
+      #   users.multi_insert([{name: 'Jane'}, {name: 'Jack'}])
+      #
+      # @param [Array] tuples
+      #
+      # @return [Relation]
+      #
+      # @api public
+      def multi_insert(*args, &block)
+        dataset.multi_insert(*args, &block)
+      end
+
       # Update tuples in the relation
       #
       # @example
