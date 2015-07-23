@@ -1,4 +1,4 @@
-## v0.5.3 to-be-released
+## v0.5.3 2015-07-23
 
 ### Added
 
@@ -10,9 +10,9 @@
 
 ### Fixed
 
-* Relation name and join key fixes for :many_to_one (jamesmoriarty)
+* Relation name and join key fixes for `many_to_one` macro (jamesmoriarty)
 
-[Compare v0.5.2...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.5.2...HEAD)
+[Compare v0.5.2...v0.5.3](https://github.com/rom-rb/rom-sql/compare/v0.5.2...v0.5.3)
 
 ## v0.5.2 2015-06-22
 
