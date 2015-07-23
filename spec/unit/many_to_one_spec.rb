@@ -43,4 +43,18 @@ describe 'Defining many-to-one association' do
       [{ id: 1, title: 'Finish ROM', user: { name: 'Piotr' } }]
     )
   end
+
+  it "joins on specified key" do
+    setup.relation(:task_tags) do
+      many_to_one :tags, key: :tag_id
+
+      def with_tags
+        association_left_join(:tags)
+      end
+    end
+
+    expect(rom.relation(:task_tags).with_tags.to_a).to eq(
+      [{ tag_id: 1, task_id: 1, id: 1, name: "important" }]
+    )
+  end
 end

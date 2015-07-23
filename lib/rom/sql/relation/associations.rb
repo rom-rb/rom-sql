@@ -97,12 +97,12 @@ module ROM
         end
 
         def graph_join_other(name, assoc, type, join_type, options)
-          key = assoc[:key]
+          key           = assoc[:key]
           on_conditions = assoc[:on] || {}
 
           join_keys =
             if type == :many_to_one
-              { primary_key => key }
+              { assoc[:class].primary_key => key }
             else
               { key => primary_key }
             end.merge(on_conditions)
