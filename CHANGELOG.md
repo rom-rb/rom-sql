@@ -2,11 +2,11 @@
 
 ### Added
 
-* `Relation#multi_insert` (Sudeep Agarwal)
+* `Relation#multi_insert` (draxxxeus)
 
 ### Changed
 
-* Command that receives many tuples will use `multi_insert` now (Sudeep Agarwal)
+* Command that receives many tuples will use `multi_insert` now (draxxxeus)
 
 ### Fixed
 
