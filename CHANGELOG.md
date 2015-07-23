@@ -1,3 +1,19 @@
+## v0.5.3 to-be-released
+
+### Added
+
+* `Relation#multi_insert` (Sudeep Agarwal)
+
+### Changed
+
+* Command that receives many tuples will use `multi_insert` now (Sudeep Agarwal)
+
+### Fixed
+
+* Relation name and join key fixes for :many_to_one (jamesmoriarty)
+
+[Compare v0.5.2...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.5.2...HEAD)
+
 ## v0.5.2 2015-06-22
 
 ### Added
