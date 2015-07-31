@@ -65,7 +65,7 @@ module ROM
         #
         # @api public
         def many_to_many(name, options = {})
-          associations << [__method__, name, { relation: name }.merge(options)]
+          associations << [__method__, name, { relation: Inflector.pluralize(name).to_sym }.merge(options)]
         end
 
         # Set up a many-to-one association
