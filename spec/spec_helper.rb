@@ -21,6 +21,8 @@ begin
 rescue LoadError
 end
 
+ROM.use :auto_registration
+
 LOGGER = Logger.new(File.open('./log/test.log', 'a'))
 DB_URI = 'postgres://localhost/rom'
 
