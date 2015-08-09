@@ -39,8 +39,8 @@ describe 'Plugin / Pagination' do
     it 'returns paginated relation with provided limit' do
       users = rom.relation(:users).page(2).per_page(5)
 
-      expect(users.relation.dataset.opts[:offset]).to eql(5)
-      expect(users.relation.dataset.opts[:limit]).to eql(5)
+      expect(users.dataset.opts[:offset]).to eql(5)
+      expect(users.dataset.opts[:limit]).to eql(5)
 
       expect(users.pager.current_page).to eql(2)
 
