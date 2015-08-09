@@ -45,6 +45,6 @@ RSpec.configure do |config|
   config.after do
     added_constants = Object.constants - @constants
     added_constants.each { |name| Object.send(:remove_const, name) }
-    ROM.instance_variable_set('@gateways', {})
+    ROM.instance_variable_get('@environment').instance_variable_set('@gateways', {})
   end
 end
