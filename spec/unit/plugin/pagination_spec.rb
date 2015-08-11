@@ -24,7 +24,7 @@ describe 'Plugin / Pagination' do
 
     it 'preserves existing modifiers' do
       expect(
-        rom.relation(:users) { |r| r.where(name: 'User 2') }.page(1).to_a.size
+        rom.relation(:users).send(:where, name: 'User 2').page(1).to_a.size
       ).to be(1)
     end
   end

@@ -7,7 +7,7 @@ describe 'Commands / Update' do
   subject(:users) { rom.command(:users) }
 
   let(:relation) { rom.relations.users }
-  let(:piotr) { relation.by_name('Piotr').first }
+  let(:piotr) { relation.by_name('Piotr').one }
   let(:peter) { { name: 'Peter' } }
 
   before do
@@ -51,7 +51,7 @@ describe 'Commands / Update' do
         raise ROM::SQL::Rollback
       end
 
-      expect(relation.first[:name]).to eq('Piotr')
+      expect(relation.one[:name]).to eql('Piotr')
     end
   end
 

@@ -9,6 +9,7 @@ describe 'Defining multiple associations' do
 
   it 'extends relation with association methods' do
     setup.relation(:users)
+
     setup.relation(:tags)
 
     setup.relation(:tasks) do
@@ -29,6 +30,10 @@ describe 'Defining multiple associations' do
 
       def by_tag(name)
         where(tags__name: name)
+      end
+
+      def by_title(title)
+        where(tasks__title: title)
       end
 
       def with_tags
@@ -65,7 +70,7 @@ describe 'Defining multiple associations' do
       { id: 2, title: 'Go to sleep', name: 'Piotr'  }
     ])
 
-    expect(tasks.where(title: 'Go to sleep').to_a).to eql(
+    expect(tasks.by_title('Go to sleep').to_a).to eql(
       [{ id: 2, user_id: 1, title: 'Go to sleep' }]
     )
   end

@@ -11,6 +11,8 @@ describe ROM::Relation do
       def sorted
         order(:id)
       end
+
+      ROM::SQL::Relation::Reading.instance_methods.each { |name| public name }
     end
   end
 
@@ -38,9 +40,8 @@ describe ROM::Relation do
 
   describe '#map' do
     it 'yields tuples' do
-      result = []
-      users.map { |tuple| result << tuple }
-      expect(result).to eql([{ id: 1, name: 'Piotr' }])
+      result = users.map { |tuple| tuple[:name] }
+      expect(result).to eql(%w(Piotr))
     end
   end
 
