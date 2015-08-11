@@ -11,8 +11,6 @@ describe ROM::Relation do
       def sorted
         order(:id)
       end
-
-      ROM::SQL::Relation::Reading.instance_methods.each { |name| public name }
     end
   end
 

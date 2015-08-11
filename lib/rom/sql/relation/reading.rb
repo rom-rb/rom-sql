@@ -107,8 +107,6 @@ module ROM
           dataset.map(&block)
         end
 
-        protected
-
         # Project a relation
         #
         # This method is intended to be used internally within a relation object
