@@ -15,9 +15,9 @@
 
 RDBMS support for [Ruby Object Mapper](https://github.com/rom-rb/rom).
 
-## Issues
+Resources:
 
-Please report any issues in the main [rom-rb/rom](https://github.com/rom-rb/rom/issues) issue tracker.
+- [Guides](http://rom-rb.org/guides/adapters/sql/)
 
 ## Installation
 
