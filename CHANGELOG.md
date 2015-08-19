@@ -1,8 +1,8 @@
-## v0.6.0 to-be-released
+## v0.6.0 2015-08-19
 
 Internal updates to fix deprecation warnings from ROM 0.9.0.
 
-[Compare v0.5.3...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.5.3...HEAD)
+[Compare v0.5.3...v0.6.0](https://github.com/rom-rb/rom-sql/compare/v0.5.3...v0.6.0)
 
 ## v0.5.3 2015-07-23
 
