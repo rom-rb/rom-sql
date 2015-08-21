@@ -67,6 +67,7 @@ module ROM
 
         @connection = connect(uri, conn_options)
         @schema = connection.tables
+        add_extensions(Array(options[:extensions])) if options[:extensions]
 
         super(uri, options.reject { |k,_| conn_options.keys.include?(k) })
       end
@@ -160,6 +161,13 @@ module ROM
         else
           ::Sequel.connect(uri.to_s, *args)
         end
+      end
+
+      # Add extensions to the database connection
+      #
+      # @api private
+      def add_extensions(exts)
+        connection.extension(*exts)
       end
     end
   end
