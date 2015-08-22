@@ -1,3 +1,9 @@
+## Master
+
+### Added
+
+* `Gateway` accepts `:extensions` as an option (c0)
+
 ## v0.6.0 2015-08-19
 
 Internal updates to fix deprecation warnings from ROM 0.9.0.
