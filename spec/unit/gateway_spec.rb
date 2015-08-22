@@ -35,6 +35,15 @@ describe ROM::SQL::Gateway do
 
       expect(gateway.options).to eql(migrator: migrator)
     end
+
+    it 'allows extensions' do
+      extensions = [:pg_array, :pg_enum]
+      connection = Sequel.connect uri
+
+      expect(connection).to receive(:extension).with(:pg_array, :pg_enum)
+
+      ROM::SQL::Gateway.new(connection, extensions: extensions)
+    end
   end
 
   describe '#disconnect' do
