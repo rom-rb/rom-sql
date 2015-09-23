@@ -1,8 +1,10 @@
-## Master
+## v0.6.1 2015-09-23
 
 ### Added
 
 * `Gateway` accepts `:extensions` as an option (c0)
+
+[Compare v0.6.0...v0.6.1](https://github.com/rom-rb/rom-sql/compare/v0.6.0...v0.6.2)
 
 ## v0.6.0 2015-08-19
 
