@@ -4,7 +4,7 @@ gemspec
 
 group :test do
   gem 'byebug', platforms: :mri
-  gem 'anima'
+  gem 'anima', '~> 0.2.0'
   gem 'rom', github: 'rom-rb/rom', branch: 'master'
   gem 'rom-support', github: 'rom-rb/rom-support', branch: 'master'
   gem 'rom-mapper', github: 'rom-rb/rom-mapper', branch: 'master'
