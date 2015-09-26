@@ -18,7 +18,7 @@ require 'active_support/inflector'
 require 'logger'
 begin
   require 'byebug'
-rescue LoadError
+rescue LoadError # rubocop:disable Lint/HandleExceptions
 end
 
 ROM.use :auto_registration
