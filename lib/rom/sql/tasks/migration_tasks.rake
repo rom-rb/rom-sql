@@ -35,7 +35,7 @@ namespace :db do
   desc "Create a migration (parameters: NAME, VERSION)"
   task :create_migration, [:name, :version] => :setup do |_, args|
     gateway = ROM::SQL.gateway
-    name, version = args[:name], args[:version]
+    name, version = args.values_at(:name, :version)
 
     if name.nil?
       puts "No NAME specified. Example usage:
