@@ -23,7 +23,7 @@ describe 'Commands / Create' do
         input Params
 
         validator -> tuple {
-          raise ROM::CommandError.new('name cannot be empty') if tuple[:name] == ''
+          raise ROM::CommandError, 'name cannot be empty' if tuple[:name] == ''
         }
 
         result :one
