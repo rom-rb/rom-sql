@@ -78,7 +78,7 @@ describe 'Commands / Create' do
         result = users.create.transaction {
           users.create.call(name: 'Jane')
           users.create.call(name: '')
-        } >-> value {
+        } >-> _value {
           passed = true
         }
 
@@ -96,7 +96,7 @@ describe 'Commands / Create' do
           users.create.call(name: 'Jane')
           users.create.call(name: 'John')
           raise ROM::SQL::Rollback
-        } >-> value {
+        } >-> _value {
           passed = true
         }
 
@@ -114,7 +114,7 @@ describe 'Commands / Create' do
           users.create.transaction {
             users.create.call(name: 'Jane')
             users.create.call(name: 'Jane')
-          } >-> value {
+          } >-> _value {
             passed = true
           }
         rescue => error

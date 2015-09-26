@@ -70,7 +70,7 @@ module ROM
               )
             end
 
-            option :association, reader: true, default: -> command { options }
+            option :association, reader: true, default: -> _command { options }
             include InstanceMethods
 
             associations << name
