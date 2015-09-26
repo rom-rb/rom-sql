@@ -182,7 +182,7 @@ describe 'Commands / Create' do
   it 're-raises fk constraint violation error' do
     expect {
       tasks.try {
-        tasks.create.call(user_id: 918273645)
+        tasks.create.call(user_id: 918_273_645)
       }
     }.to raise_error(ROM::SQL::ForeignKeyConstraintError, /user_id/)
   end
