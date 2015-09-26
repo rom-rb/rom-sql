@@ -63,13 +63,13 @@ module ROM
       # @api public
       def initialize(uri, options = {})
         repo_options = self.class.option_definitions.names
-        conn_options = options.reject { |k,_| repo_options.include?(k) }
+        conn_options = options.reject { |k, _| repo_options.include?(k) }
 
         @connection = connect(uri, conn_options)
         @schema = connection.tables
         add_extensions(Array(options[:extensions])) if options[:extensions]
 
-        super(uri, options.reject { |k,_| conn_options.keys.include?(k) })
+        super(uri, options.reject { |k, _| conn_options.keys.include?(k) })
       end
 
       # Disconnect from database

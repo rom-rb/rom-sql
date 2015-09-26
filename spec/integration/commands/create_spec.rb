@@ -53,7 +53,7 @@ describe 'Commands / Create' do
 
     it 'creates multiple records if nothing was raised' do
       result = users.create.transaction {
-        users.create_many.call([{name: 'Jane'}, {name: 'Jack'}])
+        users.create_many.call([{ name: 'Jane' }, { name: 'Jack' }])
       }
 
       expect(result.value).to match_array([

@@ -17,4 +17,3 @@ describe 'Association errors' do
     end
   end
 end
-

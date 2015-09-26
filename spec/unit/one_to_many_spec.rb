@@ -40,7 +40,7 @@ describe 'Defining one-to-many association' do
     )
 
     result = rom.relation(:users).map_with(:with_tasks)
-      .all.with_tasks.by_name("Piotr").to_a
+             .all.with_tasks.by_name("Piotr").to_a
 
     expect(result).to eql(
       [{ id: 1, name: 'Piotr', tasks: [{ tasks_id: 1, title: 'Finish ROM' }] }]
@@ -50,7 +50,7 @@ describe 'Defining one-to-many association' do
   it 'allows setting :conditions' do
     setup.relation(:users) do
       one_to_many :piotrs_tasks, relation: :tasks, key: :user_id,
-        conditions: { name: 'Piotr' }
+                                 conditions: { name: 'Piotr' }
 
       def with_piotrs_tasks
         association_left_join(:piotrs_tasks, select: [:id, :title])
@@ -68,7 +68,7 @@ describe 'Defining one-to-many association' do
     )
 
     result = rom.relation(:users).map_with(:with_tasks)
-      .all.with_piotrs_tasks.to_a
+             .all.with_piotrs_tasks.to_a
 
     expect(result).to eql(
       [{ id: 1, name: 'Piotr', tasks: [{ tasks_id: 1, title: 'Finish ROM' }] }]
