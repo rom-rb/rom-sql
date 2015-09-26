@@ -53,10 +53,6 @@ Style/OpMethod:
   Exclude:
     - lib/rom/command_registry.rb
 
-# Even a single escaped slash can be confusing
-Style/RegexpLiteral:
-  MaxSlashes: 0
-
 # Don’t introduce semantic fail/raise distinction
 Style/SignalException:
   EnforcedStyle: only_raise
