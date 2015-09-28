@@ -131,4 +131,20 @@ describe ROM::Relation do
       expect(tasks.unique?(title: 'Task One')).to be(false)
     end
   end
+
+  describe '#union' do
+    let(:relation1) { users.where(id: 1).select(:id, :name) }
+    let(:relation2) { users.where(id: 2).select(:id, :name) }
+
+    it 'unions two relations and returns a new relation' do
+      conn[:users].insert(id: 2, name: 'Jane')
+
+      result = relation1.union(relation2)
+
+      expect(result.to_a).to match_array([
+         { id: 1, name: 'Piotr' },
+         { id: 2, name: 'Jane' }
+      ])
+    end
+  end
 end

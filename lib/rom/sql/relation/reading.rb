@@ -323,6 +323,21 @@ module ROM
         def select_group(*args, &block)
           __new__(dataset.__send__(__method__, *args, &block))
         end
+
+        # Adds a UNION clause for relation dataset using second relation dataset
+        #
+        # @param [Relation] relation object
+        #
+        # @example
+        #   users.where(id: 1).union(users.where(id: 2))
+        #   # => [{ id: 1, name: 'Piotr' }, { id: 2, name: 'Jane' }]
+        #
+        # @return [Relation]
+        #
+        # @api public
+        def union(relation, *args, &block)
+          __new__(dataset.__send__(__method__, relation.dataset, *args, &block))
+        end
       end
     end
   end
