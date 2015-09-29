@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 namespace :db do
-  task :setup  do
+  task :setup do
     # noop
   end
 end

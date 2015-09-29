@@ -14,7 +14,7 @@ module ROM
           raise ERROR_MAP[e.class], e
         end
 
-        alias :[] :call
+        alias_method :[], :call
       end
     end
   end

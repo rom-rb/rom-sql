@@ -23,7 +23,7 @@ describe 'Commands / Create' do
         input Params
 
         validator -> tuple {
-          raise ROM::CommandError.new('name cannot be empty') if tuple[:name] == ''
+          raise ROM::CommandError, 'name cannot be empty' if tuple[:name] == ''
         }
 
         result :one
@@ -53,7 +53,7 @@ describe 'Commands / Create' do
 
     it 'creates multiple records if nothing was raised' do
       result = users.create.transaction {
-        users.create_many.call([{name: 'Jane'}, {name: 'Jack'}])
+        users.create_many.call([{ name: 'Jane' }, { name: 'Jack' }])
       }
 
       expect(result.value).to match_array([
@@ -78,7 +78,7 @@ describe 'Commands / Create' do
         result = users.create.transaction {
           users.create.call(name: 'Jane')
           users.create.call(name: '')
-        } >-> value {
+        } >-> _value {
           passed = true
         }
 
@@ -96,7 +96,7 @@ describe 'Commands / Create' do
           users.create.call(name: 'Jane')
           users.create.call(name: 'John')
           raise ROM::SQL::Rollback
-        } >-> value {
+        } >-> _value {
           passed = true
         }
 
@@ -114,7 +114,7 @@ describe 'Commands / Create' do
           users.create.transaction {
             users.create.call(name: 'Jane')
             users.create.call(name: 'Jane')
-          } >-> value {
+          } >-> _value {
             passed = true
           }
         rescue => error
@@ -182,7 +182,7 @@ describe 'Commands / Create' do
   it 're-raises fk constraint violation error' do
     expect {
       tasks.try {
-        tasks.create.call(user_id: 918273645)
+        tasks.create.call(user_id: 918_273_645)
       }
     }.to raise_error(ROM::SQL::ForeignKeyConstraintError, /user_id/)
   end

@@ -67,7 +67,7 @@ describe 'Defining multiple associations' do
 
     expect(tasks.all.with_user.to_a).to eql([
       { id: 1, title: 'Finish ROM', name: 'Piotr' },
-      { id: 2, title: 'Go to sleep', name: 'Piotr'  }
+      { id: 2, title: 'Go to sleep', name: 'Piotr' }
     ])
 
     expect(tasks.by_title('Go to sleep').to_a).to eql(

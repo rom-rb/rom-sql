@@ -64,13 +64,11 @@ module ROM
           # @api public
           def associates(name, options)
             if associations.include?(name)
-              raise(
-                ArgumentError,
+              raise ArgumentError,
                 "#{name} association is already defined for #{self.class}"
-              )
             end
 
-            option :association, reader: true, default: -> command { options }
+            option :association, reader: true, default: -> _command { options }
             include InstanceMethods
 
             associations << name

@@ -9,7 +9,6 @@ describe ROM::SQL, '.migration' do
   end
 
   it 'creates a migration for a specific gateway' do
-
     migration = ROM::SQL.migration do
       change do
         create_table :dragons do
