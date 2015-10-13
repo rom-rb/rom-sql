@@ -158,7 +158,7 @@ describe 'Commands / Create' do
   it 're-raises not-null constraint violation error' do
     expect {
       users.try { users.create.call(name: nil) }
-    }.to raise_error(ROM::SQL::NotNullConstraintError, /not-null/)
+    }.to raise_error(ROM::SQL::NotNullConstraintError)
   end
 
   it 're-raises uniqueness constraint violation error' do
@@ -168,7 +168,7 @@ describe 'Commands / Create' do
       } >-> user {
         users.try { users.create.call(name: user[:name]) }
       }
-    }.to raise_error(ROM::SQL::UniqueConstraintError, /unique/)
+    }.to raise_error(ROM::SQL::UniqueConstraintError)
   end
 
   it 're-raises check constraint violation error' do
