@@ -36,7 +36,7 @@ shared_context 'database setup' do
     end
 
     conn.create_table :task_tags do
-      primary_key :tag_id, :task_id
+      primary_key [:tag_id, :task_id]
       Integer :tag_id
       Integer :task_id
     end
