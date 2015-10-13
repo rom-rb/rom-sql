@@ -142,8 +142,8 @@ describe ROM::Relation do
       result = relation1.union(relation2)
 
       expect(result.to_a).to match_array([
-         { id: 1, name: 'Piotr' },
-         { id: 2, name: 'Jane' }
+        { id: 1, name: 'Piotr' },
+        { id: 2, name: 'Jane' }
       ])
     end
   end
