@@ -6,12 +6,22 @@ require 'rom/sql/relation/writing'
 require 'rom/sql/relation/inspection'
 require 'rom/sql/relation/associations'
 
+require 'rom/plugins/relation/view'
+require 'rom/plugins/relation/sql/base_view'
+require 'rom/plugins/relation/sql/auto_combine'
+require 'rom/plugins/relation/sql/auto_wrap'
+
 module ROM
   module SQL
     # Sequel-specific relation extensions
     #
     class Relation < ROM::Relation
       adapter :sql
+
+      use :view
+      use :base_view
+      use :auto_combine
+      use :auto_wrap
 
       extend ClassMethods
 
