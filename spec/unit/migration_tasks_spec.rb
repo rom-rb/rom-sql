@@ -8,7 +8,7 @@ end
 
 describe 'MigrationTasks' do
   before do
-    ROM.setup(:sql, ['postgres://localhost/rom'])
+    ROM.setup(:sql, DB_URI)
     ROM.finalize
   end
 

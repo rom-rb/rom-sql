@@ -10,7 +10,7 @@ describe ROM::SQL::Gateway do
   it_behaves_like 'a rom gateway' do
     let(:identifier) { :sql }
     let(:gateway) { ROM::SQL::Gateway }
-    let(:uri) { 'postgres://localhost/rom' }
+    let(:uri) { DB_URI }
   end
 
   describe '#dataset?' do
