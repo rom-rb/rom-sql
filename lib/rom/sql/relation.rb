@@ -7,6 +7,7 @@ require 'rom/sql/relation/inspection'
 require 'rom/sql/relation/associations'
 
 require 'rom/plugins/relation/view'
+require 'rom/plugins/relation/key_inference'
 require 'rom/plugins/relation/sql/base_view'
 require 'rom/plugins/relation/sql/auto_combine'
 require 'rom/plugins/relation/sql/auto_wrap'
@@ -18,6 +19,7 @@ module ROM
     class Relation < ROM::Relation
       adapter :sql
 
+      use :key_inference
       use :view
       use :base_view
       use :auto_combine
