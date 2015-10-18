@@ -9,14 +9,27 @@ module ROM
         #
         # @api private
         def inherited(klass)
+          super
+
           klass.class_eval do
             class << self
               attr_reader :model, :associations
             end
+
+            dataset do
+              table = opts[:from].first
+
+              if db.table_exists?(table)
+                pk = Array(db.primary_key(table)).map { |name| :"#{table}__#{name}" }
+                select(*columns).order(*pk)
+              else
+                self
+              end
+            end
           end
+
           klass.instance_variable_set('@model', Class.new(Sequel::Model))
           klass.instance_variable_set('@associations', [])
-          super
         end
 
         # Set up a one-to-many association

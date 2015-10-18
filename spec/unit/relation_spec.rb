@@ -14,6 +14,14 @@ describe ROM::Relation do
     end
   end
 
+  describe '#dataset' do
+    it 'selects all qualified columns and sorts by pk' do
+      expect(users.dataset).to eql(
+        users.select(*users.columns).order(:users__id).dataset
+      )
+    end
+  end
+
   describe '#distinct' do
     it 'delegates to dataset and returns a new relation' do
       expect(users.dataset).to receive(:distinct).with(:name).and_call_original
@@ -52,6 +60,12 @@ describe ROM::Relation do
       expect(result.to_a).to match_array([
         { name: 'Piotr', title: 'Finish ROM' }
       ])
+    end
+
+    it 'raises error when column names are ambiguous' do
+      expect {
+        users.inner_join(:tasks, user_id: :id).to_a
+      }.to raise_error(Sequel::DatabaseError, /column reference "id" is ambiguous/)
     end
   end
 
