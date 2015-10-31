@@ -13,7 +13,7 @@ module ROM
       class Update < ROM::Commands::Update
         adapter :sql
 
-        include Deprecations
+        extend Deprecations
 
         include Transaction
         include ErrorWrapper
