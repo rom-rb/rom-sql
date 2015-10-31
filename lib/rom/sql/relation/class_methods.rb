@@ -20,7 +20,16 @@ module ROM
               table = opts[:from].first
 
               if db.table_exists?(table)
-                pk = Array(db.primary_key(table)).map { |name| :"#{table}__#{name}" }
+                # quick fix for dbs w/o primary_key inference
+                #
+                # TODO: add a way of setting a pk explicitly on a relation
+                pk =
+                  if db.respond_to?(:primary_key)
+                    Array(db.primary_key(table))
+                  else
+                    [:id]
+                  end.map { |name| :"#{table}__#{name}" }
+
                 select(*columns).order(*pk)
               else
                 self
