@@ -8,11 +8,11 @@ describe 'Defining multiple associations' do
   end
 
   it 'extends relation with association methods' do
-    setup.relation(:users)
+    configuration.relation(:users)
 
-    setup.relation(:tags)
+    configuration.relation(:tags)
 
-    setup.relation(:tasks) do
+    configuration.relation(:tasks) do
       many_to_one :users, key: :user_id
 
       many_to_many :tags,
@@ -49,7 +49,7 @@ describe 'Defining multiple associations' do
       end
     end
 
-    tasks = rom.relations.tasks
+    tasks = container.relations.tasks
 
     expect(tasks.with_user_and_tags.to_a).to eql([
       { id: 1, title: 'Finish ROM', name: 'Piotr', tags_name: 'important' },

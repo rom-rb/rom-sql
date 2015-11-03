@@ -5,12 +5,10 @@ describe ROM::SQL::Gateway do
     let(:conn) { Sequel.connect(DB_URI) }
 
     context 'creating migrations inline' do
-      subject(:gateway) { ROM.env.gateways[:default] }
-
-      before do
-        ROM.setup(:sql, conn)
-        ROM.finalize
-      end
+      subject(:gateway) { container.gateways[:default] }
+      
+      let(:configuration) { ROM::Configuration.new(:sql, conn) }
+      let!(:container) { ROM.create_container(configuration) }
 
       after do
         [:rabbits, :carrots].each do |name|
@@ -19,7 +17,7 @@ describe ROM::SQL::Gateway do
       end
 
       it 'allows creating and running migrations' do
-        migration = ROM::SQL.migration do
+        migration = gateway.migration do
           up do
             create_table(:rabbits) do
               primary_key :id
@@ -50,11 +48,8 @@ describe ROM::SQL::Gateway do
       end
 
       let(:migrator) { ROM::SQL::Migration::Migrator.new(conn, path: migration_dir) }
-
-      before do
-        ROM.setup(:sql, [conn, migrator: migrator])
-        ROM.finalize
-      end
+      let(:configuration) { ROM::Configuration.new(:sql, [conn, migrator: migrator]) }
+      let!(:container) { ROM.create_container(configuration) }
 
       it 'returns true for pending migrations' do
         expect(ROM.env.gateways[:default].pending_migrations?).to be_truthy
@@ -66,7 +61,7 @@ describe ROM::SQL::Gateway do
       end
 
       it 'runs migrations from a specified directory' do
-        ROM.env.gateways[:default].run_migrations
+        container.gateways[:default].run_migrations
       end
     end
   end
@@ -75,24 +70,26 @@ describe ROM::SQL::Gateway do
     include_context 'database setup'
 
     it 'skips settings up associations when tables are missing' do
-      ROM.setup(:sql, uri)
-
-      ROM.relation(:foos) do
-        one_to_many :bars, key: :foo_id
+      configuration = ROM::Configuration.new(:sql, uri) do |config|
+        config.use([:auto_registration, :macros])
+        config.relation(:foos) do
+          one_to_many :bars, key: :foo_id
+        end
       end
-
-      expect { ROM.finalize }.not_to raise_error
+      expect { ROM.create_container(configuration) }.not_to raise_error
     end
 
     it 'skips finalization a relation when table is missing' do
-      ROM.setup(:sql, uri)
+      configuration = ROM::Configuration.new(:sql, uri) do |config|
+        config.use([:auto_registration, :macros])
 
-      class Foos < ROM::Relation[:sql]
-        dataset :foos
-        one_to_many :bars, key: :foo_id
+        class Foos < ROM::Relation[:sql]
+          dataset :foos
+          one_to_many :bars, key: :foo_id
+        end
       end
-
-      expect { ROM.finalize }.not_to raise_error
+      
+      expect { ROM.create_container(configuration) }.not_to raise_error
       expect { Foos.model.dataset }.to raise_error(Sequel::Error, /no dataset/i)
     end
   end

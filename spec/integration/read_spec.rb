@@ -34,12 +34,12 @@ describe 'Reading relations' do
       end
     end
 
-    setup.relation(:goals) do
+    configuration.relation(:goals) do
       register_as :goals
       dataset :tasks
     end
 
-    setup.relation(:users) do
+    configuration.relation(:users) do
       one_to_many :goals, key: :user_id
 
       def by_name(name)
@@ -55,7 +55,7 @@ describe 'Reading relations' do
       end
     end
 
-    setup.relation(:user_goal_counts) do
+    configuration.relation(:user_goal_counts) do
       dataset :users
       register_as :user_goal_counts
       one_to_many :goals, key: :user_id
@@ -71,7 +71,7 @@ describe 'Reading relations' do
       end
     end
 
-    setup.mappers do
+    configuration.mappers do
       define(:users) do
         model User
 
@@ -90,7 +90,7 @@ describe 'Reading relations' do
   end
 
   it 'loads domain objects' do
-    user = rom.relation(:users).as(:users).with_goals.by_name('Piotr').to_a.first
+    user = container.relation(:users).as(:users).with_goals.by_name('Piotr').to_a.first
 
     expect(user).to eql(
       User.new(
@@ -99,9 +99,9 @@ describe 'Reading relations' do
   end
 
   it 'works with grouping and aggregates' do
-    rom.relations[:goals].insert(id: 2, user_id: 1, title: 'Get Milk')
+    container.relations[:goals].insert(id: 2, user_id: 1, title: 'Get Milk')
 
-    users_with_goal_count = rom.relation(:user_goal_counts).as(:user_goal_counts).all
+    users_with_goal_count = container.relation(:user_goal_counts).as(:user_goal_counts).all
 
     expect(users_with_goal_count.to_a).to eq([
       UserGoalCount.new(id: 1, name: "Piotr", goal_count: 2)

@@ -4,14 +4,14 @@ require 'anima'
 describe 'Commands / Update' do
   include_context 'database setup'
 
-  subject(:users) { rom.command(:users) }
+  subject(:users) { container.command(:users) }
 
-  let(:relation) { rom.relations.users }
+  let(:relation) { container.relations.users }
   let(:piotr) { relation.by_name('Piotr').one }
   let(:peter) { { name: 'Peter' } }
 
   before do
-    setup.relation(:users) do
+    configuration.relation(:users) do
       def by_id(id)
         where(id: id).limit(1)
       end
@@ -21,13 +21,13 @@ describe 'Commands / Update' do
       end
     end
 
-    setup.commands(:users) do
+    configuration.commands(:users) do
       define(:update)
     end
 
     User = Class.new { include Anima.new(:id, :name) }
 
-    setup.mappers do
+    configuration.mappers do
       register :users, entity: -> tuples { tuples.map { |tuple| User.new(tuple) } }
     end
 

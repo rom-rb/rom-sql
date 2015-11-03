@@ -3,15 +3,17 @@ require 'spec_helper'
 describe ROM::Relation do
   include_context 'users and tasks'
 
-  let(:users) { rom.relations.users }
-  let(:tasks) { rom.relations.tasks }
+  let(:users) { container.relations.users }
+  let(:tasks) { container.relations.tasks }
 
   before do
-    setup.relation(:users) do
+    configuration.relation(:users) do
       def sorted
         order(:id)
       end
     end
+
+    configuration.relation(:tasks)
   end
 
   describe '#dataset' do

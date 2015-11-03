@@ -4,8 +4,8 @@ require 'virtus'
 describe 'Commands / Create' do
   include_context 'database setup'
 
-  subject(:users) { rom.commands.users }
-  subject(:tasks) { rom.commands.tasks }
+  subject(:users) { container.commands.users }
+  subject(:tasks) { container.commands.tasks }
 
   before do
     class Params
@@ -18,7 +18,7 @@ describe 'Commands / Create' do
       end
     end
 
-    setup.commands(:users) do
+    configuration.commands(:users) do
       define(:create) do
         input Params
 
@@ -34,12 +34,12 @@ describe 'Commands / Create' do
       end
     end
 
-    setup.commands(:tasks) do
+    configuration.commands(:tasks) do
       define(:create)
     end
 
-    setup.relation(:users)
-    setup.relation(:tasks)
+    configuration.relation(:users)
+    configuration.relation(:tasks)
   end
 
   context '#transaction' do
@@ -85,7 +85,7 @@ describe 'Commands / Create' do
         expect(result.value).to be(nil)
         expect(result.error.message).to eql('name cannot be empty')
         expect(passed).to be(false)
-      }.to_not change { rom.relations.users.count }
+      }.to_not change { container.relations.users.count }
     end
 
     it 'creates nothing if rollback was raised' do
@@ -103,7 +103,7 @@ describe 'Commands / Create' do
         expect(result.value).to be(nil)
         expect(result.error).to be(nil)
         expect(passed).to be(false)
-      }.to_not change { rom.relations.users.count }
+      }.to_not change { container.relations.users.count }
     end
 
     it 'creates nothing if constraint error was raised' do
@@ -121,7 +121,7 @@ describe 'Commands / Create' do
           expect(error).to be_instance_of(ROM::SQL::UniqueConstraintError)
           expect(passed).to be(false)
         end
-      }.to_not change { rom.relations.users.count }
+      }.to_not change { container.relations.users.count }
     end
 
     it 'creates nothing if anything was raised in any nested transaction' do
@@ -135,7 +135,7 @@ describe 'Commands / Create' do
             }
           }
         }.to raise_error(Exception)
-      }.to_not change { rom.relations.users.count }
+      }.to_not change { container.relations.users.count }
     end
   end
 
@@ -203,15 +203,15 @@ describe 'Commands / Create' do
 
   describe '.associates' do
     it 'sets foreign key prior execution for many tuples' do
-      setup.commands(:tasks) do
+      configuration.commands(:tasks) do
         define(:create) do
           associates :user, key: [:user_id, :id]
         end
       end
 
-      create_user = rom.command(:users).create.with(name: 'Jade')
+      create_user = container.command(:users).create.with(name: 'Jade')
 
-      create_task = rom.command(:tasks).create.with([
+      create_task = container.command(:tasks).create.with([
         { title: 'Task one' }, { title: 'Task two' }
       ])
 
@@ -226,15 +226,15 @@ describe 'Commands / Create' do
     end
 
     it 'sets foreign key prior execution for one tuple' do
-      setup.commands(:tasks) do
+      configuration.commands(:tasks) do
         define(:create) do
           result :one
           associates :user, key: [:user_id, :id]
         end
       end
 
-      create_user = rom.command(:users).create.with(name: 'Jade')
-      create_task = rom.command(:tasks).create.with(title: 'Task one')
+      create_user = container.command(:users).create.with(name: 'Jade')
+      create_task = container.command(:tasks).create.with(title: 'Task one')
 
       command = create_user >> create_task
 
@@ -245,7 +245,7 @@ describe 'Commands / Create' do
 
     it 'raises when already defined' do
       expect {
-        setup.commands(:tasks) do
+        configuration.commands(:tasks) do
           define(:create) do
             result :one
             associates :user, key: [:user_id, :id]

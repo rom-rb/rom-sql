@@ -5,7 +5,7 @@ require 'rom/lint/spec'
 describe ROM::SQL::Gateway do
   include_context 'users and tasks'
 
-  let(:gateway) { rom.gateways[:default] }
+  let(:gateway) { container.gateways[:default] }
 
   it_behaves_like 'a rom gateway' do
     let(:identifier) { :sql }

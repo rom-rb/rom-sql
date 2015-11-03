@@ -5,8 +5,10 @@ describe 'Inferring schema from database' do
 
   context "when database schema exists" do
     it "infers the schema from the database relations" do
-      expect(rom.relations.users.to_a)
-        .to eql(rom.gateways[:default][:users].to_a)
+      configuration.relation(:users)
+
+      expect(container.relations.users.to_a)
+        .to eql(container.gateways[:default][:users].to_a)
     end
   end
 
@@ -14,7 +16,7 @@ describe 'Inferring schema from database' do
     it "returns an empty schema" do
       drop_tables
 
-      expect { rom.not_here }.to raise_error(NoMethodError)
+      expect { container.not_here }.to raise_error(NoMethodError)
     end
   end
 end

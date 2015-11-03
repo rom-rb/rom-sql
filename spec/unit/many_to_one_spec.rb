@@ -9,7 +9,7 @@ describe 'Defining many-to-one association' do
   end
 
   it 'extends relation with association methods' do
-    setup.relation(:tasks) do
+    configuration.relation(:tasks) do
       many_to_one :users, key: :user_id, on: { name: 'Piotr' }
 
       def all
@@ -21,7 +21,7 @@ describe 'Defining many-to-one association' do
       end
     end
 
-    setup.mappers do
+    configuration.mappers do
       define(:tasks)
 
       define(:with_user, parent: :tasks) do
@@ -31,29 +31,30 @@ describe 'Defining many-to-one association' do
       end
     end
 
-    setup.relation(:users)
+    configuration.relation(:users)
 
-    tasks = rom.relations.tasks
+    tasks = container.relations.tasks
 
     expect(tasks.all.with_user.to_a).to eql(
       [{ id: 1, name: 'Piotr', title: 'Finish ROM' }]
     )
 
-    expect(rom.relation(:tasks).map_with(:with_user).all.with_user.to_a).to eql(
+    expect(container.relation(:tasks).map_with(:with_user).all.with_user.to_a).to eql(
       [{ id: 1, title: 'Finish ROM', user: { name: 'Piotr' } }]
     )
   end
 
   it "joins on specified key" do
-    setup.relation(:task_tags) do
+    configuration.relation(:task_tags) do
       many_to_one :tags, key: :tag_id
 
       def with_tags
         association_left_join(:tags)
       end
     end
+    configuration.relation(:tags)
 
-    expect(rom.relation(:task_tags).with_tags.to_a).to eq(
+    expect(container.relation(:task_tags).with_tags.to_a).to eq(
       [{ tag_id: 1, task_id: 1, id: 1, name: "important" }]
     )
   end

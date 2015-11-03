@@ -4,7 +4,7 @@ describe 'Logger' do
   include_context 'database setup'
 
   it 'sets up a logger for sequel' do
-    gateway = rom.gateways[:default]
+    gateway = container.gateways[:default]
 
     gateway.use_logger(LOGGER)
 

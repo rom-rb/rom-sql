@@ -1,4 +1,4 @@
-ROM.env.gateways[:default].migration do
+ROM::SQL.migration do
   change do
     create_table :carrots do
       primary_key :id
