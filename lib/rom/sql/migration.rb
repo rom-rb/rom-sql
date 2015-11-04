@@ -55,6 +55,13 @@ module ROM
         end
       end
 
+      # @see ROM::SQL::Migration.pending?
+      #
+      # @api public
+      def pending_migrations?
+        migrator.pending?
+      end
+
       # @see ROM::SQL.migration
       #
       # @api public
