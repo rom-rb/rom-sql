@@ -20,6 +20,10 @@ module ROM
           Sequel::Migrator.run(connection, path.to_s, options)
         end
 
+        def pending?
+          !Sequel::Migrator.is_current?(connection, path.to_s)
+        end
+
         def migration(&block)
           Sequel.migration(&block)
         end

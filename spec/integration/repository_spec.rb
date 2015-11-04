@@ -43,6 +43,8 @@ describe ROM::SQL::Gateway do
     end
 
     context 'running migrations from a file system' do
+      include_context 'database setup'
+
       let(:migration_dir) do
         Pathname(__FILE__).dirname.join('../fixtures/migrations').realpath
       end
@@ -52,6 +54,15 @@ describe ROM::SQL::Gateway do
       before do
         ROM.setup(:sql, [conn, migrator: migrator])
         ROM.finalize
+      end
+
+      it 'returns true for pending migrations' do
+        expect(ROM.env.gateways[:default].pending_migrations?).to be_truthy
+      end
+
+      it 'returns false for non pending migrations' do
+        ROM.env.gateways[:default].run_migrations
+        expect(ROM.env.gateways[:default].pending_migrations?).to be_falsy
       end
 
       it 'runs migrations from a specified directory' do
