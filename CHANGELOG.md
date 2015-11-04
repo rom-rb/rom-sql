@@ -1,3 +1,9 @@
+## v0.6.2
+
+### Added
+
+* Possibility to check for pending migrations (gotar)
+
 ## v0.6.1 2015-09-23
 
 ### Added
