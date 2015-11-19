@@ -175,6 +175,18 @@ module ROM
           __new__(dataset.__send__(__method__, *args, &block))
         end
 
+        # Returns a result of SQL SUM clause.
+        #
+        # @example
+        #   users.sum(:age)
+        #
+        # @return Number
+        #
+        # @api public
+        def sum(*args)
+          dataset.__send__(__method__, *args)
+        end
+
         # Restrict a relation to match criteria
         #
         # @example
