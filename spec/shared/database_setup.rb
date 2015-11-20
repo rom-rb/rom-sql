@@ -1,10 +1,8 @@
 shared_context 'database setup' do
-  subject(:rom) { setup.finalize }
-
   let(:uri) { DB_URI }
   let(:conn) { Sequel.connect(uri) }
-
-  let(:setup) { ROM.setup(:sql, conn) }
+  let(:configuration) { ROM::Configuration.new(:sql, conn).use(:macros) }
+  let(:container) { ROM.create_container(configuration) }
 
   def drop_tables
     [:tasks, :users, :tags, :task_tags, :rabbits, :carrots, :schema_migrations].each do |name|

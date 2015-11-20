@@ -2,17 +2,18 @@ require 'spec_helper'
 
 namespace :db do
   task :setup do
-    # noop
+    #noop
   end
 end
 
-describe 'MigrationTasks' do
-  before do
-    ROM.setup(:sql, DB_URI)
-    ROM.finalize
-  end
+xdescribe 'MigrationTasks' do
+  let(:configuration) { ROM::Configuration.new(:sql, DB_URI) }
+  let!(:container) { ROM.create_container(configuration) }
+  let(:migrator) { container.gateways[:default].migrator }
 
-  let(:migrator) { ROM.env.gateways[:default].migrator }
+  before do
+    ROM::SQL::RakeSupport.stub(:env) { configuration }
+  end
 
   context 'db:reset' do
     it 'calls proper commands' do

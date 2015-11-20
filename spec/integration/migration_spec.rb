@@ -2,13 +2,14 @@ require 'spec_helper'
 
 describe ROM::SQL, '.migration' do
   let(:connection) { ROM::SQL.gateway.connection }
+  let(:configuration) { ROM::Configuration.new(:sql, DB_URI) }
 
   before do
-    ROM.setup(:sql, DB_URI)
+    configuration
     connection.drop_table?(:dragons)
   end
 
-  it 'creates a migration for a specific gateway' do
+  xit 'creates a migration for a specific gateway' do
     migration = ROM::SQL.migration do
       change do
         create_table :dragons do

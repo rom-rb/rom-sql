@@ -1,8 +1,14 @@
 require 'rom/sql/migration/migrator'
+require 'rom/support/publisher'
 
 module ROM
   module SQL
-    # Create a database migration for a specific gateway
+    class << self
+      include ROM::Support::Publisher
+    end
+    
+    # Trap for the migration runner. To create a migration 
+    # on a specific gateway, use ROM::SQL::Gateway#migration
     #
     # @example
     #   ROM.setup(
@@ -21,29 +27,22 @@ module ROM
     #     end
     #   end
     #
-    #   # for a non-default gateway
-    #   ROM::SQL.migration(:other) do
-    #     # ...
-    #   end
-    #
     # @api public
-    def self.migration(gateway = :default, &block)
-      gateways = ROM.boot ? ROM.boot.gateways : ROM.env.gateways
-      gateways[gateway].migration(&block)
-    end
-
-    # Return first sql gateway for migrations
-    #
-    # This is used by migration tasks, they only support a single sql gateway
-    #
-    # @api private
-    def self.gateway
-      ROM.gateways
-        .keys
-        .detect { |gateway| gateway.instance_of?(Gateway) }
+    def self.migration(&block)
+      broadcast(:migration, block)
     end
 
     module Migration
+      class MigrationLoader
+        def initialize gateway
+          @gateway = gateway
+        end
+        
+        def migration(block)
+          @gateway.migration(&block)
+        end
+      end
+      
       Sequel.extension :migration
 
       def self.included(klass)
@@ -81,7 +80,9 @@ module ROM
       #
       # @api public
       def run_migrations(options = {})
-        migrator.run(options)
+        Wisper::TemporaryListeners.subscribe(MigrationLoader.new(self)) do
+          migrator.run(options)
+        end
       end
 
       # TODO: this should be removed in favor of migration API in Gateway

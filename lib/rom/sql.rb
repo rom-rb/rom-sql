@@ -1,6 +1,12 @@
 require "sequel"
 require "rom"
 
+module ROM
+  MissingConfigurationError = Class.new(StandardError)
+end
+
+require "rom/configuration_dsl"
+
 require "rom/sql/version"
 require "rom/sql/errors"
 require "rom/sql/plugins"

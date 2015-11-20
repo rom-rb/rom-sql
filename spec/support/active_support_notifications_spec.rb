@@ -7,7 +7,7 @@ describe 'ActiveSupport::Notifications support' do
   include_context 'database setup'
 
   it 'works' do
-    rom.gateways[:default].use_logger(LOGGER)
+    container.gateways[:default].use_logger(LOGGER)
 
     sql = nil
 

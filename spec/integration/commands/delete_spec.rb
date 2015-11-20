@@ -3,22 +3,22 @@ require 'spec_helper'
 describe 'Commands / Delete' do
   include_context 'users and tasks'
 
-  subject(:users) { rom.commands.users }
+  subject(:users) { container.commands.users }
 
   before do
-    setup.relation(:users) do
+    configuration.relation(:users) do
       def by_name(name)
         where(name: name)
       end
     end
 
-    setup.commands(:users) do
+    configuration.commands(:users) do
       define(:delete) do
         result :one
       end
     end
 
-    rom.relations.users.insert(id: 2, name: 'Jane')
+    container.relations.users.insert(id: 2, name: 'Jane')
   end
 
   context '#transaction' do
@@ -27,7 +27,7 @@ describe 'Commands / Delete' do
         users.delete.transaction do
           users.delete.by_name('Jane').call
         end
-      }.to change { rom.relations.users.count }.by(-1)
+      }.to change { container.relations.users.count }.by(-1)
     end
 
     it 'delete nothing if error was raised' do
@@ -36,7 +36,7 @@ describe 'Commands / Delete' do
           users.delete.by_name('Jane').call
           raise ROM::SQL::Rollback
         end
-      }.to_not change { rom.relations.users.count }
+      }.to_not change { container.relations.users.count }
     end
   end
 

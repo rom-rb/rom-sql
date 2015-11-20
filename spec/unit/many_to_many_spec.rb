@@ -8,7 +8,7 @@ describe 'Defining many-to-one association' do
   end
 
   it 'extends relation with association methods' do
-    setup.relation(:tasks) do
+    configuration.relation(:tasks) do
       many_to_many :tags,
         join_table: :task_tags,
         left_key: :task_id,
@@ -33,9 +33,9 @@ describe 'Defining many-to-one association' do
       end
     end
 
-    setup.relation(:tags)
+    configuration.relation(:tags)
 
-    tasks = rom.relations.tasks
+    tasks = container.relations.tasks
 
     expect(tasks.all.with_tags.to_a).to eql([
       { id: 1, title: 'Finish ROM', name: 'important' },
