@@ -52,12 +52,12 @@ describe ROM::SQL::Gateway do
       let!(:container) { ROM.create_container(configuration) }
 
       it 'returns true for pending migrations' do
-        expect(ROM.env.gateways[:default].pending_migrations?).to be_truthy
+        expect(container.gateways[:default].pending_migrations?).to be_truthy
       end
 
       it 'returns false for non pending migrations' do
-        ROM.env.gateways[:default].run_migrations
-        expect(ROM.env.gateways[:default].pending_migrations?).to be_falsy
+        container.gateways[:default].run_migrations
+        expect(container.gateways[:default].pending_migrations?).to be_falsy
       end
 
       it 'runs migrations from a specified directory' do
