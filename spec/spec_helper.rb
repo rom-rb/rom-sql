@@ -38,7 +38,6 @@ RSpec.configure do |config|
 
   config.before do
     @constants = Object.constants
-    ROM::ConfigurationPlugins::AutoRegistration.reset_trapper
   end
 
   config.after do

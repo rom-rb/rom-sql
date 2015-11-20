@@ -1,7 +1,7 @@
 shared_context 'database setup' do
   let(:uri) { DB_URI }
   let(:conn) { Sequel.connect(uri) }
-  let(:configuration) { ROM::Configuration.new(:sql, conn).use([:auto_registration, :macros]) }
+  let(:configuration) { ROM::Configuration.new(:sql, conn).use(:macros) }
   let(:container) { ROM.create_container(configuration) }
 
   def drop_tables

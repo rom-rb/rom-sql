@@ -6,7 +6,7 @@ describe ROM::SQL::Gateway do
 
     context 'creating migrations inline' do
       subject(:gateway) { container.gateways[:default] }
-      
+
       let(:configuration) { ROM::Configuration.new(:sql, conn) }
       let!(:container) { ROM.create_container(configuration) }
 
@@ -71,7 +71,7 @@ describe ROM::SQL::Gateway do
 
     it 'skips settings up associations when tables are missing' do
       configuration = ROM::Configuration.new(:sql, uri) do |config|
-        config.use([:auto_registration, :macros])
+        config.use(:macros)
         config.relation(:foos) do
           one_to_many :bars, key: :foo_id
         end
@@ -81,14 +81,14 @@ describe ROM::SQL::Gateway do
 
     it 'skips finalization a relation when table is missing' do
       configuration = ROM::Configuration.new(:sql, uri) do |config|
-        config.use([:auto_registration, :macros])
+        config.use(:macros)
 
         class Foos < ROM::Relation[:sql]
           dataset :foos
           one_to_many :bars, key: :foo_id
         end
       end
-      
+
       expect { ROM.create_container(configuration) }.not_to raise_error
       expect { Foos.model.dataset }.to raise_error(Sequel::Error, /no dataset/i)
     end

@@ -6,7 +6,7 @@ group :test do
   gem 'byebug', platforms: :mri
   gem 'anima', '~> 0.2.0'
   gem 'transproc', github: 'solnic/transproc', branch: 'master'
-  gem 'rom', github: 'rom-rb/rom', branch: 'master'
+  gem 'rom', path: '~/dev/rom'
   gem 'rom-support', github: 'rom-rb/rom-support', branch: 'master'
   gem 'rom-mapper', github: 'rom-rb/rom-mapper', branch: 'master'
   gem 'virtus'

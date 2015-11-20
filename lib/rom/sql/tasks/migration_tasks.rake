@@ -1,6 +1,5 @@
 require "pathname"
 require "fileutils"
-require 'rom/support/loader'
 
 module ROM
   module SQL
@@ -9,25 +8,25 @@ module ROM
         def run_migrations(options = {})
           gateway.run_migrations(options)
         end
-  
+
         def create_migration(*args)
           gateway.migrator.create_file(*args)
         end
 
         private
-        
+
         def env
           ROM::Support::Loader.env
         end
-        
+
         def gateway
           env.gateways.values.select { |g| g.is_a?(ROM::SQL::Gateway) }.first
         end
-    
+
         def gateway_name
           name_for_gateway(gateway)
         end
-    
+
         def name_for_gateway(gateway)
           env.gateways.invert[gateway]
         end
@@ -43,7 +42,7 @@ namespace :db do
       Rake::Task["db:setup"].invoke
     end
   end
-  
+
   task reset: :rom_configuration do
     ROM::SQL::RakeSupport.run_migrations(target: 0)
     ROM::SQL::RakeSupport.run_migrations
