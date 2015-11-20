@@ -4,7 +4,7 @@ module ROM
       module Pagination
         class Pager
           include Options
-          include Equalizer.new(:dataset, :options)
+          include Dry::Equalizer(:dataset, :options)
 
           option :current_page, reader: true, default: 1
           option :per_page, reader: true

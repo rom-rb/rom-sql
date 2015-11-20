@@ -2,7 +2,7 @@ module ROM
   module SQL
     # @private
     class Header
-      include Equalizer.new(:columns, :table)
+      include Dry::Equalizer(:columns, :table)
 
       attr_reader :columns, :table
 
