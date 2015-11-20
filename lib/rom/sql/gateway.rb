@@ -19,6 +19,10 @@ module ROM
       include Options
       include Migration
 
+      class << self
+        attr_accessor :instance
+      end
+
       # Return optionally configured logger
       #
       # @return [Object] logger
@@ -70,6 +74,8 @@ module ROM
         add_extensions(Array(options[:extensions])) if options[:extensions]
 
         super(uri, options.reject { |k, _| conn_options.keys.include?(k) })
+
+        self.class.instance = self
       end
 
       # Disconnect from database

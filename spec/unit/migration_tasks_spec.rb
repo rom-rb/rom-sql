@@ -6,7 +6,7 @@ namespace :db do
   end
 end
 
-xdescribe 'MigrationTasks' do
+describe 'MigrationTasks' do
   let(:configuration) { ROM::Configuration.new(:sql, DB_URI) }
   let!(:container) { ROM.create_container(configuration) }
   let(:migrator) { container.gateways[:default].migrator }

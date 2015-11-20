@@ -15,20 +15,8 @@ module ROM
 
         private
 
-        def env
-          ROM::Support::Loader.env
-        end
-
         def gateway
-          env.gateways.values.select { |g| g.is_a?(ROM::SQL::Gateway) }.first
-        end
-
-        def gateway_name
-          name_for_gateway(gateway)
-        end
-
-        def name_for_gateway(gateway)
-          env.gateways.invert[gateway]
+          ROM::SQL::Gateway.instance
         end
       end
     end
@@ -38,9 +26,7 @@ end
 namespace :db do
   desc "Perform migration reset (full erase and migration up)"
   task :rom_configuration do
-    ROM::Support::Loader.load do
-      Rake::Task["db:setup"].invoke
-    end
+    Rake::Task["db:setup"].invoke
   end
 
   task reset: :rom_configuration do
