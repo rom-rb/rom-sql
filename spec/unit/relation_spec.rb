@@ -24,6 +24,13 @@ describe ROM::Relation do
     end
   end
 
+  describe '#sum' do
+    it 'delegates to dataset and return value' do
+      expect(users.dataset).to receive(:sum).with(:id).and_call_original
+      expect(users.sum(:id)).to eql(1)
+    end
+  end
+
   describe '#distinct' do
     it 'delegates to dataset and returns a new relation' do
       expect(users.dataset).to receive(:distinct).with(:name).and_call_original
