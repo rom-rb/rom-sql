@@ -24,6 +24,16 @@ describe ROM::Relation do
     end
   end
 
+  describe '.table_name' do
+    it 'allows one to set the table name' do
+      setup.relation(:my_tasks) do
+        table_name :tasks
+      end
+
+      expect(rom.relations.my_tasks.model.table_name).to eq :tasks
+    end
+  end
+
   describe '#distinct' do
     it 'delegates to dataset and returns a new relation' do
       expect(users.dataset).to receive(:distinct).with(:name).and_call_original
