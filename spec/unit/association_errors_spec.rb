@@ -6,6 +6,8 @@ describe 'Association errors' do
   describe 'accessing an undefined association' do
     specify do
       configuration.relation(:users) do
+        use :assoc_macros
+
         def with_undefined
           association_join(:undefined)
         end

@@ -7,8 +7,6 @@ describe 'Defining one-to-many association' do
     conn[:users].insert id: 2, name: 'Jane'
     conn[:tasks].insert id: 2, user_id: 2, title: 'Task one'
 
-    configuration.relation(:tasks)
-
     configuration.mappers do
       define(:users)
 
@@ -16,10 +14,14 @@ describe 'Defining one-to-many association' do
         group tasks: [:tasks_id, :title]
       end
     end
+
+    configuration.relation(:tasks) { use :assoc_macros }
   end
 
   it 'extends relation with association methods' do
     configuration.relation(:users) do
+      use :assoc_macros
+
       one_to_many :tasks, key: :user_id, on: { title: 'Finish ROM' }
 
       def by_name(name)
@@ -51,6 +53,8 @@ describe 'Defining one-to-many association' do
 
   it 'allows setting :conditions' do
     configuration.relation(:users) do
+      use :assoc_macros
+
       one_to_many :piotrs_tasks, relation: :tasks, key: :user_id,
                                  conditions: { name: 'Piotr' }
 

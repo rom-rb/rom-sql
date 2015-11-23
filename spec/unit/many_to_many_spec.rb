@@ -8,7 +8,12 @@ describe 'Defining many-to-one association' do
   end
 
   it 'extends relation with association methods' do
+    configuration.relation(:tags) { use :assoc_macros }
+    configuration.relation(:task_tags) { use :assoc_macros }
+
     configuration.relation(:tasks) do
+      use :assoc_macros
+
       many_to_many :tags,
         join_table: :task_tags,
         left_key: :task_id,
@@ -32,8 +37,6 @@ describe 'Defining many-to-one association' do
         select(:id, :title)
       end
     end
-
-    configuration.relation(:tags)
 
     tasks = container.relations.tasks
 

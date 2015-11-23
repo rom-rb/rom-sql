@@ -35,11 +35,15 @@ describe 'Reading relations' do
     end
 
     configuration.relation(:goals) do
+      use :assoc_macros
+
       register_as :goals
       dataset :tasks
     end
 
     configuration.relation(:users) do
+      use :assoc_macros
+
       one_to_many :goals, key: :user_id
 
       def by_name(name)
@@ -56,6 +60,8 @@ describe 'Reading relations' do
     end
 
     configuration.relation(:user_goal_counts) do
+      use :assoc_macros
+
       dataset :users
       register_as :user_goal_counts
       one_to_many :goals, key: :user_id

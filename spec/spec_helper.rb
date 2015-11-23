@@ -29,10 +29,6 @@ TMP_PATH = root.join('../tmp')
 
 Dir[root.join('shared/*.rb').to_s].each { |f| require f }
 
-class ROM::SQL::Relation
-  use :assoc_macros
-end
-
 RSpec.configure do |config|
   config.before(:suite) do
     tmp_test_dir = TMP_PATH.join('test')

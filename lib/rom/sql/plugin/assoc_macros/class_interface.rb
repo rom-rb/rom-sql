@@ -18,7 +18,7 @@ module ROM
           end
 
           # @api private
-          def extended(klass)
+          def self.extended(klass)
             prepare(klass)
           end
 

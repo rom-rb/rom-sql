@@ -8,11 +8,13 @@ describe 'Defining multiple associations' do
   end
 
   it 'extends relation with association methods' do
-    configuration.relation(:users)
+    configuration.relation(:users) { use :assoc_macros }
 
-    configuration.relation(:tags)
+    configuration.relation(:tags) { use :assoc_macros }
 
     configuration.relation(:tasks) do
+      use :assoc_macros
+
       many_to_one :users, key: :user_id
 
       many_to_many :tags,
