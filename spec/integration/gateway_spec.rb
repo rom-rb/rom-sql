@@ -8,7 +8,7 @@ describe ROM::SQL::Gateway do
       subject(:gateway) { container.gateways[:default] }
 
       let(:configuration) { ROM::Configuration.new(:sql, conn) }
-      let!(:container) { ROM.create_container(configuration) }
+      let!(:container) { ROM.container(configuration) }
 
       after do
         [:rabbits, :carrots].each do |name|
@@ -49,7 +49,7 @@ describe ROM::SQL::Gateway do
 
       let(:migrator) { ROM::SQL::Migration::Migrator.new(conn, path: migration_dir) }
       let(:configuration) { ROM::Configuration.new(:sql, [conn, migrator: migrator]) }
-      let!(:container) { ROM.create_container(configuration) }
+      let!(:container) { ROM.container(configuration) }
 
       it 'returns true for pending migrations' do
         expect(container.gateways[:default].pending_migrations?).to be_truthy
@@ -76,7 +76,7 @@ describe ROM::SQL::Gateway do
           one_to_many :bars, key: :foo_id
         end
       end
-      expect { ROM.create_container(configuration) }.not_to raise_error
+      expect { ROM.container(configuration) }.not_to raise_error
     end
 
     it 'skips finalization a relation when table is missing' do
@@ -89,7 +89,7 @@ describe ROM::SQL::Gateway do
         end
       end
 
-      expect { ROM.create_container(configuration) }.not_to raise_error
+      expect { ROM.container(configuration) }.not_to raise_error
       expect { Foos.model.dataset }.to raise_error(Sequel::Error, /no dataset/i)
     end
   end
