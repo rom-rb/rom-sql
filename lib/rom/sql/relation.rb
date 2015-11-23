@@ -37,10 +37,7 @@ module ROM
         option :primary_key, reader: true, default: value
       end
 
-      option :primary_key, reader: true, default: -> relation {
-        pk = Array(relation.dataset.db.primary_key(relation.name)).map(&:to_sym)
-        pk.size > 1 ? pk : pk[0]
-      }
+      primary_key :id
 
       # @api private
       def initialize(dataset, registry = {})
