@@ -6,13 +6,15 @@ module ROM
           # @api private
           def self.included(klass)
             super
-            klass.class_eval do
-              def self.inherited(other)
-                super
-                other.view(:base) do
-                  header { dataset.columns }
-                  relation { select(*attributes(:base)).order(primary_key) }
-                end
+            klass.extend(ClassInterface)
+          end
+
+          module ClassInterface
+            def inherited(klass)
+              super
+              klass.view(:base) do
+                header { dataset.columns }
+                relation { select(*attributes(:base)).order(primary_key) }
               end
             end
           end
