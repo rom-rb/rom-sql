@@ -1,16 +1,14 @@
 ## v0.7.0 to-be-released
 
+### Added
+
+* Possibility to check for pending migrations (gotar)
+
 ### Changed
 
 * Association macros are now an optional plugin (solnic)
 
-[Compare v0.6.2...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.6.2...HEAD)
-
-## v0.6.2
-
-### Added
-
-* Possibility to check for pending migrations (gotar)
+[Compare v0.6.1...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.6.1...HEAD)
 
 ## v0.6.1 2015-09-23
 
