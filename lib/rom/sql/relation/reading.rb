@@ -187,6 +187,42 @@ module ROM
           dataset.__send__(__method__, *args)
         end
 
+        # Returns a result of SQL MIN clause.
+        #
+        # @example
+        #   users.min(:age)
+        #
+        # @return Number
+        #
+        # @api public
+        def min(*args)
+          dataset.__send__(__method__, *args)
+        end
+
+        # Returns a result of SQL MAX clause.
+        #
+        # @example
+        #   users.max(:age)
+        #
+        # @return Number
+        #
+        # @api public
+        def max(*args)
+          dataset.__send__(__method__, *args)
+        end
+
+        # Returns a result of SQL AVG clause.
+        #
+        # @example
+        #   users.avg(:age)
+        #
+        # @return Number
+        #
+        # @api public
+        def avg(*args)
+          dataset.__send__(__method__, *args)
+        end
+
         # Restrict a relation to match criteria
         #
         # @example

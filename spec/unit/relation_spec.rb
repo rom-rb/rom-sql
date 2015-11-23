@@ -31,6 +31,33 @@ describe ROM::Relation do
     end
   end
 
+  describe '#min' do
+    it 'delegates to dataset and return value' do
+      users.insert id: 2, name: 'Oskar'
+
+      expect(users.dataset).to receive(:min).with(:id).and_call_original
+      expect(users.min(:id)).to eql(1)
+    end
+  end
+
+  describe '#max' do
+    it 'delegates to dataset and return value' do
+      users.insert id: 2, name: 'Oskar'
+
+      expect(users.dataset).to receive(:max).with(:id).and_call_original
+      expect(users.max(:id)).to eql(2)
+    end
+  end
+
+  describe '#avg' do
+    it 'delegates to dataset and return value' do
+      users.insert id: 2, name: 'Oskar'
+
+      expect(users.dataset).to receive(:avg).with(:id).and_call_original
+      expect(users.avg(:id)).to eql(1.5)
+    end
+  end
+
   describe '#distinct' do
     it 'delegates to dataset and returns a new relation' do
       expect(users.dataset).to receive(:distinct).with(:name).and_call_original
