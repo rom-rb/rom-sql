@@ -2,7 +2,6 @@ require 'rom/sql/header'
 
 require 'rom/sql/relation/reading'
 require 'rom/sql/relation/writing'
-require 'rom/sql/relation/inspection'
 
 require 'rom/plugins/relation/view'
 require 'rom/plugins/relation/key_inference'
@@ -23,7 +22,6 @@ module ROM
       use :auto_combine
       use :auto_wrap
 
-      include Inspection
       include Writing
       include Reading
 
@@ -34,6 +32,15 @@ module ROM
       #
       # @attr_reader [Symbol] table
       attr_reader :table
+
+      def self.primary_key(value)
+        option :primary_key, reader: true, default: value
+      end
+
+      option :primary_key, reader: true, default: -> relation {
+        pk = Array(relation.dataset.db.primary_key(relation.name)).map(&:to_sym)
+        pk.size > 1 ? pk : pk[0]
+      }
 
       # @api private
       def initialize(dataset, registry = {})

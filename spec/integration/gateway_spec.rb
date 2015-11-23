@@ -72,7 +72,9 @@ describe ROM::SQL::Gateway do
     it 'skips settings up associations when tables are missing' do
       configuration = ROM::Configuration.new(:sql, uri) do |config|
         config.use(:macros)
+
         config.relation(:foos) do
+          primary_key :id
           one_to_many :bars, key: :foo_id
         end
       end
@@ -85,6 +87,7 @@ describe ROM::SQL::Gateway do
 
         class Foos < ROM::Relation[:sql]
           dataset :foos
+          primary_key :id
           one_to_many :bars, key: :foo_id
         end
       end

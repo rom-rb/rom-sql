@@ -12,6 +12,11 @@ module ROM
           relation.extend(ClassInterface)
         end
 
+        # @api private
+        def model
+          self.class.model
+        end
+
         # Join configured association.
         #
         # Uses INNER JOIN type.
