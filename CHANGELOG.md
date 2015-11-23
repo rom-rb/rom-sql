@@ -3,6 +3,8 @@
 ### Added
 
 * Possibility to check for pending migrations (gotar)
+* `Relation#sum` interface (gotar)
+* `Relation#union` interface (spscream)
 
 ### Changed
 
