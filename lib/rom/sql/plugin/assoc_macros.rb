@@ -1,7 +1,17 @@
+require 'rom/sql/plugin/assoc_macros/class_interface'
+
 module ROM
   module SQL
-    class Relation < ROM::Relation
-      module Associations
+    module Plugin
+      module AssocMacros
+        # Extends a relation class with assoc-macros and instance-level methods
+        #
+        # @api private
+        def self.included(relation)
+          super
+          relation.extend(ClassInterface)
+        end
+
         # Join configured association.
         #
         # Uses INNER JOIN type.

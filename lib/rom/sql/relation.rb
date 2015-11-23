@@ -1,10 +1,8 @@
 require 'rom/sql/header'
 
-require 'rom/sql/relation/class_methods'
 require 'rom/sql/relation/reading'
 require 'rom/sql/relation/writing'
 require 'rom/sql/relation/inspection'
-require 'rom/sql/relation/associations'
 
 require 'rom/plugins/relation/view'
 require 'rom/plugins/relation/key_inference'
@@ -25,10 +23,7 @@ module ROM
       use :auto_combine
       use :auto_wrap
 
-      extend ClassMethods
-
       include Inspection
-      include Associations
       include Writing
       include Reading
 
