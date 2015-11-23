@@ -6,20 +6,28 @@ module ROM
         #
         # @api private
         module ClassInterface
+          # @api private
+          def self.prepare(klass)
+            klass.class_eval do
+              class << self
+                attr_reader :model, :associations
+              end
+            end
+            klass.instance_variable_set('@model', Class.new(Sequel::Model))
+            klass.instance_variable_set('@associations', [])
+          end
+
+          # @api private
+          def extended(klass)
+            prepare(klass)
+          end
+
           # Set up model and association ivars for descendant class
           #
           # @api private
           def inherited(klass)
             super
-
-            klass.class_eval do
-              class << self
-                attr_reader :model, :associations
-              end
-
-              instance_variable_set('@model', Class.new(Sequel::Model))
-              instance_variable_set('@associations', [])
-            end
+            ClassInterface.prepare(klass)
           end
 
           # Set up a one-to-many association
