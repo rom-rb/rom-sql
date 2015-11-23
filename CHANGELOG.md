@@ -12,6 +12,8 @@
 * Possibility to check for pending migrations (gotar)
 * `Relation#sum` interface (gotar)
 * `Relation#union` interface (spscream)
+* `primary_key` macro which allows setting a custom primary key when it cannot be
+   inferred automatically (solnic)
 
 ### Changed
 
