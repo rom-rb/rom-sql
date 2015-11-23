@@ -2,12 +2,20 @@
 
 ### Added
 
+* Repository plugins have been imported:
+  * `view` allows defining a relation view with an explicit header (solnic)
+  * `base_view` defines a base view with all column names as the header (solnic)
+  * `auto_combine` defines a generic `for_combine` method which eager-loads
+    parent/children relation (solnic)
+  * `auto-wrap` defines a generic `for_wrap` method which inner-joins
+    a parent/children relation (solnic)
 * Possibility to check for pending migrations (gotar)
 * `Relation#sum` interface (gotar)
 * `Relation#union` interface (spscream)
 
 ### Changed
 
+* `ROM::SQL.gateway` renamed to `ROM::SQL::Gateway.instance` for migrations (endash)
 * Association macros are now an optional plugin (solnic)
 
 [Compare v0.6.1...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.6.1...HEAD)
