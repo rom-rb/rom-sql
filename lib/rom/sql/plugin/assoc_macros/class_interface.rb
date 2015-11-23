@@ -17,29 +17,9 @@ module ROM
                 attr_reader :model, :associations
               end
 
-              dataset do
-                table = opts[:from].first
-
-                if db.table_exists?(table)
-                  # quick fix for dbs w/o primary_key inference
-                  #
-                  # TODO: add a way of setting a pk explicitly on a relation
-                  pk =
-                    if db.respond_to?(:primary_key)
-                      Array(db.primary_key(table))
-                    else
-                      [:id]
-                    end.map { |name| :"#{table}__#{name}" }
-
-                    select(*columns).order(*pk)
-                else
-                  self
-                end
-              end
+              instance_variable_set('@model', Class.new(Sequel::Model))
+              instance_variable_set('@associations', [])
             end
-
-            klass.instance_variable_set('@model', Class.new(Sequel::Model))
-            klass.instance_variable_set('@associations', [])
           end
 
           # Set up a one-to-many association

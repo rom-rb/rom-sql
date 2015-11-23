@@ -33,6 +33,35 @@ module ROM
       # @attr_reader [Symbol] table
       attr_reader :table
 
+      # Set default dataset for a relation sub-class
+      #
+      # @api private
+      def self.inherited(klass)
+        super
+
+        klass.class_eval do
+          dataset do
+            table = opts[:from].first
+
+            if db.table_exists?(table)
+              # quick fix for dbs w/o primary_key inference
+              #
+              # TODO: add a way of setting a pk explicitly on a relation
+              pk =
+                if db.respond_to?(:primary_key)
+                  Array(db.primary_key(table))
+                else
+                  [:id]
+                end.map { |name| :"#{table}__#{name}" }
+
+                select(*columns).order(*pk)
+            else
+              self
+            end
+          end
+        end
+      end
+
       def self.primary_key(value)
         option :primary_key, reader: true, default: value
       end
