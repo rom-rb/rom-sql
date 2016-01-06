@@ -1,4 +1,4 @@
-## v0.7.0 to-be-released
+## v0.7.0 2016-01-06
 
 ### Added
 
@@ -23,7 +23,7 @@
 * `ROM::SQL.gateway` renamed to `ROM::SQL::Gateway.instance` for migrations (endash)
 * Association macros are now an optional plugin (solnic)
 
-[Compare v0.6.1...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.6.1...HEAD)
+[Compare v0.6.1...v0.7.0](https://github.com/rom-rb/rom-sql/compare/v0.6.1...v0.7.0)
 
 ## v0.6.1 2015-09-23
 
