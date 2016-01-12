@@ -16,6 +16,26 @@ describe ROM::Relation do
     configuration.relation(:tasks)
   end
 
+  describe '.schema' do
+    it 'defines a canonical schema for a relation' do
+      class Test::Users < ROM::Relation[:sql]
+        schema do
+          attribute :id, Types::Serial
+          attribute :name, Types::String
+          attribute :admin, Types::Bool
+        end
+      end
+
+      schema = ROM::SQL::Schema.new(
+        id: ROM::SQL::Types::Serial,
+        name: ROM::SQL::Types::String,
+        admin: ROM::SQL::Types::Bool
+      )
+
+      expect(Test::Users.schema).to eql(schema)
+    end
+  end
+
   describe '#dataset' do
     it 'selects all qualified columns and sorts by pk' do
       expect(users.dataset).to eql(

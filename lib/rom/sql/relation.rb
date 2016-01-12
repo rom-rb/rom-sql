@@ -1,5 +1,6 @@
 require 'rom/sql/header'
 
+require 'rom/sql/schema'
 require 'rom/sql/relation/reading'
 require 'rom/sql/relation/writing'
 
@@ -14,6 +15,8 @@ module ROM
     # Sequel-specific relation extensions
     #
     class Relation < ROM::Relation
+      include SQL
+
       adapter :sql
 
       use :key_inference
@@ -67,6 +70,10 @@ module ROM
       end
 
       primary_key :id
+
+      def self.schema(&block)
+        @schema ||= Schema::DSL.new(&block).call
+      end
 
       # @api private
       def initialize(dataset, registry = {})

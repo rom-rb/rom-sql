@@ -20,6 +20,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "sequel", "~> 4.18"
   spec.add_runtime_dependency "dry-equalizer", "~> 0.2"
+  spec.add_runtime_dependency "dry-data", "~> 0.5"
   spec.add_runtime_dependency "rom", "~> 1.0.0"
 
   spec.add_development_dependency "bundler"
