@@ -6,6 +6,7 @@ module ROM
   module SQL
     class Schema
       include Dry::Equalizer(:attributes)
+      include Enumerable
 
       attr_reader :attributes
 
@@ -29,6 +30,10 @@ module ROM
       def initialize(attributes = {})
         @attributes = attributes
         freeze
+      end
+
+      def each(&block)
+        attributes.each(&block)
       end
     end
   end

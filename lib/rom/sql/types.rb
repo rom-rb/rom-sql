@@ -6,7 +6,7 @@ module ROM
       # FIXME: missing interface in dry-data
       Dry::Data.define_constants(self, Dry::Data.container._container.keys)
 
-      Serial = Strict::String.constrained(min_size: 1)
+      Serial = Strict::Int.constrained(gt: 0)
     end
   end
 end

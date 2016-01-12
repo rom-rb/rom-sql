@@ -16,6 +16,20 @@ module ROM
 
         use :associates
 
+        def self.build(relation, options = {})
+          super(relation, options.merge(input: default_input(relation)))
+        end
+
+        def self.default_input(relation)
+          schema = relation.class.schema
+
+          if relation.class.schema
+            Types::Hash.schema(schema)
+          else
+            Hash
+          end
+        end
+
         # Inserts provided tuples into the database table
         #
         # @api public

@@ -72,7 +72,11 @@ module ROM
       primary_key :id
 
       def self.schema(&block)
-        @schema ||= Schema::DSL.new(&block).call
+        if defined?(@schema)
+          @schema
+        elsif block
+          @schema = Schema::DSL.new(&block).call
+        end
       end
 
       # @api private
