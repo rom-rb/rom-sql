@@ -35,7 +35,7 @@ Or install it yourself as:
 
     $ gem install rom-sql
 
-Check out [SQL guide](http://rom-rb.org/guides/adapters/sql/) for usage examples.
+Check out [SQL guide](http://rom-rb.org/learn/adapters/sql/) for usage examples.
 
 ## ROADMAP
 
