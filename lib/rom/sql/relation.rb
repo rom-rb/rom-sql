@@ -121,6 +121,14 @@ module ROM
       def columns
         dataset.columns
       end
+
+      def schema?
+        ! schema.nil?
+      end
+
+      def schema
+        self.class.schema
+      end
     end
   end
 end

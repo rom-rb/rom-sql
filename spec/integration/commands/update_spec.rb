@@ -6,28 +6,30 @@ describe 'Commands / Update' do
 
   subject(:users) { container.command(:users) }
 
+  let(:update) { container.commands[:users][:update] }
+
   let(:relation) { container.relations.users }
   let(:piotr) { relation.by_name('Piotr').one }
   let(:peter) { { name: 'Peter' } }
 
   context 'with a schema' do
-    it 'uses relation schema for the default input handler' do
+    before do
       configuration.relation(:users) do
         schema do
           attribute :id, ROM::SQL::Types::Serial
           attribute :name, ROM::SQL::Types::String
         end
       end
+    end
 
+    it 'uses relation schema for the default input handler' do
       configuration.commands(:users) do
         define(:update) do
           result :one
         end
       end
 
-      create = container.commands[:users][:update]
-
-      expect(create.input[foo: 'bar', id: 1, name: 'Jane']).to eql(
+      expect(update.input[foo: 'bar', id: 1, name: 'Jane']).to eql(
         id: 1, name: 'Jane'
       )
     end
@@ -59,6 +61,12 @@ describe 'Commands / Update' do
     end
 
     after { Object.send(:remove_const, :User) }
+
+    it 'respects configured input handler' do
+      expect(update.input[foo: 'bar', id: 1, name: 'Jane']).to eql(
+        foo: 'bar', id: 1, name: 'Jane'
+      )
+    end
 
     context '#transaction' do
       it 'update record if there was no errors' do
