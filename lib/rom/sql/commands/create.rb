@@ -1,6 +1,7 @@
 require 'rom/sql/commands'
 require 'rom/sql/commands/error_wrapper'
 require 'rom/sql/commands/transaction'
+require 'rom/sql/commands/default_input'
 
 module ROM
   module SQL
@@ -11,24 +12,12 @@ module ROM
       class Create < ROM::Commands::Create
         adapter :sql
 
+        extend DefaultInput
+
         include Transaction
         include ErrorWrapper
 
         use :associates
-
-        def self.build(relation, options = {})
-          super(relation, options.merge(input: default_input(relation)))
-        end
-
-        def self.default_input(relation)
-          schema = relation.class.schema
-
-          if relation.class.schema
-            Types::Hash.schema(schema)
-          else
-            Hash
-          end
-        end
 
         # Inserts provided tuples into the database table
         #

@@ -8,7 +8,7 @@ RSpec.describe ROM::SQL::Types do
     end
 
     it 'raises when input is <= 0' do
-      expect { ROM::SQL::Types::Serial[0] }.to raise_error(Dry::Data::ConstraintError)
+      expect { ROM::SQL::Types::Serial[0] }.to raise_error(Dry::Types::ConstraintError)
     end
   end
 

@@ -1,10 +1,9 @@
-require 'dry-data'
+require 'dry-types'
 
 module ROM
   module SQL
     module Types
-      # FIXME: missing interface in dry-data
-      Dry::Data.define_constants(self, Dry::Data.container._container.keys)
+      include Dry::Types.module
 
       Serial = Strict::Int.constrained(gt: 0)
     end
