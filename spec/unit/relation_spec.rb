@@ -32,7 +32,24 @@ describe ROM::Relation do
         admin: ROM::SQL::Types::Bool
       )
 
+      expect(Test::Users.schema.primary_key).to eql([Test::Users.schema[:id]])
+
       expect(Test::Users.schema).to eql(schema)
+    end
+
+    it 'allows setting composite primary key' do
+      class Test::Users < ROM::Relation[:sql]
+        schema do
+          attribute :name, Types::String
+          attribute :email, Types::String
+
+          primary_key :name, :email
+        end
+      end
+
+      schema = Test::Users.schema
+
+      expect(schema.primary_key).to eql([schema[:name], schema[:email]])
     end
   end
 

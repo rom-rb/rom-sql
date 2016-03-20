@@ -8,10 +8,10 @@ module ROM
     #
     # @api public
     class Schema
-      include Dry::Equalizer(:attributes)
+      include Dry::Equalizer(:attributes, :meta)
       include Enumerable
 
-      attr_reader :attributes
+      attr_reader :attributes, :meta
 
       # @api public
       class DSL < BasicObject
@@ -32,6 +32,16 @@ module ROM
           @attributes[name] = type
         end
 
+        # Specify which key(s) should be the primary key
+        #
+        # @api public
+        def primary_key(*names)
+          names.each do |name|
+            attributes[name] = attributes[name].with(primary_key: true)
+          end
+          self
+        end
+
         # @api private
         def call
           Schema.new(attributes)
@@ -39,9 +49,23 @@ module ROM
       end
 
       # @api private
-      def initialize(attributes = {})
+      def initialize(attributes)
         @attributes = attributes
         freeze
+      end
+
+      # Return attribute
+      #
+      # @api public
+      def [](name)
+        attributes.fetch(name)
+      end
+
+      # @api public
+      def primary_key
+        attributes.values.select do |attr|
+          attr.respond_to?(:options) && attr.options[:primary_key] == true
+        end
       end
 
       # Iterate over schema's attributes
