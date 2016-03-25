@@ -37,7 +37,7 @@ module ROM
         # @api public
         def primary_key(*names)
           names.each do |name|
-            attributes[name] = attributes[name].with(primary_key: true)
+            attributes[name] = attributes[name].meta(primary_key: true)
           end
           self
         end
@@ -64,7 +64,7 @@ module ROM
       # @api public
       def primary_key
         attributes.values.select do |attr|
-          attr.respond_to?(:options) && attr.options[:primary_key] == true
+          attr.meta[:primary_key] == true
         end
       end
 
