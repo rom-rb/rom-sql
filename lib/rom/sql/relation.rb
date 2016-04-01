@@ -122,10 +122,12 @@ module ROM
         dataset.columns
       end
 
+      # @api private
       def schema?
         ! schema.nil?
       end
 
+      # @api private
       def schema
         self.class.schema
       end
