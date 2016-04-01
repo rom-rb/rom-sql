@@ -2,6 +2,8 @@ source 'https://rubygems.org'
 
 gemspec
 
+gem 'dry-types', github: 'dry-rb/dry-types', branch: 'master'
+
 group :test do
   gem 'byebug', platforms: :mri
   gem 'anima', '~> 0.2.0'

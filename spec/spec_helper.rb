@@ -37,11 +37,18 @@ RSpec.configure do |config|
   end
 
   config.before do
+    module Test
+      def self.remove_constants
+        constants.each { |const| remove_const(const) }
+        self
+      end
+    end
     @constants = Object.constants
   end
 
   config.after do
     added_constants = Object.constants - @constants
     added_constants.each { |name| Object.send(:remove_const, name) }
+    Object.send(:remove_const, Test.remove_constants.name)
   end
 end

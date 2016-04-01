@@ -1,5 +1,6 @@
 require 'rom/sql/header'
 
+require 'rom/sql/schema'
 require 'rom/sql/relation/reading'
 require 'rom/sql/relation/writing'
 
@@ -14,6 +15,8 @@ module ROM
     # Sequel-specific relation extensions
     #
     class Relation < ROM::Relation
+      include SQL
+
       adapter :sql
 
       use :key_inference
@@ -68,6 +71,33 @@ module ROM
 
       primary_key :id
 
+      # Specify canonical schema for a relation
+      #
+      # With a schema defined commands will set up a type-safe input handler
+      # automatically
+      #
+      # @example
+      #   class Users < ROM::Relation[:sql]
+      #     schema do
+      #       attribute :id, Types::Serial
+      #       attribute :name, Types::String
+      #     end
+      #   end
+      #
+      #   # access schema
+      #   Users.schema
+      #
+      # @return [Schema]
+      #
+      # @api public
+      def self.schema(&block)
+        if defined?(@schema)
+          @schema
+        elsif block
+          @schema = Schema::DSL.new(&block).call
+        end
+      end
+
       # @api private
       def initialize(dataset, registry = {})
         super
@@ -90,6 +120,16 @@ module ROM
       # @api private
       def columns
         dataset.columns
+      end
+
+      # @api private
+      def schema?
+        ! schema.nil?
+      end
+
+      # @api private
+      def schema
+        self.class.schema
       end
     end
   end

@@ -139,6 +139,29 @@ describe 'Commands / Create' do
     end
   end
 
+  it 'uses relation schema for the default input handler' do
+    configuration.relation(:users) do
+      register_as :users_with_schema
+
+      schema do
+        attribute :id, ROM::SQL::Types::Serial
+        attribute :name, ROM::SQL::Types::String
+      end
+    end
+
+    configuration.commands(:users_with_schema) do
+      define(:create) do
+        result :one
+      end
+    end
+
+    create = container.commands[:users_with_schema][:create]
+
+    expect(create.input[foo: 'bar', id: 1, name: 'Jane']).to eql(
+      id: 1, name: 'Jane'
+    )
+  end
+
   it 'returns a single tuple when result is set to :one' do
     result = users.try { users.create.call(name: 'Jane') }
 

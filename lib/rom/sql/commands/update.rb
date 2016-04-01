@@ -14,6 +14,7 @@ module ROM
         adapter :sql
 
         extend Deprecations
+        extend DefaultInput
 
         include Transaction
         include ErrorWrapper

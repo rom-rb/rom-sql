@@ -1,6 +1,7 @@
 require 'rom/sql/commands'
 require 'rom/sql/commands/error_wrapper'
 require 'rom/sql/commands/transaction'
+require 'rom/sql/commands/default_input'
 
 module ROM
   module SQL
@@ -10,6 +11,8 @@ module ROM
       # @api public
       class Create < ROM::Commands::Create
         adapter :sql
+
+        extend DefaultInput
 
         include Transaction
         include ErrorWrapper
