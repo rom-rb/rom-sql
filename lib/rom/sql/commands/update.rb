@@ -1,6 +1,5 @@
 require 'rom/support/deprecations'
 
-require 'rom/sql/commands'
 require 'rom/sql/commands/error_wrapper'
 require 'rom/sql/commands/transaction'
 
