@@ -7,6 +7,8 @@ describe ROM::Relation do
   let(:tasks) { container.relations.tasks }
 
   context 'with schema', adapter: :sqlite do
+    let(:uri) { SQLITE_DB_URI }
+
     before do
       configuration.relation(:users) do
         schema do
