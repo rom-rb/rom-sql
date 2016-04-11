@@ -13,6 +13,7 @@ require 'rom/sql/rake_task'
 
 # FIXME: why do we need to require it manually??
 require 'sequel/adapters/postgres'
+require 'sequel/adapters/sqlite'
 require 'active_support/inflector'
 
 require 'logger'
