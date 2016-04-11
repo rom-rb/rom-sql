@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe ROM::SQL::Gateway do
   describe 'migration' do
-    let(:conn) { Sequel.connect(DB_URI) }
+    let(:conn) { Sequel.connect(POSTGRES_DB_URI) }
 
     context 'creating migrations inline' do
       subject(:gateway) { container.gateways[:default] }

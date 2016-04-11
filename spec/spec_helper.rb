@@ -22,7 +22,7 @@ rescue LoadError # rubocop:disable Lint/HandleExceptions
 end
 
 LOGGER = Logger.new(File.open('./log/test.log', 'a'))
-DB_URI = 'postgres://localhost/rom_sql'
+POSTGRES_DB_URI = 'postgres://localhost/rom_sql'
 
 root = Pathname(__FILE__).dirname
 TMP_PATH = root.join('../tmp')

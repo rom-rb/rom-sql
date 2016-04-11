@@ -1,5 +1,5 @@
 shared_context 'database setup' do
-  let(:uri) { DB_URI }
+  let(:uri) { POSTGRES_DB_URI }
   let(:conn) { Sequel.connect(uri) }
   let(:configuration) { ROM::Configuration.new(:sql, conn) }
   let(:container) { ROM.container(configuration) }

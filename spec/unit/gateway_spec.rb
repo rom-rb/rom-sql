@@ -10,7 +10,7 @@ describe ROM::SQL::Gateway do
   it_behaves_like 'a rom gateway' do
     let(:identifier) { :sql }
     let(:gateway) { ROM::SQL::Gateway }
-    let(:uri) { DB_URI }
+    let(:uri) { POSTGRES_DB_URI }
   end
 
   describe '#dataset?' do
@@ -28,10 +28,10 @@ describe ROM::SQL::Gateway do
       migrator = double('migrator')
 
       expect(Sequel).to receive(:connect)
-        .with(DB_URI, host: '127.0.0.1')
+        .with(POSTGRES_DB_URI, host: '127.0.0.1')
         .and_return(conn)
 
-      gateway = ROM::SQL::Gateway.new(DB_URI, migrator: migrator, host: '127.0.0.1')
+      gateway = ROM::SQL::Gateway.new(POSTGRES_DB_URI, migrator: migrator, host: '127.0.0.1')
 
       expect(gateway.options).to eql(migrator: migrator)
     end
