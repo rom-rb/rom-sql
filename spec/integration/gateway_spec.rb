@@ -73,7 +73,6 @@ describe ROM::SQL::Gateway do
       configuration = ROM::Configuration.new(:sql, uri) do |config|
         config.relation(:foos) do
           use :assoc_macros
-          primary_key :id
           one_to_many :bars, key: :foo_id
         end
       end
@@ -85,7 +84,6 @@ describe ROM::SQL::Gateway do
         class Foos < ROM::Relation[:sql]
           dataset :foos
           use :assoc_macros
-          primary_key :id
           one_to_many :bars, key: :foo_id
         end
       end
