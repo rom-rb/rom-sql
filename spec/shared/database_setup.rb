@@ -10,7 +10,7 @@ shared_context 'database setup' do
     end
   end
 
-  before do
+  before do |example|
     conn.loggers << LOGGER
 
     drop_tables
@@ -19,7 +19,7 @@ shared_context 'database setup' do
       primary_key :id
       String :name, null: false
       index :name, unique: true
-      check { char_length(name) > 2 }
+      check { char_length(name) > 2 } if [:postgres, nil].include?(example.metadata[:adapter])
     end
 
     conn.create_table :tasks do

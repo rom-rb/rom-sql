@@ -23,6 +23,7 @@ end
 
 LOGGER = Logger.new(File.open('./log/test.log', 'a'))
 POSTGRES_DB_URI = 'postgres://localhost/rom_sql'
+SQLITE_DB_URI = 'sqlite::memory'
 
 root = Pathname(__FILE__).dirname
 TMP_PATH = root.join('../tmp')
