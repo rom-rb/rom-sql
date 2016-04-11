@@ -14,6 +14,7 @@ group :test do
   gem 'codeclimate-test-reporter', require: false
   gem 'pg', platforms: [:mri, :rbx]
   gem 'pg_jruby', platforms: :jruby
+  gem 'sqlite3'
 end
 
 group :tools do

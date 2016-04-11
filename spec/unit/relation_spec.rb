@@ -22,6 +22,26 @@ describe ROM::Relation do
         users.select(*users.columns).order(:users__id).dataset
       )
     end
+
+    it 'uses schema to infer default dataset' do
+      container = ROM.container(:sql, 'sqlite::memory') do |config|
+        config.gateways[:default].connection.create_table :users do
+          primary_key :id
+          String :name, null: false
+        end
+
+        config.relation(:users) do
+          schema do
+            attribute :id, ROM::SQL::Types::Serial
+            attribute :name, ROM::SQL::Types::String
+          end
+        end
+      end
+
+      expect(container.relations[:users].dataset).to eql(
+        container.gateways[:default].dataset(:users).select(:id, :name).order(:users__id)
+      )
+    end
   end
 
   describe '#sum' do

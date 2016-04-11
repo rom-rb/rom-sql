@@ -1,4 +1,5 @@
 require 'rom/sql/header'
+require 'rom/sql/types'
 
 require 'rom/sql/relation/reading'
 require 'rom/sql/relation/writing'
@@ -8,6 +9,8 @@ require 'rom/plugins/relation/key_inference'
 require 'rom/plugins/relation/sql/base_view'
 require 'rom/plugins/relation/sql/auto_combine'
 require 'rom/plugins/relation/sql/auto_wrap'
+
+require 'rom/support/deprecations'
 
 module ROM
   module SQL
@@ -46,17 +49,16 @@ module ROM
             table = opts[:from].first
 
             if db.table_exists?(table)
-              # quick fix for dbs w/o primary_key inference
-              #
-              # TODO: add a way of setting a pk explicitly on a relation
               pk =
-                if db.respond_to?(:primary_key)
+                if klass.schema
+                  klass.schema.primary_key.map { |type| type.meta[:name] }
+                elsif db.respond_to?(:primary_key)
                   Array(db.primary_key(table))
                 else
                   [:id]
                 end.map { |name| :"#{table}__#{name}" }
 
-                select(*columns).order(*pk)
+              select(*columns).order(*pk)
             else
               self
             end
@@ -65,6 +67,7 @@ module ROM
       end
 
       def self.primary_key(value)
+        Deprecations.announce(:primary_key, "#{self}.primary_key is deprecated, use schema definition to configure primary key")
         option :primary_key, reader: true, default: value
       end
 
