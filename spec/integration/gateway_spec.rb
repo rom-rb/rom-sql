@@ -71,8 +71,6 @@ describe ROM::SQL::Gateway do
 
     it 'skips settings up associations when tables are missing' do
       configuration = ROM::Configuration.new(:sql, uri) do |config|
-        config.use(:macros)
-
         config.relation(:foos) do
           use :assoc_macros
           primary_key :id
@@ -84,8 +82,6 @@ describe ROM::SQL::Gateway do
 
     it 'skips finalization a relation when table is missing' do
       configuration = ROM::Configuration.new(:sql, uri) do |config|
-        config.use(:macros)
-
         class Foos < ROM::Relation[:sql]
           dataset :foos
           use :assoc_macros
