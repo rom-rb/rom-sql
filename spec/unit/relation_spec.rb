@@ -44,6 +44,22 @@ describe ROM::Relation do
     end
   end
 
+  describe '#primary_key' do
+    it 'returns :id by default' do
+      expect(users.primary_key).to be(:id)
+    end
+
+    it 'returns configured primary key from the schema' do
+      configuration.relation(:other_users) do
+        schema(:users) do
+          attribute :name, ROM::SQL::Types::String.meta(primary_key: true)
+        end
+      end
+
+      expect(container.relations[:other_users].primary_key).to be(:name)
+    end
+  end
+
   describe '#sum' do
     it 'delegates to dataset and return value' do
       expect(users.dataset).to receive(:sum).with(:id).and_call_original

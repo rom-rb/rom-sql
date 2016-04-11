@@ -71,8 +71,6 @@ module ROM
         option :primary_key, reader: true, default: value
       end
 
-      primary_key :id
-
       # @api private
       def initialize(dataset, registry = {})
         super
@@ -86,6 +84,17 @@ module ROM
       # @api private
       def header
         @header ||= Header.new(dataset.opts[:select] || dataset.columns, table)
+      end
+
+      # Return primary key column name
+      #
+      # TODO: add support for composite pks
+      #
+      # @return [Symbol]
+      #
+      # @api public
+      def primary_key
+        @primary_key ||= schema? ? schema.primary_key[0].meta[:name] : :id
       end
 
       # Return raw column names
