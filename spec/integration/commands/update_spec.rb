@@ -58,6 +58,7 @@ describe 'Commands / Update' do
       end
 
       relation.insert(name: 'Piotr')
+      relation.insert(name: 'Jane')
     end
 
     after { Object.send(:remove_const, :User) }
@@ -83,42 +84,90 @@ describe 'Commands / Update' do
           raise ROM::SQL::Rollback
         end
 
-        expect(relation.one[:name]).to eql('Piotr')
+        expect(relation.first[:name]).to eql('Piotr')
       end
     end
 
-    it 'updates everything when there is no original tuple' do
-      result = users.try do
-        users.update.by_id(piotr[:id]).call(peter)
+    describe '#call' do
+      it 'updates everything when there is no original tuple' do
+        result = users.try do
+          users.update.by_id(piotr[:id]).call(peter)
+        end
+
+        expect(result.value.to_a).to match_array([{ id: 1, name: 'Peter' }])
       end
 
-      expect(result.value.to_a).to match_array([{ id: 1, name: 'Peter' }])
-    end
+      it 'updates when attributes changed' do
+        result = users.try do
+          users.as(:entity).update.by_id(piotr[:id]).change(User.new(piotr)).call(peter)
+        end
 
-    it 'updates when attributes changed' do
-      result = users.try do
-        users.as(:entity).update.by_id(piotr[:id]).change(User.new(piotr)).call(peter)
+        expect(result.value.to_a).to match_array([User.new(id: 1, name: 'Peter')])
       end
 
-      expect(result.value.to_a).to match_array([User.new(id: 1, name: 'Peter')])
-    end
+      it 'does not update when attributes did not change' do
+        result = users.try do
+          command = users.update.by_id(piotr[:id]).change(piotr)
 
-    it 'does not update when attributes did not change' do
-      result = users.try do
-        command = users.update.by_id(piotr[:id]).change(piotr)
+          expect(command.relation).not_to receive(:update)
 
-        expect(command.relation).not_to receive(:update)
+          command.call(name: piotr[:name])
+        end
 
-        command.call(name: piotr[:name])
+        expect(result.value.to_a).to be_empty
       end
 
-      expect(result.value.to_a).to be_empty
-    end
+      it 're-reaises database errors' do
+        expect {
+          users.try { users.update.by_id(piotr[:id]).call(bogus_field: '#trollface') }
+        }.to raise_error(ROM::SQL::DatabaseError, /bogus_field/)
+      end
 
-    it 're-reaises database errors' do
-      expect {
-        users.try { users.update.by_id(piotr[:id]).call(bogus_field: '#trollface') }
-      }.to raise_error(ROM::SQL::DatabaseError, /bogus_field/)
+      describe '#execute' do
+        context 'with postgres adapter' do
+          context 'with a single record' do
+            it 'materializes the result' do
+              result = users.update.by_name('Piotr').execute(name: 'Pete')
+              expect(result).to eq([
+                { id: 1, name: 'Pete' }
+              ])
+            end
+          end
+
+          context 'with multiple records' do
+            it 'materializes the results' do
+              result = users.update.by_name(%w(Piotr Jane)).execute(name: 'Josie')
+              expect(result).to eq([
+                { id: 1, name: 'Josie' },
+                { id: 2, name: 'Josie' }
+              ])
+            end
+          end
+        end
+
+        context 'with other adapter', adapter: :sqlite do
+          let(:uri) { SQLITE_DB_URI }
+
+          context 'with a single record' do
+            it 'materializes the result' do
+              result = users.update.by_name('Piotr').execute(name: 'Pete')
+              expect(result).to eq([
+                { id: 1, name: 'Pete' }
+              ])
+            end
+          end
+
+          context 'with multiple records' do
+            it 'materializes the results' do
+              result = users.update.by_name(%w(Piotr Jane)).execute(name: 'Josie')
+              expect(result).to eq([
+                { id: 1, name: 'Josie' },
+                { id: 2, name: 'Josie' }
+              ])
+            end
+          end
+        end
+      end
     end
   end
 end
