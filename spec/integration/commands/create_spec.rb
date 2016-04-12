@@ -18,6 +18,8 @@ describe 'Commands / Create' do
       end
     end
 
+    conn.add_index :users, :name, unique: true
+
     configuration.commands(:users) do
       define(:create) do
         input Params
@@ -42,7 +44,7 @@ describe 'Commands / Create' do
     configuration.relation(:tasks)
   end
 
-  context '#transaction' do
+  describe '#transaction' do
     it 'creates record if nothing was raised' do
       result = users.create.transaction {
         users.create.call(name: 'Jane')
@@ -276,6 +278,58 @@ describe 'Commands / Create' do
           end
         end
       }.to raise_error(ArgumentError, /user/)
+    end
+  end
+
+  describe '#execute' do
+    context 'with postgres adapter' do
+      context 'with a single record' do
+        it 'materializes the result' do
+          result = container.command(:users).create.execute(name: 'Jane')
+          expect(result).to eq([
+            { id: 1, name: 'Jane' }
+          ])
+        end
+      end
+
+      context 'with multiple records' do
+        it 'materializes the results' do
+          result = container.command(:users).create.execute([
+            { name: 'Jane' },
+            { name: 'John' }
+          ])
+          expect(result).to eq([
+            { id: 1, name: 'Jane' },
+            { id: 2, name: 'John' }
+          ])
+        end
+      end
+    end
+
+    context 'with other adapter', adapter: :sqlite do
+      let(:uri) { SQLITE_DB_URI }
+      
+      context 'with a single record' do
+        it 'materializes the result' do
+          result = container.command(:users).create.execute(name: 'Jane')
+          expect(result).to eq([
+            { id: 1, name: 'Jane' }
+          ])
+        end
+      end
+
+      context 'with multiple records' do
+        it 'materializes the results' do
+          result = container.command(:users).create.execute([
+            { name: 'Jane' },
+            { name: 'John' }
+          ])
+          expect(result).to eq([
+            { id: 1, name: 'Jane' },
+            { id: 2, name: 'John' }
+          ])
+        end
+      end
     end
   end
 end

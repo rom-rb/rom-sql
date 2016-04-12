@@ -19,10 +19,11 @@ describe 'Commands / Delete' do
     end
 
     container.relations.users.insert(id: 2, name: 'Jane')
+    container.relations.users.insert(id: 3, name: 'John')
   end
 
-  context '#transaction' do
-    it 'delete in normal way if no error raised' do
+  describe '#transaction' do
+    it 'deletes in normal way if no error raised' do
       expect {
         users.delete.transaction do
           users.delete.by_name('Jane').call
@@ -30,7 +31,7 @@ describe 'Commands / Delete' do
       }.to change { container.relations.users.count }.by(-1)
     end
 
-    it 'delete nothing if error was raised' do
+    it 'deletes nothing if error was raised' do
       expect {
         users.delete.transaction do
           users.delete.by_name('Jane').call
@@ -40,28 +41,76 @@ describe 'Commands / Delete' do
     end
   end
 
-  it 'raises error when tuple count does not match expectation' do
-    result = users.try { users.delete.call }
+  describe '#call' do
+    it 'raises error when tuple count does not match expectation' do
+      result = users.try { users.delete.call }
 
-    expect(result.value).to be(nil)
-    expect(result.error).to be_instance_of(ROM::TupleCountMismatchError)
+      expect(result.value).to be(nil)
+      expect(result.error).to be_instance_of(ROM::TupleCountMismatchError)
+    end
+
+    it 'deletes all tuples in a restricted relation' do
+      result = users.try { users.delete.by_name('Jane').call }
+
+      expect(result.value).to eql(id: 2, name: 'Jane')
+    end
+
+    it 're-raises database error' do
+      command = users.delete.by_name('Jane')
+
+      expect(command.relation).to receive(:delete).and_raise(
+        Sequel::DatabaseError, 'totally wrong'
+      )
+
+      expect {
+        users.try { command.call }
+      }.to raise_error(ROM::SQL::DatabaseError, /totally wrong/)
+    end
   end
 
-  it 'deletes all tuples in a restricted relation' do
-    result = users.try { users.delete.by_name('Jane').call }
+  describe '#execute' do
+    context 'with postgres adapter' do
+      context 'with a single record' do
+        it 'materializes the result' do
+          result = container.command(:users).delete.by_name(%w(Jane)).execute
+          expect(result).to eq([
+            { id: 2, name: 'Jane' }
+          ])
+        end
+      end
 
-    expect(result.value).to eql(id: 2, name: 'Jane')
-  end
+      context 'with multiple records' do
+        it 'materializes the results' do
+          result = container.command(:users).delete.by_name(%w(Jane John)).execute
+          expect(result).to eq([
+            { id: 2, name: 'Jane' },
+            { id: 3, name: 'John' }
+          ])
+        end
+      end
+    end
 
-  it 're-raises database error' do
-    command = users.delete.by_name('Jane')
+    context 'with other adapter', adapter: :sqlite do
+      let(:uri) { SQLITE_DB_URI }
+      
+      context 'with a single record' do
+        it 'materializes the result' do
+          result = container.command(:users).delete.by_name(%w(Jane)).execute
+          expect(result).to eq([
+            { id: 2, name: 'Jane' }
+          ])
+        end
+      end
 
-    expect(command.relation).to receive(:delete).and_raise(
-      Sequel::DatabaseError, 'totally wrong'
-    )
-
-    expect {
-      users.try { command.call }
-    }.to raise_error(ROM::SQL::DatabaseError, /totally wrong/)
+      context 'with multiple records' do
+        it 'materializes the results' do
+          result = container.command(:users).delete.by_name(%w(Jane John)).execute
+          expect(result).to eq([
+            { id: 2, name: 'Jane' },
+            { id: 3, name: 'John' }
+          ])
+        end
+      end
+    end
   end
 end

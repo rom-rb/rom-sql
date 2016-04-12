@@ -42,7 +42,7 @@ module ROM
         # @api private
         def insert(tuples)
           pks = tuples.map { |tuple| relation.insert(tuple) }
-          relation.where(relation.primary_key => pks)
+          relation.where(relation.primary_key => pks).to_a
         end
 
         # Executes multi_insert statement and returns inserted tuples

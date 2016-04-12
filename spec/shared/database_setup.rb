@@ -18,7 +18,6 @@ shared_context 'database setup' do
     conn.create_table :users do
       primary_key :id
       String :name, null: false
-      index :name, unique: true
       check { char_length(name) > 2 } if [:postgres, nil].include?(example.metadata[:adapter])
     end
 
