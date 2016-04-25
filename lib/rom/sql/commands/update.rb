@@ -13,12 +13,13 @@ module ROM
         adapter :sql
 
         extend Deprecations
-        extend DefaultInput
 
         include Transaction
         include ErrorWrapper
 
         option :original, reader: true
+
+        use :schema
 
         deprecate :set, :call
         deprecate :to, :call

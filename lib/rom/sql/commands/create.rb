@@ -1,6 +1,5 @@
 require 'rom/sql/commands/error_wrapper'
 require 'rom/sql/commands/transaction'
-require 'rom/sql/commands/default_input'
 
 module ROM
   module SQL
@@ -11,12 +10,11 @@ module ROM
       class Create < ROM::Commands::Create
         adapter :sql
 
-        extend DefaultInput
-
         include Transaction
         include ErrorWrapper
 
         use :associates
+        use :schema
 
         # Inserts provided tuples into the database table
         #
