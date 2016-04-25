@@ -110,11 +110,6 @@ module ROM
       def schema?
         ! schema.nil?
       end
-
-      # @api private
-      def schema
-        self.class.schema
-      end
     end
   end
 end
