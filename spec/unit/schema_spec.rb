@@ -19,4 +19,20 @@ describe 'Inferring schema from database' do
       expect { container.not_here }.to raise_error(NoMethodError)
     end
   end
+
+  context 'defining associations' do
+    it "allows defining a many-to-many" do
+      class Test::Posts < ROM::Relation[:sql]
+        schema(:posts) do
+          associate do
+            many :tags, through: :posts_tags
+          end
+        end
+      end
+
+      assoc = ROM::SQL::Association::ManyToMany.new(:posts, :tags, through: :posts_tags)
+
+      expect(Test::Posts.schema.associations[:tags]).to eql(assoc)
+    end
+  end
 end

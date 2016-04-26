@@ -1,6 +1,8 @@
 require 'rom/sql/header'
 require 'rom/sql/types'
 
+require 'rom/sql/schema'
+
 require 'rom/sql/relation/reading'
 require 'rom/sql/relation/writing'
 
@@ -45,6 +47,8 @@ module ROM
         super
 
         klass.class_eval do
+          schema_dsl SQL::Schema::DSL
+
           dataset do
             table = opts[:from].first
 
