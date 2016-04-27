@@ -21,6 +21,7 @@ RSpec.describe ROM::SQL::Association::ManyToMany, '#call' do
   it 'prepares joined relations' do
     relation = assoc.call(container.relations)
 
+    expect(relation.attributes).to eql(%i[id name task_id])
     expect(relation.to_a).to eql([id: 1, name: 'important', task_id: 1])
   end
 end
