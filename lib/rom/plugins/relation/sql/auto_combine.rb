@@ -16,6 +16,7 @@ module ROM
             def inherited(klass)
               super
               klass.auto_curry :for_combine
+              klass.auto_curry :preload
             end
           end
 
@@ -27,9 +28,21 @@ module ROM
             # @return [SQL::Relation]
             #
             # @api private
-            def for_combine(keys, relation)
-              pk, fk = keys.to_a.flatten
-              where(fk => relation.map { |tuple| tuple[pk] })
+            def for_combine(spec)
+              source_key, target_key, target =
+                case spec
+                when ROM::SQL::Association
+                  [*spec.combine_keys(__registry__).flatten, spec.call(__registry__)]
+                else
+                  [*spec.flatten, self]
+                end
+
+              target.preload(source_key, target_key)
+            end
+
+            # @api private
+            def preload(source_key, target_key, source)
+              where(target_key => source.map { |tuple| tuple[source_key] })
             end
           end
         end
