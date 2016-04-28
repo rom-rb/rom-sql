@@ -21,14 +21,14 @@ RSpec.describe ROM::SQL::Association::ManyToOne do
     it 'prepares joined relations' do
       relation = assoc.call(container.relations)
 
-      expect(relation.attributes).to eql(%i[id name])
-      expect(relation.to_a).to eql([id: 1, name: 'Piotr'])
+      expect(relation.attributes).to eql(%i[id name task_id])
+      expect(relation.to_a).to eql([id: 1, task_id: 1, name: 'Piotr'])
     end
   end
 
   describe '#combine_keys' do
     it 'returns key-map used for in-memory tuple-combining' do
-      expect(assoc.combine_keys(container.relations)).to eql(id: :task_id)
+      expect(assoc.combine_keys(container.relations)).to eql(user_id: :id)
     end
   end
 end

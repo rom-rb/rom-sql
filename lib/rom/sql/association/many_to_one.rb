@@ -16,7 +16,15 @@ module ROM
           left_pk = left.foreign_key(target)
           right_fk = right.primary_key
 
-          columns = right.header.qualified.to_a
+          tarcols = right.header.qualified.to_a
+
+          srccols = left
+            .header
+            .project(left.primary_key)
+            .rename(left.primary_key => right.foreign_key(source))
+            .qualified.to_a
+
+          columns = tarcols + srccols
 
           relation = right
             .inner_join(source, left_pk => right_fk)
