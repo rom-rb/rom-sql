@@ -12,6 +12,33 @@ module ROM
         end
 
         def call(relations)
+          if through.is_a?(Association)
+            through_association(relations)
+          else
+            through_relation(relations)
+          end
+        end
+
+        private
+
+        def through_association(relations)
+          left = through.call(relations)
+          right = relations[target]
+
+          target_pk = relations[source].primary_key
+          target_fk = :"#{left.name}__#{left.foreign_key(source)}"
+
+          columns = right.header.qualified.to_a + [target_fk]
+
+          relation = left
+            .inner_join(source, target_pk => target_fk)
+            .select(*columns)
+            .order(target_fk)
+
+          relation.with(attributes: relation.columns)
+        end
+
+        def through_relation(relations)
           left = relations[source]
           right = relations[through]
           tarel = relations[target]
