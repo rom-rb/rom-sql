@@ -44,6 +44,33 @@ RSpec.describe ROM::SQL::Association::OneToOneThrough do
     end
   end
 
+  describe ':through another assoc' do
+    subject(:assoc) do
+      ROM::SQL::Association::OneToOneThrough.new(:users, :subscriptions, through: account_assoc)
+    end
+
+    let(:account_assoc) do
+      ROM::SQL::Association::OneToOneThrough.new(:accounts, :subscriptions, through: :cards)
+    end
+
+    before do
+      configuration.relation(:subscriptions) do
+        schema do
+          attribute :id, ROM::SQL::Types::Serial
+          attribute :card_id, ROM::SQL::Types::ForeignKey(:cards)
+          attribute :service, ROM::SQL::Types::String
+        end
+      end
+    end
+
+    it 'prepares joined relations through other association' do
+      relation = assoc.call(container.relations)
+
+      expect(relation.attributes).to eql(%i[id card_id service user_id])
+      expect(relation.to_a).to eql([id: 1, card_id: 1, service: 'aws', user_id: 1])
+    end
+  end
+
   describe ROM::Plugins::Relation::SQL::AutoCombine, '#for_combine' do
     it 'preloads relation based on association' do
       relation = cards.for_combine(assoc).call(users.call)

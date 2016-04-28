@@ -2,7 +2,7 @@ module ROM
   module SQL
     class Association
       class ManyToMany < Association
-        option :through, reader: true, default: nil, accepts: [Symbol]
+        option :through, reader: true, default: nil, accepts: [Symbol, Association]
 
         def combine_keys(relations)
           source_key = relations[source].primary_key

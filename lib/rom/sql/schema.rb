@@ -28,8 +28,12 @@ module ROM
         end
 
         def one(target, options = {})
-          if options.key?(:through)
-            @associations[target] = Association::OneToOneThrough.new(source, target, options)
+          through = options[:through]
+
+          if through
+            @associations[target] = Association::OneToOneThrough.new(
+              source, target, options.merge(through: associations[through] || through)
+            )
           else
             @associations[target] = Association::OneToOne.new(source, target, options)
           end
