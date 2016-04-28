@@ -16,8 +16,12 @@ module ROM
         end
 
         def many(target, options = {})
-          if options.key?(:through)
-            @associations[target] = Association::ManyToMany.new(source, target, options)
+          through = options[:through]
+
+          if through
+            @associations[target] = Association::ManyToMany.new(
+              source, target, options.merge(through: associations[through] || through)
+            )
           else
             @associations[target] = Association::OneToMany.new(source, target, options)
           end
