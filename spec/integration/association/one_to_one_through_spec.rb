@@ -7,6 +7,9 @@ RSpec.describe ROM::SQL::Association::OneToOneThrough do
 
   include_context 'users and accounts'
 
+  let(:users) { container.relations[:users] }
+  let(:cards) { container.relations[:cards] }
+
   before do
     configuration.relation(:accounts) do
       schema do
@@ -38,6 +41,14 @@ RSpec.describe ROM::SQL::Association::OneToOneThrough do
   describe '#combine_keys' do
     it 'returns key-map used for in-memory tuple-combining' do
       expect(assoc.combine_keys(container.relations)).to eql(id: :user_id)
+    end
+  end
+
+  describe ROM::Plugins::Relation::SQL::AutoCombine, '#for_combine' do
+    it 'preloads relation based on association' do
+      relation = cards.for_combine(assoc).call(users.call)
+
+      expect(relation.to_a).to eql([id: 1, account_id: 1, pan: '*6789', user_id: 1])
     end
   end
 end

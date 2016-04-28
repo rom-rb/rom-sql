@@ -3,8 +3,8 @@ module ROM
     class Association
       class ManyToOne < Association
         def combine_keys(relations)
-          source_key = relations[source].foreign_key(target)
-          target_key = relations[target].primary_key
+          source_key = relations[target].primary_key
+          target_key = relations[source].foreign_key(target)
 
           { source_key => target_key }
         end

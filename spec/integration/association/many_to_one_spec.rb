@@ -7,6 +7,9 @@ RSpec.describe ROM::SQL::Association::ManyToOne do
 
   include_context 'users and tasks'
 
+  let(:users) { container.relations[:users] }
+  let(:tasks) { container.relations[:tasks] }
+
   before do
     configuration.relation(:tasks) do
       schema do
@@ -28,7 +31,15 @@ RSpec.describe ROM::SQL::Association::ManyToOne do
 
   describe '#combine_keys' do
     it 'returns key-map used for in-memory tuple-combining' do
-      expect(assoc.combine_keys(container.relations)).to eql(user_id: :id)
+      expect(assoc.combine_keys(container.relations)).to eql(id: :user_id)
+    end
+  end
+
+  describe ROM::Plugins::Relation::SQL::AutoCombine, '#for_combine' do
+    it 'preloads relation based on association' do
+      relation = users.for_combine(assoc).call(tasks.call)
+
+      expect(relation.to_a).to eql([id: 1, task_id: 1, name: 'Piotr'])
     end
   end
 end

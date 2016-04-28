@@ -8,6 +8,7 @@ RSpec.describe ROM::SQL::Association::OneToMany do
   include_context 'users and tasks'
 
   let(:users) { container.relations[:users] }
+  let(:tasks) { container.relations[:tasks] }
 
   before do
     configuration.relation(:tasks) do
@@ -32,6 +33,14 @@ RSpec.describe ROM::SQL::Association::OneToMany do
   describe '#combine_keys' do
     it 'returns key-map used for in-memory tuple-combining' do
       expect(assoc.combine_keys(container.relations)).to eql(id: :user_id)
+    end
+  end
+
+  describe ROM::Plugins::Relation::SQL::AutoCombine, '#for_combine' do
+    it 'preloads relation based on association' do
+      relation = tasks.for_combine(assoc).call(users.call)
+
+      expect(relation.to_a).to eql([id: 1, user_id: 1, title: 'Finish ROM'])
     end
   end
 end
