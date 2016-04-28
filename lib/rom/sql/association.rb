@@ -30,8 +30,8 @@ module ROM
 
           columns = right.header.qualified.to_a
 
-          relation = left
-            .inner_join(target, right_fk => left_pk)
+          relation = right
+            .inner_join(source, left_pk => right_fk)
             .select(*columns)
             .order(right.primary_key)
 
