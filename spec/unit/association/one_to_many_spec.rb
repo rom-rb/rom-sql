@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe ROM::SQL::Association::OneToMany, '#call' do
+RSpec.describe ROM::SQL::Association::OneToMany do
   subject(:assoc) {
     ROM::SQL::Association::OneToMany.new(:users, :tasks)
   }
@@ -19,11 +19,19 @@ RSpec.describe ROM::SQL::Association::OneToMany, '#call' do
     end
   end
 
-  it 'prepares joined relations' do
-    relation = assoc.call(container.relations)
+  describe '#call' do
+    it 'prepares joined relations' do
+      relation = assoc.call(container.relations)
 
-    expect(relation.attributes).to eql(%i[id user_id title])
-    expect(relation.to_a).to eql([id: 1, user_id: 1, title: 'Finish ROM'])
-    expect(relation.where(user_id: 1).to_a).to eql([id: 1, user_id: 1, title: 'Finish ROM'])
+      expect(relation.attributes).to eql(%i[id user_id title])
+      expect(relation.to_a).to eql([id: 1, user_id: 1, title: 'Finish ROM'])
+      expect(relation.where(user_id: 1).to_a).to eql([id: 1, user_id: 1, title: 'Finish ROM'])
+    end
+  end
+
+  describe '#combine_keys' do
+    it 'returns key-map used for in-memory tuple-combining' do
+      expect(assoc.combine_keys(container.relations)).to eql(id: :user_id)
+    end
   end
 end

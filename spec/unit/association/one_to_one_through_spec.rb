@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe ROM::SQL::Association::OneToOneThrough, '#call' do
+RSpec.describe ROM::SQL::Association::OneToOneThrough do
   subject(:assoc) {
     ROM::SQL::Association::OneToOneThrough.new(:users, :cards, through: :accounts)
   }
@@ -26,10 +26,18 @@ RSpec.describe ROM::SQL::Association::OneToOneThrough, '#call' do
     end
   end
 
-  it 'prepares joined relations' do
-    relation = assoc.call(container.relations)
+  describe '#call' do
+    it 'prepares joined relations' do
+      relation = assoc.call(container.relations)
 
-    expect(relation.attributes).to eql(%i[id account_id pan user_id])
-    expect(relation.to_a).to eql([id: 1, account_id: 1, pan: '*6789', user_id: 1])
+      expect(relation.attributes).to eql(%i[id account_id pan user_id])
+      expect(relation.to_a).to eql([id: 1, account_id: 1, pan: '*6789', user_id: 1])
+    end
+  end
+
+  describe '#combine_keys' do
+    it 'returns key-map used for in-memory tuple-combining' do
+      expect(assoc.combine_keys(container.relations)).to eql(id: :user_id)
+    end
   end
 end

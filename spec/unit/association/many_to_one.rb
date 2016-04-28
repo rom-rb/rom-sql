@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe ROM::SQL::Association::ManyToOne, '#call' do
+RSpec.describe ROM::SQL::Association::ManyToOne do
   subject(:assoc) {
     ROM::SQL::Association::ManyToOne.new(:tasks, :users)
   }
@@ -17,10 +17,18 @@ RSpec.describe ROM::SQL::Association::ManyToOne, '#call' do
     end
   end
 
-  it 'prepares joined relations' do
-    relation = assoc.call(container.relations)
+  describe '#call' do
+    it 'prepares joined relations' do
+      relation = assoc.call(container.relations)
 
-    expect(relation.attributes).to eql(%i[id name])
-    expect(relation.to_a).to eql([id: 1, name: 'Piotr'])
+      expect(relation.attributes).to eql(%i[id name])
+      expect(relation.to_a).to eql([id: 1, name: 'Piotr'])
+    end
+  end
+
+  describe '#combine_keys' do
+    it 'returns key-map used for in-memory tuple-combining' do
+      expect(assoc.combine_keys(container.relations)).to eql(id: :task_id)
+    end
   end
 end
