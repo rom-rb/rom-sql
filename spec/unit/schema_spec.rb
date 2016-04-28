@@ -34,5 +34,61 @@ describe 'Inferring schema from database' do
 
       expect(Test::Posts.schema.associations[:tags]).to eql(assoc)
     end
+
+    it "allows defining a one-to-many" do
+      class Test::Posts < ROM::Relation[:sql]
+        schema(:posts) do
+          associate do
+            many :tags
+          end
+        end
+      end
+
+      assoc = ROM::SQL::Association::OneToMany.new(:posts, :tags)
+
+      expect(Test::Posts.schema.associations[:tags]).to eql(assoc)
+    end
+
+    it "allows defining a one-to-one" do
+      class Test::Posts < ROM::Relation[:sql]
+        schema(:users) do
+          associate do
+            one :accounts
+          end
+        end
+      end
+
+      assoc = ROM::SQL::Association::OneToOne.new(:users, :accounts)
+
+      expect(Test::Posts.schema.associations[:accounts]).to eql(assoc)
+    end
+
+    it "allows defining a one-to-one-through" do
+      class Test::Posts < ROM::Relation[:sql]
+        schema(:users) do
+          associate do
+            one :cards, through: :accounts
+          end
+        end
+      end
+
+      assoc = ROM::SQL::Association::OneToOneThrough.new(:users, :cards, through: :accounts)
+
+      expect(Test::Posts.schema.associations[:cards]).to eql(assoc)
+    end
+
+    it "allows defining a many-to-one" do
+      class Test::Posts < ROM::Relation[:sql]
+        schema(:tags) do
+          associate do
+            belongs :posts
+          end
+        end
+      end
+
+      assoc = ROM::SQL::Association::ManyToOne.new(:tags, :posts)
+
+      expect(Test::Posts.schema.associations[:posts]).to eql(assoc)
+    end
   end
 end

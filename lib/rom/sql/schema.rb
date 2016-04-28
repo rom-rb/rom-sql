@@ -16,7 +16,23 @@ module ROM
         end
 
         def many(target, options = {})
-          @associations[target] = Association::ManyToMany.new(source, target, options)
+          if options.key?(:through)
+            @associations[target] = Association::ManyToMany.new(source, target, options)
+          else
+            @associations[target] = Association::OneToMany.new(source, target, options)
+          end
+        end
+
+        def one(target, options = {})
+          if options.key?(:through)
+            @associations[target] = Association::OneToOneThrough.new(source, target, options)
+          else
+            @associations[target] = Association::OneToOne.new(source, target, options)
+          end
+        end
+
+        def belongs(target)
+          @associations[target] = Association::ManyToOne.new(source, target)
         end
 
         def call
