@@ -20,6 +20,10 @@ RSpec.describe ROM::SQL::Association::ManyToOne do
     end
   end
 
+  describe '#result' do
+    specify { expect(ROM::SQL::Association::ManyToOne.result).to be(:one) }
+  end
+
   describe '#name' do
     it 'uses target by default' do
       expect(assoc.name).to be(:users)

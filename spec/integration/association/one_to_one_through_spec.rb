@@ -29,6 +29,10 @@ RSpec.describe ROM::SQL::Association::OneToOneThrough do
     end
   end
 
+  describe '#result' do
+    specify { expect(ROM::SQL::Association::OneToOneThrough.result).to be(:one) }
+  end
+
   describe '#call' do
     it 'prepares joined relations' do
       relation = assoc.call(container.relations)

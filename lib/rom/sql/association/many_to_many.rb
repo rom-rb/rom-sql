@@ -2,6 +2,8 @@ module ROM
   module SQL
     class Association
       class ManyToMany < Association
+        result :many
+
         option :through, reader: true, default: nil, accepts: [Symbol, Association]
 
         def combine_keys(relations)

@@ -2,6 +2,8 @@ module ROM
   module SQL
     class Association
       class OneToOne < Association
+        result :one
+
         def combine_keys(relations)
           source_key = relations[source].primary_key
           target_key = relations[target].foreign_key(source)
