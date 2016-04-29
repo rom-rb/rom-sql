@@ -34,7 +34,7 @@ module ROM
             .select(*columns)
             .order(*right.header.project(*right.primary_key).qualified)
 
-          relation.with(attributes: relation.columns)
+          relation.with(attributes: relation.header.names)
         end
       end
     end

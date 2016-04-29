@@ -26,7 +26,7 @@ module ROM
             .select(*columns)
             .order(right.primary_key)
 
-          relation.with(attributes: relation.columns)
+          relation.with(attributes: relation.header.names)
         end
       end
     end

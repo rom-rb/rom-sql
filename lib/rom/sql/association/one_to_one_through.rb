@@ -38,7 +38,7 @@ module ROM
             .select(*columns)
             .order(left.primary_key)
 
-          relation.with(attributes: relation.columns)
+          relation.with(attributes: relation.header.names)
         end
 
         def through_relation(relations)
@@ -61,7 +61,7 @@ module ROM
             .select(*columns)
             .order(tarel.primary_key)
 
-          relation.with(attributes: relation.columns)
+          relation.with(attributes: relation.header.names)
         end
       end
     end

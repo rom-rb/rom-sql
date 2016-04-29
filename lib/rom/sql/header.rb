@@ -4,6 +4,8 @@ module ROM
     class Header
       include Dry::Equalizer(:columns, :table)
 
+      SEP_REGEX = /_{2,3}/.freeze
+
       attr_reader :columns, :table
 
       def initialize(columns, table)
@@ -24,7 +26,7 @@ module ROM
       end
 
       def names
-        columns.map { |col| :"#{col.to_s.split('___').last}" }
+        columns.map { |col| :"#{col.to_s.split(SEP_REGEX).last}" }
       end
 
       def project(*names)
