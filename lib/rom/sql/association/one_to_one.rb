@@ -8,6 +8,7 @@ module ROM
 
           { source_key => target_key }
         end
+        alias_method :join_keys, :combine_keys
 
         def call(relations)
           left = relations[source]

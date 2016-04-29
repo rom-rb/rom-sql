@@ -3,13 +3,21 @@ module ROM
     class Association
       include Dry::Equalizer(:source, :target, :options)
       include Options
+      extend ClassMacros
+
+      defines :result
 
       attr_reader :source
       attr_reader :target
+      attr_reader :name
+
+      option :relation, accepts: [Symbol], reader: true
+      option :result, accepts: [Symbol], reader: true, default: -> assoc { assoc.class.result }
 
       def initialize(source, target, options = {})
         @source = source
-        @target = target
+        @target = options[:relation] || target
+        @name = target
         super
       end
     end

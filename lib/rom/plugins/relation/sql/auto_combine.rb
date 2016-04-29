@@ -32,7 +32,7 @@ module ROM
               source_key, target_key, target =
                 case spec
                 when ROM::SQL::Association
-                  [*spec.combine_keys(__registry__).flatten, spec.call(__registry__)]
+                  [*spec.join_keys(__registry__).flatten, spec.call(__registry__)]
                 else
                   [*spec.flatten, self]
                 end

@@ -20,6 +20,21 @@ RSpec.describe ROM::SQL::Association::ManyToOne do
     end
   end
 
+  describe '#name' do
+    it 'uses target by default' do
+      expect(assoc.name).to be(:users)
+    end
+  end
+
+  describe '#target' do
+    it 'uses custom relation name' do
+      assoc = ROM::SQL::Association::ManyToOne.new(:users, :tasks, relation: :foo)
+
+      expect(assoc.name).to be(:tasks)
+      expect(assoc.target).to be(:foo)
+    end
+  end
+
   describe '#call' do
     it 'prepares joined relations' do
       relation = assoc.call(container.relations)
@@ -31,7 +46,13 @@ RSpec.describe ROM::SQL::Association::ManyToOne do
 
   describe '#combine_keys' do
     it 'returns key-map used for in-memory tuple-combining' do
-      expect(assoc.combine_keys(container.relations)).to eql(id: :user_id)
+      expect(assoc.combine_keys(container.relations)).to eql(id: :task_id)
+    end
+  end
+
+  describe '#join_keys' do
+    it 'returns key-map used for joins' do
+      expect(assoc.join_keys(container.relations)).to eql(id: :user_id)
     end
   end
 

@@ -2,7 +2,16 @@ module ROM
   module SQL
     class Association
       class ManyToOne < Association
+        result :one
+
         def combine_keys(relations)
+          source_key = relations[target].primary_key
+          target_key = relations[target].foreign_key(source)
+
+          { source_key => target_key }
+        end
+
+        def join_keys(relations)
           source_key = relations[target].primary_key
           target_key = relations[source].foreign_key(target)
 

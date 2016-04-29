@@ -39,8 +39,8 @@ module ROM
           end
         end
 
-        def belongs(target)
-          @associations[target] = Association::ManyToOne.new(source, target)
+        def belongs(target, options = {})
+          @associations[target] = Association::ManyToOne.new(source, target, options)
         end
 
         def call
