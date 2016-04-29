@@ -17,6 +17,11 @@ RSpec.describe ROM::SQL::Association::OneToOneThrough do
         attribute :user_id, ROM::SQL::Types::ForeignKey(:users)
         attribute :number, ROM::SQL::Types::String
         attribute :balance, ROM::SQL::Types::Decimal
+
+        associate do
+          many :cards
+          many :subscriptions, through: :cards
+        end
       end
     end
 
@@ -25,6 +30,22 @@ RSpec.describe ROM::SQL::Association::OneToOneThrough do
         attribute :id, ROM::SQL::Types::Serial
         attribute :account_id, ROM::SQL::Types::ForeignKey(:accounts)
         attribute :pan, ROM::SQL::Types::String
+
+        associate do
+          many :subscriptions
+        end
+      end
+    end
+
+    configuration.relation(:subscriptions) do
+      schema do
+        attribute :id, ROM::SQL::Types::Serial
+        attribute :card_id, ROM::SQL::Types::ForeignKey(:cards)
+        attribute :service, ROM::SQL::Types::String
+
+        associate do
+          belongs :cards
+        end
       end
     end
   end
@@ -50,21 +71,11 @@ RSpec.describe ROM::SQL::Association::OneToOneThrough do
 
   describe ':through another assoc' do
     subject(:assoc) do
-      ROM::SQL::Association::OneToOneThrough.new(:users, :subscriptions, through: account_assoc)
+      ROM::SQL::Association::OneToOneThrough.new(:users, :subscriptions, through: :accounts)
     end
 
     let(:account_assoc) do
       ROM::SQL::Association::OneToOneThrough.new(:accounts, :subscriptions, through: :cards)
-    end
-
-    before do
-      configuration.relation(:subscriptions) do
-        schema do
-          attribute :id, ROM::SQL::Types::Serial
-          attribute :card_id, ROM::SQL::Types::ForeignKey(:cards)
-          attribute :service, ROM::SQL::Types::String
-        end
-      end
     end
 
     it 'prepares joined relations through other association' do
