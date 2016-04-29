@@ -1,3 +1,25 @@
+## v0.8.0 to-be-released
+
+### Added
+
+* Support for relation schemas with SQL-specific data types (solnic)
+* One-To-Many support in schemas (solnic + flash-gordon)
+* One-To-One support in schemas (solnic + flash-gordon)
+* One-To-One-Through support in schemas (solnic + flash-gordon)
+* Many-To-One support in schemas (solnic + flash-gordon)
+* Many-To-Many support in schemas (solnic + flash-gordon)
+* Support for custom PG types: `Types::PG::Array`, `Types::PG::Hash` and `Types::PG::JSON` (solnic)
+
+### Changed
+
+* `Create` and `Update` commands have `:schema` plugin enabled by default which sets input handler based on schema definition automatically (solnic)
+
+### Fixed
+
+* `Create` command properly materialize result when `:one` is set (AMHOL)
+
+[Compare v0.7.0...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.7.0...HEAD)
+
 ## v0.7.0 2016-01-06
 
 ### Added
