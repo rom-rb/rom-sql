@@ -15,6 +15,26 @@ RSpec.describe ROM::SQL::Association::ManyToMany do
       schema do
         attribute :task_id, ROM::SQL::Types::ForeignKey(:tasks)
         attribute :tag_id, ROM::SQL::Types::ForeignKey(:tags)
+
+        primary_key :task_id, :tag_id
+
+        associate do
+          belongs :tasks
+          belongs :tags
+        end
+      end
+    end
+
+    configuration.relation(:tasks) do
+      schema do
+        attribute :id, ROM::SQL::Types::Serial
+        attribute :user_id, ROM::SQL::Types::ForeignKey(:users)
+        attribute :title, ROM::SQL::Types::String
+
+        associate do
+          many :task_tags
+          many :tags, through: :task_tags
+        end
       end
     end
   end
@@ -40,21 +60,7 @@ RSpec.describe ROM::SQL::Association::ManyToMany do
 
   describe ':through another assoc' do
     subject(:assoc) do
-      ROM::SQL::Association::ManyToMany.new(:users, :tags, through: task_assoc)
-    end
-
-    let(:task_assoc) do
-      ROM::SQL::Association::ManyToMany.new(:tasks, :tags, through: :task_tags)
-    end
-
-    before do
-      configuration.relation(:tasks) do
-        schema do
-          attribute :id, ROM::SQL::Types::Serial
-          attribute :user_id, ROM::SQL::Types::ForeignKey(:users)
-          attribute :title, ROM::SQL::Types::String
-        end
-      end
+      ROM::SQL::Association::ManyToMany.new(:users, :tags, through: :tasks)
     end
 
     it 'prepares joined relations through other association' do

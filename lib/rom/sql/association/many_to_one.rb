@@ -19,26 +19,20 @@ module ROM
         end
 
         def call(relations)
-          left = relations[source]
-          right = relations[target]
+          left = relations[target]
+          right = relations[source]
 
-          left_pk = left.foreign_key(target)
-          right_fk = right.primary_key
+          right_pk = right.schema.primary_key.map { |a| a.meta[:name] }
+          right_fk = right.foreign_key(target)
 
-          tarcols = right.header.qualified.to_a
+          pk_to_fk = Hash[right_pk.product(Array(left.foreign_key(source)))]
 
-          srccols = left
-            .header
-            .project(left.primary_key)
-            .rename(left.primary_key => right.foreign_key(source))
-            .qualified.to_a
+          columns = left.header.qualified.to_a + right.header.project(*right_pk).rename(pk_to_fk).qualified.to_a
 
-          columns = tarcols + srccols
-
-          relation = right
-            .inner_join(source, left_pk => right_fk)
+          relation = left
+            .inner_join(source, right_fk => left.primary_key)
             .select(*columns)
-            .order(right.primary_key)
+            .order(*right.header.project(*right.primary_key).qualified)
 
           relation.with(attributes: relation.columns)
         end
