@@ -5,7 +5,11 @@ shared_context 'database setup' do
   let(:container) { ROM.container(configuration) }
 
   def drop_tables
-    [:tasks, :users, :tags, :task_tags, :accounts, :cards, :rabbits, :carrots, :schema_migrations].each do |name|
+    %i(task_tags tasks tags
+       subscriptions cards accounts
+       users
+       rabbits carrots schema_migrations
+    ).each do |name|
       conn.drop_table?(name)
     end
   end
@@ -49,6 +53,12 @@ shared_context 'database setup' do
       primary_key :id
       Integer :account_id
       String :pan
+    end
+
+    conn.create_table :subscriptions do
+      primary_key :id
+      Integer :card_id
+      String :service
     end
   end
 

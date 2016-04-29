@@ -49,10 +49,6 @@ RSpec.describe ROM::SQL::Association::ManyToMany do
           attribute :id, ROM::SQL::Types::Serial
           attribute :user_id, ROM::SQL::Types::ForeignKey(:users)
           attribute :title, ROM::SQL::Types::String
-
-          associate do
-            belongs :users
-          end
         end
       end
     end

@@ -2,7 +2,7 @@ module ROM
   module SQL
     class Association
       class OneToOneThrough < Association
-        option :through, reader: true, default: nil, accepts: [Symbol]
+        option :through, reader: true, default: nil, accepts: [Symbol, Association]
 
         def combine_keys(relations)
           source_key = relations[source].primary_key
@@ -12,6 +12,33 @@ module ROM
         end
 
         def call(relations)
+          if through.is_a?(Association)
+            through_association(relations)
+          else
+            through_relation(relations)
+          end
+        end
+
+        private
+
+        def through_association(relations)
+          left = through.call(relations)
+          right = relations[target]
+
+          target_pk = relations[source].primary_key
+          target_fk = :"#{left.name}__#{left.foreign_key(source)}"
+
+          columns = right.header.qualified.to_a + [target_fk]
+
+          relation = left
+            .inner_join(source, target_fk => target_pk)
+            .select(*columns)
+            .order(left.primary_key)
+
+          relation.with(attributes: relation.columns)
+        end
+
+        def through_relation(relations)
           left = relations[source]
           right = relations[through]
           tarel = relations[target]
