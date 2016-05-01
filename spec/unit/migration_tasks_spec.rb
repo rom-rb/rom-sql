@@ -12,7 +12,7 @@ describe 'MigrationTasks' do
   let(:migrator) { container.gateways[:default].migrator }
 
   before do
-    ROM::SQL::RakeSupport.stub(:env) { configuration }
+    allow(ROM::SQL::RakeSupport).to receive(:env) { configuration }
   end
 
   context 'db:reset' do
