@@ -24,7 +24,7 @@ module ROM
           relation = left
             .inner_join(source, right.primary_key => left_fk)
             .select(*columns)
-            .order(right.primary_key)
+            .order(*right.header.project(*right.primary_key).qualified)
 
           relation.with(attributes: relation.header.names)
         end

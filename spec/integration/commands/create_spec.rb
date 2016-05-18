@@ -308,7 +308,7 @@ describe 'Commands / Create' do
 
     context 'with other adapter', adapter: :sqlite do
       let(:uri) { SQLITE_DB_URI }
-      
+
       context 'with a single record' do
         it 'materializes the result' do
           result = container.command(:users).create.execute(name: 'Jane')
