@@ -48,6 +48,7 @@ module ROM
 
         klass.class_eval do
           schema_dsl SQL::Schema::DSL
+          schema_inferrer ROM::SQL::Schema::SchemaInferrer
 
           dataset do
             table = opts[:from].first
