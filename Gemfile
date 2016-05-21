@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'dry-types', github: 'dry-rb/dry-types', branch: 'master'
-gem 'rom', github: 'flash-gordon/rom', branch: 'infer-schema'
+gem 'rom', github: 'rom-rb/rom', branch: 'infer-schema'
 gem 'rom-support', github: 'rom-rb/rom-support', branch: 'master'
 
 group :test do
