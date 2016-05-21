@@ -78,7 +78,7 @@ describe 'Inferring schema from database' do
     end
 
     it "allows defining a many-to-one" do
-      class Test::Posts < ROM::Relation[:sql]
+      class Test::Tags < ROM::Relation[:sql]
         schema(:tags) do
           associate do
             belongs :posts
@@ -88,11 +88,11 @@ describe 'Inferring schema from database' do
 
       assoc = ROM::SQL::Association::ManyToOne.new(:tags, :posts)
 
-      expect(Test::Posts.schema.associations[:posts]).to eql(assoc)
+      expect(Test::Tags.schema.associations[:posts]).to eql(assoc)
     end
 
     it "allows defining a many-to-one with a custom name" do
-      class Test::Posts < ROM::Relation[:sql]
+      class Test::Tags < ROM::Relation[:sql]
         schema(:tags) do
           associate do
             belongs :published_posts, relation: :posts
@@ -102,7 +102,7 @@ describe 'Inferring schema from database' do
 
       assoc = ROM::SQL::Association::ManyToOne.new(:tags, :published_posts, relation: :posts)
 
-      expect(Test::Posts.schema.associations[:published_posts]).to eql(assoc)
+      expect(Test::Tags.schema.associations[:published_posts]).to eql(assoc)
     end
   end
 end
