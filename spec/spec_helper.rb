@@ -11,11 +11,6 @@ end
 require 'rom-sql'
 require 'rom/sql/rake_task'
 
-# FIXME: why do we need to require it manually??
-require 'sequel/adapters/postgres'
-require 'sequel/adapters/sqlite'
-require 'active_support/inflector'
-
 require 'logger'
 begin
   require 'byebug'
@@ -23,8 +18,14 @@ rescue LoadError # rubocop:disable Lint/HandleExceptions
 end
 
 LOGGER = Logger.new(File.open('./log/test.log', 'a'))
-POSTGRES_DB_URI = 'postgres://localhost/rom_sql'
-SQLITE_DB_URI = 'sqlite::memory'
+
+if defined? JRUBY_VERSION
+  SQLITE_DB_URI = 'jdbc:sqlite::memory'
+  POSTGRES_DB_URI = 'jdbc:postgresql://localhost/rom_sql'
+else
+  SQLITE_DB_URI = 'sqlite::memory'
+  POSTGRES_DB_URI = 'postgres://localhost/rom_sql'
+end
 
 root = Pathname(__FILE__).dirname
 TMP_PATH = root.join('../tmp')
@@ -40,17 +41,10 @@ RSpec.configure do |config|
 
   config.before do
     module Test
-      def self.remove_constants
-        constants.each { |const| remove_const(const) }
-        self
-      end
     end
-    @constants = Object.constants
   end
 
   config.after do
-    added_constants = Object.constants - @constants
-    added_constants.each { |name| Object.send(:remove_const, name) }
-    Object.send(:remove_const, Test.remove_constants.name)
+    Object.send(:remove_const, :Test)
   end
 end

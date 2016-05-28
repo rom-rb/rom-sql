@@ -14,7 +14,7 @@ group :test do
   gem 'rspec', '~> 3.1'
   gem 'codeclimate-test-reporter', require: false
   gem 'pg', platforms: [:mri, :rbx]
-  gem 'pg_jruby', platforms: :jruby
+  gem 'jdbc-postgres', platforms: :jruby
   gem 'sqlite3', platforms: [:mri, :rbx]
   gem 'jdbc-sqlite3', platforms: :jruby
 end

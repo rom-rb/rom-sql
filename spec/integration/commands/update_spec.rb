@@ -51,17 +51,15 @@ describe 'Commands / Update' do
         define(:update)
       end
 
-      User = Class.new { include Anima.new(:id, :name) }
+      Test::User = Class.new { include Anima.new(:id, :name) }
 
       configuration.mappers do
-        register :users, entity: -> tuples { tuples.map { |tuple| User.new(tuple) } }
+        register :users, entity: -> tuples { tuples.map { |tuple| Test::User.new(tuple) } }
       end
 
       relation.insert(name: 'Piotr')
       relation.insert(name: 'Jane')
     end
-
-    after { Object.send(:remove_const, :User) }
 
     it 'respects configured input handler' do
       expect(update.input[foo: 'bar', id: 1, name: 'Jane']).to eql(
@@ -99,10 +97,10 @@ describe 'Commands / Update' do
 
       it 'updates when attributes changed' do
         result = users.try do
-          users.as(:entity).update.by_id(piotr[:id]).change(User.new(piotr)).call(peter)
+          users.as(:entity).update.by_id(piotr[:id]).change(Test::User.new(piotr)).call(peter)
         end
 
-        expect(result.value.to_a).to match_array([User.new(id: 1, name: 'Peter')])
+        expect(result.value.to_a).to match_array([Test::User.new(id: 1, name: 'Peter')])
       end
 
       it 'does not update when attributes did not change' do
