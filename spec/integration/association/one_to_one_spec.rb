@@ -34,7 +34,14 @@ RSpec.describe ROM::SQL::Association::OneToOne do
           relation = assoc.call(container.relations)
 
           expect(relation.attributes).to eql(%i[id user_id number balance])
-          expect(relation.to_a).to eql([id: 1, user_id: 1, number: '42', balance: 10_000.to_d])
+
+          # TODO: this if caluse should be removed when (and if) https://github.com/xerial/sqlite-jdbc/issues/112
+          # will be resolved. See https://github.com/rom-rb/rom-sql/issues/49 for details
+          if defined? JRUBY_VERSION && SQLITE_DB_URI == db_uri
+            expect(relation.to_a).to eql([id: 1, user_id: 1, number: '42', balance: 10_000])
+          else
+            expect(relation.to_a).to eql([id: 1, user_id: 1, number: '42', balance: 10_000.to_d])
+          end
         end
       end
 
@@ -48,7 +55,13 @@ RSpec.describe ROM::SQL::Association::OneToOne do
         it 'preloads relation based on association' do
           relation = accounts.for_combine(assoc).call(users.call)
 
-          expect(relation.to_a).to eql([id: 1, user_id: 1, number: '42', balance: 10_000.to_d])
+          # TODO: this if caluse should be removed when (and if) https://github.com/xerial/sqlite-jdbc/issues/112
+          # will be resolved. See https://github.com/rom-rb/rom-sql/issues/49 for details
+          if defined? JRUBY_VERSION && SQLITE_DB_URI == db_uri
+            expect(relation.to_a).to eql([id: 1, user_id: 1, number: '42', balance: 10_000])
+          else
+            expect(relation.to_a).to eql([id: 1, user_id: 1, number: '42', balance: 10_000.to_d])
+          end
         end
       end
     end
