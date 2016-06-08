@@ -37,7 +37,7 @@ shared_context 'database setup' do
     conn.create_table :tasks do
       primary_key :id
       foreign_key :user_id, :users
-      String :title
+      String :title, unique: true
     end
 
     conn.create_table :tags do

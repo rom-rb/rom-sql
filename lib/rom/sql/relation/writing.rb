@@ -2,6 +2,19 @@ module ROM
   module SQL
     class Relation < ROM::Relation
       module Writing
+        # Add upsert option (only PostgreSQL >= 9.5)
+        # Uses internal Sequel implementation
+        # Default - ON CONFLICT DO NOTHING
+        # more options: http://sequel.jeremyevans.net/rdoc-adapters/classes/Sequel/Postgres/DatasetMethods.html#method-i-insert_conflict
+        #
+        # @example
+        #   users.upsert
+        #
+        # @api public
+        def upsert(opts = nil)
+          dataset.insert_conflict(opts)
+        end
+
         # Insert tuple into relation
         #
         # @example

@@ -15,6 +15,10 @@ module ROM
           def multi_insert(tuples)
             relation.dataset.returning(*relation.columns).multi_insert(tuples)
           end
+
+          def upsert(opts = nil)
+            relation.upsert(opts)
+          end
         end
 
         module Update
