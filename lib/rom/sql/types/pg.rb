@@ -16,6 +16,10 @@ module ROM
           .constructor(Sequel.method(:pg_json))
 
         JSON = Array | Hash
+
+        Bytea = Dry::Types::Definition
+          .new(Sequel::SQL::Blob)
+          .constructor(Sequel::SQL::Blob.method(:new))
       end
     end
   end

@@ -27,4 +27,14 @@ RSpec.describe ROM::SQL::Types do
       expect(output.to_a).to eql(input)
     end
   end
+
+  describe ROM::SQL::Types::PG::Bytea do
+    it 'coerses strings to Sequel::SQL::Blob' do
+      input = 'sutin'
+      output = described_class[input]
+
+      expect(output).to be_instance_of(Sequel::SQL::Blob)
+      expect(output).to eql('sutin')
+    end
+  end
 end
