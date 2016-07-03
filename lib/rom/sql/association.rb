@@ -1,3 +1,5 @@
+require 'rom/sql/qualified_name'
+
 module ROM
   module SQL
     class Association
@@ -15,10 +17,14 @@ module ROM
       option :result, accepts: [Symbol], reader: true, default: -> assoc { assoc.class.result }
 
       def initialize(source, target, options = {})
-        @source = source
-        @target = options[:relation] || target
-        @name = target
+        @source = Relation::Name[source]
+        @target = Relation::Name[options[:relation] || target, target]
+        @name = self.target.dataset
         super
+      end
+
+      def qualify(name, attribute)
+        QualifiedName.new(name.dataset, attribute)
       end
     end
   end

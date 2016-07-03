@@ -40,7 +40,9 @@ RSpec.describe ROM::SQL::Association::OneToMany do
 
       describe '#combine_keys' do
         it 'returns key-map used for in-memory tuple-combining' do
-          expect(assoc.combine_keys(container.relations)).to eql(id: :user_id)
+          expect(assoc.combine_keys(container.relations)).to eql(
+            ROM::SQL::QualifiedName.new(:users, :id) => ROM::SQL::QualifiedName.new(:tasks, :user_id)
+          )
         end
       end
 

@@ -42,7 +42,8 @@ module ROM
 
             # @api private
             def preload(source_key, target_key, source)
-              where(target_key => source.map { |tuple| tuple[source_key] })
+              source_attr = source_key.is_a?(ROM::SQL::QualifiedName) ? source_key.attribute : source_key
+              where(target_key => source.map { |tuple| tuple[source_attr] })
             end
           end
         end

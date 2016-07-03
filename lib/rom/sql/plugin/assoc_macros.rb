@@ -66,7 +66,7 @@ module ROM
           if assoc.nil?
             raise NoAssociationError,
               "Association #{assoc_name.inspect} has not been " \
-              "defined for relation #{name.inspect}"
+              "defined for relation #{name.relation.inspect}"
           end
 
           type = assoc[:type]
@@ -103,7 +103,7 @@ module ROM
           l_graph = graph(
             assoc[:join_table],
             { assoc[:left_key] => primary_key },
-            select: l_select, implicit_qualifier: self.name
+            select: l_select, implicit_qualifier: self.name.dataset
           )
 
           l_graph.graph(
@@ -124,7 +124,7 @@ module ROM
 
           graph(
             name, join_keys,
-            options.merge(join_type: join_type, implicit_qualifier: self.name)
+            options.merge(join_type: join_type, implicit_qualifier: self.name.dataset)
           )
         end
       end

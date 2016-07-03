@@ -32,7 +32,7 @@ module ROM
 
               inner_join(name, keys)
                 .select(*qualified.header.columns)
-                .select_append(*other.prefix(other.name).qualified.header)
+                .select_append(*other.prefix(other.name.dataset).qualified.header)
             end
           end
         end
