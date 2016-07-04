@@ -6,9 +6,9 @@ module ROM
 
         def combine_keys(relations)
           source_key = relations[target.relation].primary_key
-          target_key = relations[target.relation].foreign_key(source)
+          target_key = relations[source.relation].foreign_key(target)
 
-          { qualify(target, source_key) => qualify(target, target_key) }
+          { source_key => target_key }
         end
 
         def join_keys(relations)

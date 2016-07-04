@@ -19,9 +19,15 @@ module ROM
           source_key = relations[source.relation].primary_key
           target_key = relations[through.relation].foreign_key(source)
 
+          { source_key => target_key }
+        end
+
+        def join_keys(relations)
+          source_key = relations[source.relation].primary_key
+          target_key = relations[through.relation].foreign_key(source)
+
           { qualify(source, source_key) => qualify(through, target_key) }
         end
-        alias_method :join_keys, :combine_keys
 
         def call(relations)
           left = relations[through.relation].schema.associations[target.dataset].call(relations)
