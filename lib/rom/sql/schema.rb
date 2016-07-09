@@ -4,6 +4,8 @@ require 'rom/sql/association'
 module ROM
   module SQL
     class Schema < ROM::Schema
+      include Dry::Equalizer(:name, :attributes, :associations)
+
       attr_reader :associations
 
       class SchemaInferrer
@@ -64,22 +66,27 @@ module ROM
 
         def many(target, options = {})
           if options[:through]
-            @associations[target] = Association::ManyToMany.new(source, target, options)
+            association = Association::ManyToMany.new(source, target, options)
           else
-            @associations[target] = Association::OneToMany.new(source, target, options)
+            association = Association::OneToMany.new(source, target, options)
           end
+
+          @associations[association.name] = association
         end
 
         def one(target, options = {})
           if options[:through]
-            @associations[target] = Association::OneToOneThrough.new(source, target, options)
+            association = Association::OneToOneThrough.new(source, target, options)
           else
-            @associations[target] = Association::OneToOne.new(source, target, options)
+            association = Association::OneToOne.new(source, target, options)
           end
+
+          @associations[association.name] = association
         end
 
         def belongs(target, options = {})
-          @associations[target] = Association::ManyToOne.new(source, target, options)
+          association = Association::ManyToOne.new(source, target, options)
+          @associations[association.name] = association
         end
 
         def call
@@ -91,20 +98,20 @@ module ROM
         attr_reader :associations
 
         def associate(&block)
-          @associations = AssociateDSL.new(dataset, &block)
+          @associations = AssociateDSL.new(name, &block)
         end
 
         def call
-          SQL::Schema.new(dataset,
+          SQL::Schema.new(name,
                           attributes,
                           associations && associations.call,
                           inferrer: inferrer && inferrer.new(self))
         end
       end
 
-      def initialize(dataset, attributes, associations = nil, inferrer: nil)
+      def initialize(name, attributes, associations = nil, inferrer: nil)
         @associations = associations
-        super(dataset, attributes, inferrer: inferrer)
+        super(name, attributes, inferrer: inferrer)
       end
     end
   end

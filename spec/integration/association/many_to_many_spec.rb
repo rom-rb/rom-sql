@@ -62,6 +62,14 @@ RSpec.describe ROM::SQL::Association::ManyToMany do
         end
       end
 
+      describe '#join_keys' do
+        it 'returns key-map used for joins' do
+          expect(assoc.join_keys(container.relations)).to eql(
+            ROM::SQL::QualifiedName.new(:tasks, :id) => ROM::SQL::QualifiedName.new(:task_tags, :task_id)
+          )
+        end
+      end
+
       describe ':through another assoc' do
         subject(:assoc) do
           ROM::SQL::Association::ManyToMany.new(:users, :tags, through: :tasks)

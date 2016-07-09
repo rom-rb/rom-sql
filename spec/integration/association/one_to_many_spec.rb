@@ -44,6 +44,14 @@ RSpec.describe ROM::SQL::Association::OneToMany do
         end
       end
 
+      describe '#join_keys' do
+        it 'returns key-map used for joins' do
+          expect(assoc.join_keys(container.relations)).to eql(
+            ROM::SQL::QualifiedName.new(:users, :id) => ROM::SQL::QualifiedName.new(:tasks, :user_id)
+          )
+        end
+      end
+
       describe ROM::Plugins::Relation::SQL::AutoCombine, '#for_combine' do
         it 'preloads relation based on association' do
           relation = tasks.for_combine(assoc).call(users.call)
