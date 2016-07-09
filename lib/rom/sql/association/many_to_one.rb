@@ -5,17 +5,17 @@ module ROM
         result :one
 
         def combine_keys(relations)
-          source_key = relations[target].primary_key
-          target_key = relations[source].foreign_key(target)
+          source_key = relations[source].foreign_key(target)
+          target_key = relations[target].primary_key
 
           { source_key => target_key }
         end
 
         def join_keys(relations)
-          source_key = relations[target].primary_key
-          target_key = relations[source].foreign_key(target)
+          source_key = relations[source].foreign_key(target)
+          target_key = relations[target].primary_key
 
-          { qualify(target, source_key) => qualify(source, target_key) }
+          { qualify(source, source_key) => qualify(target, target_key) }
         end
 
         def call(relations)

@@ -11,15 +11,16 @@ module ROM
 
       attr_reader :source
       attr_reader :target
-      attr_reader :name
 
       option :relation, accepts: [Symbol], reader: true
       option :result, accepts: [Symbol], reader: true, default: -> assoc { assoc.class.result }
+      option :as, accepts: [Symbol], reader: true, default: -> assoc { assoc.target.dataset }
+
+      alias_method :name, :as
 
       def initialize(source, target, options = {})
         @source = Relation::Name[source]
         @target = Relation::Name[options[:relation] || target, target]
-        @name = self.target.dataset
         super
       end
 
