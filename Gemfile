@@ -4,13 +4,13 @@ gemspec
 
 gem 'dry-types', github: 'dry-rb/dry-types', branch: 'master'
 gem 'rom', github: 'rom-rb/rom', branch: 'add-explicit-relation-name'
-gem 'rom-support', github: 'rom-rb/rom-support', branch: 'call-to_sym'
+gem 'rom-support', github: 'rom-rb/rom-support', branch: 'master'
 
 group :test do
   gem 'byebug', platforms: :mri
   gem 'anima', '~> 0.2.0'
   gem 'virtus'
-  gem 'activesupport'
+  gem 'activesupport', '~> 4.2'
   gem 'rspec', '~> 3.1'
   gem 'codeclimate-test-reporter', require: false
   gem 'pg', platforms: [:mri, :rbx]
