@@ -16,24 +16,24 @@ module ROM
         end
 
         def combine_keys(relations)
-          source_key = relations[source.relation].primary_key
-          target_key = relations[through.relation].foreign_key(source)
+          source_key = relations[source].primary_key
+          target_key = relations[through].foreign_key(source)
 
           { source_key => target_key }
         end
 
         def join_keys(relations)
-          source_key = relations[source.relation].primary_key
-          target_key = relations[through.relation].foreign_key(source)
+          source_key = relations[source].primary_key
+          target_key = relations[through].foreign_key(source)
 
           { qualify(source, source_key) => qualify(through, target_key) }
         end
 
         def call(relations)
-          left = relations[through.relation].schema.associations[target.dataset].call(relations)
-          right = relations[target.relation]
+          left = relations[through].schema.associations[target.dataset].call(relations)
+          right = relations[target]
 
-          left_fk = relations[through.relation].foreign_key(source)
+          left_fk = relations[through].foreign_key(source)
           columns = right.header.qualified.to_a + [left_fk]
 
           relation = left

@@ -5,22 +5,22 @@ module ROM
         result :one
 
         def combine_keys(relations)
-          source_key = relations[target.relation].primary_key
-          target_key = relations[source.relation].foreign_key(target)
+          source_key = relations[target].primary_key
+          target_key = relations[source].foreign_key(target)
 
           { source_key => target_key }
         end
 
         def join_keys(relations)
-          source_key = relations[target.relation].primary_key
-          target_key = relations[source.relation].foreign_key(target)
+          source_key = relations[target].primary_key
+          target_key = relations[source].foreign_key(target)
 
           { qualify(target, source_key) => qualify(source, target_key) }
         end
 
         def call(relations)
-          left = relations[target.relation]
-          right = relations[source.relation]
+          left = relations[target]
+          right = relations[source]
 
           right_pk = right.schema.primary_key.map { |a| a.meta[:name] }
           right_fk = right.foreign_key(target)

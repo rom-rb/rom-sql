@@ -4,7 +4,7 @@ gemspec
 
 gem 'dry-types', github: 'dry-rb/dry-types', branch: 'master'
 gem 'rom', github: 'rom-rb/rom', branch: 'add-explicit-relation-name'
-gem 'rom-support', github: 'rom-rb/rom-support', branch: 'master'
+gem 'rom-support', github: 'rom-rb/rom-support', branch: 'call-to_sym'
 
 group :test do
   gem 'byebug', platforms: :mri
