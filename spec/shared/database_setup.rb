@@ -7,7 +7,7 @@ shared_context 'database setup' do
   def drop_tables
     %i(task_tags tasks tags
        subscriptions cards accounts
-       users
+       posts users
        rabbits carrots schema_migrations
     ).each do |name|
       conn.drop_table?(name)
@@ -40,6 +40,13 @@ shared_context 'database setup' do
       primary_key [:tag_id, :task_id]
       Integer :tag_id
       Integer :task_id
+    end
+
+    conn.create_table :posts do
+      primary_key :post_id
+      foreign_key :author_id, :users
+      String :title
+      String :body
     end
 
     conn.create_table :accounts do

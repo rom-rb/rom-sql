@@ -9,6 +9,7 @@ RSpec.describe ROM::SQL::Association::ManyToOne do
 
   let(:users) { container.relations[:users] }
   let(:tasks) { container.relations[:tasks] }
+  let(:articles) { container.relations[:articles] }
 
   { postgres: POSTGRES_DB_URI, sqlite: SQLITE_DB_URI }.each_pair do |adapter, db_uri|
     context "with #{adapter} adapter", adapter: adapter do
@@ -71,6 +72,34 @@ RSpec.describe ROM::SQL::Association::ManyToOne do
           relation = users.for_combine(assoc).call(tasks.call)
 
           expect(relation.to_a).to eql([id: 1, task_id: 1, name: 'Piotr'])
+        end
+      end
+
+      context 'arbitrary name conventions' do
+        let(:articles_name) { ROM::Relation::Name[:articles, :posts] }
+
+        subject(:assoc) do
+          ROM::SQL::Association::ManyToOne.new(articles_name, :users)
+        end
+
+        before do
+          configuration.relation(:articles) do
+            schema(:posts) do
+              attribute :post_id, ROM::SQL::Types::Serial
+              attribute :author_id, ROM::SQL::Types::ForeignKey(:users)
+              attribute :title, ROM::SQL::Types::Strict::String
+              attribute :body, ROM::SQL::Types::Strict::String
+            end
+          end
+        end
+
+        describe '#call' do
+          it 'prepares joined relations' do
+            relation = assoc.call(container.relations)
+
+            expect(relation.attributes).to eql(%i[id name post_id])
+            expect(relation.to_a).to eql([id: 1, name: 'Piotr', post_id: 1])
+          end
         end
       end
     end
