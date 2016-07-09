@@ -8,7 +8,9 @@
 * One-To-One-Through support in schemas (solnic + flash-gordon)
 * Many-To-One support in schemas (solnic + flash-gordon)
 * Many-To-Many support in schemas (solnic + flash-gordon)
-* Support for custom PG types: `Types::PG::Array`, `Types::PG::Hash` and `Types::PG::JSON` (solnic)
+* Support for custom PG types: `Types::PG::Array`, `Types::PG::Hash`, `Types::PG::JSON`, and `Types::PG::Bytea` (solnic + flash-gordon)
+* Optional automatic schema inference for attributes based on DB metadata provided by Sequel (flash-gordon)
+* Support for arbitrary dataset and FK names in schemas (flash-gordon)
 
 ### Changed
 
