@@ -4,9 +4,6 @@ describe 'Defining one-to-many association' do
   include_context 'users and tasks'
 
   before do
-    conn[:users].insert id: 2, name: 'Jane'
-    conn[:tasks].insert id: 2, user_id: 2, title: 'Task one'
-
     configuration.mappers do
       define(:users)
 
@@ -22,7 +19,7 @@ describe 'Defining one-to-many association' do
     configuration.relation(:users) do
       use :assoc_macros
 
-      one_to_many :tasks, key: :user_id, on: { title: 'Finish ROM' }
+      one_to_many :tasks, key: :user_id, on: { title: "Jane's task" }
 
       def by_name(name)
         where(name: name)
@@ -39,15 +36,15 @@ describe 'Defining one-to-many association' do
 
     users = container.relations.users
 
-    expect(users.with_tasks.by_name("Piotr").to_a).to eql(
-      [{ id: 1, name: 'Piotr', tasks_id: 1, title: 'Finish ROM' }]
+    expect(users.with_tasks.by_name("Jane").to_a).to eql(
+      [{ id: 1, name: 'Jane', tasks_id: 2, title: "Jane's task" }]
     )
 
     result = container.relation(:users).map_with(:with_tasks)
-             .all.with_tasks.by_name("Piotr").to_a
+             .all.with_tasks.by_name("Jane").to_a
 
     expect(result).to eql(
-      [{ id: 1, name: 'Piotr', tasks: [{ tasks_id: 1, title: 'Finish ROM' }] }]
+      [{ id: 1, name: 'Jane', tasks: [{ tasks_id: 2, title: "Jane's task" }] }]
     )
   end
 
@@ -55,11 +52,11 @@ describe 'Defining one-to-many association' do
     configuration.relation(:users) do
       use :assoc_macros
 
-      one_to_many :piotrs_tasks, relation: :tasks, key: :user_id,
-                                 conditions: { name: 'Piotr' }
+      one_to_many :janes_tasks, relation: :tasks, key: :user_id,
+                                 conditions: { name: 'Jane' }
 
-      def with_piotrs_tasks
-        association_left_join(:piotrs_tasks, select: [:id, :title])
+      def with_janes_tasks
+        association_left_join(:janes_tasks, select: [:id, :title])
       end
 
       def all
@@ -69,15 +66,15 @@ describe 'Defining one-to-many association' do
 
     users = container.relations.users
 
-    expect(users.with_piotrs_tasks.to_a).to eql(
-      [{ id: 1, name: 'Piotr', tasks_id: 1, title: 'Finish ROM' }]
+    expect(users.with_janes_tasks.to_a).to eql(
+      [{ id: 1, name: 'Jane', tasks_id: 2, title: "Jane's task" }]
     )
 
     result = container.relation(:users).map_with(:with_tasks)
-             .all.with_piotrs_tasks.to_a
+             .all.with_janes_tasks.to_a
 
     expect(result).to eql(
-      [{ id: 1, name: 'Piotr', tasks: [{ tasks_id: 1, title: 'Finish ROM' }] }]
+      [{ id: 1, name: 'Jane', tasks: [{ tasks_id: 2, title: "Jane's task" }] }]
     )
   end
 end

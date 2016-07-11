@@ -4,9 +4,6 @@ describe 'Defining many-to-one association' do
   include_context 'users and tasks'
 
   before do
-    conn[:users].insert id: 2, name: 'Jane'
-    conn[:tasks].insert id: 2, user_id: 2, title: 'Task one'
-
     configuration.relation(:users) { use :assoc_macros }
   end
 
@@ -14,7 +11,7 @@ describe 'Defining many-to-one association' do
     configuration.relation(:tasks) do
       use :assoc_macros
 
-      many_to_one :users, key: :user_id, on: { name: 'Piotr' }
+      many_to_one :users, key: :user_id, on: { name: 'Jane' }
 
       def all
         select(:id, :title)
@@ -38,11 +35,11 @@ describe 'Defining many-to-one association' do
     tasks = container.relations.tasks
 
     expect(tasks.all.with_user.to_a).to eql(
-      [{ id: 1, name: 'Piotr', title: 'Finish ROM' }]
+      [{ id: 2, name: 'Jane', title: "Jane's task" }]
     )
 
     expect(container.relation(:tasks).map_with(:with_user).all.with_user.to_a).to eql(
-      [{ id: 1, title: 'Finish ROM', user: { name: 'Piotr' } }]
+      [{ id: 2, title: "Jane's task", user: { name: 'Jane' } }]
     )
   end
 

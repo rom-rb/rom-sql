@@ -3,10 +3,6 @@ require 'spec_helper'
 describe 'Defining multiple associations' do
   include_context 'users and tasks'
 
-  before do
-    conn[:tasks].insert id: 2, user_id: 1, title: 'Go to sleep'
-  end
-
   it 'extends relation with association methods' do
     configuration.relation(:users) { use :assoc_macros }
 
@@ -54,26 +50,26 @@ describe 'Defining multiple associations' do
     tasks = container.relations.tasks
 
     expect(tasks.with_user_and_tags.to_a).to eql([
-      { id: 1, title: 'Finish ROM', name: 'Piotr', tags_name: 'important' },
-      { id: 2, title: 'Go to sleep', name: 'Piotr',  tags_name: nil }
+      { id: 1, title: "Joe's task", name: 'Joe', tags_name: 'important' },
+      { id: 2, title: "Jane's task", name: 'Jane',  tags_name: nil }
     ])
 
     expect(tasks.with_user_and_tags.sorted_by_tags_name.to_a).to eql([
-      { id: 2, title: 'Go to sleep', name: 'Piotr',  tags_name: nil },
-      { id: 1, title: 'Finish ROM', name: 'Piotr', tags_name: 'important' }
+      { id: 2, title: "Jane's task", name: 'Jane',  tags_name: nil },
+      { id: 1, title: "Joe's task", name: 'Joe', tags_name: 'important' }
     ])
 
     expect(tasks.with_user_and_tags.by_tag('important').to_a).to eql([
-      { id: 1, title: 'Finish ROM', name: 'Piotr', tags_name: 'important' }
+      { id: 1, title: "Joe's task", name: 'Joe', tags_name: 'important' }
     ])
 
     expect(tasks.all.with_user.to_a).to eql([
-      { id: 1, title: 'Finish ROM', name: 'Piotr' },
-      { id: 2, title: 'Go to sleep', name: 'Piotr' }
+      { id: 1, title: "Joe's task", name: 'Joe' },
+      { id: 2, title: "Jane's task", name: 'Jane' }
     ])
 
-    expect(tasks.by_title('Go to sleep').to_a).to eql(
-      [{ id: 2, user_id: 1, title: 'Go to sleep' }]
+    expect(tasks.by_title("Jane's task").to_a).to eql(
+      [{ id: 2, user_id: 1, title: "Jane's task" }]
     )
   end
 end

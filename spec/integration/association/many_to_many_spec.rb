@@ -79,7 +79,7 @@ RSpec.describe ROM::SQL::Association::ManyToMany do
           relation = assoc.call(container.relations)
 
           expect(relation.attributes).to eql(%i[id name user_id])
-          expect(relation.to_a).to eql([id: 1, name: 'important', user_id: 1])
+          expect(relation.to_a).to eql([id: 1, name: 'important', user_id: 2])
         end
       end
 

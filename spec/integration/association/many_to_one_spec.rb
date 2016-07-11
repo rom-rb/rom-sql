@@ -49,7 +49,15 @@ RSpec.describe ROM::SQL::Association::ManyToOne do
           relation = assoc.call(container.relations)
 
           expect(relation.attributes).to eql(%i[id name task_id])
-          expect(relation.to_a).to eql([id: 1, task_id: 1, name: 'Piotr'])
+
+          expect(relation.where(user_id: 1).one).to eql(id: 1, task_id: 2, name: 'Jane')
+
+          expect(relation.where(user_id: 2).one).to eql(id: 2, task_id: 1, name: 'Joe')
+
+          expect(relation.to_a).to eql([
+            { id: 2, task_id: 1, name: 'Joe' },
+            { id: 1, task_id: 2, name: 'Jane' }
+          ])
         end
       end
 
@@ -71,7 +79,10 @@ RSpec.describe ROM::SQL::Association::ManyToOne do
         it 'preloads relation based on association' do
           relation = users.for_combine(assoc).call(tasks.call)
 
-          expect(relation.to_a).to eql([id: 1, task_id: 1, name: 'Piotr'])
+          expect(relation.to_a).to eql([
+            { id: 2, task_id: 1, name: 'Joe' },
+            { id: 1, task_id: 2, name: 'Jane' }
+          ])
         end
       end
 
@@ -98,7 +109,19 @@ RSpec.describe ROM::SQL::Association::ManyToOne do
             relation = assoc.call(container.relations)
 
             expect(relation.attributes).to eql(%i[id name post_id])
-            expect(relation.to_a).to eql([id: 1, name: 'Piotr', post_id: 1])
+
+            expect(relation.order(:id).to_a).to eql([
+              { id: 1, name: 'Jane', post_id: 2 },
+              { id: 2, name: 'Joe', post_id: 1 }
+            ])
+
+            expect(relation.where(author_id: 1).to_a).to eql(
+              [id: 1, name: 'Jane', post_id: 2]
+            )
+
+            expect(relation.where(author_id: 2).to_a).to eql(
+              [id: 2, name: 'Joe', post_id: 1]
+            )
           end
         end
       end

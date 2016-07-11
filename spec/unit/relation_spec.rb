@@ -69,35 +69,25 @@ describe ROM::Relation do
     end
 
     describe '#sum' do
-      it 'delegates to dataset and return value' do
-        expect(users.dataset).to receive(:sum).with(:id).and_call_original
-        expect(users.sum(:id)).to eql(1)
+      it 'returns a sum' do
+        expect(users.sum(:id)).to eql(3)
       end
     end
 
     describe '#min' do
-      it 'delegates to dataset and return value' do
-        users.insert id: 2, name: 'Oskar'
-
-        expect(users.dataset).to receive(:min).with(:id).and_call_original
+      it 'returns a min' do
         expect(users.min(:id)).to eql(1)
       end
     end
 
     describe '#max' do
       it 'delegates to dataset and return value' do
-        users.insert id: 2, name: 'Oskar'
-
-        expect(users.dataset).to receive(:max).with(:id).and_call_original
         expect(users.max(:id)).to eql(2)
       end
     end
 
     describe '#avg' do
       it 'delegates to dataset and return value' do
-        users.insert id: 2, name: 'Oskar'
-
-        expect(users.dataset).to receive(:avg).with(:id).and_call_original
         expect(users.avg(:id)).to eql(1.5)
       end
     end
@@ -112,8 +102,8 @@ describe ROM::Relation do
     describe '#exclude' do
       it 'delegates to dataset and returns a new relation' do
         expect(users.dataset)
-          .to receive(:exclude).with(name: 'Piotr').and_call_original
-        expect(users.exclude(name: 'Piotr')).to_not eq(users)
+          .to receive(:exclude).with(name: 'Jane').and_call_original
+        expect(users.exclude(name: 'Jane')).to_not eq(users)
       end
     end
 
@@ -127,18 +117,17 @@ describe ROM::Relation do
     describe '#map' do
       it 'yields tuples' do
         result = users.map { |tuple| tuple[:name] }
-        expect(result).to eql(%w(Piotr))
+        expect(result).to eql(%w(Jane Joe))
       end
     end
 
     describe '#inner_join' do
       it 'joins relations using inner join' do
-        conn[:users].insert(id: 2, name: 'Jane')
-
         result = users.inner_join(:tasks, user_id: :id).select(:name, :title)
 
-        expect(result.to_a).to match_array([
-          { name: 'Piotr', title: 'Finish ROM' }
+        expect(result.to_a).to eql([
+          { name: 'Jane', title: "Jane's task" },
+          { name: 'Joe', title: "Joe's task" }
         ])
       end
 
@@ -151,13 +140,11 @@ describe ROM::Relation do
 
     describe '#left_join' do
       it 'joins relations using left outer join' do
-        conn[:users].insert(id: 2, name: 'Jane')
-
         result = users.left_join(:tasks, user_id: :id).select(:name, :title)
 
         expect(result.to_a).to match_array([
-          { name: 'Piotr', title: 'Finish ROM' },
-          { name: 'Jane', title: nil }
+          { name: 'Joe', title: "Joe's task" },
+          { name: 'Jane', title: "Jane's task" }
         ])
       end
     end
@@ -167,7 +154,7 @@ describe ROM::Relation do
         projected = users.sorted.project(:name)
 
         expect(projected.header).to match_array([:name])
-        expect(projected.to_a).to eql([{ name: 'Piotr' }])
+        expect(projected.first).to eql(name: 'Jane')
       end
     end
 
@@ -175,7 +162,7 @@ describe ROM::Relation do
       it 'projects the dataset using new column names' do
         renamed = users.sorted.rename(id: :user_id, name: :user_name)
 
-        expect(renamed.to_a).to eql([{ user_id: 1, user_name: 'Piotr' }])
+        expect(renamed.first).to eql(user_id: 1, user_name: 'Jane')
       end
     end
 
@@ -183,13 +170,13 @@ describe ROM::Relation do
       it 'projects the dataset using new column names' do
         prefixed = users.sorted.prefix(:user)
 
-        expect(prefixed.to_a).to eql([{ user_id: 1, user_name: 'Piotr' }])
+        expect(prefixed.first).to eql(user_id: 1, user_name: 'Jane')
       end
 
       it 'uses singularized table name as the default prefix' do
         prefixed = users.sorted.prefix
 
-        expect(prefixed.to_a).to eql([{ user_id: 1, user_name: 'Piotr' }])
+        expect(prefixed.first).to eql(user_id: 1, user_name: 'Jane')
       end
     end
 
@@ -231,13 +218,11 @@ describe ROM::Relation do
       let(:relation2) { users.where(id: 2).select(:id, :name) }
 
       it 'unions two relations and returns a new relation' do
-        conn[:users].insert(id: 2, name: 'Jane')
-
         result = relation1.union(relation2)
 
         expect(result.to_a).to match_array([
-          { id: 1, name: 'Piotr' },
-          { id: 2, name: 'Jane' }
+          { id: 1, name: 'Jane' },
+          { id: 2, name: 'Joe' }
         ])
       end
     end

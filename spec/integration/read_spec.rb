@@ -96,21 +96,22 @@ describe 'Reading relations' do
   end
 
   it 'loads domain objects' do
-    user = container.relation(:users).as(:users).with_goals.by_name('Piotr').to_a.first
+    user = container.relation(:users).as(:users).with_goals.by_name('Jane').to_a.first
 
     expect(user).to eql(
       User.new(
-        id: 1, name: 'Piotr', goals: [Goal.new(id: 1, title: 'Finish ROM')]
+        id: 1, name: 'Jane', goals: [Goal.new(id: 2, title: "Jane's task")]
       ))
   end
 
   it 'works with grouping and aggregates' do
-    container.relations[:goals].insert(id: 2, user_id: 1, title: 'Get Milk')
+    container.relations[:goals].insert(id: 3, user_id: 1, title: 'Get Milk')
 
     users_with_goal_count = container.relation(:user_goal_counts).as(:user_goal_counts).all
 
     expect(users_with_goal_count.to_a).to eq([
-      UserGoalCount.new(id: 1, name: "Piotr", goal_count: 2)
+      UserGoalCount.new(id: 1, name: "Jane", goal_count: 2),
+      UserGoalCount.new(id: 2, name: "Joe", goal_count: 1)
     ])
   end
 end

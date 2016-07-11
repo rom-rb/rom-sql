@@ -3,10 +3,6 @@ require 'spec_helper'
 describe 'Defining many-to-one association' do
   include_context 'users and tasks'
 
-  before do
-    conn[:tasks].insert id: 2, user_id: 1, title: 'Go to sleep'
-  end
-
   it 'extends relation with association methods' do
     configuration.relation(:tags) { use :assoc_macros }
     configuration.relation(:task_tags) { use :assoc_macros }
@@ -41,17 +37,17 @@ describe 'Defining many-to-one association' do
     tasks = container.relations.tasks
 
     expect(tasks.all.with_tags.to_a).to eql([
-      { id: 1, title: 'Finish ROM', name: 'important' },
-      { id: 2, title: 'Go to sleep', name: nil }
+      { id: 1, title: "Joe's task", name: 'important' },
+      { id: 2, title: "Jane's task", name: nil }
     ])
 
     expect(tasks.all.with_tags_and_tag_id.to_a).to eql([
-      { id: 1, title: 'Finish ROM', tag_id: 1, name: 'important' },
-      { id: 2, title: 'Go to sleep', tag_id: nil, name: nil }
+      { id: 1, title: "Joe's task", tag_id: 1, name: 'important' },
+      { id: 2, title: "Jane's task", tag_id: nil, name: nil }
     ])
 
     expect(tasks.all.by_tag("important").to_a).to eql([
-      { id: 1, title: 'Finish ROM', name: 'important' }
+      { id: 1, title: "Joe's task", name: 'important' }
     ])
 
     expect(tasks.by_tag("not-here").to_a).to be_empty
