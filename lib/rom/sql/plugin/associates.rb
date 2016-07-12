@@ -12,6 +12,23 @@ module ROM
         end
 
         module InstanceMethods
+          # @api private
+          def initialize(*)
+            super
+            self.class.associations.each do |(name, opts)|
+              association[:key] =
+                if opts.any?
+                  opts[:key]
+                else
+                  relation.schema.associations[name]
+                    .join_keys(relation.__registry__)
+                    .to_a
+                    .flatten
+                    .map(&:to_sym)
+                end
+            end
+          end
+
           # Set fk on tuples from parent tuple
           #
           # @param [Array<Hash>, Hash] tuples The input tuple(s)
@@ -62,16 +79,17 @@ module ROM
           # @option options [Array] :key The association keys
           #
           # @api public
-          def associates(name, options)
-            if associations.include?(name)
+          def associates(name, options = {})
+            if associations.map(&:first).include?(name)
               raise ArgumentError,
                 "#{name} association is already defined for #{self.class}"
             end
 
-            option :association, reader: true, default: -> _command { options }
+            option :association, reader: true, default: {}
+
             include InstanceMethods
 
-            associations << name
+            associations << [name, options]
           end
         end
       end
