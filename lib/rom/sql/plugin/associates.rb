@@ -20,11 +20,7 @@ module ROM
                 if opts.any?
                   opts[:key]
                 else
-                  relation.schema.associations[name]
-                    .join_keys(relation.__registry__)
-                    .to_a
-                    .flatten
-                    .map(&:to_sym)
+                  relation.schema.associations[name].join_key_map(relation.__registry__)
                 end
             end
           end
@@ -39,14 +35,33 @@ module ROM
           # @overload SQL::Commands::Create#execute
           #
           # @api public
-          def execute(tuples, parent)
-            fk, pk = association[:key]
+          def execute(tuples, parent, assoc = association[:key])
+            input_tuples =
+              case assoc
+              when Array
+                fk, pk = assoc
 
-            input_tuples = with_input_tuples(tuples).map { |tuple|
-              tuple.merge(fk => parent.fetch(pk))
-            }
+                input_tuples = with_input_tuples(tuples).map { |tuple|
+                  tuple.merge(fk => parent.fetch(pk))
+                }
 
-            super(input_tuples)
+                super(input_tuples)
+              when Hash
+                new_tuples = super(tuples)
+
+                join_relation, keys = assoc.to_a[0]
+
+                join_tuples = new_tuples.map do |tuple|
+                  source, target = keys
+                  spk, sfk = source
+                  tfk, tpk = target
+                  { sfk => tuple.fetch(spk), tfk => parent.fetch(tpk) }
+                end
+
+                join_relation.multi_insert(join_tuples)
+
+                new_tuples
+              end
           end
         end
 

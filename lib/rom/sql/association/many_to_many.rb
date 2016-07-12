@@ -15,6 +15,15 @@ module ROM
                                         options[:through])
         end
 
+        def join_key_map(relations)
+          join_relation = relations[through]
+
+          left = super
+          right = join_relation.schema.associations[target.dataset].join_key_map(relations)
+
+          { join_relation => [left, right] }
+        end
+
         def combine_keys(relations)
           source_key = relations[source].primary_key
           target_key = relations[through].foreign_key(source)
