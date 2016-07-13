@@ -16,12 +16,11 @@ module ROM
         end
 
         def associate(relations, children, parent)
-          children.map do |tuple|
-            source, target = join_key_map(relations)
-            spk, sfk = source
-            tfk, tpk = target
+          ((spk, sfk), (tfk, tpk)) = join_key_map(relations)
+
+          children.map { |tuple|
             { sfk => tuple.fetch(spk), tfk => parent.fetch(tpk) }
-          end
+          }
         end
 
         def join_relation(relations)
