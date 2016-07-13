@@ -1,3 +1,5 @@
+require 'rom/support/deprecations'
+
 module ROM
   module SQL
     module Plugin
@@ -98,6 +100,14 @@ module ROM
             if associations.map(&:first).include?(name)
               raise ArgumentError,
                 "#{name} association is already defined for #{self.class}"
+            end
+
+            if options.any?
+              Deprecations.warn(
+                "Passing options to `associates` is deprecated. " \
+                "Define an association in schema for your :#{relation} relation " \
+                "instead and pass in its name to `associates`"
+              )
             end
 
             option :association, reader: true, default: {}
