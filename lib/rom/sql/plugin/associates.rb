@@ -1,3 +1,5 @@
+require 'rom/support/deprecations'
+
 module ROM
   module SQL
     module Plugin
@@ -12,21 +14,19 @@ module ROM
         end
 
         module InstanceMethods
+          attr_reader :assoc, :__registry__
+
           # @api private
           def initialize(*)
             super
-            self.class.associations.each do |(name, opts)|
-              association[:key] =
-                if opts.any?
-                  opts[:key]
-                else
-                  relation.schema.associations[name]
-                    .join_keys(relation.__registry__)
-                    .to_a
-                    .flatten
-                    .map(&:to_sym)
-                end
-            end
+            @__registry__ = relation.__registry__
+            assoc_name, assoc_opts = self.class.associations[0]
+            @assoc =
+              if assoc_opts.any?
+                assoc_opts[:key]
+              else
+                relation.schema.associations[assoc_name]
+              end
           end
 
           # Set fk on tuples from parent tuple
@@ -40,13 +40,30 @@ module ROM
           #
           # @api public
           def execute(tuples, parent)
-            fk, pk = association[:key]
+            input_tuples =
+              case assoc
+              when Array
+                fk, pk = assoc
 
-            input_tuples = with_input_tuples(tuples).map { |tuple|
-              tuple.merge(fk => parent.fetch(pk))
-            }
+                input_tuples = with_input_tuples(tuples).map { |tuple|
+                  tuple.merge(fk => parent.fetch(pk))
+                }
 
-            super(input_tuples)
+                super(input_tuples)
+              when Association::ManyToMany
+                new_tuples = super(tuples)
+
+                join_tuples = assoc.associate(__registry__, new_tuples, parent)
+                join_relation = assoc.join_relation(__registry__)
+                join_relation.multi_insert(join_tuples)
+
+                new_tuples
+              when Association
+                input_tuples = with_input_tuples(tuples).map { |tuple|
+                  assoc.associate(relation.__registry__, tuple, parent)
+                }
+                super(input_tuples)
+              end
           end
         end
 
@@ -83,6 +100,14 @@ module ROM
             if associations.map(&:first).include?(name)
               raise ArgumentError,
                 "#{name} association is already defined for #{self.class}"
+            end
+
+            if options.any?
+              Deprecations.warn(
+                "Passing options to `associates` is deprecated. " \
+                "Define an association in schema for your :#{relation} relation " \
+                "instead and pass in its name to `associates`"
+              )
             end
 
             option :association, reader: true, default: {}

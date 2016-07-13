@@ -3,6 +3,7 @@ shared_context 'database setup' do
   let(:conn) { Sequel.connect(uri) }
   let(:configuration) { ROM::Configuration.new(:sql, conn) }
   let(:container) { ROM.container(configuration) }
+  let(:relations) { container.relations }
 
   def drop_tables
     %i(task_tags tasks tags

@@ -32,6 +32,9 @@ TMP_PATH = root.join('../tmp')
 
 Dir[root.join('shared/*.rb').to_s].each { |f| require f }
 
+require 'rom/support/deprecations'
+ROM::Deprecations.set_logger!(root.join('../log/deprecations.log'))
+
 RSpec.configure do |config|
   config.before(:suite) do
     tmp_test_dir = TMP_PATH.join('test')

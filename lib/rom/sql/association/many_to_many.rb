@@ -15,6 +15,26 @@ module ROM
                                         options[:through])
         end
 
+        def associate(relations, children, parent)
+          ((spk, sfk), (tfk, tpk)) = join_key_map(relations)
+
+          children.map { |tuple|
+            { sfk => tuple.fetch(spk), tfk => parent.fetch(tpk) }
+          }
+        end
+
+        def join_relation(relations)
+          relations[through]
+        end
+
+        def join_key_map(relations)
+          left = super
+          right = join_relation(relations)
+            .schema.associations[target.dataset].join_key_map(relations)
+
+          [left, right]
+        end
+
         def combine_keys(relations)
           source_key = relations[source].primary_key
           target_key = relations[through].foreign_key(source)
