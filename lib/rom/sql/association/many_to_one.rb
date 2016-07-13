@@ -4,6 +4,11 @@ module ROM
       class ManyToOne < Association
         result :one
 
+        def associate(relations, child, parent)
+          fk, pk = join_key_map(relations)
+          child.merge(fk => parent.fetch(pk))
+        end
+
         def combine_keys(relations)
           source_key = relations[source].foreign_key(target)
           target_key = relations[target].primary_key

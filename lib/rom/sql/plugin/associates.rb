@@ -14,17 +14,19 @@ module ROM
         end
 
         module InstanceMethods
+          attr_reader :assoc, :__registry__
+
           # @api private
           def initialize(*)
             super
-            self.class.associations.each do |(name, opts)|
-              association[:key] =
-                if opts.any?
-                  opts[:key]
-                else
-                  relation.schema.associations[name].join_key_map(relation.__registry__)
-                end
-            end
+            @__registry__ = relation.__registry__
+            assoc_name, assoc_opts = self.class.associations[0]
+            @assoc =
+              if assoc_opts.any?
+                assoc_opts[:key]
+              else
+                relation.schema.associations[assoc_name]
+              end
           end
 
           # Set fk on tuples from parent tuple
@@ -37,7 +39,7 @@ module ROM
           # @overload SQL::Commands::Create#execute
           #
           # @api public
-          def execute(tuples, parent, assoc = association[:key])
+          def execute(tuples, parent)
             input_tuples =
               case assoc
               when Array
@@ -48,21 +50,19 @@ module ROM
                 }
 
                 super(input_tuples)
-              when Hash
+              when Association::ManyToMany
                 new_tuples = super(tuples)
 
-                join_relation, keys = assoc.to_a[0]
-
-                join_tuples = new_tuples.map do |tuple|
-                  source, target = keys
-                  spk, sfk = source
-                  tfk, tpk = target
-                  { sfk => tuple.fetch(spk), tfk => parent.fetch(tpk) }
-                end
-
+                join_tuples = assoc.associate(__registry__, new_tuples, parent)
+                join_relation = assoc.join_relation(__registry__)
                 join_relation.multi_insert(join_tuples)
 
                 new_tuples
+              when Association
+                input_tuples = with_input_tuples(tuples).map { |tuple|
+                  assoc.associate(relation.__registry__, tuple, parent)
+                }
+                super(input_tuples)
               end
           end
         end
