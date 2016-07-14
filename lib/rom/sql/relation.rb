@@ -72,7 +72,11 @@ module ROM
       end
 
       def self.primary_key(value)
-        Deprecations.announce(:primary_key, "#{self}.primary_key is deprecated, use schema definition to configure primary key")
+        Deprecations.announce(
+          :primary_key,
+          "#{self}.primary_key is deprecated, use schema definition to configure"\
+          " primary key"
+        )
         option :primary_key, reader: true, default: value
       end
 
