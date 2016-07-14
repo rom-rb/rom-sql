@@ -32,7 +32,10 @@ module ROM
 
           pk_to_fk = Hash[right_pk.product(Array(left.foreign_key(source.relation)))]
 
-          columns = left.header.qualified.to_a + right.header.project(*right_pk).rename(pk_to_fk).qualified.to_a
+          columns = left.header.qualified.to_a + right.header
+            .project(*right_pk)
+            .rename(pk_to_fk)
+            .qualified.to_a
 
           relation = left
             .inner_join(source, right_fk => left.primary_key)
