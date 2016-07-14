@@ -40,7 +40,7 @@ RSpec.describe ROM::SQL::Association::ManyToOne do
           assoc = ROM::SQL::Association::ManyToOne.new(:users, :tasks, relation: :foo)
 
           expect(assoc.name).to be(:tasks)
-          expect(assoc.target).to eql(ROM::Relation::Name[:foo, :tasks])
+          expect(assoc.target).to eql(ROM::SQL::Association::Name[:foo, :tasks])
         end
       end
 

@@ -10,9 +10,9 @@ module ROM
 
         def initialize(*)
           super
-
-          @through = Relation::Name.new(options[:through] || options[:through_relation],
-                                        options[:through])
+          @through = Relation::Name[
+            options[:through] || options[:through_relation], options[:through]
+          ]
         end
 
         def associate(relations, children, parent)
@@ -30,7 +30,7 @@ module ROM
         def join_key_map(relations)
           left = super
           right = join_relation(relations)
-            .schema.associations[target.dataset].join_key_map(relations)
+            .schema.associations[target].join_key_map(relations)
 
           [left, right]
         end
@@ -43,21 +43,26 @@ module ROM
         end
 
         def join_keys(relations)
-          source_key = relations[source].primary_key
-          target_key = relations[through].foreign_key(source)
+          source_key = relations[source.relation].primary_key
+          target_key = relations[through.relation].foreign_key(source)
 
           { qualify(source, source_key) => qualify(through, target_key) }
         end
 
         def call(relations)
-          left = relations[through].schema.associations[target.dataset].call(relations)
-          right = relations[target]
+          join_rel = join_relation(relations)
+          assocs = join_rel.schema.associations
 
-          left_fk = relations[through].foreign_key(source)
+          # TODO: figure out a way so that we don't have to check which join assoc
+          #       exists
+          left = (assocs.key?(target) ? assocs[target] : assocs[target.singularize]).call(relations)
+          right = relations[target.relation]
+
+          left_fk = join_rel.foreign_key(source.relation)
           columns = right.header.qualified.to_a + [left_fk]
 
           relation = left
-            .inner_join(source.dataset, right.primary_key => left_fk)
+            .inner_join(source, right.primary_key => left_fk)
             .select(*columns)
             .order(*right.header.project(*right.primary_key).qualified)
 

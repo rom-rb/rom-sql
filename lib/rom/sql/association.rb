@@ -1,4 +1,5 @@
 require 'rom/sql/qualified_name'
+require 'rom/sql/association/name'
 
 module ROM
   module SQL
@@ -14,13 +15,13 @@ module ROM
 
       option :relation, accepts: [Symbol], reader: true
       option :result, accepts: [Symbol], reader: true, default: -> assoc { assoc.class.result }
-      option :as, accepts: [Symbol], reader: true, default: -> assoc { assoc.target.dataset }
+      option :as, accepts: [Symbol], reader: true, default: -> assoc { assoc.target.to_sym }
 
       alias_method :name, :as
 
       def initialize(source, target, options = {})
-        @source = Relation::Name[source]
-        @target = Relation::Name[options[:relation] || target, target]
+        @source = Name[source]
+        @target = Name[options[:relation] || target, target, options[:as] || target]
         super
       end
 
