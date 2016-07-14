@@ -23,8 +23,8 @@ RSpec.describe ROM::SQL::Association::OneToOneThrough do
             attribute :balance, ROM::SQL::Types::Decimal
 
             associate do
-              many :cards
-              many :subscriptions, through: :cards
+              one_to_many :cards
+              one_to_many :subscriptions, through: :cards
             end
           end
         end
@@ -36,7 +36,7 @@ RSpec.describe ROM::SQL::Association::OneToOneThrough do
             attribute :pan, ROM::SQL::Types::String
 
             associate do
-              many :subscriptions
+              one_to_many :subscriptions
             end
           end
         end
@@ -48,7 +48,7 @@ RSpec.describe ROM::SQL::Association::OneToOneThrough do
             attribute :service, ROM::SQL::Types::String
 
             associate do
-              belongs :cards
+              many_to_one :cards
             end
           end
         end

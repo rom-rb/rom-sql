@@ -23,8 +23,8 @@ RSpec.describe ROM::SQL::Association::ManyToMany do
             primary_key :task_id, :tag_id
 
             associate do
-              belongs :tasks
-              belongs :tags
+              many_to_one :tasks
+              many_to_one :tags
             end
           end
         end
@@ -36,8 +36,8 @@ RSpec.describe ROM::SQL::Association::ManyToMany do
             attribute :title, ROM::SQL::Types::String
 
             associate do
-              many :task_tags
-              many :tags, through: :task_tags
+              one_to_many :task_tags
+              one_to_many :tags, through: :task_tags
             end
           end
         end

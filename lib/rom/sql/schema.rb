@@ -64,33 +64,42 @@ module ROM
           instance_exec(&block)
         end
 
-        def many(target, options = {})
+        def one_to_many(target, options = {})
           if options[:through]
-            association = Association::ManyToMany.new(source, target, options)
+            many_to_many(target, options)
           else
-            association = Association::OneToMany.new(source, target, options)
+            add(Association::OneToMany.new(source, target, options))
           end
-
-          @associations[association.name] = association
         end
 
-        def one(target, options = {})
-          if options[:through]
-            association = Association::OneToOneThrough.new(source, target, options)
-          else
-            association = Association::OneToOne.new(source, target, options)
-          end
-
-          @associations[association.name] = association
+        def many_to_many(target, options = {})
+          add(Association::ManyToMany.new(source, target, options))
         end
 
-        def belongs(target, options = {})
-          association = Association::ManyToOne.new(source, target, options)
-          @associations[association.name] = association
+        def one_to_one(target, options = {})
+          if options[:through]
+            one_to_one_through(target, options)
+          else
+            add(Association::OneToOne.new(source, target, options))
+          end
+        end
+
+        def one_to_one_through(target, options = {})
+          add(Association::OneToOneThrough.new(source, target, options))
+        end
+
+        def many_to_one(target, options = {})
+          add(Association::ManyToOne.new(source, target, options))
         end
 
         def call
           associations
+        end
+
+        private
+
+        def add(association)
+          @associations[association.name] = association
         end
       end
 

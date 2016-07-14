@@ -69,9 +69,9 @@ RSpec.describe 'Plugins / :associates' do
             attribute :title, ROM::SQL::Types::String
 
             associate do
-              belongs :users, as: :user
-              many :task_tags
-              many :tags, through: :task_tags
+              many_to_one :users, as: :user
+              one_to_many :task_tags
+              one_to_many :tags, through: :task_tags
             end
           end
         end
@@ -98,8 +98,8 @@ RSpec.describe 'Plugins / :associates' do
               attribute :name, ROM::SQL::Types::String
 
               associate do
-                many :task_tags
-                many :tasks, through: :task_tags
+                one_to_many :task_tags
+                one_to_many :tasks, through: :task_tags
               end
             end
           end
@@ -112,8 +112,8 @@ RSpec.describe 'Plugins / :associates' do
               primary_key :tag_id, :task_id
 
               associate do
-                belongs :tags
-                belongs :tasks
+                many_to_one :tags
+                many_to_one :tasks
               end
             end
           end
