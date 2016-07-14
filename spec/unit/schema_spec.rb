@@ -24,7 +24,7 @@ describe 'Inferring schema from database' do
     it "allows defining a one-to-many" do
       class Test::Posts < ROM::Relation[:sql]
         schema(:posts) do
-          associate do
+          associations do
             one_to_many :tags
           end
         end
@@ -38,7 +38,7 @@ describe 'Inferring schema from database' do
     it "allows defining a one-to-many using has_many shortcut" do
       class Test::Posts < ROM::Relation[:sql]
         schema(:posts) do
-          associate do
+          associations do
             has_many :tags
           end
         end
@@ -52,7 +52,7 @@ describe 'Inferring schema from database' do
     it "allows defining a one-to-one" do
       class Test::Users < ROM::Relation[:sql]
         schema(:users) do
-          associate do
+          associations do
             one_to_one :accounts
           end
         end
@@ -66,7 +66,7 @@ describe 'Inferring schema from database' do
     it "allows defining a one-to-one using has_one shortcut" do
       class Test::Users < ROM::Relation[:sql]
         schema(:users) do
-          associate do
+          associations do
             has_one :account
           end
         end
@@ -80,7 +80,7 @@ describe 'Inferring schema from database' do
     it "allows defining a one-to-one-through" do
       class Test::Users < ROM::Relation[:sql]
         schema(:users) do
-          associate do
+          associations do
             one_to_one :cards, through: :accounts
           end
         end
@@ -94,7 +94,7 @@ describe 'Inferring schema from database' do
     it "allows defining a many-to-one" do
       class Test::Tags < ROM::Relation[:sql]
         schema(:tags) do
-          associate do
+          associations do
             many_to_one :posts
           end
         end
@@ -108,7 +108,7 @@ describe 'Inferring schema from database' do
     it "allows defining a many-to-one using belongs_to shortcut" do
       class Test::Tags < ROM::Relation[:sql]
         schema(:tags) do
-          associate do
+          associations do
             belongs_to :post
           end
         end
@@ -122,7 +122,7 @@ describe 'Inferring schema from database' do
     it "allows defining a many-to-many" do
       class Test::Posts < ROM::Relation[:sql]
         schema(:posts) do
-          associate do
+          associations do
             one_to_many :tags, through: :posts_tags
           end
         end
@@ -136,7 +136,7 @@ describe 'Inferring schema from database' do
     it "allows defining a many-to-one with a custom name" do
       class Test::Tags < ROM::Relation[:sql]
         schema(:tags) do
-          associate do
+          associations do
             many_to_one :published_posts, relation: :posts
           end
         end

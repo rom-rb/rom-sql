@@ -55,12 +55,12 @@ module ROM
         end
       end
 
-      class AssociateDSL < BasicObject
-        attr_reader :source, :associations
+      class AssociationsDSL < BasicObject
+        attr_reader :source, :registry
 
         def initialize(source, &block)
           @source = source
-          @associations = {}
+          @registry = {}
           instance_exec(&block)
         end
 
@@ -102,13 +102,13 @@ module ROM
         end
 
         def call
-          associations
+          registry
         end
 
         private
 
         def add(association)
-          @associations[association.name] = association
+          registry[association.name] = association
         end
 
         def dataset_name(name)
@@ -117,17 +117,18 @@ module ROM
       end
 
       class DSL < ROM::Schema::DSL
-        attr_reader :associations
+        attr_reader :associations_dsl
 
-        def associate(&block)
-          @associations = AssociateDSL.new(name, &block)
+        def associations(&block)
+          @associations_dsl = AssociationsDSL.new(name, &block)
         end
 
         def call
-          SQL::Schema.new(name,
-                          attributes,
-                          associations && associations.call,
-                          inferrer: inferrer && inferrer.new(self))
+          SQL::Schema.new(
+            name,
+            attributes,
+            associations_dsl && associations_dsl.call,
+            inferrer: inferrer && inferrer.new(self))
         end
       end
 
