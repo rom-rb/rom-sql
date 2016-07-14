@@ -77,6 +77,20 @@ describe 'Inferring schema from database' do
       expect(Test::Users.schema.associations[:account]).to eql(assoc)
     end
 
+    it "allows defining a one-to-one using has_one shortcut with an alias" do
+      class Test::Users < ROM::Relation[:sql]
+        schema(:users) do
+          associations do
+            has_one :account, as: :user_account
+          end
+        end
+      end
+
+      assoc = ROM::SQL::Association::OneToOne.new(:users, :accounts, as: :user_account)
+
+      expect(Test::Users.schema.associations[:user_account]).to eql(assoc)
+    end
+
     it "allows defining a one-to-one-through" do
       class Test::Users < ROM::Relation[:sql]
         schema(:users) do
@@ -117,6 +131,20 @@ describe 'Inferring schema from database' do
       assoc = ROM::SQL::Association::ManyToOne.new(:tags, :posts, as: :post)
 
       expect(Test::Tags.schema.associations[:post]).to eql(assoc)
+    end
+
+    it "allows defining a many-to-one using belongs_to shortcut" do
+      class Test::Tags < ROM::Relation[:sql]
+        schema(:tags) do
+          associations do
+            belongs_to :post, as: :post_tag
+          end
+        end
+      end
+
+      assoc = ROM::SQL::Association::ManyToOne.new(:tags, :posts, as: :post_tag)
+
+      expect(Test::Tags.schema.associations[:post_tag]).to eql(assoc)
     end
 
     it "allows defining a many-to-many" do

@@ -42,11 +42,11 @@ module ROM
         end
 
         def belongs_to(name, options = {})
-          many_to_one(dataset_name(name), options.merge(as: name))
+          many_to_one(dataset_name(name), options.merge(as: options[:as] || name))
         end
 
         def has_one(name, options = {})
-          one_to_one(dataset_name(name), options.merge(as: name))
+          one_to_one(dataset_name(name), options.merge(as: options[:as] || name))
         end
 
         def call
