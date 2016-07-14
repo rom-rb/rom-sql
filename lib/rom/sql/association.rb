@@ -4,7 +4,7 @@ require 'rom/sql/association/name'
 module ROM
   module SQL
     class Association
-      include Dry::Equalizer(:source, :target, :options)
+      include Dry::Equalizer(:source, :target, :result)
       include Options
       extend ClassMacros
 
