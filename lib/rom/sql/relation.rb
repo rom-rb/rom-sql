@@ -71,6 +71,11 @@ module ROM
         end
       end
 
+      # @api private
+      def self.associations
+        schema.associations
+      end
+
       def self.primary_key(value)
         Deprecations.announce(
           :primary_key,
@@ -118,6 +123,11 @@ module ROM
       # @api private
       def schema?
         ! schema.nil?
+      end
+
+      # @api private
+      def associations
+        schema.associations
       end
     end
   end

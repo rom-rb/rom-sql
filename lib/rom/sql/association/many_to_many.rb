@@ -30,7 +30,7 @@ module ROM
         def join_key_map(relations)
           left = super
           right = join_relation(relations)
-            .schema.associations[target].join_key_map(relations)
+            .associations[target].join_key_map(relations)
 
           [left, right]
         end
@@ -51,7 +51,7 @@ module ROM
 
         def call(relations)
           join_rel = join_relation(relations)
-          assocs = join_rel.schema.associations
+          assocs = join_rel.associations
 
           # TODO: figure out a way so that we don't have to check which join assoc
           #       exists

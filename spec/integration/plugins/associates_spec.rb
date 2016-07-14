@@ -140,7 +140,7 @@ RSpec.describe 'Plugins / :associates' do
           command = create_user >> create_task >> create_tags
 
           result = command.call
-          tags = relations[:tasks].schema.associations[:tags].call(relations).to_a
+          tags = relations[:tasks].associations[:tags].call(relations).to_a
 
           expect(result).to eql([
             { id: 1, name: 'red' }, { id: 2, name: 'blue' }
