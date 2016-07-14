@@ -19,6 +19,11 @@ module ROM
       attr_reader :attribute
 
       # @api private
+      def self.[](*args)
+        new(*args)
+      end
+
+      # @api private
       def initialize(dataset, attribute)
         @dataset = dataset
         @attribute = attribute
