@@ -31,9 +31,12 @@ module ROM
             dsl.attribute name, build_type(definition)
           end
 
-          pks = columns.select { |(name, definition)| definition.fetch(:primary_key) }.map(&:first)
+          pks = columns
+            .map { |(name, definition)| name if definition.fetch(:primary_key) }
+            .compact
 
-          dsl.primary_key *pks if pks.any?
+          dsl.primary_key(*pks) if pks.any?
+
           dsl.attributes
         end
 
