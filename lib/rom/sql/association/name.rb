@@ -1,5 +1,6 @@
 require 'dry/equalizer'
 require 'rom/relation/name'
+require 'concurrent/map'
 
 module ROM
   module SQL
@@ -14,17 +15,23 @@ module ROM
         alias_method :to_sym, :key
 
         def self.[](*args)
-          rel, ds, aliaz = args
+          cache.fetch_or_store(args.hash) do
+            rel, ds, aliaz = args
 
-          if rel.is_a?(ROM::Relation::Name)
-            new(rel, rel.dataset)
-          elsif aliaz
-            new(ROM::Relation::Name[rel, ds], aliaz)
-          elsif ds.nil?
-            new(ROM::Relation::Name[rel], rel)
-          else
-            new(ROM::Relation::Name[rel, ds], ds)
+            if rel.is_a?(ROM::Relation::Name)
+              new(rel, rel.dataset)
+            elsif aliaz
+              new(ROM::Relation::Name[rel, ds], aliaz)
+            elsif ds.nil?
+              new(ROM::Relation::Name[rel], rel)
+            else
+              new(ROM::Relation::Name[rel, ds], ds)
+            end
           end
+        end
+
+        def self.cache
+          @cache ||= Concurrent::Map.new
         end
 
         def initialize(relation_name, aliaz)
