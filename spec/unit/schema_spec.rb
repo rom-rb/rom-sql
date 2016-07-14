@@ -35,6 +35,20 @@ describe 'Inferring schema from database' do
       expect(Test::Posts.schema.associations[:tags]).to eql(assoc)
     end
 
+    it "allows defining a one-to-many using has_many shortcut" do
+      class Test::Posts < ROM::Relation[:sql]
+        schema(:posts) do
+          associate do
+            has_many :tags
+          end
+        end
+      end
+
+      assoc = ROM::SQL::Association::OneToMany.new(:posts, :tags)
+
+      expect(Test::Posts.schema.associations[:tags]).to eql(assoc)
+    end
+
     it "allows defining a one-to-one" do
       class Test::Users < ROM::Relation[:sql]
         schema(:users) do
