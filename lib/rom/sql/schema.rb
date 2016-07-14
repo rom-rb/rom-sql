@@ -72,10 +72,6 @@ module ROM
           end
         end
 
-        def many_to_many(target, options = {})
-          add(Association::ManyToMany.new(source, target, options))
-        end
-
         def one_to_one(target, options = {})
           if options[:through]
             one_to_one_through(target, options)
@@ -86,6 +82,10 @@ module ROM
 
         def one_to_one_through(target, options = {})
           add(Association::OneToOneThrough.new(source, target, options))
+        end
+
+        def many_to_many(target, options = {})
+          add(Association::ManyToMany.new(source, target, options))
         end
 
         def many_to_one(target, options = {})

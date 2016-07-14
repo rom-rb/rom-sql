@@ -21,20 +21,6 @@ describe 'Inferring schema from database' do
   end
 
   context 'defining associations' do
-    it "allows defining a many-to-many" do
-      class Test::Posts < ROM::Relation[:sql]
-        schema(:posts) do
-          associate do
-            one_to_many :tags, through: :posts_tags
-          end
-        end
-      end
-
-      assoc = ROM::SQL::Association::ManyToMany.new(:posts, :tags, through: :posts_tags)
-
-      expect(Test::Posts.schema.associations[:tags]).to eql(assoc)
-    end
-
     it "allows defining a one-to-many" do
       class Test::Posts < ROM::Relation[:sql]
         schema(:posts) do
@@ -91,7 +77,21 @@ describe 'Inferring schema from database' do
       expect(Test::Tags.schema.associations[:posts]).to eql(assoc)
     end
 
-    it "allows defining a many-to-one_to_one with a custom name" do
+    it "allows defining a many-to-many" do
+      class Test::Posts < ROM::Relation[:sql]
+        schema(:posts) do
+          associate do
+            one_to_many :tags, through: :posts_tags
+          end
+        end
+      end
+
+      assoc = ROM::SQL::Association::ManyToMany.new(:posts, :tags, through: :posts_tags)
+
+      expect(Test::Posts.schema.associations[:tags]).to eql(assoc)
+    end
+
+    it "allows defining a many-to-one with a custom name" do
       class Test::Tags < ROM::Relation[:sql]
         schema(:tags) do
           associate do
