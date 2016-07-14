@@ -29,8 +29,8 @@ module ROM
 
         def initialize(relation_name, aliaz)
           @relation_name = relation_name
-          @key = relation_name.dataset == aliaz ? relation_name.dataset : aliaz
-          @aliased = key == aliaz
+          @aliased = relation_name.dataset != aliaz
+          @key = aliased? ? aliaz : relation_name.dataset
         end
 
         def aliased?
@@ -38,12 +38,16 @@ module ROM
         end
 
         def inspect
-          "#{self.class}(#{relation_name.to_s} as #{key})"
+          if aliased?
+            "#{self.class}(#{relation_name.to_s} as #{key})"
+          else
+            "#{self.class}(#{relation_name.to_s})"
+          end
         end
         alias_method :to_s, :inspect
 
         def singularize
-          :"#{Inflector.singularize(key.to_s)}"
+          @singularize ||= :"#{Inflector.singularize(key.to_s)}"
         end
 
         def dataset

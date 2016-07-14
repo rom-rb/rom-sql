@@ -75,6 +75,7 @@ describe 'Inferring schema from database' do
       assoc = ROM::SQL::Association::OneToOne.new(:users, :accounts, as: :account)
 
       expect(Test::Users.schema.associations[:account]).to eql(assoc)
+      expect(Test::Users.schema.associations[:account].target).to be_aliased
     end
 
     it "allows defining a one-to-one using has_one shortcut with an alias" do
@@ -89,6 +90,7 @@ describe 'Inferring schema from database' do
       assoc = ROM::SQL::Association::OneToOne.new(:users, :accounts, as: :user_account)
 
       expect(Test::Users.schema.associations[:user_account]).to eql(assoc)
+      expect(Test::Users.schema.associations[:user_account].target).to be_aliased
     end
 
     it "allows defining a one-to-one-through" do
