@@ -2,12 +2,13 @@
 
 ### Added
 
-* Support for relation schemas with SQL-specific data types (solnic)
+* Support for relation schemas with SQL-specific data types (solnic + flash-gordon)
 * One-To-Many support in schemas (solnic + flash-gordon)
 * One-To-One support in schemas (solnic + flash-gordon)
 * One-To-One-Through support in schemas (solnic + flash-gordon)
 * Many-To-One support in schemas (solnic + flash-gordon)
 * Many-To-Many support in schemas (solnic + flash-gordon)
+* Support for `has_many`, `has_one` and `belongs_to` convenient methods in schema DSL (solnic)
 * Support for custom PG types: `Types::PG::Array`, `Types::PG::Hash`, `Types::PG::JSON`, and `Types::PG::Bytea` (solnic + flash-gordon)
 * Optional automatic schema inference for attributes based on DB metadata provided by Sequel (flash-gordon)
 * Support for arbitrary dataset and FK names in schemas (flash-gordon)
@@ -15,6 +16,8 @@
 ### Changed
 
 * `Create` and `Update` commands have `:schema` plugin enabled by default which sets input handler based on schema definition automatically (solnic)
+* `associates` command plugin uses schema associations now (solnic)
+* Ad-hoc key options in `associates` command plugin are now deprecated (solnic)
 
 ### Fixed
 
