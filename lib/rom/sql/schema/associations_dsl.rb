@@ -1,4 +1,5 @@
 require 'rom/sql/association'
+require 'rom/sql/association_set'
 
 module ROM
   module SQL
@@ -50,7 +51,7 @@ module ROM
         end
 
         def call
-          registry
+          AssociationSet.new(registry)
         end
 
         private
