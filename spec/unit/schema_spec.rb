@@ -49,6 +49,20 @@ describe 'Inferring schema from database' do
       expect(Test::Users.schema.associations[:accounts]).to eql(assoc)
     end
 
+    it "allows defining a one-to-one using has_one shortcut" do
+      class Test::Users < ROM::Relation[:sql]
+        schema(:users) do
+          associate do
+            has_one :account
+          end
+        end
+      end
+
+      assoc = ROM::SQL::Association::OneToOne.new(:users, :accounts, as: :account)
+
+      expect(Test::Users.schema.associations[:account]).to eql(assoc)
+    end
+
     it "allows defining a one-to-one-through" do
       class Test::Users < ROM::Relation[:sql]
         schema(:users) do

@@ -71,6 +71,7 @@ module ROM
             add(Association::OneToMany.new(source, target, options))
           end
         end
+        alias_method :has_many, :one_to_many
 
         def one_to_one(target, options = {})
           if options[:through]
@@ -92,6 +93,10 @@ module ROM
           add(Association::ManyToOne.new(source, target, options))
         end
 
+        def has_one(name, options = {})
+          one_to_one(dataset_name(name), options.merge(as: name))
+        end
+
         def call
           associations
         end
@@ -100,6 +105,10 @@ module ROM
 
         def add(association)
           @associations[association.name] = association
+        end
+
+        def dataset_name(name)
+          Inflector.pluralize(name).to_sym
         end
       end
 
