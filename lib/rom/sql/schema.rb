@@ -93,6 +93,10 @@ module ROM
           add(Association::ManyToOne.new(source, target, options))
         end
 
+        def belongs_to(name, options = {})
+          many_to_one(dataset_name(name), options.merge(as: name))
+        end
+
         def has_one(name, options = {})
           one_to_one(dataset_name(name), options.merge(as: name))
         end

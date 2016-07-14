@@ -91,6 +91,20 @@ describe 'Inferring schema from database' do
       expect(Test::Tags.schema.associations[:posts]).to eql(assoc)
     end
 
+    it "allows defining a many-to-one using belongs_to shortcut" do
+      class Test::Tags < ROM::Relation[:sql]
+        schema(:tags) do
+          associate do
+            belongs_to :post
+          end
+        end
+      end
+
+      assoc = ROM::SQL::Association::ManyToOne.new(:tags, :posts, as: :post)
+
+      expect(Test::Tags.schema.associations[:post]).to eql(assoc)
+    end
+
     it "allows defining a many-to-many" do
       class Test::Posts < ROM::Relation[:sql]
         schema(:posts) do
