@@ -30,7 +30,8 @@ end
 root = Pathname(__FILE__).dirname
 TMP_PATH = root.join('../tmp')
 
-Dir[root.join('shared/*.rb').to_s].each { |f| require f }
+Dir[root.join('shared/**/*')].each { |f| require f }
+Dir[root.join('support/**/*')].each { |f| require f }
 
 require 'rom/support/deprecations'
 ROM::Deprecations.set_logger!(root.join('../log/deprecations.log'))
@@ -50,4 +51,6 @@ RSpec.configure do |config|
   config.after do
     Object.send(:remove_const, :Test)
   end
+
+  config.include(Helpers, helpers: true)
 end

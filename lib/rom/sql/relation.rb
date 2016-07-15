@@ -13,6 +13,7 @@ require 'rom/plugins/relation/sql/auto_combine'
 require 'rom/plugins/relation/sql/auto_wrap'
 
 require 'rom/support/deprecations'
+require 'rom/support/constants'
 
 module ROM
   module SQL
@@ -71,6 +72,11 @@ module ROM
         end
       end
 
+      # @api private
+      def self.associations
+        schema.associations
+      end
+
       def self.primary_key(value)
         Deprecations.announce(
           :primary_key,
@@ -80,8 +86,12 @@ module ROM
         option :primary_key, reader: true, default: value
       end
 
+      option :associations, reader: true, default: -> rel {
+        rel.schema? ? rel.schema.associations : EMPTY_HASH
+      }
+
       # @api private
-      def initialize(dataset, registry = {})
+      def initialize(dataset, options = EMPTY_HASH)
         super
         @table = dataset.opts[:from].first
       end

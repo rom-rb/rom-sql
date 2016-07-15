@@ -1,3 +1,5 @@
+require 'concurrent/map'
+
 module ROM
   module SQL
     # Used as a pair table name + field name.
@@ -5,7 +7,7 @@ module ROM
     # Sequel types to leak into ROM
     #
     # @api private
-    class QualifiedName
+    class QualifiedAttribute
       include Dry::Equalizer(:dataset, :attribute)
 
       # Dataset (table) name
@@ -17,6 +19,16 @@ module ROM
       #
       # @api private
       attr_reader :attribute
+
+      # @api private
+      def self.[](*args)
+        cache.fetch_or_store(args.hash) { new(*args) }
+      end
+
+      # @api private
+      def self.cache
+        @cache ||= Concurrent::Map.new
+      end
 
       # @api private
       def initialize(dataset, attribute)

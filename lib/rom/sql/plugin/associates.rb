@@ -25,7 +25,7 @@ module ROM
               if assoc_opts.any?
                 assoc_opts[:key]
               else
-                relation.schema.associations[assoc_name]
+                relation.associations[assoc_name]
               end
           end
 
