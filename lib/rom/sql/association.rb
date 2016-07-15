@@ -1,4 +1,4 @@
-require 'rom/sql/qualified_name'
+require 'rom/sql/qualified_attribute'
 require 'rom/sql/association/name'
 
 module ROM
@@ -26,7 +26,7 @@ module ROM
       end
 
       def qualify(name, attribute)
-        QualifiedName.new(name.dataset, attribute)
+        QualifiedAttribute[name.dataset, attribute]
       end
 
       protected
