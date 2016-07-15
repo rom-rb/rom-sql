@@ -20,6 +20,8 @@ module ROM
 
             if rel.is_a?(ROM::Relation::Name)
               new(rel, rel.dataset)
+            elsif rel.is_a?(self)
+              rel
             elsif aliaz
               new(ROM::Relation::Name[rel, ds], aliaz)
             elsif ds.nil?

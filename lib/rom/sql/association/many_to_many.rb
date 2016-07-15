@@ -37,14 +37,14 @@ module ROM
 
         def combine_keys(relations)
           source_key = relations[source.relation].primary_key
-          target_key = relations[through.relation].foreign_key(source.dataset)
+          target_key = relations[through.relation].foreign_key(source.relation)
 
           { source_key => target_key }
         end
 
         def join_keys(relations)
           source_key = relations[source.relation].primary_key
-          target_key = relations[through.relation].foreign_key(source.dataset)
+          target_key = relations[through.relation].foreign_key(source.relation)
 
           { qualify(source, source_key) => qualify(through, target_key) }
         end
