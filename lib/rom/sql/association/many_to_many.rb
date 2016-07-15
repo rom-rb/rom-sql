@@ -24,15 +24,7 @@ module ROM
         end
 
         def join_relation(relations)
-          relations[through]
-        end
-
-        def join_key_map(relations)
-          left = super
-          right = join_relation(relations)
-            .associations[target].join_key_map(relations)
-
-          [left, right]
+          relations[through.relation]
         end
 
         def combine_keys(relations)
@@ -68,6 +60,17 @@ module ROM
 
           relation.with(attributes: relation.header.names)
         end
+
+        protected
+
+        def join_key_map(relations)
+          left = super
+          right = join_relation(relations)
+            .associations[target].join_key_map(relations)
+
+          [left, right]
+        end
+
       end
     end
   end

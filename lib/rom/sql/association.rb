@@ -25,12 +25,14 @@ module ROM
         super
       end
 
-      def join_key_map(relations)
-        join_keys(relations).to_a.flatten.map(&:to_sym)
-      end
-
       def qualify(name, attribute)
         QualifiedName.new(name.dataset, attribute)
+      end
+
+      protected
+
+      def join_key_map(relations)
+        join_keys(relations).to_a.flatten.map(&:to_sym)
       end
     end
   end

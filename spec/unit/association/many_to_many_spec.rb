@@ -9,6 +9,13 @@ RSpec.describe ROM::SQL::Association::ManyToMany, helpers: true do
   let(:tasks) { double(:tasks, primary_key: :id) }
   let(:tasks_tags) { double(:tasks, primary_key: [:task_id, :tag_id]) }
 
+  let(:source) { :tasks }
+  let(:target) { :tags }
+
+  let(:relations) do
+    { tasks: tasks, tags: tags, tasks_tags: tasks_tags }
+  end
+
   shared_examples_for 'many-to-many association' do
     describe '#combine_keys' do
       it 'returns a hash with combine keys' do
@@ -19,14 +26,33 @@ RSpec.describe ROM::SQL::Association::ManyToMany, helpers: true do
     end
   end
 
-  context 'with default names' do
-    let(:source) { :tasks }
-    let(:target) { :tags }
-
-    let(:relations) do
-      { tasks: tasks, tags: tags, tasks_tags: tasks_tags }
+  describe '#result' do
+    it 'is :many' do
+      expect(assoc.result).to be(:many)
     end
+  end
 
+  describe '#associate' do
+    let(:join_assoc) { double(:join_assoc) }
+
+    let(:source) { :tags }
+    let(:target) { :tasks }
+
+    it 'returns a list of join keys for given child tuples' do
+      expect(tasks_tags).to receive(:associations).and_return(assoc.target => join_assoc)
+      expect(join_assoc).to receive(:join_key_map).with(relations).and_return([:task_id, :id])
+      expect(tasks_tags).to receive(:foreign_key).with(:tags).and_return(:tag_id)
+
+      task_tuple = { id: 3 }
+      tag_tuples = [{ id: 1 }, { id: 2 }]
+
+      expect(assoc.associate(relations, tag_tuples, task_tuple)).to eql([
+        { tag_id: 1, task_id: 3 }, { tag_id: 2, task_id: 3 }
+      ])
+    end
+  end
+
+  context 'with default names' do
     it_behaves_like 'many-to-many association'
 
     describe '#join_keys' do
