@@ -20,6 +20,8 @@ module ROM
     # Sequel-specific relation extensions
     #
     class Relation < ROM::Relation
+      EMPTY_ASSOCIATION_SET = AssociationSet.new({}).freeze
+
       include SQL
 
       adapter :sql
@@ -87,7 +89,7 @@ module ROM
       end
 
       option :associations, reader: true, default: -> rel {
-        rel.schema? ? rel.schema.associations : EMPTY_HASH
+        rel.schema? ? rel.schema.associations : EMPTY_ASSOCIATION_SET
       }
 
       # @api private

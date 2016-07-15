@@ -44,6 +44,12 @@ describe ROM::Relation do
       configuration.relation(:tasks)
     end
 
+    describe '#associations' do
+      it 'returns an empty association set' do
+        expect(users.associations.elements).to be_empty
+      end
+    end
+
     describe '#dataset' do
       it 'selects all qualified columns and sorts by pk' do
         expect(users.dataset).to eql(
