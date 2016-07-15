@@ -40,7 +40,7 @@ RSpec.describe ROM::SQL::Association::OneToOneThrough, helpers: true do
         expect(tasks_tags).to receive(:foreign_key).with(:tasks).and_return(:tag_id)
 
         expect(assoc.join_keys(relations)).to eql(
-          qualified_name(:tasks, :id) => qualified_name(:tasks_tags, :tag_id)
+          qualified_attribute(:tasks, :id) => qualified_attribute(:tasks_tags, :tag_id)
         )
       end
     end
@@ -61,7 +61,7 @@ RSpec.describe ROM::SQL::Association::OneToOneThrough, helpers: true do
         expect(tasks_tags).to receive(:foreign_key).with(:tasks).and_return(:tag_id)
 
         expect(assoc.join_keys(relations)).to eql(
-          qualified_name(:user_tasks, :id) => qualified_name(:tasks_tags, :tag_id)
+          qualified_attribute(:user_tasks, :id) => qualified_attribute(:tasks_tags, :tag_id)
         )
       end
     end

@@ -33,7 +33,7 @@ RSpec.describe ROM::SQL::Association::OneToMany, helpers: true do
         expect(tasks).to receive(:foreign_key).with(:users).and_return(:user_id)
 
         expect(assoc.join_keys(relations)).to eql(
-          qualified_name(:users, :id) => qualified_name(:tasks, :user_id)
+          qualified_attribute(:users, :id) => qualified_attribute(:tasks, :user_id)
         )
       end
     end
@@ -54,7 +54,7 @@ RSpec.describe ROM::SQL::Association::OneToMany, helpers: true do
         expect(tasks).to receive(:foreign_key).with(:users).and_return(:user_id)
 
         expect(assoc.join_keys(relations)).to eql(
-          qualified_name(:people, :id) => qualified_name(:user_tasks, :user_id)
+          qualified_attribute(:people, :id) => qualified_attribute(:user_tasks, :user_id)
         )
       end
     end

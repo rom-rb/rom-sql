@@ -1,5 +1,5 @@
 module Helpers
-  def qualified_name(*args)
+  def qualified_attribute(*args)
     ROM::SQL::QualifiedAttribute[*args]
   end
 
