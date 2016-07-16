@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe ROM::SQL::Migration::Migrator do
+RSpec.describe ROM::SQL::Migration::Migrator do
   subject(:migrator) { ROM::SQL::Migration::Migrator.new(conn, options) }
 
   let(:conn) { Sequel.connect(POSTGRES_DB_URI) }

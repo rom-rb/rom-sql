@@ -1,7 +1,6 @@
-require 'spec_helper'
 require 'virtus'
 
-describe 'Commands / Create' do
+RSpec.describe 'Commands / Create' do
   include_context 'relations'
 
   subject(:users) { container.commands.users }

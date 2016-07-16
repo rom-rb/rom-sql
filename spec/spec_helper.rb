@@ -29,6 +29,7 @@ else
 end
 
 URIS = { postgres: POSTGRES_DB_URI, sqlite: SQLITE_DB_URI, mysql: MYSQL_DB_URI }
+ADAPTERS = URIS.keys
 
 root = Pathname(__FILE__).dirname
 TMP_PATH = root.join('../tmp')
@@ -39,7 +40,23 @@ Dir[root.join('support/**/*')].each { |f| require f }
 require 'rom/support/deprecations'
 ROM::Deprecations.set_logger!(root.join('../log/deprecations.log'))
 
+def with_adapter(adapter, &block)
+  Object.const_set(:DB_URI, URIS[:mysql])
+  block.call
+  Object.send(:remove_const, :DB_URI)
+end
+
+def with_adapters(*args, &block)
+  adapters = args.empty? || args[0] == :all ? ADAPTERS : args
+
+  adapters.each do |adapter|
+    context("with #{adapter}", adapter: adapter, &block)
+  end
+end
+
 RSpec.configure do |config|
+  config.disable_monkey_patching
+
   config.before(:suite) do
     tmp_test_dir = TMP_PATH.join('test')
     FileUtils.rm_r(tmp_test_dir) if File.exist?(tmp_test_dir)
@@ -47,9 +64,7 @@ RSpec.configure do |config|
   end
 
   config.around(adapter: :mysql) do |example|
-    Object.const_set(:DB_URI, URIS[:mysql])
-    example.run
-    Object.send(:remove_const, :DB_URI)
+    with_adapter(:mysql) { example.run }
   end
 
   config.before do

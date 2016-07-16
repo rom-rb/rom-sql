@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe ROM::SQL, '.migration' do
+RSpec.describe ROM::SQL, '.migration' do
   let(:connection) { ROM::SQL.gateway.connection }
   let(:configuration) { ROM::Configuration.new(:sql, POSTGRES_DB_URI) }
 

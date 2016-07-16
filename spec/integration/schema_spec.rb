@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe 'Automatic inferring schema from database' do
+RSpec.describe 'Automatic inferring schema from database' do
   include_context 'database setup'
 
   before do

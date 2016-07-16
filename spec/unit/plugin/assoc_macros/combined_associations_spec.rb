@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe 'Defining multiple associations' do
+RSpec.describe 'Defining multiple associations' do
   include_context 'users and tasks'
 
   it 'extends relation with association methods' do
