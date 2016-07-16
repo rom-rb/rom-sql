@@ -25,7 +25,10 @@ if defined? JRUBY_VERSION
 else
   SQLITE_DB_URI = 'sqlite::memory'
   POSTGRES_DB_URI = 'postgres://localhost/rom_sql'
+  MYSQL_DB_URI = 'mysql2://root@localhost/rom_sql'
 end
+
+URIS = { postgres: POSTGRES_DB_URI, sqlite: SQLITE_DB_URI, mysql: MYSQL_DB_URI }
 
 root = Pathname(__FILE__).dirname
 TMP_PATH = root.join('../tmp')
@@ -41,6 +44,12 @@ RSpec.configure do |config|
     tmp_test_dir = TMP_PATH.join('test')
     FileUtils.rm_r(tmp_test_dir) if File.exist?(tmp_test_dir)
     FileUtils.mkdir_p(tmp_test_dir)
+  end
+
+  config.around(adapter: :mysql) do |example|
+    Object.const_set(:DB_URI, URIS[:mysql])
+    example.run
+    Object.send(:remove_const, :DB_URI)
   end
 
   config.before do

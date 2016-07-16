@@ -273,5 +273,36 @@ describe 'Commands / Create' do
         end
       end
     end
+
+    context 'with a composite pk', adapter: :mysql do
+      before do
+        conn.create_table?(:user_group) do
+          primary_key [:user_id, :group_id]
+          column :user_id, Integer, null: false
+          column :group_id, Integer, null: false
+        end
+
+        configuration.relation(:user_group) do
+          schema(infer: true)
+        end
+
+        configuration.commands(:user_group) do
+          define(:create) { result :one }
+        end
+      end
+
+      after do
+        conn.drop_table(:user_group)
+      end
+
+      it 'materializes the result' do
+        pending 'TODO: with a composite pk sequel returns 0 when inserting'
+
+        command = container.commands[:user_group][:create]
+        result = command.call(user_id: 1, group_id: 2)
+
+        expect(result).to eql(user_id: 1, group_id: 2)
+      end
+    end
   end
 end
