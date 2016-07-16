@@ -31,7 +31,7 @@ shared_context 'database setup' do
     conn.create_table :users do
       primary_key :id
       String :name, null: false
-      check { char_length(name) > 2 } if [:postgres, nil].include?(example.metadata[:adapter])
+      check { char_length(name) > 2 } if postgres?(example)
     end
 
     conn.create_table :tasks do

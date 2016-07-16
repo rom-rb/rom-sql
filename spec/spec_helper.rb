@@ -22,7 +22,7 @@ LOGGER = Logger.new(File.open('./log/test.log', 'a'))
 if defined? JRUBY_VERSION
   SQLITE_DB_URI = 'jdbc:sqlite::memory'
   POSTGRES_DB_URI = 'jdbc:postgresql://localhost/rom_sql'
-  MYSQL_DB_URI = 'jdbc:mysql://root@localhost/rom_sql'
+  MYSQL_DB_URI = 'jdbc:mysql://root@127.0.0.1/rom_sql'
 else
   SQLITE_DB_URI = 'sqlite::memory'
   POSTGRES_DB_URI = 'postgres://localhost/rom_sql'
@@ -40,6 +40,22 @@ Dir[root.join('support/**/*')].each { |f| require f }
 
 require 'rom/support/deprecations'
 ROM::Deprecations.set_logger!(root.join('../log/deprecations.log'))
+
+def db?(type, example = nil)
+  if example
+    example.metadata[:adapter] == type
+  else
+    defined?(DB_URI) && DB_URI.include?(type.to_s)
+  end
+end
+
+def postgres?(example = nil)
+  db?(:postgres, example)
+end
+
+def mysql?(example = nil)
+  db?(:mysql, example)
+end
 
 def with_adapter(adapter, &block)
   Object.const_set(:DB_URI, URIS[:mysql])
