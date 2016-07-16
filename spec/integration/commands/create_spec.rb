@@ -3,8 +3,8 @@ require 'virtus'
 RSpec.describe 'Commands / Create' do
   include_context 'relations'
 
-  subject(:users) { container.commands.users }
-  subject(:tasks) { container.commands.tasks }
+  let(:users) { commands[:users] }
+  let(:tasks) { commands[:tasks] }
 
   before do
     class Params
