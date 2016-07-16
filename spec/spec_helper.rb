@@ -20,9 +20,9 @@ end
 LOGGER = Logger.new(File.open('./log/test.log', 'a'))
 
 if defined? JRUBY_VERSION
-  SQLITE_DB_URI = 'jdbc:sqlite::memory'
+  SQLITE_DB_URI = 'jdbc:sqlite:::memory'
   POSTGRES_DB_URI = 'jdbc:postgresql://localhost/rom_sql'
-  MYSQL_DB_URI = 'jdbc:mysql://root@127.0.0.1/rom_sql'
+  MYSQL_DB_URI = 'jdbc:mysql://localhost/rom_sql?user=root'
 else
   SQLITE_DB_URI = 'sqlite::memory'
   POSTGRES_DB_URI = 'postgres://localhost/rom_sql'
