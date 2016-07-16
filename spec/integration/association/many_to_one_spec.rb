@@ -11,7 +11,7 @@ RSpec.describe ROM::SQL::Association::ManyToOne, helpers: true do
 
   with_adapters do
     before do
-      configuration.relation(:tasks) do
+      conf.relation(:tasks) do
         schema do
           attribute :id, ROM::SQL::Types::Serial
           attribute :user_id, ROM::SQL::Types::ForeignKey(:users)
@@ -75,7 +75,7 @@ RSpec.describe ROM::SQL::Association::ManyToOne, helpers: true do
       end
 
       before do
-        configuration.relation(:articles) do
+        conf.relation(:articles) do
           schema(:posts) do
             attribute :post_id, ROM::SQL::Types::Serial
             attribute :author_id, ROM::SQL::Types::ForeignKey(:users)

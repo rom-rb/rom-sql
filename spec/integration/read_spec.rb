@@ -35,14 +35,14 @@ RSpec.describe 'Reading relations' do
         end
       end
 
-      configuration.relation(:goals) do
+      conf.relation(:goals) do
         use :assoc_macros
 
         register_as :goals
         dataset :tasks
       end
 
-      configuration.relation(:users) do
+      conf.relation(:users) do
         use :assoc_macros
 
         one_to_many :goals, key: :user_id
@@ -60,7 +60,7 @@ RSpec.describe 'Reading relations' do
         end
       end
 
-      configuration.relation(:user_goal_counts) do
+      conf.relation(:user_goal_counts) do
         use :assoc_macros
 
         dataset :users
@@ -78,7 +78,7 @@ RSpec.describe 'Reading relations' do
         end
       end
 
-      configuration.mappers do
+      conf.mappers do
         define(:users) do
           model User
 

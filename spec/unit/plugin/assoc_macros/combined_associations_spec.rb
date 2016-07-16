@@ -2,11 +2,11 @@ RSpec.describe 'Defining multiple associations' do
   include_context 'users and tasks'
 
   it 'extends relation with association methods' do
-    configuration.relation(:users) { use :assoc_macros }
+    conf.relation(:users) { use :assoc_macros }
 
-    configuration.relation(:tags) { use :assoc_macros }
+    conf.relation(:tags) { use :assoc_macros }
 
-    configuration.relation(:tasks) do
+    conf.relation(:tasks) do
       use :assoc_macros
 
       many_to_one :users, key: :user_id

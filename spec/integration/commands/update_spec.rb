@@ -14,7 +14,7 @@ RSpec.describe 'Commands / Update' do
   with_adapters do
     context 'with a schema' do
       before do
-        configuration.relation(:users) do
+        conf.relation(:users) do
           schema do
             attribute :id, ROM::SQL::Types::Serial
             attribute :name, ROM::SQL::Types::String
@@ -23,7 +23,7 @@ RSpec.describe 'Commands / Update' do
       end
 
       it 'uses relation schema for the default input handler' do
-        configuration.commands(:users) do
+        conf.commands(:users) do
           define(:update) do
             result :one
           end
@@ -37,7 +37,7 @@ RSpec.describe 'Commands / Update' do
 
     context 'without a schema' do
       before do
-        configuration.relation(:users) do
+        conf.relation(:users) do
           def by_id(id)
             where(id: id).limit(1)
           end
@@ -47,13 +47,13 @@ RSpec.describe 'Commands / Update' do
           end
         end
 
-        configuration.commands(:users) do
+        conf.commands(:users) do
           define(:update)
         end
 
         Test::User = Class.new { include Anima.new(:id, :name) }
 
-        configuration.mappers do
+        conf.mappers do
           register :users, entity: -> tuples { tuples.map { |tuple| Test::User.new(tuple) } }
         end
 

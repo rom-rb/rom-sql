@@ -10,7 +10,7 @@ RSpec.describe ROM::SQL::Association::OneToOne do
 
   with_adapters do
     before do
-      configuration.relation(:accounts) do
+      conf.relation(:accounts) do
         schema do
           attribute :id, ROM::SQL::Types::Serial
           attribute :user_id, ROM::SQL::Types::ForeignKey(:users)

@@ -20,7 +20,7 @@ RSpec.describe 'Automatic inferring schema from database' do
   context 'inferring attributes' do
     before do
       dataset = self.dataset
-      configuration.relation(dataset) do
+      conf.relation(dataset) do
         schema(dataset, infer: true)
       end
     end

@@ -10,7 +10,7 @@ RSpec.describe 'Plugin / Base View' do
         end
       end
 
-      configuration.register_relation(Test::Users)
+      conf.register_relation(Test::Users)
 
       expect(container.relation(:users).base.header).to match_array([:id, :name])
     end

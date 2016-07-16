@@ -10,7 +10,7 @@ RSpec.describe ROM::SQL::Association::OneToOneThrough do
 
   with_adapters do
     before do
-      configuration.relation(:accounts) do
+      conf.relation(:accounts) do
         schema do
           attribute :id, ROM::SQL::Types::Serial
           attribute :user_id, ROM::SQL::Types::ForeignKey(:users)
@@ -24,7 +24,7 @@ RSpec.describe ROM::SQL::Association::OneToOneThrough do
         end
       end
 
-      configuration.relation(:cards) do
+      conf.relation(:cards) do
         schema do
           attribute :id, ROM::SQL::Types::Serial
           attribute :account_id, ROM::SQL::Types::ForeignKey(:accounts)
@@ -36,7 +36,7 @@ RSpec.describe ROM::SQL::Association::OneToOneThrough do
         end
       end
 
-      configuration.relation(:subscriptions) do
+      conf.relation(:subscriptions) do
         schema do
           attribute :id, ROM::SQL::Types::Serial
           attribute :card_id, ROM::SQL::Types::ForeignKey(:cards)

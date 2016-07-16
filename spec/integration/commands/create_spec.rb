@@ -19,7 +19,7 @@ RSpec.describe 'Commands / Create' do
 
     conn.add_index :users, :name, unique: true
 
-    configuration.commands(:users) do
+    conf.commands(:users) do
       define(:create) do
         input Params
 
@@ -35,7 +35,7 @@ RSpec.describe 'Commands / Create' do
       end
     end
 
-    configuration.commands(:tasks) do
+    conf.commands(:tasks) do
       define(:create)
     end
   end
@@ -138,7 +138,7 @@ RSpec.describe 'Commands / Create' do
   end
 
   it 'uses relation schema for the default input handler' do
-    configuration.relation(:users) do
+    conf.relation(:users) do
       register_as :users_with_schema
 
       schema do
@@ -147,7 +147,7 @@ RSpec.describe 'Commands / Create' do
       end
     end
 
-    configuration.commands(:users_with_schema) do
+    conf.commands(:users_with_schema) do
       define(:create) do
         result :one
       end
@@ -281,11 +281,11 @@ RSpec.describe 'Commands / Create' do
           column :group_id, Integer, null: false
         end
 
-        configuration.relation(:user_group) do
+        conf.relation(:user_group) do
           schema(infer: true)
         end
 
-        configuration.commands(:user_group) do
+        conf.commands(:user_group) do
           define(:create) { result :one }
         end
       end

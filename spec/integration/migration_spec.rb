@@ -1,9 +1,9 @@
 RSpec.describe ROM::SQL, '.migration' do
   let(:connection) { ROM::SQL.gateway.connection }
-  let(:configuration) { ROM::Configuration.new(:sql, POSTGRES_DB_URI) }
+  let(:conf) { ROM::Configuration.new(:sql, POSTGRES_DB_URI) }
 
   before do
-    configuration
+    conf
     connection.drop_table?(:dragons)
   end
 

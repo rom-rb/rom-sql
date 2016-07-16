@@ -10,7 +10,7 @@ RSpec.describe ROM::SQL::Association::ManyToMany do
 
   with_adapters do
     before do
-      configuration.relation(:task_tags) do
+      conf.relation(:task_tags) do
         schema do
           attribute :task_id, ROM::SQL::Types::ForeignKey(:tasks)
           attribute :tag_id, ROM::SQL::Types::ForeignKey(:tags)
@@ -24,7 +24,7 @@ RSpec.describe ROM::SQL::Association::ManyToMany do
         end
       end
 
-      configuration.relation(:tasks) do
+      conf.relation(:tasks) do
         schema do
           attribute :id, ROM::SQL::Types::Serial
           attribute :user_id, ROM::SQL::Types::ForeignKey(:users)

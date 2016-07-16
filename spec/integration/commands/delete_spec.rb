@@ -5,13 +5,13 @@ RSpec.describe 'Commands / Delete' do
 
   with_adapters do
     before do
-      configuration.relation(:users) do
+      conf.relation(:users) do
         def by_name(name)
           where(name: name)
         end
       end
 
-      configuration.commands(:users) do
+      conf.commands(:users) do
         define(:delete) do
           result :one
         end

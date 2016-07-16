@@ -10,7 +10,7 @@ describe ROM::Relation do
     let(:uri) { SQLITE_DB_URI }
 
     before do
-      configuration.relation(:users) do
+      conf.relation(:users) do
         schema do
           attribute :id, ROM::SQL::Types::Serial
           attribute :name, ROM::SQL::Types::String
@@ -21,7 +21,7 @@ describe ROM::Relation do
         end
       end
 
-      configuration.relation(:tasks)
+      conf.relation(:tasks)
     end
 
     describe '#dataset' do
@@ -35,13 +35,13 @@ describe ROM::Relation do
 
   context 'without schema' do
     before do
-      configuration.relation(:users) do
+      conf.relation(:users) do
         def sorted
           order(:id)
         end
       end
 
-      configuration.relation(:tasks)
+      conf.relation(:tasks)
     end
 
     describe '#associations' do
@@ -64,7 +64,7 @@ describe ROM::Relation do
       end
 
       it 'returns configured primary key from the schema' do
-        configuration.relation(:other_users) do
+        conf.relation(:other_users) do
           schema(:users) do
             attribute :name, ROM::SQL::Types::String.meta(primary_key: true)
           end

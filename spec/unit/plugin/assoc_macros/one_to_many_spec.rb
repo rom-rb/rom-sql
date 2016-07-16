@@ -2,7 +2,7 @@ RSpec.describe 'Defining one-to-many association' do
   include_context 'users and tasks'
 
   before do
-    configuration.mappers do
+    conf.mappers do
       define(:users)
 
       define(:with_tasks, parent: :users) do
@@ -10,11 +10,11 @@ RSpec.describe 'Defining one-to-many association' do
       end
     end
 
-    configuration.relation(:tasks) { use :assoc_macros }
+    conf.relation(:tasks) { use :assoc_macros }
   end
 
   it 'extends relation with association methods' do
-    configuration.relation(:users) do
+    conf.relation(:users) do
       use :assoc_macros
 
       one_to_many :tasks, key: :user_id, on: { title: "Jane's task" }
@@ -47,7 +47,7 @@ RSpec.describe 'Defining one-to-many association' do
   end
 
   it 'allows setting :conditions' do
-    configuration.relation(:users) do
+    conf.relation(:users) do
       use :assoc_macros
 
       one_to_many :janes_tasks, relation: :tasks, key: :user_id,

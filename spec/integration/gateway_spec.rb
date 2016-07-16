@@ -5,8 +5,8 @@ describe ROM::SQL::Gateway do
     context 'creating migrations inline' do
       subject(:gateway) { container.gateways[:default] }
 
-      let(:configuration) { ROM::Configuration.new(:sql, conn) }
-      let!(:container) { ROM.container(configuration) }
+      let(:conf) { ROM::Configuration.new(:sql, conn) }
+      let!(:container) { ROM.container(conf) }
 
       after do
         [:rabbits, :carrots].each do |name|
@@ -46,8 +46,8 @@ describe ROM::SQL::Gateway do
       end
 
       let(:migrator) { ROM::SQL::Migration::Migrator.new(conn, path: migration_dir) }
-      let(:configuration) { ROM::Configuration.new(:sql, [conn, migrator: migrator]) }
-      let!(:container) { ROM.container(configuration) }
+      let(:conf) { ROM::Configuration.new(:sql, [conn, migrator: migrator]) }
+      let!(:container) { ROM.container(conf) }
 
       it 'returns true for pending migrations' do
         expect(container.gateways[:default].pending_migrations?).to be_truthy
@@ -68,17 +68,17 @@ describe ROM::SQL::Gateway do
     include_context 'database setup'
 
     it 'skips settings up associations when tables are missing' do
-      configuration = ROM::Configuration.new(:sql, uri) do |config|
+      conf = ROM::Configuration.new(:sql, uri) do |config|
         config.relation(:foos) do
           use :assoc_macros
           one_to_many :bars, key: :foo_id
         end
       end
-      expect { ROM.container(configuration) }.not_to raise_error
+      expect { ROM.container(conf) }.not_to raise_error
     end
 
     it 'skips finalization a relation when table is missing' do
-      configuration = ROM::Configuration.new(:sql, uri) do |config|
+      conf = ROM::Configuration.new(:sql, uri) do |config|
         class Foos < ROM::Relation[:sql]
           dataset :foos
           use :assoc_macros
@@ -86,7 +86,7 @@ describe ROM::SQL::Gateway do
         end
       end
 
-      expect { ROM.container(configuration) }.not_to raise_error
+      expect { ROM.container(conf) }.not_to raise_error
       expect { Foos.model.dataset }.to raise_error(Sequel::Error, /no dataset/i)
     end
   end

@@ -8,7 +8,7 @@ RSpec.describe 'Plugins / :associates' do
       let(:tags) { container.commands[:tags] }
 
       before do
-        configuration.commands(:users) do
+        conf.commands(:users) do
           define(:create) { result :one }
         end
       end
@@ -43,7 +43,7 @@ RSpec.describe 'Plugins / :associates' do
       context 'without a schema' do
         include_context 'automatic FK setting' do
           before do
-            configuration.commands(:tasks) do
+            conf.commands(:tasks) do
               define(:create) do
                 register_as :create_many
                 associates :user, key: [:user_id, :id]
@@ -63,7 +63,7 @@ RSpec.describe 'Plugins / :associates' do
         include_context 'automatic FK setting'
 
         before do
-          configuration.relation_classes[1].class_eval do
+          conf.relation_classes[1].class_eval do
             schema do
               attribute :id, ROM::SQL::Types::Serial
               attribute :user_id, ROM::SQL::Types::ForeignKey(:users)
@@ -77,7 +77,7 @@ RSpec.describe 'Plugins / :associates' do
             end
           end
 
-          configuration.commands(:tasks) do
+          conf.commands(:tasks) do
             define(:create) do
               register_as :create_many
               associates :user
@@ -93,7 +93,7 @@ RSpec.describe 'Plugins / :associates' do
 
         context 'with many-to-many association' do
           before do
-            configuration.relation(:tags) do
+            conf.relation(:tags) do
               schema do
                 attribute :id, ROM::SQL::Types::Serial
                 attribute :name, ROM::SQL::Types::String
@@ -105,7 +105,7 @@ RSpec.describe 'Plugins / :associates' do
               end
             end
 
-            configuration.relation(:task_tags) do
+            conf.relation(:task_tags) do
               schema do
                 attribute :tag_id, ROM::SQL::Types::ForeignKey(:tags)
                 attribute :task_id, ROM::SQL::Types::ForeignKey(:tasks)
@@ -119,14 +119,14 @@ RSpec.describe 'Plugins / :associates' do
               end
             end
 
-            configuration.commands(:tasks) do
+            conf.commands(:tasks) do
               define(:create) do
                 result :one
                 associates :user
               end
             end
 
-            configuration.commands(:tags) do
+            conf.commands(:tags) do
               define(:create) do
                 associates :tasks
               end
@@ -157,7 +157,7 @@ RSpec.describe 'Plugins / :associates' do
 
       it 'raises when already defined' do
         expect {
-          configuration.commands(:tasks) do
+          conf.commands(:tasks) do
             define(:create) do
               result :one
               associates :user, key: [:user_id, :id]

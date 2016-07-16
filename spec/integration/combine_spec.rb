@@ -3,19 +3,19 @@ describe 'Eager loading', adapters: :all do
 
   with_adapters do
     before do
-      configuration.relation(:users) do
+      conf.relation(:users) do
         def by_name(name)
           where(name: name)
         end
       end
 
-      configuration.relation(:tasks) do
+      conf.relation(:tasks) do
         def for_users(users)
           where(user_id: users.map { |tuple| tuple[:id] })
         end
       end
 
-      configuration.relation(:tags) do
+      conf.relation(:tags) do
         def for_tasks(tasks)
           inner_join(:task_tags, task_id: :id)
             .where(task_id: tasks.map { |tuple| tuple[:id] })

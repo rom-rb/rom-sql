@@ -7,12 +7,12 @@ namespace :db do
 end
 
 describe 'MigrationTasks' do
-  let(:configuration) { ROM::Configuration.new(:sql, POSTGRES_DB_URI) }
-  let!(:container) { ROM.container(configuration) }
+  let(:conf) { ROM::Configuration.new(:sql, POSTGRES_DB_URI) }
+  let!(:container) { ROM.container(conf) }
   let(:migrator) { container.gateways[:default].migrator }
 
   before do
-    allow(ROM::SQL::RakeSupport).to receive(:env) { configuration }
+    allow(ROM::SQL::RakeSupport).to receive(:env) { conf }
   end
 
   context 'db:reset' do

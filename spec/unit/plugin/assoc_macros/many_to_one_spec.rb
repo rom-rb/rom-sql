@@ -2,11 +2,11 @@ RSpec.describe 'Defining many-to-one association' do
   include_context 'users and tasks'
 
   before do
-    configuration.relation(:users) { use :assoc_macros }
+    conf.relation(:users) { use :assoc_macros }
   end
 
   it 'extends relation with association methods' do
-    configuration.relation(:tasks) do
+    conf.relation(:tasks) do
       use :assoc_macros
 
       many_to_one :users, key: :user_id, on: { name: 'Jane' }
@@ -20,7 +20,7 @@ RSpec.describe 'Defining many-to-one association' do
       end
     end
 
-    configuration.mappers do
+    conf.mappers do
       define(:tasks)
 
       define(:with_user, parent: :tasks) do
@@ -42,7 +42,7 @@ RSpec.describe 'Defining many-to-one association' do
   end
 
   it "joins on specified key" do
-    configuration.relation(:task_tags) do
+    conf.relation(:task_tags) do
       use :assoc_macros
 
       many_to_one :tags, key: :tag_id
@@ -52,7 +52,7 @@ RSpec.describe 'Defining many-to-one association' do
       end
     end
 
-    configuration.relation(:tags) { use :assoc_macros }
+    conf.relation(:tags) { use :assoc_macros }
 
     expect(container.relation(:task_tags).with_tags.to_a).to eq(
       [{ tag_id: 1, task_id: 1, id: 1, name: "important" }]
