@@ -104,7 +104,7 @@ module ROM
       #
       # @api private
       def header
-        @header ||= Header.new(dataset.opts[:select] || dataset.columns, table)
+        @header ||= Header.new(selected_columns, table)
       end
 
       # Return primary key column name
@@ -124,12 +124,26 @@ module ROM
       #
       # @api private
       def columns
-        dataset.columns
+        @columns ||= dataset.columns
       end
 
       # @api private
       def schema?
         ! schema.nil?
+      end
+
+      protected
+
+      # Return a list of columns from *the sql select* statement or default to
+      # dataset columns
+      #
+      # This is used to construct relation's header
+      #
+      # @return [Array<Symbol>]
+      #
+      # @api private
+      def selected_columns
+        @selected_columns ||= dataset.opts.fetch(:select, columns)
       end
     end
   end
