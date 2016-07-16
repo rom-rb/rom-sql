@@ -16,13 +16,7 @@ group :test do
   gem 'pg', platforms: [:mri, :rbx]
   gem 'mysql2', platforms: [:mri, :rbx]
   gem 'jdbc-postgres', platforms: :jruby
+  gem 'jdbc-mysql', platforms: :jruby
   gem 'sqlite3', platforms: [:mri, :rbx]
   gem 'jdbc-sqlite3', platforms: :jruby
-end
-
-group :tools do
-  gem 'guard'
-  gem 'guard-rspec'
-  gem 'guard-rubocop'
-  gem 'rubocop', '~> 0.28'
 end
