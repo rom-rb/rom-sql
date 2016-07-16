@@ -35,14 +35,6 @@ module ROM
       include Writing
       include Reading
 
-      # @attr_reader [Header] header Internal lazy-initialized header
-      attr_reader :header
-
-      # Name of the table used in FROM clause
-      #
-      # @attr_reader [Symbol] table
-      attr_reader :table
-
       # Set default dataset for a relation sub-class
       #
       # @api private
@@ -79,11 +71,14 @@ module ROM
         schema.associations
       end
 
+      # Set primary key
+      #
+      # @deprecated
+      #
+      # @api public
       def self.primary_key(value)
         Deprecations.announce(
-          :primary_key,
-          "#{self}.primary_key is deprecated, use schema definition to configure"\
-          " primary key"
+          :primary_key, "use schema definition to configure primary key"
         )
         option :primary_key, reader: true, default: value
       end
@@ -92,10 +87,15 @@ module ROM
         rel.schema? ? rel.schema.associations : EMPTY_ASSOCIATION_SET
       }
 
+      # Return table name from relation's sql statement
+      #
+      # This value is used by `header` for prefixing column names
+      #
+      # @return [Symbol]
+      #
       # @api private
-      def initialize(dataset, options = EMPTY_HASH)
-        super
-        @table = dataset.opts[:from].first
+      def table
+        @table ||= dataset.opts[:from].first
       end
 
       # Return a header for this relation
