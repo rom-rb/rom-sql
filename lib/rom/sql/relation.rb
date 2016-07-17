@@ -51,7 +51,7 @@ module ROM
             if db.table_exists?(table)
               pk =
                 if klass.schema
-                  klass.schema.primary_key.map { |type| type.meta[:name] }
+                  klass.schema.primary_key_names
                 elsif db.respond_to?(:primary_key)
                   Array(db.primary_key(table))
                 else
@@ -87,6 +87,10 @@ module ROM
         rel.schema? ? rel.schema.associations : EMPTY_ASSOCIATION_SET
       }
 
+      option :primary_key, reader: true, default: -> rel {
+        rel.schema? ? rel.schema.primary_key_name : :id
+      }
+
       # Return table name from relation's sql statement
       #
       # This value is used by `header` for prefixing column names
@@ -105,17 +109,6 @@ module ROM
       # @api private
       def header
         @header ||= Header.new(selected_columns, table)
-      end
-
-      # Return primary key column name
-      #
-      # TODO: add support for composite pks
-      #
-      # @return [Symbol]
-      #
-      # @api public
-      def primary_key
-        @primary_key ||= schema? ? schema.primary_key[0].meta[:name] : :id
       end
 
       # Return raw column names

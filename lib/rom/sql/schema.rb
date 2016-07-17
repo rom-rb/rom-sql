@@ -5,11 +5,31 @@ module ROM
     class Schema < ROM::Schema
       include Dry::Equalizer(:name, :attributes, :associations)
 
+      # @!attribute [r] associations
+      #   @return [AssociationSet] The association set
       attr_reader :associations
 
+      # @!attribute [r] primary_key_name
+      #   @return [Symbol] The name of the primary key. This is set because in
+      #                    most of the cases relations don't have composite pks
+      attr_reader :primary_key_name
+
+      # @!attribute [r] primary_key_names
+      #   @return [Array<Symbol>] A list of all pk names
+      attr_reader :primary_key_names
+
+      # @api private
       def initialize(name, attributes, associations = nil, inferrer: nil)
-        @associations = associations
         super(name, attributes, inferrer: inferrer)
+        @associations = associations
+      end
+
+      # @api private
+      def finalize!(*)
+        super do
+          @primary_key_name = primary_key[0].meta[:name]
+          @primary_key_names = primary_key.map { |type| type.meta[:name] }
+        end
       end
     end
   end
