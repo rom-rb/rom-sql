@@ -42,7 +42,7 @@ module ROM
 
             # @api private
             def preload(source_key, target_key, source)
-              where(target_key => source.map { |tuple| tuple[source_key.to_sym] })
+              where(target_key => source.pluck(source_key.to_sym))
             end
           end
         end
