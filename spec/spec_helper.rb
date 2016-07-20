@@ -12,6 +12,8 @@ require 'rom-sql'
 require 'rom/sql/rake_task'
 
 require 'logger'
+require 'tempfile'
+
 begin
   require 'byebug'
 rescue LoadError # rubocop:disable Lint/HandleExceptions
