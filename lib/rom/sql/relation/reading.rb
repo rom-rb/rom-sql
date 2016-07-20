@@ -2,6 +2,18 @@ module ROM
   module SQL
     class Relation < ROM::Relation
       module Reading
+        # Fetch a tuple identified by the pk
+        #
+        # @example
+        #   users.fetch(1)
+        #
+        # @return [Relation]
+        #
+        # @api public
+        def fetch(pk)
+          where(primary_key => pk).one!
+        end
+
         # Return relation count
         #
         # @example

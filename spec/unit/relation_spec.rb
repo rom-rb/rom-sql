@@ -233,6 +233,20 @@ describe ROM::Relation do
           ])
         end
       end
+
+      describe '#fetch' do
+        it 'returns a single tuple identified by the pk' do
+          expect(users.fetch(1)).to eql(id: 1, name: 'Jane')
+        end
+
+        it 'raises when tuple was not found' do
+          expect { users.fetch(535315412) }.to raise_error(ROM::TupleCountMismatchError)
+        end
+
+        it 'raises when more tuples were returned' do
+          expect { users.fetch([1, 2]) }.to raise_error(ROM::TupleCountMismatchError)
+        end
+      end
     end
   end
 end
