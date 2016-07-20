@@ -286,21 +286,19 @@ RSpec.describe 'Commands / Create' do
 
     before { tasks.create.call(task) }
 
-    it 'raise error without upsert marker' do
+    it 'raises error without upsert marker' do
       expect {
         tasks.create.call(task)
       }.to raise_error(ROM::SQL::UniqueConstraintError)
     end
 
-    it 'raise no error for duplicated data' do
-      expect {
-        tasks.create.upsert.call(task)
-      }.to_not raise_error
+    it 'raises no error for duplicated data' do
+      expect { tasks.create.upsert.call(task) }.to_not raise_error
     end
 
     it 'returns record data' do
       expect(tasks.create.upsert.call(task)).to eql([
-        {:id=>1, :user_id=>nil, :title=>"task 1"}
+        id: 1, user_id: nil, title: 'task 1'
       ])
     end
   end
