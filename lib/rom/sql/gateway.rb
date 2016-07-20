@@ -37,13 +37,6 @@ module ROM
       # @api public
       attr_reader :schema
 
-      # @param [String,Symbol] scheme
-      #
-      # @api public
-      def self.database_file?(scheme)
-        scheme.to_s.include?('sqlite')
-      end
-
       # SQL gateway interface
       #
       # @overload connect(uri, options)
