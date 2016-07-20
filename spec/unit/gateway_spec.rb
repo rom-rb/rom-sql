@@ -13,6 +13,14 @@ describe ROM::SQL::Gateway do
     let(:uri) { POSTGRES_DB_URI }
   end
 
+  describe 'sqlite with a file db' do
+    it 'establishes an sqlite connection' do
+      db_file = Tempfile.new('test.sqlite')
+      gateway = ROM::SQL::Gateway.new("sqlite://#{db_file.path}")
+      expect(gateway.connection).to be_instance_of(Sequel::SQLite::Database)
+    end
+  end
+
   describe '#dataset?' do
     it 'returns true if a table exists' do
       expect(gateway.dataset?(:users)).to be(true)

@@ -32,7 +32,7 @@ end
 URIS = { postgres: POSTGRES_DB_URI, sqlite: SQLITE_DB_URI, mysql: MYSQL_DB_URI }
 ADAPTERS = URIS.keys
 
-root = Pathname(__FILE__).dirname
+SPEC_ROOT = root = Pathname(__FILE__).dirname
 TMP_PATH = root.join('../tmp')
 
 Dir[root.join('shared/**/*')].each { |f| require f }
