@@ -29,10 +29,11 @@ module ROM
             # @api private
             def for_wrap(keys, name)
               other = __registry__[name]
+              other_dataset = other.name.dataset
 
-              inner_join(name, keys)
+              inner_join(other_dataset, keys)
                 .select(*qualified.header.columns)
-                .select_append(*other.prefix(other.name.dataset).qualified.header)
+                .select_append(*other.prefix(other_dataset).qualified.header)
             end
           end
         end
