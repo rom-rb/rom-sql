@@ -17,7 +17,6 @@
 
 * `Create` and `Update` commands have `:schema` plugin enabled by default which sets input handler based on schema definition automatically (solnic)
 * `associates` command plugin uses schema associations now (solnic)
-* Ad-hoc key options in `associates` command plugin are now deprecated (solnic)
 
 ### Fixed
 

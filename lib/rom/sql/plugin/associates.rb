@@ -102,14 +102,6 @@ module ROM
                 "#{name} association is already defined for #{self.class}"
             end
 
-            if options.any?
-              Deprecations.warn(
-                "Passing options to `associates` is deprecated. " \
-                "Define an association in schema for your :#{relation} relation " \
-                "instead and pass in its name to `associates`"
-              )
-            end
-
             option :association, reader: true, default: {}
 
             include InstanceMethods
