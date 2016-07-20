@@ -49,16 +49,8 @@ module ROM
             table = opts[:from].first
 
             if db.table_exists?(table)
-              pk =
-                if klass.schema
-                  klass.schema.primary_key_names
-                elsif db.respond_to?(:primary_key)
-                  Array(db.primary_key(table))
-                else
-                  [:id]
-                end.map { |name| :"#{table}__#{name}" }
-
-              select(*columns).order(*pk)
+              pk_header = klass.primary_key_header(db, table)
+              select(*columns).order(*pk_header.qualified)
             else
               self
             end
@@ -69,6 +61,19 @@ module ROM
       # @api private
       def self.associations
         schema.associations
+      end
+
+      # @api private
+      def self.primary_key_header(db, table)
+        names =
+          if schema
+            schema.primary_key_names
+          elsif db.respond_to?(:primary_key)
+            Array(db.primary_key(table))
+          else
+            [:id]
+          end
+        Header.new(names, table)
       end
 
       # Set primary key
