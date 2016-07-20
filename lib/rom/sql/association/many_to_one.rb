@@ -4,25 +4,7 @@ module ROM
       class ManyToOne < Association
         result :one
 
-        def associate(relations, child, parent)
-          fk, pk = join_key_map(relations)
-          child.merge(fk => parent.fetch(pk))
-        end
-
-        def combine_keys(relations)
-          source_key = relations[source.relation].foreign_key(target.relation)
-          target_key = relations[target.relation].primary_key
-
-          { source_key => target_key }
-        end
-
-        def join_keys(relations)
-          source_key = relations[source.relation].foreign_key(target.relation)
-          target_key = relations[target.relation].primary_key
-
-          { qualify(source, source_key) => qualify(target, target_key) }
-        end
-
+        # @api public
         def call(relations)
           left = relations[target.relation]
           right = relations[source.relation]
@@ -43,6 +25,34 @@ module ROM
             .order(*right.header.project(*right.primary_key).qualified)
 
           relation.with(attributes: relation.header.names)
+        end
+
+        # @api public
+        def combine_keys(relations)
+          Hash[*with_keys(relations)]
+        end
+
+        # @api public
+        def join_keys(relations)
+          with_keys(relations) { |source_key, target_key|
+            { qualify(source, source_key) => qualify(target, target_key) }
+          }
+        end
+
+        # @api private
+        def associate(relations, child, parent)
+          fk, pk = join_key_map(relations)
+          child.merge(fk => parent.fetch(pk))
+        end
+
+        protected
+
+        # @api private
+        def with_keys(relations, &block)
+          source_key = relations[source.relation].foreign_key(target.relation)
+          target_key = relations[target.relation].primary_key
+          return [source_key, target_key] unless block
+          yield(source_key, target_key)
         end
       end
     end

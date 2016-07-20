@@ -4,35 +4,41 @@ module ROM
       class OneToOne < Association
         result :one
 
-        def combine_keys(relations)
-          source_key = relations[source.relation].primary_key
-          target_key = relations[target.relation].foreign_key(source.relation)
-
-          { source_key => target_key }
-        end
-
-        def join_keys(relations)
-          source_key = relations[source.relation].primary_key
-          target_key = relations[target.relation].foreign_key(source.relation)
-
-          { qualify(source, source_key) => qualify(target, target_key) }
-        end
-
+        # @api public
         def call(relations)
-          left = relations[source.relation]
-          right = relations[target.relation]
+          with_keys(relations) do |left_pk, right_fk|
+            right = relations[target.relation]
+            columns = right.header.qualified.to_a
 
-          left_pk = left.primary_key
-          right_fk = right.foreign_key(source.relation)
+            relation = right
+              .inner_join(source, left_pk => right_fk)
+              .select(*columns)
+              .order(*right.header.project(*right.primary_key).qualified)
 
-          columns = right.header.qualified.to_a
+            relation.with(attributes: relation.header.names)
+          end
+        end
 
-          relation = right
-            .inner_join(source, left_pk => right_fk)
-            .select(*columns)
-            .order(*right.header.project(*right.primary_key).qualified)
+        # @api public
+        def combine_keys(relations)
+          Hash[*with_keys(relations)]
+        end
 
-          relation.with(attributes: relation.header.names)
+        # @api public
+        def join_keys(relations)
+          with_keys(relations) { |source_key, target_key|
+            { qualify(source, source_key) => qualify(target, target_key) }
+          }
+        end
+
+        protected
+
+        # @api private
+        def with_keys(relations, &block)
+          source_key = relations[source.relation].primary_key
+          target_key = relations[target.relation].foreign_key(source.relation)
+          return [source_key, target_key] unless block
+          yield(source_key, target_key)
         end
       end
     end
