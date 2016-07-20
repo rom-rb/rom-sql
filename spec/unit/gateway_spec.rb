@@ -16,7 +16,8 @@ describe ROM::SQL::Gateway do
   describe 'sqlite with a file db' do
     it 'establishes an sqlite connection' do
       db_file = Tempfile.new('test.sqlite')
-      gateway = ROM::SQL::Gateway.new("sqlite://#{db_file.path}")
+      uri = "#{defined?(JRUBY_VERSION) ? 'jdbc:sqlite' : 'sqlite'}://#{db_file.path}"
+      gateway = ROM::SQL::Gateway.new(uri)
       expect(gateway.connection).to be_instance_of(Sequel::SQLite::Database)
     end
   end
