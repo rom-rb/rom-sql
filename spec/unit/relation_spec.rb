@@ -234,6 +234,12 @@ describe ROM::Relation do
         end
       end
 
+      describe '#by_pk' do
+        it 'restricts a relation by its PK' do
+          expect(users.by_pk(1).to_a).to eql([id: 1, name: 'Jane'])
+        end
+      end
+
       describe '#fetch' do
         it 'returns a single tuple identified by the pk' do
           expect(users.fetch(1)).to eql(id: 1, name: 'Jane')

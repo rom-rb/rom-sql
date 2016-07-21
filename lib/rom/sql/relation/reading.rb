@@ -2,6 +2,15 @@ module ROM
   module SQL
     class Relation < ROM::Relation
       module Reading
+        # Restrict relation by its primary key
+        #
+        # @return [Relation]
+        #
+        # @api public
+        def by_pk(pk)
+          where(primary_key => pk)
+        end
+
         # Fetch a tuple identified by the pk
         #
         # @example
@@ -11,7 +20,7 @@ module ROM
         #
         # @api public
         def fetch(pk)
-          where(primary_key => pk).one!
+          by_pk(pk).one!
         end
 
         # Return relation count
