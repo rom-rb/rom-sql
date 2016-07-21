@@ -238,6 +238,10 @@ describe ROM::Relation do
         it 'restricts a relation by its PK' do
           expect(users.by_pk(1).to_a).to eql([id: 1, name: 'Jane'])
         end
+
+        it 'is available as a view' do
+          expect(users.by_pk).to be_curried
+        end
       end
 
       describe '#fetch' do

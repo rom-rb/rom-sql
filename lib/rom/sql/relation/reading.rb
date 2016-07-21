@@ -2,15 +2,6 @@ module ROM
   module SQL
     class Relation < ROM::Relation
       module Reading
-        # Restrict relation by its primary key
-        #
-        # @return [Relation]
-        #
-        # @api public
-        def by_pk(pk)
-          where(primary_key => pk)
-        end
-
         # Fetch a tuple identified by the pk
         #
         # @example
