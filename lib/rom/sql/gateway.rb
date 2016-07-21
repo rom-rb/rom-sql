@@ -30,13 +30,6 @@ module ROM
       # @api public
       attr_reader :logger
 
-      # Returns a list of datasets inferred from table names
-      #
-      # @return [Array] array with table names
-      #
-      # @api public
-      attr_reader :schema
-
       # SQL gateway interface
       #
       # @overload connect(uri, options)
@@ -63,7 +56,6 @@ module ROM
         conn_options = options.reject { |k, _| repo_options.include?(k) }
 
         @connection = connect(uri, conn_options)
-        @schema = connection.tables
         add_extensions(Array(options[:extensions])) if options[:extensions]
 
         super(uri, options.reject { |k, _| conn_options.keys.include?(k) })
@@ -144,6 +136,29 @@ module ROM
         end
 
         klass
+      end
+
+      # Create a table using the configured connection
+      #
+      # @api public
+      def create_table(*args, &block)
+        connection.create_table(*args, &block)
+      end
+
+      # Drops a table
+      #
+      # @api public
+      def drop_table(*args, &block)
+        connection.drop_table(*args, &block)
+      end
+
+      # Returns a list of datasets inferred from table names
+      #
+      # @return [Array] array with table names
+      #
+      # @api public
+      def schema
+        @schema ||= connection.tables
       end
 
       private
