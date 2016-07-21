@@ -18,7 +18,7 @@ describe ROM::SQL::Gateway do
       db_file = Tempfile.new('test.sqlite')
       uri = "#{defined?(JRUBY_VERSION) ? 'jdbc:sqlite' : 'sqlite'}://#{db_file.path}"
       gateway = ROM::SQL::Gateway.new(uri)
-      expect(gateway.connection).to be_instance_of(Sequel::SQLite::Database)
+      expect(gateway).to be_instance_of(ROM::SQL::Gateway)
     end
   end
 
