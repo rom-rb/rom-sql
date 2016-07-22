@@ -293,11 +293,11 @@ RSpec.describe 'Commands / Create' do
     end
 
     it 'raises no error for duplicated data' do
-      expect { tasks.create.upsert.call(task) }.to_not raise_error
+      expect { tasks.create.upsert(task) }.to_not raise_error
     end
 
     it 'returns record data' do
-      expect(tasks.create.upsert.call(task)).to eql([
+      expect(tasks.create.upsert(task, constraint: :tasks_title_key, update: { user_id: nil })).to eql([
         id: 1, user_id: nil, title: 'task 1'
       ])
     end
