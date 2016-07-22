@@ -21,9 +21,7 @@ module ROM
           join_rel = join_relation(relations)
           assocs = join_rel.associations
 
-          # TODO: figure out a way so that we don't have to check which join assoc
-          #       exists
-          left = (assocs.key?(target) ? assocs[target] : assocs[target.singularize]).call(relations)
+          left = assocs[target].call(relations)
           right = relations[target.relation]
 
           left_fk = join_rel.foreign_key(source.relation)
@@ -76,8 +74,7 @@ module ROM
         # @api private
         def join_key_map(relations)
           left = super
-          right = join_relation(relations)
-            .associations[target].join_key_map(relations)
+          right = join_relation(relations).associations[target].join_key_map(relations)
 
           [left, right]
         end

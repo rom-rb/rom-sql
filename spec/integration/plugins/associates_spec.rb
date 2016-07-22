@@ -144,13 +144,10 @@ RSpec.describe 'Plugins / :associates' do
             tags = relations[:tasks].associations[:tags].call(relations).to_a
 
             expect(result).to eql([
-              { id: 1, name: 'red' }, { id: 2, name: 'blue' }
+              { id: 1, task_id: 1, name: 'red' }, { id: 2, task_id: 1, name: 'blue' }
             ])
 
-            expect(tags).to eql([
-              { id: 1, task_id: 1, name: 'red' },
-              { id: 2, task_id: 1, name: 'blue' }
-            ])
+            expect(tags).to eql(result)
           end
         end
       end

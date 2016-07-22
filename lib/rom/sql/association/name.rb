@@ -55,10 +55,6 @@ module ROM
         end
         alias_method :to_s, :inspect
 
-        def singularize
-          @singularize ||= :"#{Inflector.singularize(key.to_s)}"
-        end
-
         def dataset
           relation_name.dataset
         end

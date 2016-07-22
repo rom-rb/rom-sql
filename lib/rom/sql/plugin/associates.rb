@@ -57,7 +57,13 @@ module ROM
                 join_relation = assoc.join_relation(__registry__)
                 join_relation.multi_insert(join_tuples)
 
-                new_tuples
+                pk, fk = __registry__[assoc.target]
+                  .associations[assoc.source]
+                  .combine_keys(__registry__).to_a.flatten
+
+                pk_extend = { fk => parent[pk] }
+
+                new_tuples.map { |tuple| tuple.update(pk_extend) }
               when Association
                 input_tuples = with_input_tuples(tuples).map { |tuple|
                   assoc.associate(relation.__registry__, tuple, parent)

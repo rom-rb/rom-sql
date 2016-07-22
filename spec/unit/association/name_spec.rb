@@ -36,14 +36,6 @@ RSpec.describe ROM::SQL::Association::Name do
     end
   end
 
-  describe '#singularize' do
-    it 'returns singularized symbol for the key' do
-      expect(ROM::SQL::Association::Name[:users].singularize).to be(:user)
-      expect(ROM::SQL::Association::Name[:users, :people].singularize).to be(:person)
-      expect(ROM::SQL::Association::Name[:users, :people, :author].singularize).to be(:author)
-    end
-  end
-
   describe '#aliased?' do
     it 'returns true if a name has an alias' do
       expect(ROM::SQL::Association::Name[:users, :people, :author]).to be_aliased

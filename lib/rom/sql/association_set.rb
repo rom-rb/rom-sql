@@ -1,4 +1,5 @@
 require 'rom/support/registry'
+require 'rom/support/inflector'
 
 module ROM
   module SQL
@@ -9,6 +10,17 @@ module ROM
           yield(self[name])
         else
           false
+        end
+      end
+
+      # @api private
+      def [](name)
+        key = name.to_sym
+
+        if key?(key)
+          super
+        else
+          super(Inflector.singularize(key))
         end
       end
     end
