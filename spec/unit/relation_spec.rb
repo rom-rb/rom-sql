@@ -126,6 +126,10 @@ describe ROM::Relation do
           result = users.map { |tuple| tuple[:name] }
           expect(result).to eql(%w(Jane Joe))
         end
+
+        it 'plucks value' do
+          expect(users.map(:name)).to eql(%w(Jane Joe))
+        end
       end
 
       describe '#inner_join' do
@@ -231,6 +235,12 @@ describe ROM::Relation do
             { id: 1, name: 'Jane' },
             { id: 2, name: 'Joe' }
           ])
+        end
+      end
+
+      describe '#pluck' do
+        it 'returns a list of values from a specific column' do
+          expect(users.pluck(:id)).to eql([1, 2])
         end
       end
 

@@ -115,8 +115,17 @@ module ROM
         #   users.map { |user| ... }
         #
         # @api public
-        def map(&block)
-          dataset.map(&block)
+        def map(*args, &block)
+          dataset.map(*args, &block)
+        end
+
+        # Pluck values from a specific column
+        #
+        # @return [Array]
+        #
+        # @api public
+        def pluck(name)
+          map(name)
         end
 
         # Project a relation
