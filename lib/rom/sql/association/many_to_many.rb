@@ -25,10 +25,12 @@ module ROM
           right = relations[target.relation]
 
           left_fk = join_rel.foreign_key(source.relation)
-          columns = right.header.qualified.to_a + [left_fk]
+
+          columns = right.header.exclude(left_fk).qualified.to_a
+          columns << left_fk unless right.header.names.include?(left_fk)
 
           relation = left
-            .inner_join(source, right.primary_key => left_fk)
+            .inner_join(source, join_keys(relations))
             .select(*columns)
             .order(*right.header.project(*right.primary_key).qualified)
 

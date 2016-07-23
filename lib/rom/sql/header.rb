@@ -29,6 +29,10 @@ module ROM
         columns.map { |col| :"#{col.to_s.split(SEP_REGEX).last}" }
       end
 
+      def exclude(*names)
+        self.class.new(columns.find_all { |col| !names.include?(col) }, table)
+      end
+
       def project(*names)
         self.class.new(columns.find_all { |col| names.include?(col) }, table)
       end

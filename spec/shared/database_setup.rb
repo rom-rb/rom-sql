@@ -14,7 +14,7 @@ shared_context 'database setup' do
   let(:commands) { container.commands }
 
   def drop_tables
-    %i(task_tags tasks tags
+    %i(task_tags users_tasks tasks tags
        subscriptions cards accounts
        posts users
        rabbits carrots schema_migrations

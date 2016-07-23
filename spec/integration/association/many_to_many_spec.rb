@@ -1,14 +1,76 @@
 RSpec.describe ROM::SQL::Association::ManyToMany do
-  subject(:assoc) {
-    ROM::SQL::Association::ManyToMany.new(:tasks, :tags, through: :task_tags)
-  }
-
   include_context 'users and tasks'
 
-  let(:tasks) { container.relations[:tasks] }
-  let(:tags) { container.relations[:tags] }
+  with_adapters :sqlite do
+    context 'with two associations pointing to the same target relation' do
+      let(:container) do
+        ROM.container(:sql, uri) do |conf|
+          conf.default.create_table(:users_tasks) do
+            foreign_key :user_id, :users
+            foreign_key :task_id, :tasks
+            primary_key [:user_id, :task_id]
+          end
+
+          conf.relation(:users) do
+            schema(infer: true) do
+              associations do
+                has_many :users_tasks
+                has_many :tasks, through: :users_tasks
+                has_many :tasks, as: :priv_tasks
+              end
+            end
+          end
+
+          conf.relation(:users_tasks) do
+            schema(infer: true) do
+              associations do
+                belongs_to :user
+                belongs_to :task
+              end
+            end
+          end
+
+          conf.relation(:tasks) do
+            schema(infer: true) do
+              associations do
+                has_many :users_tasks
+                has_many :users, through: :users_tasks
+              end
+            end
+          end
+        end
+      end
+
+      it 'does not conflict with two FKs' do
+        users = container.relations[:users]
+        tasks = container.relations[:tasks]
+        assoc = users.associations[:tasks]
+
+        relation = tasks.for_combine(assoc).call(users.call)
+
+        expect(relation.to_a).to be_empty
+      end
+
+      it 'preloads using FK' do
+        users = container.relations[:users]
+        tasks = container.relations[:tasks]
+        assoc = users.associations[:priv_tasks]
+
+        relation = tasks.for_combine(assoc).call(users.where(id: 2).call)
+
+        expect(relation.to_a).to eql([id: 1, user_id: 2, title: "Joe's task"])
+      end
+    end
+  end
 
   with_adapters do
+    subject(:assoc) {
+      ROM::SQL::Association::ManyToMany.new(:tasks, :tags, through: :task_tags)
+    }
+
+    let(:tasks) { container.relations[:tasks] }
+    let(:tags) { container.relations[:tags] }
+
     before do
       conf.relation(:task_tags) do
         schema do
