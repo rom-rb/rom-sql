@@ -301,5 +301,5 @@ RSpec.describe 'Commands / Create' do
         id: 1, user_id: nil, title: 'task 1'
       ])
     end
-  end
+  end if PG_LTE_95
 end

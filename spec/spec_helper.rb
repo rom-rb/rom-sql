@@ -31,6 +31,7 @@ end
 
 URIS = { postgres: POSTGRES_DB_URI, sqlite: SQLITE_DB_URI, mysql: MYSQL_DB_URI }
 ADAPTERS = URIS.keys
+PG_LTE_95 = ENV.fetch('PG_LTE_95', 'true') == 'true'
 
 root = Pathname(__FILE__).dirname
 TMP_PATH = root.join('../tmp')

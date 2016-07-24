@@ -80,4 +80,4 @@ RSpec.describe 'Commands / Postgres / Upsert', adapter: :postgres do
       end
     end
   end
-end
+end if PG_LTE_95
