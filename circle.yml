@@ -1,0 +1,10 @@
+machine:
+  ruby:
+    version: 2.3.1
+dependencies:
+  bundler:
+    without: [yard guard benchmarks tools]
+database:
+  override:
+    - psql -c 'create database rom_sql;' -U postgres
+    - mysql -e 'create database rom_sql;'
