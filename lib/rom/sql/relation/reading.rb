@@ -1,13 +1,19 @@
 module ROM
   module SQL
     class Relation < ROM::Relation
+      # Query API for SQL::Relation
+      #
+      # @api public
       module Reading
         # Fetch a tuple identified by the pk
         #
         # @example
         #   users.fetch(1)
+        #   # {:id => 1, name: "Jane"}
         #
         # @return [Relation]
+        #
+        # @raise [ROM::TupleCountMismatchError] When 0 or more than 1 tuples were found
         #
         # @api public
         def fetch(pk)
@@ -17,7 +23,8 @@ module ROM
         # Return relation count
         #
         # @example
-        #   users.count # => 12
+        #   users.count
+        #   # => 12
         #
         # @return [Relation]
         #
@@ -30,8 +37,9 @@ module ROM
         #
         # @example
         #   users.first
+        #   # {:id => 1, :name => "Jane"}
         #
-        # @return [Relation]
+        # @return [Hash]
         #
         # @api public
         def first
@@ -42,8 +50,9 @@ module ROM
         #
         # @example
         #   users.last
+        #   # {:id => 2, :name => "Joe"}
         #
-        # @return [Relation]
+        # @return [Hash]
         #
         # @api public
         def last
@@ -55,7 +64,8 @@ module ROM
         # This method is intended to be used internally within a relation object
         #
         # @example
-        #   rom.relation(:users) { |r| r.prefix(:user) }
+        #   users.prefix(:user).to_a
+        #   # {:user_id => 1, :user_name => "Jane"}
         #
         # @param [Symbol] name The prefix
         #
@@ -71,7 +81,7 @@ module ROM
         # This method is intended to be used internally within a relation object
         #
         # @example
-        #   rom.relation(:users) { |r| r.qualified }
+        #   users.qualified
         #
         # @return [Relation]
         #
@@ -84,42 +94,43 @@ module ROM
         #
         # This method is intended to be used internally within a relation object
         #
-        # @return [Relation]
+        # @example
+        #   users.qualified_columns
+        #   # [:users__id, :users__name]
+        #
+        # @return [Array<Symbol>]
         #
         # @api public
         def qualified_columns
           header.qualified.to_a
         end
 
-        # Return if a restricted relation has 0 tuples
-        #
-        # @example
-        #   users.unique?(email: 'jane@doe.org') # true
-        #
-        #   users.insert(email: 'jane@doe.org')
-        #
-        #   users.unique?(email: 'jane@doe.org') # false
-        #
-        # @param [Hash] criteria hash for the where clause
-        #
-        # @return [Relation]
-        #
-        # @api public
-        def unique?(criteria)
-          where(criteria).count.zero?
-        end
-
         # Map tuples from the relation
         #
         # @example
-        #   users.map { |user| ... }
+        #   users.map { |user| user[:id] }
+        #   # [1, 2, 3]
+        #
+        #   users.map(:id).to_a
+        #   # [1, 2, 3]
+        #
+        # @param [Symbol] key An optional name of the key for extracting values
+        #                     from tuples
         #
         # @api public
-        def map(*args, &block)
-          dataset.map(*args, &block)
+        def map(key = nil, &block)
+          if key
+            dataset.map(key, &block)
+          else
+            dataset.map(&block)
+          end
         end
 
         # Pluck values from a specific column
+        #
+        # @example
+        #   users.pluck(:id)
+        #   # [1, 2, 3]
         #
         # @return [Array]
         #
@@ -133,9 +144,9 @@ module ROM
         # This method is intended to be used internally within a relation object
         #
         # @example
-        #   rom.relation(:users) { |r| r.project(:id, :name) }
+        #   users.project(:id, :name) }
         #
-        # @param [Symbol] names A list of symbol column names
+        # @param [Symbol] *names A list of symbol column names
         #
         # @return [Relation]
         #
@@ -149,9 +160,10 @@ module ROM
         # This method is intended to be used internally within a relation object
         #
         # @example
-        #   rom.relation(:users) { |r| r.rename(name: :user_name) }
+        #   users.rename(name: :user_name).first
+        #   # {:id => 1, :user_name => "Jane" }
         #
-        # @param [Hash] options A name => new_name map
+        # @param [Hash<Symbol=>Symbol>] options A name => new_name map
         #
         # @return [Relation]
         #
@@ -163,7 +175,8 @@ module ROM
         # Select specific columns for select clause
         #
         # @example
-        #   users.select(:id, :name)
+        #   users.select(:id, :name).first
+        #   # {:id => 1, :name => "Jane" }
         #
         # @return [Relation]
         #
@@ -176,6 +189,9 @@ module ROM
         #
         # @example
         #   users.select(:id, :name).select_append(:email)
+        #   # {:id => 1, :name => "Jane", :email => "jane@doe.org"}
+        #
+        # @param [Array<Symbol>] *args A list with column names
         #
         # @return [Relation]
         #
@@ -189,6 +205,8 @@ module ROM
         # @example
         #   users.distinct(:country)
         #
+        # @param [Array<Symbol>] *args A list with column names
+        #
         # @return [Relation]
         #
         # @api public
@@ -201,7 +219,9 @@ module ROM
         # @example
         #   users.sum(:age)
         #
-        # @return Number
+        # @param [Array<Symbol>] *args A list with column names
+        #
+        # @return [Integer]
         #
         # @api public
         def sum(*args)
@@ -212,6 +232,8 @@ module ROM
         #
         # @example
         #   users.min(:age)
+        #
+        # @param [Array<Symbol>] *args A list with column names
         #
         # @return Number
         #
@@ -225,6 +247,8 @@ module ROM
         # @example
         #   users.max(:age)
         #
+        # @param [Array<Symbol>] *args A list with column names
+        #
         # @return Number
         #
         # @api public
@@ -237,6 +261,8 @@ module ROM
         # @example
         #   users.avg(:age)
         #
+        # @param [Array<Symbol>] *args A list with column names
+        #
         # @return Number
         #
         # @api public
@@ -246,10 +272,19 @@ module ROM
 
         # Restrict a relation to match criteria
         #
+        # If block is passed it'll be executed in the context of a condition
+        # builder object.
+        #
         # @example
         #   users.where(name: 'Jane')
         #
+        #   users.where { age >= 18 }
+        #
+        # @param [Hash] *args An optional hash with conditions for WHERE clause
+        #
         # @return [Relation]
+        #
+        # @see http://sequel.jeremyevans.net/rdoc/files/doc/dataset_filtering_rdoc.html
         #
         # @api public
         def where(*args, &block)
@@ -261,6 +296,8 @@ module ROM
         # @example
         #   users.exclude(name: 'Jane')
         #
+        # @param [Hash] *args A hash with conditions for exclusion
+        #
         # @return [Relation]
         #
         # @api public
@@ -268,7 +305,8 @@ module ROM
           __new__(dataset.__send__(__method__, *args, &block))
         end
 
-        # Inverts a request
+        # Inverts the current WHERE and HAVING clauses. If there is neither a
+        # WHERE or HAVING clause, adds a WHERE clause that is always false.
         #
         # @example
         #   users.exclude(name: 'Jane').invert
@@ -279,14 +317,16 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def invert(*args, &block)
-          __new__(dataset.__send__(__method__, *args, &block))
+        def invert
+          __new__(dataset.invert)
         end
 
         # Set order for the relation
         #
         # @example
         #   users.order(:name)
+        #
+        # @param [Array<Symbol>] *args A list with column names
         #
         # @return [Relation]
         #
@@ -312,6 +352,11 @@ module ROM
         # @example
         #   users.limit(1)
         #
+        #   users.limit(10, 2)
+        #
+        # @param [Integer] limit The limit value
+        # @param [Integer] offset An optional offset
+        #
         # @return [Relation]
         #
         # @api public
@@ -324,6 +369,8 @@ module ROM
         # @example
         #   users.limit(10).offset(2)
         #
+        # @param [Integer] num The offset value
+        #
         # @return [Relation]
         #
         # @api public
@@ -331,7 +378,10 @@ module ROM
           __new__(dataset.__send__(__method__, *args, &block))
         end
 
-        # Join other relation using inner join
+        # Join with another relation using INNER JOIN
+        #
+        # @example
+        #   users.inner_join(:tasks, id: :user_id)
         #
         # @param [Symbol] relation name
         # @param [Hash] join keys
@@ -343,7 +393,10 @@ module ROM
           __new__(dataset.__send__(__method__, *args, &block))
         end
 
-        # Join other relation using left outer join
+        # Join other relation using LEFT OUTER JOIN
+        #
+        # @example
+        #   users.left_join(:tasks, id: :user_id)
         #
         # @param [Symbol] relation name
         # @param [Hash] join keys
@@ -360,6 +413,8 @@ module ROM
         # @example
         #   tasks.group(:user_id)
         #
+        # @param [Array<Symbol>] *args A list of column names
+        #
         # @return [Relation]
         #
         # @api public
@@ -372,6 +427,8 @@ module ROM
         # @example
         #   tasks.group_and_count(:user_id)
         #   # => [{ user_id: 1, count: 2 }, { user_id: 2, count: 3 }]
+        #
+        # @param [Array<Symbol>] *args A list of column names
         #
         # @return [Relation]
         #
@@ -386,6 +443,8 @@ module ROM
         #   tasks.select_group(:user_id)
         #   # => [{ user_id: 1 }, { user_id: 2 }]
         #
+        # @param [Array<Symbol>] *args A list of column names
+        #
         # @return [Relation]
         #
         # @api public
@@ -395,17 +454,40 @@ module ROM
 
         # Adds a UNION clause for relation dataset using second relation dataset
         #
-        # @param [Relation] relation object
-        #
         # @example
         #   users.where(id: 1).union(users.where(id: 2))
         #   # => [{ id: 1, name: 'Piotr' }, { id: 2, name: 'Jane' }]
         #
+        # @param [Relation] relation Another relation
+        #
+        # @param [Hash] options Options for union
+        # @option options [Symbol] :alias Use the given value as the #from_self alias
+        # @option options [TrueClass, FalseClass] :all Set to true to use UNION ALL instead of UNION, so duplicate rows can occur
+        # @option options [TrueClass, FalseClass] :from_self Set to false to not wrap the returned dataset in a #from_self, use with care.
+        #
         # @return [Relation]
         #
         # @api public
-        def union(relation, *args, &block)
-          __new__(dataset.__send__(__method__, relation.dataset, *args, &block))
+        def union(relation, options = EMPTY_HASH, &block)
+          __new__(dataset.__send__(__method__, relation.dataset, options, &block))
+        end
+
+        # Return if a restricted relation has 0 tuples
+        #
+        # @example
+        #   users.unique?(email: 'jane@doe.org') # true
+        #
+        #   users.insert(email: 'jane@doe.org')
+        #
+        #   users.unique?(email: 'jane@doe.org') # false
+        #
+        # @param [Hash] criteria The condition hash for  WHERE clause
+        #
+        # @return [TrueClass, FalseClass]
+        #
+        # @api public
+        def unique?(criteria)
+          where(criteria).count.zero?
         end
       end
     end

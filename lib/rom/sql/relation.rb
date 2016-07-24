@@ -19,6 +19,7 @@ module ROM
   module SQL
     # Sequel-specific relation extensions
     #
+    # @api public
     class Relation < ROM::Relation
       EMPTY_ASSOCIATION_SET = AssociationSet.new({}).freeze
 
@@ -57,7 +58,7 @@ module ROM
           end
 
           # @!method by_pk(pk)
-          #   Return a relation restrictied by its primary key
+          #   Return a relation restricted by its primary key
           #   @param [Object] pk The primary key value
           #   @return [SQL::Relation]
           #   @api public
@@ -134,6 +135,10 @@ module ROM
         @columns ||= dataset.columns
       end
 
+      # Return true if a relation has schema defined
+      #
+      # @return [TrueClass, FalseClass]
+      #
       # @api private
       def schema?
         ! schema.nil?
