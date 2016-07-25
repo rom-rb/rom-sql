@@ -280,4 +280,26 @@ RSpec.describe 'Commands / Create' do
       }.to raise_error(ROM::SQL::CheckConstraintError, /name/)
     end
   end
+
+  describe '#upsert', adapter: :postgres do
+    let(:task) { { title: 'task 1' } }
+
+    before { tasks.create.call(task) }
+
+    it 'raises error without upsert marker' do
+      expect {
+        tasks.create.call(task)
+      }.to raise_error(ROM::SQL::UniqueConstraintError)
+    end
+
+    it 'raises no error for duplicated data' do
+      expect { tasks.create.upsert(task) }.to_not raise_error
+    end
+
+    it 'returns record data' do
+      expect(tasks.create.upsert(task, constraint: :tasks_title_key, update: { user_id: nil })).to eql([
+        id: 1, user_id: nil, title: 'task 1'
+      ])
+    end
+  end if PG_LTE_95
 end

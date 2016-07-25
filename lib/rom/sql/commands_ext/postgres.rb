@@ -15,6 +15,10 @@ module ROM
           def multi_insert(tuples)
             relation.dataset.returning(*relation.columns).multi_insert(tuples)
           end
+
+          def upsert(tuple, opts = EMPTY_HASH)
+            relation.dataset.returning(*relation.columns).insert_conflict(opts).insert(tuple)
+          end
         end
 
         module Update
