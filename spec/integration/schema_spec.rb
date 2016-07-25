@@ -36,6 +36,18 @@ RSpec.describe 'Automatic inferring schema from database' do
       end
     end
 
+    context 'for a table with FKs' do
+      let(:dataset) { :tasks }
+
+      it 'can infer attributes for dataset' do
+        expect(schema.attributes).to eql(
+          id: ROM::SQL::Types::Serial.meta(name: :id),
+          title: ROM::SQL::Types::Strict::String.optional.meta(name: :title),
+          user_id: ROM::SQL::Types::Strict::Int.optional.meta(name: :user_id, foreign_key: true, relation: :users)
+        )
+      end
+    end
+
     context 'for complex table' do
       let(:dataset) { :test_inferrence }
 
