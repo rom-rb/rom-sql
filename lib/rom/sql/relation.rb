@@ -135,15 +135,6 @@ module ROM
         @columns ||= dataset.columns
       end
 
-      # Return true if a relation has schema defined
-      #
-      # @return [TrueClass, FalseClass]
-      #
-      # @api private
-      def schema?
-        ! schema.nil?
-      end
-
       protected
 
       # Return a list of columns from *the sql select* statement or default to
