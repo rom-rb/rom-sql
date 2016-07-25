@@ -17,6 +17,7 @@
 
 * `Create` and `Update` commands have `:schema` plugin enabled by default which sets input handler based on schema definition automatically (solnic)
 * `associates` command plugin uses schema associations now (solnic)
+* Dropped MRI 2.0.x support
 
 ### Fixed
 
