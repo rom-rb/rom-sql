@@ -12,17 +12,15 @@ module ROM
         end
 
         def call
-          SQL::Schema.new(
-            name,
-            attributes,
-            associations_dsl && associations_dsl.call,
-            inferrer: inferrer && inferrer.new(self))
+          SQL::Schema.new(name, attributes, opts)
         end
-      end
 
-      def initialize(name, attributes, associations = nil, inferrer: nil)
-        @associations = associations
-        super(name, attributes, inferrer: inferrer)
+        def opts
+          opts = {}
+          opts[:associations] = associations_dsl.call if associations_dsl
+          opts[:inferrer] = inferrer.new(self) if inferrer
+          opts
+        end
       end
     end
   end

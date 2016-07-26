@@ -21,8 +21,6 @@ module ROM
     #
     # @api public
     class Relation < ROM::Relation
-      EMPTY_ASSOCIATION_SET = AssociationSet.new({}).freeze
-
       include SQL
 
       adapter :sql
@@ -97,10 +95,6 @@ module ROM
         )
         option :primary_key, reader: true, default: value
       end
-
-      option :associations, reader: true, default: -> rel {
-        rel.schema? ? rel.schema.associations : EMPTY_ASSOCIATION_SET
-      }
 
       option :primary_key, reader: true, default: -> rel {
         rel.schema? ? rel.schema.primary_key_name : :id

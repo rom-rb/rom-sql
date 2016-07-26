@@ -3,12 +3,6 @@ require 'rom/schema'
 module ROM
   module SQL
     class Schema < ROM::Schema
-      include Dry::Equalizer(:name, :attributes, :associations)
-
-      # @!attribute [r] associations
-      #   @return [AssociationSet] The association set
-      attr_reader :associations
-
       # @!attribute [r] primary_key_name
       #   @return [Symbol] The name of the primary key. This is set because in
       #                    most of the cases relations don't have composite pks
@@ -17,12 +11,6 @@ module ROM
       # @!attribute [r] primary_key_names
       #   @return [Array<Symbol>] A list of all pk names
       attr_reader :primary_key_names
-
-      # @api private
-      def initialize(name, attributes, associations = nil, inferrer: nil)
-        super(name, attributes, inferrer: inferrer)
-        @associations = associations
-      end
 
       # @api private
       def finalize!(*)

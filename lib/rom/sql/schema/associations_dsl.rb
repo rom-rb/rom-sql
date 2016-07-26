@@ -1,5 +1,4 @@
 require 'rom/sql/association'
-require 'rom/sql/association_set'
 
 module ROM
   module SQL
