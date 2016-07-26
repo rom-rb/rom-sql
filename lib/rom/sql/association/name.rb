@@ -1,12 +1,14 @@
 require 'dry/equalizer'
 require 'rom/relation/name'
-require 'concurrent/map'
+require 'rom/support/cache'
 
 module ROM
   module SQL
     class Association
       class Name
         include Dry::Equalizer.new(:relation_name, :key)
+
+        extend Cache
 
         attr_reader :relation_name
 
@@ -15,7 +17,7 @@ module ROM
         alias_method :to_sym, :key
 
         def self.[](*args)
-          cache.fetch_or_store(args.hash) do
+          fetch_or_store(args) do
             rel, ds, aliaz = args
 
             if rel.is_a?(ROM::Relation::Name)
@@ -30,10 +32,6 @@ module ROM
               new(ROM::Relation::Name[rel, ds], ds)
             end
           end
-        end
-
-        def self.cache
-          @cache ||= Concurrent::Map.new
         end
 
         def initialize(relation_name, aliaz)

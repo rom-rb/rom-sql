@@ -1,4 +1,4 @@
-require 'concurrent/map'
+require 'rom/support/cache'
 
 module ROM
   module SQL
@@ -9,6 +9,8 @@ module ROM
     # @api private
     class QualifiedAttribute
       include Dry::Equalizer(:dataset, :attribute)
+
+      extend Cache
 
       # Dataset (table) name
       #
@@ -22,12 +24,7 @@ module ROM
 
       # @api private
       def self.[](*args)
-        cache.fetch_or_store(args.hash) { new(*args) }
-      end
-
-      # @api private
-      def self.cache
-        @cache ||= Concurrent::Map.new
+        fetch_or_store(args) { new(*args) }
       end
 
       # @api private
