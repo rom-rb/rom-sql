@@ -12,6 +12,7 @@
 * Support for custom PG types: `Types::PG::Array`, `Types::PG::Hash`, `Types::PG::JSON`, and `Types::PG::Bytea` (solnic + flash-gordon)
 * Optional automatic schema inference for attributes based on DB metadata provided by Sequel (flash-gordon)
 * Support for arbitrary dataset and FK names in schemas (flash-gordon)
+* Support for native upserts in PostgreSQL >= 9.5 via `Commands::Postgres::Upsert` (gotar + flash-gordon)
 
 ### Changed
 
