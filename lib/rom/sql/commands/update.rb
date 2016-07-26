@@ -1,4 +1,5 @@
 require 'rom/support/deprecations'
+require 'rom/support/constants'
 
 require 'rom/sql/commands/error_wrapper'
 require 'rom/sql/commands/transaction'
@@ -35,10 +36,10 @@ module ROM
 
           changed = diff(attributes.to_h)
 
-          if changed.any?
+          if changed.size > 0
             update(changed)
           else
-            []
+            EMPTY_ARRAY
           end
         end
 
@@ -56,6 +57,7 @@ module ROM
         #
         # @api public
         def change(original)
+          Deprecations.warn("#{self.class}#change is deprecated. Use repositories with changesets instead")
           self.class.build(relation, options.merge(original: original.to_h))
         end
 
