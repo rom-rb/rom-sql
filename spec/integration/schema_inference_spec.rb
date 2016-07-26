@@ -1,4 +1,4 @@
-RSpec.describe 'Automatic inferring schema from database' do
+RSpec.describe 'Schema inference' do
   include_context 'database setup'
 
   before do
