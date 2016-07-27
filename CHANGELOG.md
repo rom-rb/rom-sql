@@ -1,4 +1,4 @@
-## v0.8.0 to-be-released
+## v0.8.0 2016-07-27
 
 ### Added
 
@@ -24,7 +24,7 @@
 
 * `Create` command properly materialize result when `:one` is set (AMHOL)
 
-[Compare v0.7.0...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.7.0...HEAD)
+[Compare v0.7.0...v0.8.0](https://github.com/rom-rb/rom-sql/compare/v0.7.0...v0.8.0)
 
 ## v0.7.0 2016-01-06
 
