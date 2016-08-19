@@ -31,6 +31,12 @@ module ROM
           }
         end
 
+        # @api private
+        def associate(relations, child, parent)
+          pk, fk = join_key_map(relations)
+          child.merge(fk => parent.fetch(pk))
+        end
+
         protected
 
         # @api private
