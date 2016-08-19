@@ -1,3 +1,11 @@
+## v0.8.1 to-be-released
+
+### Added
+
+* `Associations::{OneToMany,OneToOne}#associate` for merging FKs into child tuple (jodosha)
+
+[Compare v0.8.0...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.8.0...HEAD)
+
 ## v0.8.0 2016-07-27
 
 ### Added
