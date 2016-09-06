@@ -198,7 +198,7 @@ RSpec.describe 'Commands / Create' do
         tasks.try {
           tasks.create.call(user_id: 918_273_645)
         }
-      }.to raise_error(ROM::SQL::ForeignKeyConstraintError, /user_id/)
+      }.to raise_error(ROM::SQL::ForeignKeyConstraintError)
     end
 
     it 're-raises database errors' do
@@ -259,9 +259,8 @@ RSpec.describe 'Commands / Create' do
           conn.drop_table(:user_group)
         end
 
-        it 'materializes the result' do
-          pending 'TODO: with a composite pk sequel returns 0 when inserting' if mysql?
-
+        # TODO: with a composite pk sequel returns 0 when inserting for MySQL
+        it 'materializes the result', adapter: %i(postgres sqlite) do
           command = container.commands[:user_group][:create]
           result = command.call(user_id: 1, group_id: 2)
 

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 require 'rom/lint/spec'
 
-describe ROM::SQL::Gateway do
+RSpec.describe ROM::SQL::Gateway do
   include_context 'users and tasks'
 
   let(:gateway) { container.gateways[:default] }

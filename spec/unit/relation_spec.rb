@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ROM::Relation do
+RSpec.describe ROM::Relation do
   include_context 'users and tasks'
 
   let(:users) { container.relations.users }
@@ -100,7 +100,7 @@ describe ROM::Relation do
       end
 
       describe '#distinct' do
-        it 'delegates to dataset and returns a new relation' do
+        it 'delegates to dataset and returns a new relation', adapter: %i(mysql postgres) do
           expect(users.dataset).to receive(:distinct).with(:name).and_call_original
           expect(users.distinct(:name)).to_not eq(users)
         end
@@ -145,7 +145,7 @@ describe ROM::Relation do
         it 'raises error when column names are ambiguous' do
           expect {
             users.inner_join(:tasks, user_id: :id).to_a
-          }.to raise_error(Sequel::DatabaseError, /is ambiguous/)
+          }.to raise_error(Sequel::DatabaseError, /ambiguous/)
         end
       end
 
