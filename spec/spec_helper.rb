@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 require 'bundler'
 Bundler.setup
 
@@ -31,8 +29,8 @@ else
   MYSQL_DB_URI = 'mysql2://root@localhost/rom_sql'
 end
 
-URIS = { postgres: POSTGRES_DB_URI, sqlite: SQLITE_DB_URI, mysql: MYSQL_DB_URI }
-ADAPTERS = URIS.keys
+DB_URIS = { postgres: POSTGRES_DB_URI, sqlite: SQLITE_DB_URI, mysql: MYSQL_DB_URI }
+ADAPTERS = DB_URIS.keys
 PG_LTE_95 = ENV.fetch('PG_LTE_95', 'true') == 'true'
 
 SPEC_ROOT = root = Pathname(__FILE__).dirname
@@ -44,38 +42,36 @@ Dir[root.join('support/**/*')].each { |f| require f }
 require 'rom/support/deprecations'
 ROM::Deprecations.set_logger!(root.join('../log/deprecations.log'))
 
-def db?(type, example = nil)
-  if example
+module DBHelper
+  def db?(type, example)
     example.metadata[:adapter] == type
-  else
-    defined?(DB_URI) && DB_URI.include?(type.to_s)
   end
-end
 
-def postgres?(example = nil)
-  db?(:postgres, example)
-end
+  def postgres?(example)
+    db?(:postgres, example)
+  end
 
-def mysql?(example = nil)
-  db?(:mysql, example)
-end
+  def mysql?(example)
+    db?(:mysql, example)
+  end
 
-def with_adapter(adapter, &block)
-  Object.const_set(:DB_URI, URIS[:mysql])
-  block.call
-  Object.send(:remove_const, :DB_URI)
+  def sqlite?(example)
+    db?(:sqlite, example)
+  end
 end
 
 def with_adapters(*args, &block)
   adapters = args.empty? || args[0] == :all ? ADAPTERS : args
 
   adapters.each do |adapter|
-    context("with #{adapter}", adapter: adapter, &block)
+    context("with #{adapter}", context_adapter: adapter, &block)
   end
 end
 
 RSpec.configure do |config|
-  config.disable_monkey_patching
+  config.disable_monkey_patching!
+
+  config.include DBHelper
 
   config.before(:suite) do
     tmp_test_dir = TMP_PATH.join('test')
@@ -83,8 +79,22 @@ RSpec.configure do |config|
     FileUtils.mkdir_p(tmp_test_dir)
   end
 
-  config.around(adapter: :mysql) do |example|
-    with_adapter(:mysql) { example.run }
+  config.around do |example|
+    specific_adapters = example.metadata[:adapter]
+    context_adapter = example.metadata[:context_adapter]
+
+    if specific_adapters && context_adapter
+      if Array(specific_adapters).include?(context_adapter)
+        example.run
+      else
+        # noop
+      end
+    elsif !specific_adapters
+      example.metadata[:adapter] = context_adapter || :postgres
+      example.run
+    else
+      example.run
+    end
   end
 
   config.before do

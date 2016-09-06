@@ -3,8 +3,7 @@ require 'virtus'
 RSpec.describe 'Reading relations' do
   include_context 'users and tasks'
 
-  # FIXME: one example fails on :mysql
-  with_adapters(:postgres, :sqlite) do
+  with_adapters do
     before :each do
       class Goal
         include Virtus.value_object(coerce: true)
@@ -105,7 +104,8 @@ RSpec.describe 'Reading relations' do
         ))
     end
 
-    it 'works with grouping and aggregates' do
+    # FIXME: on mysql and sqlite
+    it 'works with grouping and aggregates', adapter: :postgres do
       container.relations[:goals].insert(id: 3, user_id: 1, title: 'Get Milk')
 
       users_with_goal_count = container.relation(:user_goal_counts).as(:user_goal_counts).all

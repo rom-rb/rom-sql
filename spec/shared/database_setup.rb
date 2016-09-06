@@ -1,10 +1,8 @@
 shared_context 'database setup' do
-  let(:uri) do
-    if defined?(DB_URI)
-      DB_URI
-    else
-      POSTGRES_DB_URI
-    end
+  let(:uri) do |example|
+    meta = example.metadata
+    adapter = meta[:context_adapter] || meta[:adapter]
+    DB_URIS.fetch(adapter)
   end
 
   let(:conn) { Sequel.connect(uri) }
@@ -24,6 +22,7 @@ shared_context 'database setup' do
   end
 
   before do |example|
+    ctx = self
     conn.loggers << LOGGER
 
     drop_tables
@@ -31,7 +30,7 @@ shared_context 'database setup' do
     conn.create_table :users do
       primary_key :id
       String :name, null: false
-      check { char_length(name) > 2 } if postgres?(example)
+      check { char_length(name) > 2 } if ctx.postgres?(example)
     end
 
     conn.create_table :tasks do

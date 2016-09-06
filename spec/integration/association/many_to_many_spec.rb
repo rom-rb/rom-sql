@@ -1,7 +1,8 @@
 RSpec.describe ROM::SQL::Association::ManyToMany do
   include_context 'users and tasks'
 
-  with_adapters :sqlite do
+  # FIXME: Figure out what is wrong with sqlite
+  with_adapters(:postgres, :mysql) do
     context 'with two associations pointing to the same target relation' do
       let(:container) do
         ROM.container(:sql, uri) do |conf|

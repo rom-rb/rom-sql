@@ -1,4 +1,4 @@
-describe ROM::SQL::Gateway do
+RSpec.describe ROM::SQL::Gateway do
   describe 'migration' do
     let(:conn) { Sequel.connect(POSTGRES_DB_URI) }
 
