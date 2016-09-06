@@ -40,6 +40,7 @@ module ROM
           db_registry[type]
         end
 
+        # @api private
         def call(dataset, gateway)
           columns = gateway.connection.schema(dataset)
           fks = fks_for(gateway, dataset)
@@ -66,6 +67,7 @@ module ROM
           end
         end
 
+        # @api private
         def fks_for(gateway, dataset)
           gateway.connection.foreign_key_list(dataset).each_with_object({}) do |definition, fks|
             column, fk = build_fk(definition)
