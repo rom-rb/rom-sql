@@ -3,7 +3,7 @@ require 'spec_helper'
 require 'rom/sql/support/active_support_notifications'
 require 'active_support/log_subscriber'
 
-describe 'ActiveSupport::Notifications support' do
+RSpec.describe 'ActiveSupport::Notifications support', :postgres do
   include_context 'database setup'
 
   it 'works' do

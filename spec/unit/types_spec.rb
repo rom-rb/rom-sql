@@ -1,7 +1,7 @@
 require 'rom/sql/types'
 require 'rom/sql/types/pg'
 
-RSpec.describe ROM::SQL::Types do
+RSpec.describe ROM::SQL::Types, :postgres do
   describe ROM::SQL::Types::Serial do
     it 'accepts ints > 0' do
       expect(ROM::SQL::Types::Serial[1]).to be(1)

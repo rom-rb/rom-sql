@@ -1,7 +1,8 @@
-RSpec.describe ROM::SQL::Migration::Migrator do
+RSpec.describe ROM::SQL::Migration::Migrator, :postgres, skip_tables: true do
+  include_context 'database setup'
+
   subject(:migrator) { ROM::SQL::Migration::Migrator.new(conn, options) }
 
-  let(:conn) { Sequel.connect(POSTGRES_DB_URI) }
   let(:options) { { path: TMP_PATH.join('test/migrations') } }
 
   describe '#create_file' do

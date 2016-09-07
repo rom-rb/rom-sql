@@ -1,12 +1,12 @@
-describe ROM::SQL::Gateway do
-  describe 'migration' do
-    let(:conn) { Sequel.connect(POSTGRES_DB_URI) }
+RSpec.describe ROM::SQL::Gateway, :postgres, skip_tables: true do
+  include_context 'database setup'
 
+  describe 'migration' do
     context 'creating migrations inline' do
       subject(:gateway) { container.gateways[:default] }
 
       let(:conf) { ROM::Configuration.new(:sql, conn) }
-      let!(:container) { ROM.container(conf) }
+      let(:container) { ROM.container(conf) }
 
       after do
         [:rabbits, :carrots].each do |name|
@@ -39,15 +39,13 @@ describe ROM::SQL::Gateway do
     end
 
     context 'running migrations from a file system' do
-      include_context 'database setup'
-
       let(:migration_dir) do
         Pathname(__FILE__).dirname.join('../fixtures/migrations').realpath
       end
 
       let(:migrator) { ROM::SQL::Migration::Migrator.new(conn, path: migration_dir) }
       let(:conf) { ROM::Configuration.new(:sql, [conn, migrator: migrator]) }
-      let!(:container) { ROM.container(conf) }
+      let(:container) { ROM.container(conf) }
 
       it 'returns true for pending migrations' do
         expect(container.gateways[:default].pending_migrations?).to be_truthy
@@ -65,8 +63,6 @@ describe ROM::SQL::Gateway do
   end
 
   context 'setting up' do
-    include_context 'database setup'
-
     it 'skips settings up associations when tables are missing' do
       conf = ROM::Configuration.new(:sql, uri) do |config|
         config.relation(:foos) do

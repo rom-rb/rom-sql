@@ -1,9 +1,13 @@
 shared_context 'database setup' do
-  let(:uri) do
-    if defined?(DB_URI)
-      DB_URI
+  let(:uri) do |example|
+    meta = example.metadata
+    adapters = ADAPTERS.select { |adapter| meta[adapter] }
+
+    case adapters.size
+    when 1 then DB_URIS.fetch(adapters.first)
+    when 0 then raise 'No adapter specified'
     else
-      POSTGRES_DB_URI
+      raise "Ambiguous adapter configuration, got #{adapters.inspect}"
     end
   end
 
@@ -24,14 +28,16 @@ shared_context 'database setup' do
   end
 
   before do |example|
+    ctx = self
     conn.loggers << LOGGER
 
     drop_tables
+    next if example.metadata[:skip_tables]
 
     conn.create_table :users do
       primary_key :id
       String :name, null: false
-      check { char_length(name) > 2 } if postgres?(example)
+      check { char_length(name) > 2 } if ctx.postgres?(example)
     end
 
     conn.create_table :tasks do

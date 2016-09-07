@@ -1,39 +1,37 @@
 require 'spec_helper'
 
-describe ROM::Relation do
+RSpec.describe ROM::Relation do
   include_context 'users and tasks'
 
   let(:users) { container.relations.users }
   let(:tasks) { container.relations.tasks }
 
-  context 'with schema', adapter: :sqlite do
-    let(:uri) { SQLITE_DB_URI }
-
-    before do
-      conf.relation(:users) do
-        schema do
-          attribute :id, ROM::SQL::Types::Serial
-          attribute :name, ROM::SQL::Types::String
-        end
-
-        def sorted
-          order(:id)
-        end
-      end
-
-      conf.relation(:tasks)
-    end
-
-    describe '#dataset' do
-      it 'uses schema to infer default dataset' do
-        expect(container.relations[:users].dataset).to eql(
-          container.gateways[:default].dataset(:users).select(:id, :name).order(:users__id)
-        )
-      end
-    end
-  end
-
   with_adapters do
+    context 'with schema' do
+      before do
+        conf.relation(:users) do
+          schema do
+            attribute :id, ROM::SQL::Types::Serial
+            attribute :name, ROM::SQL::Types::String
+          end
+
+          def sorted
+            order(:id)
+          end
+        end
+
+        conf.relation(:tasks)
+      end
+
+      describe '#dataset' do
+        it 'uses schema to infer default dataset' do
+          expect(container.relations[:users].dataset).to eql(
+            container.gateways[:default].dataset(:users).select(:id, :name).order(:users__id)
+          )
+        end
+      end
+    end
+
     context 'without schema' do
       before do
         conf.relation(:users) do
@@ -100,9 +98,11 @@ describe ROM::Relation do
       end
 
       describe '#distinct' do
-        it 'delegates to dataset and returns a new relation' do
-          expect(users.dataset).to receive(:distinct).with(:name).and_call_original
-          expect(users.distinct(:name)).to_not eq(users)
+        if !metadata[:sqlite]
+          it 'delegates to dataset and returns a new relation' do
+            expect(users.dataset).to receive(:distinct).with(:name).and_call_original
+            expect(users.distinct(:name)).to_not eq(users)
+          end
         end
       end
 
@@ -145,7 +145,7 @@ describe ROM::Relation do
         it 'raises error when column names are ambiguous' do
           expect {
             users.inner_join(:tasks, user_id: :id).to_a
-          }.to raise_error(Sequel::DatabaseError, /is ambiguous/)
+          }.to raise_error(Sequel::DatabaseError, /ambiguous/)
         end
       end
 

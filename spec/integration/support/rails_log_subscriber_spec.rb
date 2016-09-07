@@ -5,7 +5,7 @@ require 'rom/sql/support/rails_log_subscriber'
 
 require 'active_support/log_subscriber/test_helper'
 
-describe 'Rails log subscriber' do
+RSpec.describe 'Rails log subscriber', :postgres do
   include ActiveSupport::LogSubscriber::TestHelper
 
   include_context 'database setup'

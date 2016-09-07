@@ -2,7 +2,7 @@ require 'spec_helper'
 
 require 'rom/lint/spec'
 
-describe ROM::SQL::Gateway do
+RSpec.describe ROM::SQL::Gateway, :postgres do
   include_context 'users and tasks'
 
   let(:gateway) { container.gateways[:default] }
@@ -10,13 +10,11 @@ describe ROM::SQL::Gateway do
   it_behaves_like 'a rom gateway' do
     let(:identifier) { :sql }
     let(:gateway) { ROM::SQL::Gateway }
-    let(:uri) { POSTGRES_DB_URI }
   end
 
-  describe 'sqlite with a file db' do
+  describe 'sqlite with a file db', :sqlite, postgres: false do
     it 'establishes an sqlite connection' do
       db_file = Tempfile.new('test.sqlite')
-      uri = "#{defined?(JRUBY_VERSION) ? 'jdbc:sqlite' : 'sqlite'}://#{db_file.path}"
       gateway = ROM::SQL::Gateway.new(uri)
       expect(gateway).to be_instance_of(ROM::SQL::Gateway)
     end
@@ -37,10 +35,10 @@ describe ROM::SQL::Gateway do
       migrator = double('migrator')
 
       expect(Sequel).to receive(:connect)
-        .with(POSTGRES_DB_URI, host: '127.0.0.1')
+        .with(uri, host: '127.0.0.1')
         .and_return(conn)
 
-      gateway = ROM::SQL::Gateway.new(POSTGRES_DB_URI, migrator: migrator, host: '127.0.0.1')
+      gateway = ROM::SQL::Gateway.new(uri, migrator: migrator, host: '127.0.0.1')
 
       expect(gateway.options).to eql(migrator: migrator)
     end

@@ -1,4 +1,4 @@
-describe 'Eager loading', adapters: :all do
+RSpec.describe 'Eager loading' do
   include_context 'users and tasks'
 
   with_adapters do

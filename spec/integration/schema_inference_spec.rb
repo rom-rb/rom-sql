@@ -1,4 +1,4 @@
-RSpec.describe 'Schema inference' do
+RSpec.describe 'Schema inference', :postgres do
   include_context 'database setup'
 
   before do

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Logger' do
+RSpec.describe 'Logger', :postgres do
   include_context 'database setup'
 
   it 'sets up a logger for sequel' do

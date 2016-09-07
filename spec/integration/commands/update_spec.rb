@@ -122,47 +122,22 @@ RSpec.describe 'Commands / Update' do
         end
 
         describe '#execute' do
-          context 'with postgres adapter' do
-            context 'with a single record' do
-              it 'materializes the result' do
-                result = users.update.by_name('Piotr').execute(name: 'Pete')
-                expect(result).to eq([
-                  { id: 1, name: 'Pete' }
-                ])
-              end
-            end
-
-            context 'with multiple records' do
-              it 'materializes the results' do
-                result = users.update.by_name(%w(Piotr Jane)).execute(name: 'Josie')
-                expect(result).to eq([
-                  { id: 1, name: 'Josie' },
-                  { id: 2, name: 'Josie' }
-                ])
-              end
+          context 'with a single record' do
+            it 'materializes the result' do
+              result = users.update.by_name('Piotr').execute(name: 'Pete')
+              expect(result).to eq([
+                { id: 1, name: 'Pete' }
+              ])
             end
           end
 
-          context 'with other adapter', adapter: :sqlite do
-            let(:uri) { SQLITE_DB_URI }
-
-            context 'with a single record' do
-              it 'materializes the result' do
-                result = users.update.by_name('Piotr').execute(name: 'Pete')
-                expect(result).to eq([
-                  { id: 1, name: 'Pete' }
-                ])
-              end
-            end
-
-            context 'with multiple records' do
-              it 'materializes the results' do
-                result = users.update.by_name(%w(Piotr Jane)).execute(name: 'Josie')
-                expect(result).to eq([
-                  { id: 1, name: 'Josie' },
-                  { id: 2, name: 'Josie' }
-                ])
-              end
+          context 'with multiple records' do
+            it 'materializes the results' do
+              result = users.update.by_name(%w(Piotr Jane)).execute(name: 'Josie')
+              expect(result).to eq([
+                { id: 1, name: 'Josie' },
+                { id: 2, name: 'Josie' }
+              ])
             end
           end
         end

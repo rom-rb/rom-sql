@@ -6,9 +6,9 @@ namespace :db do
   end
 end
 
-describe 'MigrationTasks' do
-  let(:conf) { ROM::Configuration.new(:sql, POSTGRES_DB_URI) }
-  let!(:container) { ROM.container(conf) }
+RSpec.describe 'MigrationTasks', :postgres, skip_tables: true do
+  include_context 'database setup'
+
   let(:migrator) { container.gateways[:default].migrator }
 
   before do

@@ -1,6 +1,6 @@
 require 'virtus'
 
-RSpec.describe 'Commands / Create' do
+RSpec.describe 'Commands / Create', :postgres do
   include_context 'relations'
 
   let(:users) { commands[:users] }
@@ -198,7 +198,7 @@ RSpec.describe 'Commands / Create' do
         tasks.try {
           tasks.create.call(user_id: 918_273_645)
         }
-      }.to raise_error(ROM::SQL::ForeignKeyConstraintError, /user_id/)
+      }.to raise_error(ROM::SQL::ForeignKeyConstraintError)
     end
 
     it 're-raises database errors' do
@@ -259,20 +259,21 @@ RSpec.describe 'Commands / Create' do
           conn.drop_table(:user_group)
         end
 
-        it 'materializes the result' do
-          pending 'TODO: with a composite pk sequel returns 0 when inserting' if mysql?
+        # with a composite pk sequel returns 0 when inserting for MySQL
+        if !metadata[:mysql]
+          it 'materializes the result' do
+            command = container.commands[:user_group][:create]
+            result = command.call(user_id: 1, group_id: 2)
 
-          command = container.commands[:user_group][:create]
-          result = command.call(user_id: 1, group_id: 2)
-
-          expect(result).to eql(user_id: 1, group_id: 2)
+            expect(result).to eql(user_id: 1, group_id: 2)
+          end
         end
       end
     end
   end
 
-  describe '#call', adapter: :postgres do
-    it 're-raises check constraint violation error', adapter: :postgres do
+  describe '#call' do
+    it 're-raises check constraint violation error' do
       expect {
         users.try {
           users.create.call(name: 'J')
@@ -281,7 +282,7 @@ RSpec.describe 'Commands / Create' do
     end
   end
 
-  describe '#upsert', adapter: :postgres do
+  describe '#upsert' do
     let(:task) { { title: 'task 1' } }
 
     before { tasks.create.call(task) }
