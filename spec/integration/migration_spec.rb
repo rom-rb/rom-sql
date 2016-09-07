@@ -1,13 +1,12 @@
-RSpec.describe ROM::SQL, '.migration' do
-  let(:connection) { ROM::SQL.gateway.connection }
-  let(:conf) { ROM::Configuration.new(:sql, POSTGRES_DB_URI) }
+RSpec.describe ROM::SQL, '.migration', :postgres, skip_tables: true do
+  include_context 'database setup'
 
   before do
     conf
-    connection.drop_table?(:dragons)
+    conn.drop_table?(:dragons)
   end
 
-  xit 'creates a migration for a specific gateway' do
+  it 'creates a migration for a specific gateway' do
     migration = ROM::SQL.migration do
       change do
         create_table :dragons do
@@ -17,8 +16,8 @@ RSpec.describe ROM::SQL, '.migration' do
       end
     end
 
-    migration.apply(connection, :up)
+    migration.apply(conn, :up)
 
-    expect(connection.table_exists?(:dragons)).to be(true)
+    expect(conn.table_exists?(:dragons)).to be(true)
   end
 end

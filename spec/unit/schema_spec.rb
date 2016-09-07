@@ -1,4 +1,4 @@
-RSpec.describe ROM::SQL::Schema do
+RSpec.describe ROM::SQL::Schema, :postgres do
   describe '#primary_key' do
     it 'returns primary key attributes' do
       schema = Class.new(ROM::Relation[:sql]).schema do

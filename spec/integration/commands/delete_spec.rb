@@ -61,47 +61,22 @@ RSpec.describe 'Commands / Delete' do
     end
 
     describe '#execute' do
-      context 'with postgres adapter' do
-        context 'with a single record' do
-          it 'materializes the result' do
-            result = container.command(:users).delete.by_name(%w(Jade)).execute
-            expect(result).to eq([
-              { id: 3, name: 'Jade' }
-            ])
-          end
-        end
-
-        context 'with multiple records' do
-          it 'materializes the results' do
-            result = container.command(:users).delete.by_name(%w(Jade John)).execute
-            expect(result).to eq([
-              { id: 3, name: 'Jade' },
-              { id: 4, name: 'John' }
-            ])
-          end
+      context 'with a single record' do
+        it 'materializes the result' do
+          result = container.command(:users).delete.by_name(%w(Jade)).execute
+          expect(result).to eq([
+            { id: 3, name: 'Jade' }
+          ])
         end
       end
 
-      context 'with other adapter', adapter: :sqlite do
-        let(:uri) { SQLITE_DB_URI }
-
-        context 'with a single record' do
-          it 'materializes the result' do
-            result = container.command(:users).delete.by_name(%w(Jade)).execute
-            expect(result).to eq([
-              { id: 3, name: 'Jade' }
-            ])
-          end
-        end
-
-        context 'with multiple records' do
-          it 'materializes the results' do
-            result = container.command(:users).delete.by_name(%w(Jade John)).execute
-            expect(result).to eq([
-              { id: 3, name: 'Jade' },
-              { id: 4, name: 'John' }
-            ])
-          end
+      context 'with multiple records' do
+        it 'materializes the results' do
+          result = container.command(:users).delete.by_name(%w(Jade John)).execute
+          expect(result).to eq([
+            { id: 3, name: 'Jade' },
+            { id: 4, name: 'John' }
+          ])
         end
       end
     end

@@ -105,15 +105,17 @@ RSpec.describe 'Reading relations' do
     end
 
     # FIXME: on mysql and sqlite
-    it 'works with grouping and aggregates', adapter: :postgres do
-      container.relations[:goals].insert(id: 3, user_id: 1, title: 'Get Milk')
+    if metadata[:postgres]
+      it 'works with grouping and aggregates' do
+        container.relations[:goals].insert(id: 3, user_id: 1, title: 'Get Milk')
 
-      users_with_goal_count = container.relation(:user_goal_counts).as(:user_goal_counts).all
+        users_with_goal_count = container.relation(:user_goal_counts).as(:user_goal_counts).all
 
-      expect(users_with_goal_count.to_a).to eq([
-        UserGoalCount.new(id: 1, name: "Jane", goal_count: 2),
-        UserGoalCount.new(id: 2, name: "Joe", goal_count: 1)
-      ])
+        expect(users_with_goal_count.to_a).to eq([
+          UserGoalCount.new(id: 1, name: "Jane", goal_count: 2),
+          UserGoalCount.new(id: 2, name: "Joe", goal_count: 1)
+        ])
+      end
     end
   end
 end

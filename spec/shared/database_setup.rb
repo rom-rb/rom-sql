@@ -1,8 +1,14 @@
 shared_context 'database setup' do
   let(:uri) do |example|
     meta = example.metadata
-    adapter = meta[:context_adapter] || meta[:adapter]
-    DB_URIS.fetch(adapter)
+    adapters = ADAPTERS.select { |adapter| meta[adapter] }
+
+    case adapters.size
+    when 1 then DB_URIS.fetch(adapters.first)
+    when 0 then raise 'No adapter specified'
+    else
+      raise "Ambiguous adapter configuration, got #{adapters.inspect}"
+    end
   end
 
   let(:conn) { Sequel.connect(uri) }
@@ -26,6 +32,7 @@ shared_context 'database setup' do
     conn.loggers << LOGGER
 
     drop_tables
+    next if example.metadata[:skip_tables]
 
     conn.create_table :users do
       primary_key :id
