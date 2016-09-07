@@ -1,4 +1,4 @@
-RSpec.describe 'Commands / Postgres / Upsert', adapter: :postgres do
+RSpec.describe 'Commands / Postgres / Upsert', :postgres do
   subject(:command) { commands[:tasks][:create_or_update] }
 
   include_context 'relations'

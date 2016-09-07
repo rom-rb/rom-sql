@@ -1,4 +1,4 @@
-RSpec.describe 'Association errors' do
+RSpec.describe 'Association errors', :postgres do
   include_context 'users and tasks'
 
   describe 'accessing an undefined association' do

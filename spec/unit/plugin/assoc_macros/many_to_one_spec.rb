@@ -1,4 +1,4 @@
-RSpec.describe 'Defining many-to-one association' do
+RSpec.describe 'Defining many-to-one association', :postgres do
   include_context 'users and tasks'
 
   before do
