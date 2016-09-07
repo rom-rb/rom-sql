@@ -35,7 +35,7 @@ RSpec.describe ROM::SQL::Association::OneToOne do
         if jruby? && sqlite?(example)
           expect(relation.to_a).to eql([id: 1, user_id: 1, number: '42', balance: 10_000])
         else
-          pending 'find out why mysql returns integer here' if mysql?(example)
+          pending 'find out why mysql returns integer here' if !jruby? && mysql?(example)
           expect(relation.to_a).to eql([id: 1, user_id: 1, number: '42', balance: 10_000.to_d])
         end
       end
@@ -50,7 +50,7 @@ RSpec.describe ROM::SQL::Association::OneToOne do
         if jruby? && sqlite?(example)
           expect(relation.to_a).to eql([id: 1, user_id: 1, number: '42', balance: 10_000])
         else
-          pending 'find out why mysql returns integer here' if mysql?(example)
+          pending 'find out why mysql returns integer here' if !jruby? && mysql?(example)
           expect(relation.to_a).to eql([id: 1, user_id: 1, number: '42', balance: 10_000.to_d])
         end
       end
