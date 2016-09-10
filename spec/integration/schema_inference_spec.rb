@@ -12,6 +12,7 @@ RSpec.describe 'Schema inference', :postgres do
       DateTime :datetime, null: false
       Decimal :money, null: false
       Bytea :data
+      Float :float
     end
   end
 
@@ -59,7 +60,8 @@ RSpec.describe 'Schema inference', :postgres do
           date: ROM::SQL::Types::Strict::Date.optional.meta(name: :date),
           datetime: ROM::SQL::Types::Strict::Time.meta(name: :datetime),
           money: ROM::SQL::Types::Strict::Decimal.meta(name: :money),
-          data: ROM::SQL::Types::Strict::String.optional.meta(name: :data)
+          data: ROM::SQL::Types::Strict::String.optional.meta(name: :data),
+          float: ROM::SQL::Types::Strict::Float.optional.meta(name: :float)
         )
       end
     end
