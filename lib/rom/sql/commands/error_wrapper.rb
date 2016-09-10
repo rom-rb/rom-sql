@@ -11,7 +11,7 @@ module ROM
         def call(*args)
           super
         rescue *ERROR_MAP.keys => e
-          raise ERROR_MAP[e.class], e
+          raise ERROR_MAP.fetch(e.class, Error), e
         end
 
         alias_method :[], :call

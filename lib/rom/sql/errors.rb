@@ -14,6 +14,7 @@ module ROM
 
     ERROR_MAP = {
       Sequel::DatabaseError => DatabaseError,
+      Sequel::ConstraintViolation => ConstraintError,
       Sequel::NotNullConstraintViolation => NotNullConstraintError,
       Sequel::UniqueConstraintViolation => UniqueConstraintError,
       Sequel::ForeignKeyConstraintViolation => ForeignKeyConstraintError,
