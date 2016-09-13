@@ -296,6 +296,14 @@ RSpec.describe 'Commands / Create', :postgres do
         }
       }.to raise_error(ROM::SQL::CheckConstraintError, /name/)
     end
+
+    it 're-raises constraint violation error' do
+      expect {
+        users.try {
+          tasks.create.call(title: '')
+        }
+      }.to raise_error(ROM::SQL::ConstraintError, /title/)
+    end
   end
 
   describe '#upsert' do

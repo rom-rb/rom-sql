@@ -45,6 +45,8 @@ shared_context 'database setup' do
       primary_key :id
       foreign_key :user_id, :users
       String :title, unique: true
+      constraint(:title_length) { char_length(title) > 1 } if ctx.postgres?(example)
+      constraint(:title_length) { length(title) > 1 }      if ctx.sqlite?(example)
     end
 
     conn.create_table :tags do
