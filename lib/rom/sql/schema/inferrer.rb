@@ -7,13 +7,13 @@ module ROM
         defines :type_mapping, :pk_type
 
         type_mapping(
-          integer: Types::Strict::Int,
-          string: Types::Strict::String,
-          date: Types::Strict::Date,
-          datetime: Types::Strict::Time,
-          boolean: Types::Strict::Bool,
-          decimal: Types::Strict::Decimal,
-          blob: Types::Strict::String
+          integer: Types::Int,
+          string: Types::String,
+          date: Types::Date,
+          datetime: Types::Time,
+          boolean: Types::Bool,
+          decimal: Types::Decimal,
+          blob: Types::String
         ).freeze
 
         pk_type Types::Serial

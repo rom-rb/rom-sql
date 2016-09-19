@@ -31,7 +31,7 @@ RSpec.describe 'Schema inference', :postgres do
       it 'can infer attributes for dataset' do
         expect(schema.attributes).to eql(
           id: ROM::SQL::Types::Serial.meta(name: :id),
-          name: ROM::SQL::Types::Strict::String.meta(name: :name)
+          name: ROM::SQL::Types::String.meta(name: :name)
         )
       end
     end
@@ -42,8 +42,8 @@ RSpec.describe 'Schema inference', :postgres do
       it 'can infer attributes for dataset' do
         expect(schema.attributes).to eql(
           id: ROM::SQL::Types::Serial.meta(name: :id),
-          title: ROM::SQL::Types::Strict::String.optional.meta(name: :title),
-          user_id: ROM::SQL::Types::Strict::Int.optional.meta(name: :user_id, foreign_key: true, relation: :users)
+          title: ROM::SQL::Types::String.optional.meta(name: :title),
+          user_id: ROM::SQL::Types::Int.optional.meta(name: :user_id, foreign_key: true, relation: :users)
         )
       end
     end
@@ -54,12 +54,12 @@ RSpec.describe 'Schema inference', :postgres do
       it 'can infer attributes for dataset' do
         expect(schema.attributes).to eql(
           id: ROM::SQL::Types::Serial.meta(name: :id),
-          text: ROM::SQL::Types::Strict::String.meta(name: :text),
-          flag: ROM::SQL::Types::Strict::Bool.meta(name: :flag),
-          date: ROM::SQL::Types::Strict::Date.optional.meta(name: :date),
-          datetime: ROM::SQL::Types::Strict::Time.meta(name: :datetime),
-          money: ROM::SQL::Types::Strict::Decimal.meta(name: :money),
-          data: ROM::SQL::Types::Strict::String.optional.meta(name: :data)
+          text: ROM::SQL::Types::String.meta(name: :text),
+          flag: ROM::SQL::Types::Bool.meta(name: :flag),
+          date: ROM::SQL::Types::Date.optional.meta(name: :date),
+          datetime: ROM::SQL::Types::Time.meta(name: :datetime),
+          money: ROM::SQL::Types::Decimal.meta(name: :money),
+          data: ROM::SQL::Types::String.optional.meta(name: :data)
         )
       end
     end
