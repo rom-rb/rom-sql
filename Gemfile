@@ -2,6 +2,10 @@ source 'https://rubygems.org'
 
 gemspec
 
+gem 'dry-struct',     require: false, github: 'dry-rb/dry-struct'     # FIXME: this is needed until they will release 0.1
+gem 'dry-types',      require: false, github: 'dry-rb/dry-types'      # FIXME: this is needed until they will release 0.9
+gem 'dry-validation', require: false, github: 'dry-rb/dry-validation' # FIXME: this is needed until they will release 0.10
+
 group :test do
   gem 'byebug', platforms: :mri
   gem 'anima', '~> 0.2.0'
