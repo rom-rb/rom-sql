@@ -175,9 +175,7 @@ RSpec.describe ROM::SQL::Types, :postgres do
     end
 
     it 'raises error for float' do
-      expect do
-        described_class[3.14]
-      end.to raise_error(ArgumentError, "can't omit precision for a Float.")
+      expect(described_class[3.14]).to eq(BigDecimal.new(3.14, BigDecimal.double_fig))
     end
 
     it 'accepts decimal' do
