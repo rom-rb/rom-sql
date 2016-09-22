@@ -10,7 +10,7 @@ before_script:
   - mysql -e 'create database rom_sql;'
 script: "bundle exec rake ci"
 rvm:
-  - 2.1.9
+  - 2.1.10
   - 2.2.5
   - 2.3.1
   - rbx-2

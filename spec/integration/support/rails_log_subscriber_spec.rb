@@ -1,11 +1,12 @@
 require 'spec_helper'
 
-require 'rom/sql/support/active_support_notifications'
-require 'rom/sql/support/rails_log_subscriber'
-
 require 'active_support/log_subscriber/test_helper'
 
 RSpec.describe 'Rails log subscriber', :postgres do
+  before do
+    ROM::SQL.load_extensions(:active_support_notifications, :rails_log_subscriber)
+  end
+
   include ActiveSupport::LogSubscriber::TestHelper
 
   include_context 'database setup'

@@ -2,6 +2,8 @@ source 'https://rubygems.org'
 
 gemspec
 
+gem 'rom', github: 'rom-rb/rom', branch: 'add-dry-core'
+
 group :test do
   gem 'byebug', platforms: :mri
   gem 'anima', '~> 0.2.0'

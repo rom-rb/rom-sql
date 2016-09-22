@@ -1,9 +1,14 @@
 require 'dry-equalizer'
 require 'sequel'
+require 'dry/core/extensions'
 require 'rom'
 
 module ROM
   MissingConfigurationError = Class.new(StandardError)
+
+  module SQL
+    extend Dry::Core::Extensions
+  end
 end
 
 require 'rom/configuration_dsl'
@@ -14,10 +19,10 @@ require 'rom/sql/plugins'
 require 'rom/sql/relation'
 require 'rom/sql/gateway'
 require 'rom/sql/migration'
+require 'rom/sql/extensions'
 
 if defined?(Rails)
-  require 'rom/sql/support/active_support_notifications'
-  require 'rom/sql/support/rails_log_subscriber'
+  ROM::SQL.load_extensions(:active_support_notifications, :rails_log_subscriber)
 end
 
 ROM.register_adapter(:sql, ROM::SQL)
