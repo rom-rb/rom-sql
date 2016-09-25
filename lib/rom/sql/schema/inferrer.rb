@@ -13,6 +13,7 @@ module ROM
           datetime: Types::Strict::Time,
           boolean: Types::Strict::Bool,
           decimal: Types::Strict::Decimal,
+          float: Types::Strict::Float,
           blob: Types::Strict::String
         ).freeze
 
