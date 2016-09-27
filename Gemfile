@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'rom', github: 'rom-rb/rom', branch: 'add-dry-core'
+gem 'rom', github: 'rom-rb/rom', branch: 'update-inferrer-interface'
 
 group :test do
   gem 'byebug', platforms: :mri

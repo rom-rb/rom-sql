@@ -16,10 +16,13 @@ module ROM
         end
 
         def opts
-          opts = {}
-          opts[:associations] = associations_dsl.call if associations_dsl
-          opts[:inferrer] = inferrer.new(self) if inferrer
-          opts
+          opts = { inferrer: inferrer }
+
+          if associations_dsl
+            { **opts, associations: associations_dsl.call }
+          else
+            opts
+          end
         end
       end
     end

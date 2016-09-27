@@ -19,28 +19,15 @@ module ROM
 
         pk_type Types::Serial
 
-        attr_reader :dsl
-
-        def initialize(dsl)
-          @dsl = dsl
-        end
-
         # @api private
         def call(dataset, gateway)
           columns = gateway.connection.schema(dataset)
           fks = fks_for(gateway, dataset)
 
-          columns.each do |(name, definition)|
-            dsl.attribute name, build_type(definition.merge(foreign_key: fks[name]))
+          columns.each_with_object({}) do |(name, definition), attrs|
+            type = build_type(definition.merge(foreign_key: fks[name]))
+            attrs[name] = type.meta(name: name)
           end
-
-          pks = columns
-            .map { |(name, definition)| name if definition.fetch(:primary_key) }
-            .compact
-
-          dsl.primary_key(*pks) if pks.any?
-
-          dsl.attributes
         end
 
         private
@@ -48,7 +35,7 @@ module ROM
         # @api private
         def build_type(primary_key: , type: , allow_null: , foreign_key: , **rest)
           if primary_key
-            self.class.pk_type
+            self.class.pk_type.meta(primary_key: true)
           else
             type = self.class.type_mapping.fetch(type)
             type = type.optional if allow_null

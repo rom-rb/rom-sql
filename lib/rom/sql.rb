@@ -1,14 +1,9 @@
 require 'dry-equalizer'
 require 'sequel'
-require 'dry/core/extensions'
 require 'rom'
 
 module ROM
   MissingConfigurationError = Class.new(StandardError)
-
-  module SQL
-    extend Dry::Core::Extensions
-  end
 end
 
 require 'rom/configuration_dsl'
