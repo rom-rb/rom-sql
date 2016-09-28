@@ -28,7 +28,7 @@ RSpec.describe 'ROM::SQL::Types', :postgres do
   end
 
   describe 'ROM::SQL::Types::PG::Bytea' do
-    it 'coerses strings to Sequel::SQL::Blob' do
+    it 'coerces strings to Sequel::SQL::Blob' do
       input = 'sutin'
       output = ROM::SQL::Types::PG::Bytea[input]
 

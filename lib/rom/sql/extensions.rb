@@ -4,6 +4,10 @@ module ROM
   module SQL
     extend Dry::Core::Extensions
 
+    def self.available_extension?(database_type)
+      @__available_extensions__.key?(database_type)
+    end
+
     register_extension(:postgres) do
       require 'rom/sql/extensions/postgres'
     end
