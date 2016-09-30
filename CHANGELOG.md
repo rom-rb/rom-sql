@@ -4,6 +4,10 @@
 
 * `Associations::{OneToMany,OneToOne}#associate` for merging FKs into child tuple (jodosha)
 
+### Fixed
+
+* Floats are inferred by schemas (cflipse)
+
 [Compare v0.8.0...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.8.0...HEAD)
 
 ## v0.8.0 2016-07-27
