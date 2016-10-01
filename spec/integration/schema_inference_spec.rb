@@ -71,7 +71,7 @@ RSpec.describe 'Schema inference', :postgres do
 
           conn.create_table :test_broken_inferrence do
             primary_key :id
-            Json :json_data
+            json :json_data
           end
 
           conf.relation(dataset) do

@@ -6,8 +6,8 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
 
     conn.create_table :test_inferrence do
       primary_key :id
-      Bytea :binary_data
-      Json :json_data
+      bytea :binary_data
+      json :json_data
     end
   end
 
