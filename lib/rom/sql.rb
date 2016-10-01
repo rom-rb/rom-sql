@@ -2,14 +2,11 @@ require 'dry-equalizer'
 require 'sequel'
 require 'rom'
 
-module ROM
-  MissingConfigurationError = Class.new(StandardError)
-end
+require 'rom/sql/version'
+require 'rom/sql/errors'
 
 require 'rom/configuration_dsl'
 
-require 'rom/sql/version'
-require 'rom/sql/errors'
 require 'rom/sql/plugins'
 require 'rom/sql/relation'
 require 'rom/sql/gateway'

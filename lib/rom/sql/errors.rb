@@ -1,7 +1,8 @@
-require "rom/sql/error"
+require 'rom/sql/error'
 
 module ROM
   module SQL
+    MissingConfigurationError = Class.new(StandardError)
     NoAssociationError        = Class.new(StandardError)
     DatabaseError             = Class.new(Error)
     ConstraintError           = Class.new(Error)
@@ -9,6 +10,7 @@ module ROM
     UniqueConstraintError     = Class.new(ConstraintError)
     ForeignKeyConstraintError = Class.new(ConstraintError)
     CheckConstraintError      = Class.new(ConstraintError)
+    UnknownDBTypeError        = Class.new(StandardError)
 
     ERROR_MAP = {
       Sequel::DatabaseError => DatabaseError,

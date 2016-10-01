@@ -62,6 +62,31 @@ RSpec.describe 'Schema inference', :postgres do
           float: ROM::SQL::Types::Strict::Float.optional.meta(name: :float)
         )
       end
+
+      context 'for unknown datatypes' do
+        let(:dataset) { :test_broken_inferrence }
+
+        before do
+          conn.drop_table?(:test_broken_inferrence)
+
+          conn.create_table :test_broken_inferrence do
+            primary_key :id
+            Json :json_data
+          end
+
+          conf.relation(dataset) do
+            schema_inferrer ROM::SQL::Schema::Inferrer.new
+            schema(:test_broken_inferrence, infer: true)
+          end
+        end
+
+        it 'throws a friendly exception' do
+          expect { schema.attributes }.to raise_error(
+            ROM::SQL::UnknownDBTypeError,
+            "Cannot find corresponding type for json"
+          )
+        end
+      end
     end
   end
 end

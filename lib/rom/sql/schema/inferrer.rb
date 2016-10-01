@@ -52,14 +52,17 @@ module ROM
 
         private
 
-        def build_type(primary_key: , type: , allow_null: , foreign_key: , **rest)
+        def build_type(primary_key: , db_type: , type: , allow_null: , foreign_key: , **rest)
           if primary_key
             self.class.pk_type.meta(primary_key: true)
           else
-            type = self.class.type_mapping.fetch(type)
-            type = type.optional if allow_null
-            type = type.meta(foreign_key: true, relation: foreign_key) if foreign_key
-            type
+            type ||= db_type.to_sym
+            mapped_type = self.class.type_mapping.fetch(type) {
+              raise UnknownDBTypeError, "Cannot find corresponding type for #{type}"
+            }
+            mapped_type = mapped_type.optional if allow_null
+            mapped_type = mapped_type.meta(foreign_key: true, relation: foreign_key) if foreign_key
+            mapped_type
           end
         end
 
