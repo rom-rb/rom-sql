@@ -2,6 +2,9 @@ source 'https://rubygems.org'
 
 gemspec
 
+gem 'dry-core', github: 'dry-rb/dry-core'
+gem 'rom', github: 'rom-rb/rom', branch: 'update-inferrer-interface'
+
 group :test do
   gem 'byebug', platforms: :mri
   gem 'anima', '~> 0.2.0'

@@ -42,7 +42,10 @@ module ROM
 
         klass.class_eval do
           schema_dsl SQL::Schema::DSL
-          schema_inferrer ROM::SQL::Schema::Inferrer
+          schema_inferrer -> (dataset, gateway) do
+            inferrer_for_db = ROM::SQL::Schema::Inferrer.get(gateway.connection.database_type.to_sym)
+            inferrer_for_db.new.call(dataset, gateway)
+          end
 
           dataset do
             table = opts[:from].first

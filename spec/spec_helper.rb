@@ -45,6 +45,8 @@ Dir[root.join('support/**/*')].each { |f| require f }
 require 'rom/support/deprecations'
 ROM::Deprecations.set_logger!(root.join('../log/deprecations.log'))
 
+ROM::SQL.load_extensions(:postgres)
+
 module ENVHelper
   def db?(type, example)
     example.metadata[type]
