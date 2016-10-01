@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gemspec
 
+gem 'dry-core', github: 'dry-rb/dry-core'
 gem 'rom', github: 'rom-rb/rom', branch: 'update-inferrer-interface'
 
 group :test do
