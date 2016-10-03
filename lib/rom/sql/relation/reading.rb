@@ -305,6 +305,24 @@ module ROM
           __new__(dataset.__send__(__method__, *args, &block))
         end
 
+        # Restrict a relation to match grouping criteria
+        #
+        # @example
+        #   users.with_task_count.having( task_count: 2 )
+        #
+        #   users.with_task_count.having { task_count > 3 }
+        #
+        # @param [Hash] *args An optional hash with conditions for HAVING clause
+        #
+        # @return [Relation]
+        #
+        # @see http://sequel.jeremyevans.net/rdoc/files/doc/dataset_filtering_rdoc.html
+        #
+        # @api public
+        def having(*args, &block)
+          __new__(dataset.__send__(__method__, *args, &block))
+        end
+
         # Inverts the current WHERE and HAVING clauses. If there is neither a
         # WHERE or HAVING clause, adds a WHERE clause that is always false.
         #
