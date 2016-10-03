@@ -110,7 +110,7 @@ RSpec.describe 'Reading relations' do
         container.relations[:goals].insert(id: 3, user_id: 1, title: 'Get Milk')
 
         users_with_goal_count = container.relation(:user_goal_counts).as(:user_goal_counts).all
-        ambitious_users = container.relation(:user_goal_counts).having(goal_count: 2).as(:user_goal_counts).all
+        ambitious_users = container.relation(:user_goal_counts).having{ count(:tasks__id) >= 2}.as(:user_goal_counts).all
 
         expect(users_with_goal_count.to_a).to eq([
           UserGoalCount.new(id: 1, name: "Jane", goal_count: 2),
