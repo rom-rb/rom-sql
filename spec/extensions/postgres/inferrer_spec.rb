@@ -6,8 +6,8 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
 
     conn.create_table :test_inferrence do
       primary_key :id
-      bytea :binary_data
-      json :json_data
+      Json :json_data
+      Decimal :money, null: false
     end
   end
 
@@ -26,8 +26,8 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
     it 'can infer attributes for dataset' do
       expect(schema.attributes).to eql(
         id: ROM::SQL::Types::Serial.meta(name: :id),
-        binary_data: ROM::SQL::Types::Strict::String.optional.meta(name: :binary_data),
-        json_data: ROM::SQL::Types::PG::JSON.optional.meta(name: :json_data)
+        json_data: ROM::SQL::Types::PG::JSON.optional.meta(name: :json_data),
+        money: ROM::SQL::Types::Strict::Decimal.meta(name: :money)
       )
     end
   end

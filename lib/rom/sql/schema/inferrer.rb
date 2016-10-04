@@ -5,7 +5,7 @@ module ROM
       class Inferrer
         extend ClassMacros
 
-        defines :type_mapping, :pk_type, :db_type, :db_registry
+        defines :type_mapping, :numeric_pk_type, :db_type, :db_registry
 
         type_mapping(
           integer: Types::Strict::Int,
@@ -15,10 +15,10 @@ module ROM
           boolean: Types::Strict::Bool,
           decimal: Types::Strict::Decimal,
           float: Types::Strict::Float,
-          blob: Types::Strict::String
+          blob: Types::Blob
         ).freeze
 
-        pk_type Types::Serial
+        numeric_pk_type Types::Serial
 
         db_registry Hash.new(self)
 
@@ -53,18 +53,25 @@ module ROM
 
         private
 
-        def build_type(primary_key: , db_type: , type: , allow_null: , foreign_key: , **rest)
+        def build_type(primary_key:, db_type:, type:, allow_null:, foreign_key:, **rest)
           if primary_key
-            self.class.pk_type.meta(primary_key: true)
+            map_pk_type(type, db_type)
           else
-            type ||= db_type.to_sym
-            mapped_type = self.class.type_mapping.fetch(type) {
-              raise UnknownDBTypeError, "Cannot find corresponding type for #{type}"
-            }
+            mapped_type = map_type(type, db_type)
             mapped_type = mapped_type.optional if allow_null
             mapped_type = mapped_type.meta(foreign_key: true, relation: foreign_key) if foreign_key
             mapped_type
           end
+        end
+
+        def map_pk_type(_ruby_type, _db_type)
+          self.class.numeric_pk_type.meta(primary_key: true)
+        end
+
+        def map_type(ruby_type, db_type)
+          self.class.type_mapping.fetch(ruby_type) {
+            raise UnknownDBTypeError, "Cannot find corresponding type for #{ruby_type || db_type}"
+          }
         end
 
         # @api private
