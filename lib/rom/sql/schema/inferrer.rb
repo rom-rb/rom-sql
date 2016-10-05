@@ -5,9 +5,9 @@ module ROM
       class Inferrer
         extend ClassMacros
 
-        defines :type_mapping, :numeric_pk_type, :db_type, :db_registry
+        defines :ruby_type_mapping, :numeric_pk_type, :db_type, :db_registry
 
-        type_mapping(
+        ruby_type_mapping(
           integer: Types::Strict::Int,
           string: Types::Strict::String,
           date: Types::Strict::Date,
@@ -69,7 +69,7 @@ module ROM
         end
 
         def map_type(ruby_type, db_type)
-          self.class.type_mapping.fetch(ruby_type) {
+          self.class.ruby_type_mapping.fetch(ruby_type) {
             raise UnknownDBTypeError, "Cannot find corresponding type for #{ruby_type || db_type}"
           }
         end

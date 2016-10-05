@@ -5,7 +5,7 @@ module ROM
   module SQL
     class Schema
       class PostgresInferrer < Inferrer[:postgres]
-        defines :db_numeric_types, :db_type_mapping, :ruby_type_mapping, :db_array_type_matcher
+        defines :db_numeric_types, :db_type_mapping, :db_array_type_matcher
 
         db_numeric_types(
           'smallint'         => true,
@@ -27,16 +27,6 @@ module ROM
           'jsonb' => Types::PG::JSONB,
         ).freeze
 
-        ruby_type_mapping(
-          integer: Types::Strict::Int,
-          string: Types::Strict::String,
-          date: Types::Strict::Date,
-          datetime: Types::Strict::Time,
-          boolean: Types::Strict::Bool,
-          decimal: Types::Strict::Decimal,
-          blob: Types::Strict::String
-        ).freeze
-
         db_array_type_matcher ']'.freeze
 
         private
@@ -51,17 +41,12 @@ module ROM
           if db_type.end_with?(self.class.db_array_type_matcher)
             Types::PG::Array
           else
-            map_db_type(db_type) || map_ruby_type(ruby_type) ||
-              raise(UnknownDBTypeError, "Cannot find corresponding type for #{ruby_type || db_type}")
+            map_db_type(db_type) || super
           end
         end
 
         def map_db_type(db_type)
           self.class.db_type_mapping[db_type]
-        end
-
-        def map_ruby_type(ruby_type)
-          self.class.ruby_type_mapping[ruby_type]
         end
 
         def numeric?(ruby_type, db_type)
