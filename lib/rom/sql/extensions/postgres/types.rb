@@ -31,19 +31,27 @@ module ROM
                    .new(Sequel::Postgres::JSONHash)
                    .constructor(Sequel.method(:pg_json))
 
-        JSON = JSONArray | JSONHash
+        JSONOp = Dry::Types::Definition
+                 .new(Sequel::Postgres::JSONOp)
+                 .constructor(Sequel.method(:pg_json))
+
+        JSON = JSONArray | JSONHash | JSONOp
 
         # JSONB
 
         JSONBArray = Dry::Types::Definition
-          .new(Sequel::Postgres::JSONBArray)
-          .constructor(Sequel.method(:pg_jsonb))
+                     .new(Sequel::Postgres::JSONBArray)
+                     .constructor(Sequel.method(:pg_jsonb))
 
         JSONBHash = Dry::Types::Definition
-          .new(Sequel::Postgres::JSONBHash)
-          .constructor(Sequel.method(:pg_jsonb))
+                    .new(Sequel::Postgres::JSONBHash)
+                    .constructor(Sequel.method(:pg_jsonb))
 
-        JSONB = JSONBArray | JSONBHash
+        JSONBOp = Dry::Types::Definition
+                  .new(Sequel::Postgres::JSONBOp)
+                  .constructor(Sequel.method(:pg_jsonb))
+
+        JSONB = JSONBArray | JSONBHash | JSONBOp
 
         # MONEY
 
