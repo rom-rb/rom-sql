@@ -33,8 +33,12 @@ module ROM
 
         def map_pk_type(type, db_type)
           if numeric?(type, db_type)
-            self.class.numeric_pk_type.meta(primary_key: true)
+            type = self.class.numeric_pk_type
+          else
+            type = map_type(type, db_type)
           end
+
+          type.meta(primary_key: true)
         end
 
         def map_type(ruby_type, db_type)

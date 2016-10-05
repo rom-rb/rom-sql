@@ -7,7 +7,7 @@ module ROM
       module PG
         # UUID
 
-        UUID = Types::Strict::String.constrained(format: Regexp.new('^([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{2})([0-9a-f]{2})-([0-9a-f]{12})$'))
+        UUID = Types::Strict::String
 
         # Array
 
@@ -53,11 +53,11 @@ module ROM
 
         JSONB = JSONBArray | JSONBHash | JSONBOp
 
-        # MONEY
-
         Bytea = Dry::Types::Definition
                 .new(Sequel::SQL::Blob)
                 .constructor(Sequel::SQL::Blob.method(:new))
+
+        # MONEY
 
         Money = Types::Strict::Decimal
       end

@@ -32,14 +32,6 @@ RSpec.describe 'ROM::SQL::Types' do
 
       expect(output).to be_instance_of(String)
     end
-
-    it 'raises error in case of malformed UUID' do
-      input = 'sutin'
-      expect {
-        described_class[input]
-      }.to raise_error(Dry::Types::ConstraintError),
-                       %("#{input}" violates constraints (format?(/^([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{2})([0-9a-f]{2})-([0-9a-f]{12})$/) failed))
-    end
   end
 
   describe ROM::SQL::Types::PG::Array do
