@@ -32,8 +32,8 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
         json_data: ROM::SQL::Types::PG::JSON.optional.meta(name: :json_data),
         jsonb_data: ROM::SQL::Types::PG::JSONB.optional.meta(name: :jsonb_data),
         money: ROM::SQL::Types::Strict::Decimal.meta(name: :money),
-        tags: ROM::SQL::Types::PG::Array.optional.meta(name: :tags),
-        tag_ids: ROM::SQL::Types::PG::Array.optional.meta(name: :tag_ids)
+        tags: ROM::SQL::Types::PG::Array('text').optional.meta(name: :tags),
+        tag_ids: ROM::SQL::Types::PG::Array('biging').optional.meta(name: :tag_ids)
       )
     end
   end

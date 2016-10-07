@@ -16,7 +16,10 @@ module ROM
 
         Array = Dry::Types::Definition
                 .new(Sequel::Postgres::PGArray)
-                .constructor(Sequel.method(:pg_array))
+
+        def self.Array(db_type)
+          Array.constructor(-> (v) { Sequel.pg_array(v, db_type) }).meta(type: db_type)
+        end
 
         # JSON
 

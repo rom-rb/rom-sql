@@ -27,7 +27,7 @@ module ROM
           'jsonb' => Types::PG::JSONB,
         ).freeze
 
-        db_array_type_matcher ']'.freeze
+        db_array_type_matcher Sequel::Postgres::PGArray::EMPTY_BRACKET
 
         private
 
@@ -43,7 +43,7 @@ module ROM
 
         def map_type(ruby_type, db_type)
           if db_type.end_with?(self.class.db_array_type_matcher)
-            Types::PG::Array
+            Types::PG::Array(db_type)
           else
             map_db_type(db_type) || super
           end

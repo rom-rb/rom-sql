@@ -37,7 +37,7 @@ RSpec.describe 'ROM::SQL::Types' do
   describe ROM::SQL::Types::PG::Array do
     it 'coerces to pg array' do
       input  = [1, 2, 3]
-      output = described_class[input]
+      output = ROM::SQL::Types::PG::Array('integer')[input]
 
       expect(output).to be_instance_of(Sequel::Postgres::PGArray)
       expect(output.to_a).to eql(input)
@@ -45,7 +45,7 @@ RSpec.describe 'ROM::SQL::Types' do
 
     it 'accepts any other type of objects' do
       input  = [nil, 1, 'sutin', :sutin, 1.0, {}].sample
-      output = described_class[input]
+      output = ROM::SQL::Types::PG::Array('integer')[input]
 
       expect(output).to be_instance_of(Sequel::Postgres::ArrayOp)
       expect(output.value).to eql(input)
