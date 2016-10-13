@@ -7,7 +7,7 @@ module ROM
       module PG
         # UUID
 
-        UUID = Types::Strict::String
+        UUID = Types::String
 
         # Array
 
@@ -62,7 +62,7 @@ module ROM
 
         # MONEY
 
-        Money = Types::Strict::Decimal
+        Money = Types::Decimal
       end
     end
   end
