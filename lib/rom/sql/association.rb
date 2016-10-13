@@ -68,8 +68,8 @@ module ROM
   end
 end
 
-require 'rom/sql/association/one_to_one'
 require 'rom/sql/association/one_to_many'
+require 'rom/sql/association/one_to_one'
 require 'rom/sql/association/many_to_many'
 require 'rom/sql/association/many_to_one'
 require 'rom/sql/association/one_to_one_through'
