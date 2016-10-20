@@ -3,15 +3,15 @@ RSpec.describe 'Schema inference for common datatypes' do
 
   let(:schema) { container.relations[dataset].schema }
 
-  with_adapters do
-    before do
-      dataset = self.dataset
-      conf.relation(dataset) do
-        schema(dataset, infer: true)
-      end
-    end
-
+  with_adapters do |adapter|
     describe 'inferring attributes' do
+      before do
+        dataset = self.dataset
+        conf.relation(dataset) do
+          schema(dataset, infer: true)
+        end
+      end
+
       context 'for simple table' do
         let(:dataset) { :users }
 
@@ -73,28 +73,47 @@ RSpec.describe 'Schema inference for common datatypes' do
     end
 
     describe 'using commands with inferred schema' do
-      describe 'inserting' do
-        let(:dataset) { :users }
-        let(:relation) { container.relation(:users) }
-        let(:create) { commands[dataset].create }
+      let(:relation) { container.relation(:people) }
 
-        before do
-          conf.commands(:users) do
-            define(:create) do
-              result :one
-            end
-          end
+      before do
+        conn.drop_table?(:people)
+
+        conf.relation(:people) do
+          schema(dataset, infer: true)
         end
 
-        it "doesn't coerce or check types on insert by default" do
-          result = create.call(name: Sequel.function(:upper, 'Jade'))
+        conf.commands(:people) do
+          define(:create) do
+            result :one
+          end
+        end
+      end
 
-          expect(result).to eql(id: 1, name: 'JADE')
+      describe 'inserting' do
+        let(:create) { commands[:people].create }
+
+        context "Sequel's types" do
+          before do
+            conn.create_table :people do
+              primary_key :id
+              String :name, null: false
+            end
+          end
+
+          it "doesn't coerce or check types on insert by default" do
+            result = create.call(name: Sequel.function(:upper, 'Jade'))
+
+            expect(result).to eql(id: 1, name: 'JADE')
+          end
         end
 
         context 'nullable columns' do
           before do
-            conn.add_column :users, :age, :integer, null: true
+            conn.create_table :people do
+              primary_key :id
+              String :name, null: false
+              Integer :age, null: true
+            end
           end
 
           it 'allows to insert records with nil value' do
@@ -112,7 +131,11 @@ RSpec.describe 'Schema inference for common datatypes' do
 
         context 'columns with default value' do
           before do
-            conn.add_column :users, :age, :integer, null: false, default: 18
+            conn.create_table :people do
+              primary_key :id
+              String :name, null: false
+              Integer :age, null: false, default: 18
+            end
           end
 
           it 'sets default value on missing key' do
@@ -123,6 +146,74 @@ RSpec.describe 'Schema inference for common datatypes' do
 
           it 'raises an error on inserting nil value' do
             expect { create.call(name: 'Jade', age: nil) }.to raise_error(ROM::SQL::NotNullConstraintError)
+          end
+        end
+
+        context 'coercions' do
+          context 'date' do
+            before do
+              conn.create_table :people do
+                primary_key :id
+                String :name, null: false
+                Date :birth_date, null: false
+              end
+            end
+
+            it 'accetps Time' do
+              time = Time.iso8601('1970-01-01T06:00:00')
+              result = create.call(name: 'Jade', birth_date: time)
+
+              expect(result).to eql(id: 1, name: 'Jade', birth_date: Date.iso8601('1970-01-01T00:00:00'))
+            end
+          end
+
+          context 'timestamp' do |ctx|
+            before do
+              conn.create_table :people do
+                primary_key :id
+                String :name, null: false
+                Time :created_at, null: false
+              end
+            end
+
+            it 'accepts Date' do
+              date = Date.today
+              result = create.call(name: 'Jade', created_at: date)
+
+              expect(result).to eql(id: 1, name: 'Jade', created_at: date.to_time)
+            end
+
+            it 'accepts Time' do |ex|
+              now = Time.now
+              result = create.call(name: 'Jade', created_at: now)
+
+              expected_time = mysql?(ex) ? Time.at(now.to_i) : now
+              expect(result).to eql(id: 1, name: 'Jade', created_at: expected_time)
+            end
+
+            it 'accepts DateTime' do |ex|
+              now = DateTime.now
+              result = create.call(name: 'Jade', created_at: now)
+
+              expected_time = mysql?(ex) ? Time.at(now.to_time.to_i) : now.to_time
+              expect(result).to eql(id: 1, name: 'Jade', created_at: expected_time)
+            end
+
+            if !metadata[:mysql]
+              it 'accepts strings in RFC 2822' do
+                now = Time.now
+                result = create.call(name: 'Jade', created_at: now.rfc822)
+
+                expect(result).to eql(id: 1, name: 'Jade', created_at: Time.at(now.to_i))
+              end
+
+              it 'accepts strings in RFC 3339' do
+                now = DateTime.now
+                result = create.call(name: 'Jade', created_at: now.rfc3339)
+
+                expect(result).to eql(id: 1, name: 'Jade', created_at: Time.at(now.to_time.to_i))
+              end
+            end
           end
         end
       end
