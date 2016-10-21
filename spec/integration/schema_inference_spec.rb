@@ -3,6 +3,11 @@ RSpec.describe 'Schema inference for common datatypes' do
 
   let(:schema) { container.relations[dataset].schema }
 
+  def trunc_ts(time, drop_usec: false)
+    usec = drop_usec ? 0 : time.to_time.usec.floor
+    Time.mktime(time.year, time.month, time.day, time.hour, time.min, time.sec, usec)
+  end
+
   with_adapters do |adapter|
     describe 'inferring attributes' do
       before do
@@ -187,7 +192,7 @@ RSpec.describe 'Schema inference for common datatypes' do
               now = Time.now
               result = create.call(name: 'Jade', created_at: now)
 
-              expected_time = mysql?(ex) ? Time.at(now.to_i) : now
+              expected_time = trunc_ts(now, drop_usec: mysql?(ex))
               expect(result).to eql(id: 1, name: 'Jade', created_at: expected_time)
             end
 
@@ -195,7 +200,7 @@ RSpec.describe 'Schema inference for common datatypes' do
               now = DateTime.now
               result = create.call(name: 'Jade', created_at: now)
 
-              expected_time = mysql?(ex) ? Time.at(now.to_time.to_i) : now.to_time
+              expected_time = trunc_ts(now, drop_usec: mysql?(ex))
               expect(result).to eql(id: 1, name: 'Jade', created_at: expected_time)
             end
 
@@ -204,14 +209,14 @@ RSpec.describe 'Schema inference for common datatypes' do
                 now = Time.now
                 result = create.call(name: 'Jade', created_at: now.rfc822)
 
-                expect(result).to eql(id: 1, name: 'Jade', created_at: Time.at(now.to_i))
+                expect(result).to eql(id: 1, name: 'Jade', created_at: trunc_ts(now, drop_usec: true))
               end
 
               it 'accepts strings in RFC 3339' do
                 now = DateTime.now
                 result = create.call(name: 'Jade', created_at: now.rfc3339)
 
-                expect(result).to eql(id: 1, name: 'Jade', created_at: Time.at(now.to_time.to_i))
+                expect(result).to eql(id: 1, name: 'Jade', created_at: trunc_ts(now, drop_usec: true))
               end
             end
           end

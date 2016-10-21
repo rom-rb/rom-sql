@@ -3,6 +3,7 @@ RSpec.describe 'PostgreSQL extension', :postgres do
 
   before do
     conn.drop_table?(:pg_people)
+    conn.drop_table?(:people)
 
     conn.create_table :pg_people do
       primary_key :id
