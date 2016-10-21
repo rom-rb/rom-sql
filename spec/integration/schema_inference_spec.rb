@@ -172,51 +172,53 @@ RSpec.describe 'Schema inference for common datatypes' do
             end
           end
 
-          context 'timestamp' do |ctx|
-            before do
-              conn.create_table :people do
-                primary_key :id
-                String :name, null: false
-                Time :created_at, null: false
+          unless metadata[:sqlite] && defined? JRUBY_VERSION
+            context 'timestamp' do
+              before do
+                conn.create_table :people do
+                  primary_key :id
+                  String :name, null: false
+                  Timestamp :created_at, null: false
+                end
               end
-            end
 
-            it 'accepts Date' do
-              date = Date.today
-              result = create.call(name: 'Jade', created_at: date)
+              it 'accepts Date' do
+                date = Date.today
+                result = create.call(name: 'Jade', created_at: date)
 
-              expect(result).to eql(id: 1, name: 'Jade', created_at: date.to_time)
-            end
+                expect(result).to eql(id: 1, name: 'Jade', created_at: date.to_time)
+              end
 
-            it 'accepts Time' do |ex|
-              now = Time.now
-              result = create.call(name: 'Jade', created_at: now)
-
-              expected_time = trunc_ts(now, drop_usec: mysql?(ex))
-              expect(result).to eql(id: 1, name: 'Jade', created_at: expected_time)
-            end
-
-            it 'accepts DateTime' do |ex|
-              now = DateTime.now
-              result = create.call(name: 'Jade', created_at: now)
-
-              expected_time = trunc_ts(now, drop_usec: mysql?(ex))
-              expect(result).to eql(id: 1, name: 'Jade', created_at: expected_time)
-            end
-
-            if !metadata[:mysql]
-              it 'accepts strings in RFC 2822' do
+              it 'accepts Time' do |ex|
                 now = Time.now
-                result = create.call(name: 'Jade', created_at: now.rfc822)
+                result = create.call(name: 'Jade', created_at: now)
 
-                expect(result).to eql(id: 1, name: 'Jade', created_at: trunc_ts(now, drop_usec: true))
+                expected_time = trunc_ts(now, drop_usec: mysql?(ex))
+                expect(result).to eql(id: 1, name: 'Jade', created_at: expected_time)
               end
 
-              it 'accepts strings in RFC 3339' do
+              it 'accepts DateTime' do |ex|
                 now = DateTime.now
-                result = create.call(name: 'Jade', created_at: now.rfc3339)
+                result = create.call(name: 'Jade', created_at: now)
 
-                expect(result).to eql(id: 1, name: 'Jade', created_at: trunc_ts(now, drop_usec: true))
+                expected_time = trunc_ts(now, drop_usec: mysql?(ex))
+                expect(result).to eql(id: 1, name: 'Jade', created_at: expected_time)
+              end
+
+              if !metadata[:mysql]
+                it 'accepts strings in RFC 2822' do
+                  now = Time.now
+                  result = create.call(name: 'Jade', created_at: now.rfc822)
+
+                  expect(result).to eql(id: 1, name: 'Jade', created_at: trunc_ts(now, drop_usec: true))
+                end
+
+                it 'accepts strings in RFC 3339' do
+                  now = DateTime.now
+                  result = create.call(name: 'Jade', created_at: now.rfc3339)
+
+                  expect(result).to eql(id: 1, name: 'Jade', created_at: trunc_ts(now, drop_usec: true))
+                end
               end
             end
           end
