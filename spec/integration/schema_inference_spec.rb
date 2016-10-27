@@ -53,6 +53,7 @@ RSpec.describe 'Schema inference for common datatypes' do
             Boolean :flag, null: false
             Date :date
             DateTime :datetime, null: false
+            String :enum
 
             if ctx.postgres?(example)
               Bytea :data
@@ -71,7 +72,8 @@ RSpec.describe 'Schema inference for common datatypes' do
             flag: ROM::SQL::Types::Bool.meta(name: :flag),
             date: ROM::SQL::Types::Date.optional.meta(name: :date),
             datetime: ROM::SQL::Types::Time.meta(name: :datetime),
-            data: ROM::SQL::Types::Blob.optional.meta(name: :data)
+            data: ROM::SQL::Types::Blob.optional.meta(name: :data),
+            enum: ROM::SQL::Types::String.optional.meta(name: :enum)
           )
         end
       end

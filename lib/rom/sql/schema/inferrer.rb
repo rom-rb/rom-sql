@@ -15,7 +15,8 @@ module ROM
           boolean: Types::Bool,
           decimal: Types::Decimal,
           float: Types::Float,
-          blob: Types::Blob
+          blob: Types::Blob,
+          enum: Types::String
         ).freeze
 
         numeric_pk_type Types::Serial
