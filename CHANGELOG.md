@@ -1,10 +1,14 @@
-## v0.8.1 to-be-released
+## v0.9.0 to-be-released
 
 ### Added
 
 * `Associations::{OneToMany,OneToOne}#associate` for merging FKs into child tuple (jodosha)
 * Support for DB specific schema inferrers (flash-gordon)
 * Automatically infer PG arrays and JSON(B) types (jodosha + flash-gordon)
+
+### Changed
+
+* Inferred types in schemas are no longer strict (flash-gordon)
 
 ### Fixed
 
