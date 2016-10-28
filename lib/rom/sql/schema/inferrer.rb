@@ -8,13 +8,13 @@ module ROM
         defines :ruby_type_mapping, :numeric_pk_type, :db_type, :db_registry
 
         ruby_type_mapping(
-          integer: Types::Strict::Int,
-          string: Types::Strict::String,
-          date: Types::Strict::Date,
-          datetime: Types::Strict::Time,
-          boolean: Types::Strict::Bool,
-          decimal: Types::Strict::Decimal,
-          float: Types::Strict::Float,
+          integer: Types::Int,
+          string: Types::String,
+          date: Types::Date,
+          datetime: Types::Time,
+          boolean: Types::Bool,
+          decimal: Types::Decimal,
+          float: Types::Float,
           blob: Types::Blob
         ).freeze
 

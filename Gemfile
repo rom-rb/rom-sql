@@ -2,8 +2,8 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'dry-core', github: 'dry-rb/dry-core'
-gem 'rom', github: 'rom-rb/rom'
+gem 'dry-core', github: 'dry-rb/dry-core', branch: 'master'
+gem 'rom', github: 'rom-rb/rom', branch: 'master'
 
 group :test do
   gem 'byebug', platforms: :mri
