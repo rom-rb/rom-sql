@@ -38,6 +38,10 @@ RSpec.describe 'Commands / Create', :postgres do
     conf.commands(:tasks) do
       define(:create)
     end
+
+    conf.commands(:puppies) do
+      define(:create)
+    end
   end
 
   with_adapters do
@@ -180,6 +184,14 @@ RSpec.describe 'Commands / Create', :postgres do
     it 're-raises not-null constraint violation error' do
       expect {
         users.try { users.create.call(name: nil) }
+      }.to raise_error(ROM::SQL::NotNullConstraintError)
+    end
+
+    it 're-raises not-null constraint violation error with nil boolean' do
+      puppies = commands[:puppies]
+
+      expect {
+        puppies.try { puppies.create.call(name: 'Charlie', cute: nil) }
       }.to raise_error(ROM::SQL::NotNullConstraintError)
     end
 
