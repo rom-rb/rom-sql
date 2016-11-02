@@ -2,7 +2,6 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'dry-core', github: 'dry-rb/dry-core', branch: 'master'
 gem 'rom', github: 'rom-rb/rom', branch: 'master'
 
 group :test do
