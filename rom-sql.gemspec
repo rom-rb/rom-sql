@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'sequel', '~> 4.25'
   spec.add_runtime_dependency 'dry-equalizer', '~> 0.2'
   spec.add_runtime_dependency 'dry-types', '~> 0.8'
-  spec.add_runtime_dependency 'dry-core', '~> 0.1'
+  spec.add_runtime_dependency 'dry-core', '~> 0.2'
   spec.add_runtime_dependency 'rom', '~> 2.0'
   spec.add_runtime_dependency 'rom-support', '~> 2.0'
 
