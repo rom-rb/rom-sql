@@ -11,29 +11,6 @@ RSpec.describe 'ROM::SQL::Types', :postgres do
     end
   end
 
-  describe ROM::SQL::Types::Bool do
-    it 'returns nil when nil is given' do
-      input  = nil
-      output = described_class[input]
-
-      expect(output).to be(nil)
-    end
-
-    it 'returns true when true is given' do
-      input  = true
-      output = described_class[input]
-
-      expect(output).to be(true)
-    end
-
-    it 'returns false when false is given' do
-      input  = false
-      output = described_class[input]
-
-      expect(output).to be(false)
-    end
-  end
-
   describe ROM::SQL::Types::Blob do
     it 'coerces strings to Sequel::SQL::Blob' do
       input = 'sutin'

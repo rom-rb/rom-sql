@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'rom', github: 'rom-rb/rom', branch: 'master'
+gem 'dry-types', github: 'dry-rb/dry-types', branch: 'master'
 
 group :test do
   gem 'byebug', platforms: :mri
