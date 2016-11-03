@@ -19,6 +19,10 @@ RSpec.describe 'Commands / Create', :postgres do
 
     conn.add_index :users, :name, unique: true
 
+    conf.relation(:puppies) do
+      schema(infer: true)
+    end
+
     conf.commands(:users) do
       define(:create) do
         input Params
