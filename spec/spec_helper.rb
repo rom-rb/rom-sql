@@ -2,8 +2,8 @@ require 'bundler'
 Bundler.setup
 
 if RUBY_ENGINE == 'ruby' && RUBY_VERSION == '2.3.1'
-  require 'codeclimate-test-reporter'
-  CodeClimate::TestReporter.start
+  require 'simplecov'
+  SimpleCov.start
 end
 
 require 'rom-sql'

@@ -11,6 +11,7 @@ group :test do
   gem 'activesupport', '~> 4.2'
   gem 'rspec', '~> 3.1'
   gem 'codeclimate-test-reporter', require: false
+  gem 'simplecov', require: false
 
   if RUBY_ENGINE == 'rbx'
     gem 'pg', '~> 0.18.0', platforms: :rbx
