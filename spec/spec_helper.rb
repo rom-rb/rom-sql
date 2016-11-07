@@ -1,7 +1,7 @@
 require 'bundler'
 Bundler.setup
 
-if RUBY_ENGINE == 'ruby' && RUBY_VERSION == '2.3.1'
+if RUBY_ENGINE == 'ruby' && ENV['CI'] == 'true'
   require 'simplecov'
   SimpleCov.start do
     add_filter '/spec/'
