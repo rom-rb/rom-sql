@@ -1,20 +1,23 @@
-## v0.9.0 to-be-released
+## v0.9.0 2016-11-08
 
 ### Added
 
 * `Associations::{OneToMany,OneToOne}#associate` for merging FKs into child tuple (jodosha)
+* Added support for PostgreSQL types: UUID, Array, JSONB and Money (jodosha)
 * Support for DB specific schema inferrers (flash-gordon)
 * Automatically infer PG arrays and JSON(B) types (jodosha + flash-gordon)
 
 ### Changed
 
-* Inferred types in schemas are no longer strict (flash-gordon)
+* Inferred types in schemas **are no longer strict** (flash-gordon)
+* PG-specific types are handled by `:postgres` extension and it loads connection extensions automatically (flash-gordon)
+* Make `OneToOne` inherit from `OneToMany` (beauby)
 
 ### Fixed
 
 * Floats are inferred by schemas (cflipse)
 
-[Compare v0.8.0...HEAD](https://github.com/rom-rb/rom-sql/compare/v0.8.0...HEAD)
+[Compare v0.8.0...v0.9.0](https://github.com/rom-rb/rom-sql/compare/v0.8.0...v0.9.0)
 
 ## v0.8.0 2016-07-27
 
