@@ -1,6 +1,8 @@
 require 'dry-types'
 require 'sequel'
 
+Sequel.extension(*%i(pg_array pg_array_ops pg_json pg_json_ops))
+
 module ROM
   module SQL
     module Types
@@ -11,9 +13,6 @@ module ROM
 
         # Array
 
-        Sequel.extension(:pg_array)
-        Sequel.extension(:pg_array_ops)
-
         Array = Dry::Types::Definition
                 .new(Sequel::Postgres::PGArray)
 
@@ -22,9 +21,6 @@ module ROM
         end
 
         # JSON
-
-        Sequel.extension(:pg_json)
-        Sequel.extension(:pg_json_ops)
 
         JSONArray = Dry::Types::Definition
                     .new(Sequel::Postgres::JSONArray)

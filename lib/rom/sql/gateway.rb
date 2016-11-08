@@ -23,6 +23,10 @@ module ROM
         attr_accessor :instance
       end
 
+      CONNECTION_EXTENSIONS = {
+        postgres: %i(pg_array pg_json)
+      }.freeze
+
       # Return optionally configured logger
       #
       # @return [Object] logger
@@ -56,7 +60,7 @@ module ROM
         conn_options = options.reject { |k, _| repo_options.include?(k) }
 
         @connection = connect(uri, conn_options)
-        add_extensions(Array(options[:extensions])) if options[:extensions]
+        load_extensions(Array(options[:extensions]))
 
         super(uri, options.reject { |k, _| conn_options.keys.include?(k) })
 
@@ -177,11 +181,18 @@ module ROM
         end
       end
 
-      # Add extensions to the database connection
+      # Load database-specific extensions
       #
       # @api private
-      def add_extensions(exts)
-        connection.extension(*exts)
+      def load_extensions(exts)
+        db_type = connection.database_type.to_sym
+
+        if ROM::SQL.available_extension?(db_type)
+          ROM::SQL.load_extensions(db_type)
+        end
+
+        extensions = (CONNECTION_EXTENSIONS.fetch(db_type) { [] } + exts).uniq
+        connection.extension(*extensions)
       end
     end
   end

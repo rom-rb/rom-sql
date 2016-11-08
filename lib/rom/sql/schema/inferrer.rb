@@ -33,10 +33,6 @@ module ROM
         end
 
         def self.get(type)
-          if !db_registry.key?(type) && ROM::SQL.available_extension?(type)
-            ROM::SQL.load_extensions(type)
-          end
-
           db_registry[type]
         end
 

@@ -47,7 +47,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
       extensions = [:pg_array, :pg_enum]
       connection = Sequel.connect uri
 
-      expect(connection).to receive(:extension).with(:pg_array, :pg_enum)
+      expect(connection).to receive(:extension).with(:pg_array, :pg_json, :pg_enum)
 
       ROM::SQL::Gateway.new(connection, extensions: extensions)
     end
