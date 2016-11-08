@@ -6,6 +6,7 @@
 * Added support for PostgreSQL types: UUID, Array, JSONB and Money (jodosha)
 * Support for DB specific schema inferrers (flash-gordon)
 * Automatically infer PG arrays and JSON(B) types (jodosha + flash-gordon)
+* Support for `Relation#having` (cflipse)
 
 ### Changed
 
