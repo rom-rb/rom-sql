@@ -13,7 +13,7 @@
 [![Test Coverage](https://codeclimate.com/github/rom-rb/rom-sql/badges/coverage.svg)][codeclimate]
 [![Inline docs](http://inch-ci.org/github/rom-rb/rom-sql.svg?branch=master)][inchpages]
 
-RDBMS support for [Ruby Object Mapper](https://github.com/rom-rb/rom).
+SQL support for [rom-rb](https://github.com/rom-rb/rom).
 
 Resources:
 
@@ -37,10 +37,6 @@ Or install it yourself as:
     $ gem install rom-sql
 
 Check out [SQL guide](http://rom-rb.org/learn/sql/) for usage examples.
-
-## ROADMAP
-
-For details please refer to [issues](https://github.com/rom-rb/rom-sql/issues).
 
 ## License
 
