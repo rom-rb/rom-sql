@@ -36,8 +36,6 @@ Or install it yourself as:
 
     $ gem install rom-sql
 
-Check out [SQL guide](http://rom-rb.org/learn/sql/) for usage examples.
-
 ## License
 
 See `LICENSE` file.
