@@ -13,8 +13,11 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
   end
 
   describe 'sqlite with a file db', :sqlite, postgres: false do
+    before do
+      Tempfile.new('test.sqlite')
+    end
+
     it 'establishes an sqlite connection' do
-      db_file = Tempfile.new('test.sqlite')
       gateway = ROM::SQL::Gateway.new(uri)
       expect(gateway).to be_instance_of(ROM::SQL::Gateway)
     end
