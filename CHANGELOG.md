@@ -12,6 +12,7 @@
 * Inferred types in schemas **are no longer strict** (flash-gordon)
 * PG-specific types are handled by `:postgres` extension and it loads connection extensions automatically (flash-gordon)
 * Make `OneToOne` inherit from `OneToMany` (beauby)
+* Default dataset will use column names from schema if it's available (solnic)
 
 ### Fixed
 
