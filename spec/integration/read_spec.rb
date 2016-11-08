@@ -1,36 +1,26 @@
-require 'virtus'
+require 'dry-struct'
 
 RSpec.describe 'Reading relations' do
   include_context 'users and tasks'
 
   with_adapters do
     before :each do
-      class Goal
-        include Virtus.value_object(coerce: true)
-
-        values do
-          attribute :id, Integer
-          attribute :title, String
+      module Test
+        class Goal < Dry::Struct
+          attribute :id, Types::Strict::Int
+          attribute :title, Types::Strict::String
         end
-      end
 
-      class User
-        include Virtus.value_object(coerce: true)
-
-        values do
-          attribute :id, Integer
-          attribute :name, String
-          attribute :goals, Array[Goal]
+        class User < Dry::Struct
+          attribute :id, Types::Strict::Int
+          attribute :name, Types::Strict::String
+          attribute :goals, Types::Strict::Array.member(Goal)
         end
-      end
 
-      class UserGoalCount
-        include Virtus.value_object(coerce: true)
-
-        values do
-          attribute :id, Integer
-          attribute :name, String
-          attribute :goal_count, Integer
+        class UserGoalCount < Dry::Struct
+          attribute :id, Types::Strict::Int
+          attribute :name, Types::Strict::String
+          attribute :goal_count, Types::Strict::Int
         end
       end
 
@@ -79,10 +69,10 @@ RSpec.describe 'Reading relations' do
 
       conf.mappers do
         define(:users) do
-          model User
+          model Test::User
 
           group :goals do
-            model Goal
+            model Test::Goal
 
             attribute :id, from: :tasks_id
             attribute :title
@@ -90,7 +80,7 @@ RSpec.describe 'Reading relations' do
         end
 
         define(:user_goal_counts) do
-          model UserGoalCount
+          model Test::UserGoalCount
         end
       end
     end
@@ -99,8 +89,8 @@ RSpec.describe 'Reading relations' do
       user = container.relation(:users).as(:users).with_goals.by_name('Jane').to_a.first
 
       expect(user).to eql(
-        User.new(
-          id: 1, name: 'Jane', goals: [Goal.new(id: 2, title: "Jane's task")]
+        Test::User.new(
+          id: 1, name: 'Jane', goals: [Test::Goal.new(id: 2, title: "Jane's task")]
         ))
     end
 
@@ -112,8 +102,8 @@ RSpec.describe 'Reading relations' do
         users_with_goal_count = container.relation(:user_goal_counts).as(:user_goal_counts).all
 
         expect(users_with_goal_count.to_a).to eq([
-          UserGoalCount.new(id: 1, name: "Jane", goal_count: 2),
-          UserGoalCount.new(id: 2, name: "Joe", goal_count: 1)
+          Test::UserGoalCount.new(id: 1, name: "Jane", goal_count: 2),
+          Test::UserGoalCount.new(id: 2, name: "Joe", goal_count: 1)
         ])
       end
     end

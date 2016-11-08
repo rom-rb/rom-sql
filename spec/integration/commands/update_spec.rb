@@ -1,4 +1,4 @@
-require 'anima'
+require 'dry-struct'
 
 RSpec.describe 'Commands / Update' do
   include_context 'database setup'
@@ -37,6 +37,11 @@ RSpec.describe 'Commands / Update' do
 
     context 'without a schema' do
       before do
+        Test::User = Class.new(Dry::Struct) {
+          attribute :id, Types::Strict::Int
+          attribute :name, Types::Strict::String
+        }
+
         conf.relation(:users) do
           def by_id(id)
             where(id: id).limit(1)
@@ -50,8 +55,6 @@ RSpec.describe 'Commands / Update' do
         conf.commands(:users) do
           define(:update)
         end
-
-        Test::User = Class.new { include Anima.new(:id, :name) }
 
         conf.mappers do
           register :users, entity: -> tuples { tuples.map { |tuple| Test::User.new(tuple) } }

@@ -1,4 +1,4 @@
-require 'virtus'
+require 'dry-struct'
 
 RSpec.describe 'Commands / Create', :postgres do
   include_context 'relations'
@@ -7,13 +7,13 @@ RSpec.describe 'Commands / Create', :postgres do
   let(:tasks) { commands[:tasks] }
 
   before do
-    class Params
-      include Virtus.model
+    module Test
+      class Params < Dry::Struct
+        attribute :name, Types::Strict::String.optional
 
-      attribute :name
-
-      def self.[](input)
-        new(input)
+        def self.[](input)
+          new(input)
+        end
       end
     end
 
@@ -25,7 +25,7 @@ RSpec.describe 'Commands / Create', :postgres do
 
     conf.commands(:users) do
       define(:create) do
-        input Params
+        input Test::Params
 
         validator -> tuple {
           raise ROM::CommandError, 'name cannot be empty' if tuple[:name] == ''
@@ -219,14 +219,14 @@ RSpec.describe 'Commands / Create', :postgres do
 
     it 're-raises database errors' do
       expect {
-        Params.attribute :bogus_field
+        Test::Params.attribute :bogus_field, Types::Int
         users.try { users.create.call(name: 'some name', bogus_field: 23) }
       }.to raise_error(ROM::SQL::DatabaseError)
     end
 
     it 'supports [] syntax instead of call' do
       expect {
-        Params.attribute :bogus_field
+        Test::Params.attribute :bogus_field, Types::Int
         users.try { users.create[name: 'some name', bogus_field: 23] }
       }.to raise_error(ROM::SQL::DatabaseError)
     end

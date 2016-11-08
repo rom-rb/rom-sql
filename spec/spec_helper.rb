@@ -49,6 +49,11 @@ ROM::Deprecations.set_logger!(root.join('../log/deprecations.log'))
 
 ROM::SQL.load_extensions(:postgres)
 
+require 'dry-types'
+module Types
+  include Dry::Types.module
+end
+
 module ENVHelper
   def db?(type, example)
     example.metadata[type]
