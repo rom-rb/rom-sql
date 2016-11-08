@@ -21,6 +21,20 @@ RSpec.describe ROM::Relation, '#dataset' do
       end
     end
 
+    context 'with cherry-picked attributes in schema' do
+      before do
+        conf.relation(:users) do
+          schema do
+            attribute :id, ROM::SQL::Types::Serial
+          end
+        end
+      end
+
+      it 'uses schema to infer default dataset' do
+        expect(relation.dataset).to eql(dataset.select(:id).order(:users__id))
+      end
+    end
+
     context 'without schema' do
       before do
         conf.relation(:users)

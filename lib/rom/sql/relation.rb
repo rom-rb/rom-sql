@@ -52,7 +52,8 @@ module ROM
 
             if db.table_exists?(table)
               pk_header = klass.primary_key_header(db, table)
-              select(*columns).order(*pk_header.qualified)
+              col_names = klass.schema ? klass.schema.attributes.keys : columns
+              select(*col_names).order(*pk_header.qualified)
             else
               self
             end
