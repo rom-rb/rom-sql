@@ -1,6 +1,6 @@
 require 'dry-struct'
 
-RSpec.describe 'Reading relations' do
+RSpec.describe 'Reading relations using custom mappers' do
   include_context 'users and tasks'
 
   with_adapters do
