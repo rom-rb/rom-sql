@@ -21,7 +21,7 @@ shared_context 'database setup' do
     %i(task_tags users_tasks tasks tags
        subscriptions cards accounts
        posts users
-       rabbits carrots
+       rabbits carrots notes
        puppies schema_migrations
     ).each do |name|
       conn.drop_table?(name)
@@ -90,6 +90,14 @@ shared_context 'database setup' do
       primary_key :id
       String :name, null: false
       TrueClass :cute, null: false, default: true
+    end
+
+    conn.create_table :notes do
+      primary_key :id
+      String :text, null: false
+      DateTime :created_at, null: false
+      DateTime :updated_at, null: false
+      DateTime :completed_at
     end
   end
 
