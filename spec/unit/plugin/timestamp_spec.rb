@@ -19,15 +19,9 @@ RSpec.describe 'Plugin / Timestamp' do
           timestamp :updated_at, :created_at
         end
 
-
         define :update do
           use :timestamps
           timestamp :updated_at
-        end
-
-        define :complete, type: :update do
-          use :timestamps
-          timestamp :completed_at
         end
       end
     end
@@ -48,9 +42,24 @@ RSpec.describe 'Plugin / Timestamp' do
       end
     end
 
+    it "only updates specified timestamps" do
+      initial = container.command(:notes).create.call(text: "testing")
+      sleep 1  # Unfortunate, but unless I start injecting clocks into the
+               # command, this is needed to make sure the time actually changes
+      updated = container.command(:notes).update.call(text: "updated test").first
 
+      expect(updated[:created_at]).to eq initial[:created_at]
+      expect(updated[:updated_at]).not_to eq initial[:updated_at]
+    end
+
+    it "allows overriding timestamps" do
+      tomorrow = (Time.now + (60 * 60 * 24))
+
+      container.command(:notes).create.call(text: "testing")
+      updated = container.command(:notes).update.call(text: "updated test", updated_at: tomorrow).first
+
+      expect(updated[:updated_at].iso8601).to eq tomorrow.iso8601
+    end
   end
-
-
 
 end

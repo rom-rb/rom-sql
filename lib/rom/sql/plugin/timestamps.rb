@@ -34,7 +34,7 @@ module ROM
           end
 
           def execute(tuples)
-            time        = Time.now.utc.iso8601
+            time        = Time.now.utc
             timestamps  = {}
             timestamp_columns.each do |column|
               timestamps[column.to_sym]  = time
