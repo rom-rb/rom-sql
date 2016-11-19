@@ -13,6 +13,13 @@ RSpec.describe 'Plugin / Timestamp' do
           timestamp :updated_at, :created_at
         end
 
+        define :create_many, type: :create do
+          result :many
+          use :timestamps
+          timestamp :updated_at, :created_at
+        end
+
+
         define :update do
           use :timestamps
           timestamp :updated_at
@@ -29,6 +36,16 @@ RSpec.describe 'Plugin / Timestamp' do
       result = container.command(:notes).create.call(text: "This is a test")
 
       expect(result).to include(:created_at).and(include(:updated_at))
+    end
+
+    it "sets timestamps on multi-tuple inputs" do
+      input = [{text: "note one"}, {text: "note two"}]
+
+      results = container.command(:notes).create_many.call(input)
+
+      results.each do |result|
+        expect(result).to include(:created_at).and(include(:updated_at))
+      end
     end
 
 

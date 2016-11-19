@@ -40,7 +40,14 @@ module ROM
               timestamps[column.to_sym]  = time
             end
 
-            super timestamps.merge(tuples)
+            input_tuples = case tuples
+                           when Hash
+                             timestamps.merge(tuples)
+                           when Array
+                             tuples.map{|t| timestamps.merge(t) }
+                           end
+
+            super input_tuples
           end
         end
 
