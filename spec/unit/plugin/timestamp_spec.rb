@@ -8,6 +8,7 @@ RSpec.describe 'Plugin / Timestamp' do
     before do
       conf.commands(:notes) do
         define :create do
+          result :one
           use :timestamps
           timestamp :updated_at, :created_at
         end
@@ -25,7 +26,9 @@ RSpec.describe 'Plugin / Timestamp' do
     end
 
     it "applies timestamps by default" do
-      pending
+      result = container.command(:notes).create.call(text: "This is a test")
+
+      expect(result).to include(:created_at).and(include(:updated_at))
     end
 
 
