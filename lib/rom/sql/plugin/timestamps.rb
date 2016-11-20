@@ -3,19 +3,42 @@ require 'set'
 module ROM
   module SQL
     module Plugin
+      # Make a command that automatically fills in timestamp attributes on
+      # input tuples
+      #
+      # @api private
       module Timestamps
+        # @api private
         def self.included(klass)
           klass.extend(ClassInterface)
           super
         end
 
         module ClassInterface
+          # @api private
           def self.extended(klass)
             klass.defines :timestamp_columns
             klass.timestamp_columns Set.new
             super
           end
 
+          # Set up attributes to timestamp when the command is called
+          #
+          # @example
+          #   class CreateTask < ROM::Commands::Create[:sql]
+          #     result :one
+          #     use :timestamps
+          #     timestamp :created_at, :updated_at
+          #   end
+          #
+          #   create_user = rom.command(:user).create.with(name: 'Jane')
+          #
+          #   result = create_user.call
+          #   result[:created_at]  #=> Time.now.utc
+          #
+          # @param [Symbol] name of the attribute to set
+          #
+          # @api public
           def timestamps(*args)
             timestamp_columns timestamp_columns.merge(args)
 
@@ -30,6 +53,15 @@ module ROM
             self.class.timestamp_columns
           end
 
+          # Set the timestamp attributes on the given tuples
+          #
+          # @param [Array<Hash>, Hash] tuples the input tuple(s)
+          #
+          # @return [Array<Hash>, Hash]
+          #
+          # @overload SQL::Commands::Create#execute
+          #
+          # @api public
           def execute(tuples)
             timestamps = build_timestamps
 
