@@ -1,4 +1,3 @@
-require 'rom/support/constants'
 require 'rom/sql/qualified_attribute'
 require 'rom/sql/association/name'
 

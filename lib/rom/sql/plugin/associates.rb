@@ -1,5 +1,3 @@
-require 'rom/support/deprecations'
-
 module ROM
   module SQL
     module Plugin

@@ -12,8 +12,7 @@ require 'rom/plugins/relation/sql/base_view'
 require 'rom/plugins/relation/sql/auto_combine'
 require 'rom/plugins/relation/sql/auto_wrap'
 
-require 'rom/support/deprecations'
-require 'rom/support/constants'
+require 'dry/core/deprecations'
 
 module ROM
   module SQL
@@ -94,8 +93,10 @@ module ROM
       #
       # @api public
       def self.primary_key(value)
-        Deprecations.announce(
-          :primary_key, "use schema definition to configure primary key"
+        Dry::Core::Deprecations.announce(
+          :primary_key,
+          "use schema definition to configure primary key",
+          tag: :rom
         )
         option :primary_key, reader: true, default: value
       end

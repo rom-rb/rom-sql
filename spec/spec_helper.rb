@@ -44,8 +44,8 @@ TMP_PATH = root.join('../tmp')
 Dir[root.join('shared/**/*')].each { |f| require f }
 Dir[root.join('support/**/*')].each { |f| require f }
 
-require 'rom/support/deprecations'
-ROM::Deprecations.set_logger!(root.join('../log/deprecations.log'))
+require 'dry/core/deprecations'
+Dry::Core::Deprecations.set_logger!(root.join('../log/deprecations.log'))
 
 ROM::SQL.load_extensions(:postgres)
 

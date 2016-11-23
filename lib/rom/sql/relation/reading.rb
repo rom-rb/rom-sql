@@ -1,3 +1,5 @@
+require 'dry/core/inflector'
+
 module ROM
   module SQL
     class Relation < ROM::Relation
@@ -72,7 +74,7 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def prefix(name = Inflector.singularize(table))
+        def prefix(name = Dry::Core::Inflector.singularize(table))
           rename(header.prefix(name).to_h)
         end
 
