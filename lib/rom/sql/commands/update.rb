@@ -1,5 +1,4 @@
-require 'rom/support/deprecations'
-require 'rom/support/constants'
+require 'dry/core/deprecations'
 
 require 'rom/sql/commands/error_wrapper'
 require 'rom/sql/commands/transaction'
@@ -13,7 +12,7 @@ module ROM
       class Update < ROM::Commands::Update
         adapter :sql
 
-        extend Deprecations
+        extend Dry::Core::Deprecations[:rom]
 
         include Transaction
         include ErrorWrapper
@@ -21,9 +20,6 @@ module ROM
         option :original, reader: true
 
         use :schema
-
-        deprecate :set, :call
-        deprecate :to, :call
 
         # Updates existing tuple in a relation
         #
@@ -57,9 +53,9 @@ module ROM
         #
         # @api public
         def change(original)
-          Deprecations.warn("#{self.class}#change is deprecated. Use repositories with changesets instead")
           self.class.build(relation, options.merge(original: original.to_h))
         end
+        deprecate :change, message: 'Use repositories with changesets instead'
 
         private
 

@@ -1,6 +1,6 @@
 require 'dry/equalizer'
 require 'rom/relation/name'
-require 'rom/support/cache'
+require 'dry/core/cache'
 
 module ROM
   module SQL
@@ -8,7 +8,7 @@ module ROM
       class Name
         include Dry::Equalizer.new(:relation_name, :key)
 
-        extend Cache
+        extend Dry::Core::Cache
 
         attr_reader :relation_name
 

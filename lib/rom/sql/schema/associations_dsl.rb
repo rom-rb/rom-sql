@@ -1,3 +1,4 @@
+require 'dry/core/inflector'
 require 'rom/sql/association'
 
 module ROM
@@ -60,7 +61,7 @@ module ROM
         end
 
         def dataset_name(name)
-          Inflector.pluralize(name).to_sym
+          ::Dry::Core::Inflector.pluralize(name).to_sym
         end
       end
     end

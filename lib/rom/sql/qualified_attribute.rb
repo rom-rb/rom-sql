@@ -1,4 +1,4 @@
-require 'rom/support/cache'
+require 'dry/core/cache'
 
 module ROM
   module SQL
@@ -10,7 +10,7 @@ module ROM
     class QualifiedAttribute
       include Dry::Equalizer(:dataset, :attribute)
 
-      extend Cache
+      extend Dry::Core::Cache
 
       # Dataset (table) name
       #

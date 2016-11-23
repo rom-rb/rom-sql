@@ -1,5 +1,4 @@
 require 'rom/schema'
-require 'rom/support/constants'
 
 module ROM
   module SQL
