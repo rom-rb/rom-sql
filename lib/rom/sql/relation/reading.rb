@@ -507,6 +507,20 @@ module ROM
         def unique?(criteria)
           where(criteria).count.zero?
         end
+
+        # Return a new relation from a raw SQL string
+        #
+        # @example
+        #   users.read('SELECT name FROM users')
+        #
+        # @param [String] sql The SQL string
+        #
+        # @return [SQL::Relation]
+        #
+        # @api public
+        def read(sql)
+          __new__(dataset.db[sql])
+        end
       end
     end
   end
