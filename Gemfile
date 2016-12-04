@@ -2,8 +2,6 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'rom', github: 'rom-rb/rom', branch: 'master'
-
 group :test do
   gem 'byebug', platforms: :mri
   gem 'dry-struct'
