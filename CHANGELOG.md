@@ -1,3 +1,12 @@
+## v0.9.1 2016-12-23
+
+### Added
+
+* Support for PG enums in schema inferrer (flash-gordon)
+* `ROM::SQL::Relation#read` method which accepts an SQL string and returns a new relation (solnic)
+
+[Compare v0.9.0...v0.9.1](https://github.com/rom-rb/rom-sql/compare/v0.9.0...v0.9.1)
+
 ## v0.9.0 2016-11-08
 
 ### Added
