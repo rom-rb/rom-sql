@@ -98,6 +98,7 @@ shared_context 'database setup' do
       DateTime :created_at, null: false
       DateTime :updated_at, null: false
       DateTime :completed_at
+      Date :written
     end
   end
 

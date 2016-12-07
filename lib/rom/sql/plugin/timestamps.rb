@@ -17,8 +17,9 @@ module ROM
         module ClassInterface
           # @api private
           def self.extended(klass)
-            klass.defines :timestamp_columns
+            klass.defines :timestamp_columns, :datestamp_columns
             klass.timestamp_columns Set.new
+            klass.datestamp_columns Set.new
             super
           end
 
@@ -28,7 +29,7 @@ module ROM
           #   class CreateTask < ROM::Commands::Create[:sql]
           #     result :one
           #     use :timestamps
-          #     timestamp :created_at, :updated_at
+          #     timestamps :created_at, :updated_at
           #   end
           #
           #   create_user = rom.command(:user).create.with(name: 'Jane')
@@ -45,12 +46,42 @@ module ROM
             include InstanceMethods
           end
           alias timestamp timestamps
+
+
+          # Set up attributes to datestamp when the command is called
+          #
+          # @example
+          #   class CreateTask < ROM::Commands::Create[:sql]
+          #     result :one
+          #     use :timestamps
+          #     datestamps :created_on, :updated_on
+          #   end
+          #
+          #   create_user = rom.command(:user).create.with(name: 'Jane')
+          #
+          #   result = create_user.call
+          #   result[:created_at]  #=> Date.today
+          #
+          # @param [Symbol] name of the attribute to set
+          #
+          # @api public
+          def datestamps(*args)
+            datestamp_columns datestamp_columns.merge(args)
+
+            include InstanceMethods
+          end
+          alias datestamp datestamps
         end
 
         module InstanceMethods
           # @api private
           def timestamp_columns
             self.class.timestamp_columns
+          end
+
+          # @api private
+          def datestamp_columns
+            self.class.datestamp_columns
           end
 
           # Set the timestamp attributes on the given tuples
@@ -80,9 +111,14 @@ module ROM
           # @api private
           def build_timestamps
             time        = Time.now.utc
+            date        = Date.today
             timestamps  = {}
             timestamp_columns.each do |column|
               timestamps[column.to_sym] = time
+            end
+
+            datestamp_columns.each do |column|
+              timestamps[column.to_sym] = date
             end
 
             timestamps

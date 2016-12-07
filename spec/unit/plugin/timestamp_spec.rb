@@ -11,6 +11,7 @@ RSpec.describe 'Plugin / Timestamp' do
           result :one
           use :timestamps
           timestamp :updated_at, :created_at
+          datestamp :written
         end
 
         define :create_many, type: :create do
@@ -29,7 +30,7 @@ RSpec.describe 'Plugin / Timestamp' do
     it "applies timestamps by default" do
       result = container.command(:notes).create.call(text: "This is a test")
 
-      expect(result).to include(:created_at).and(include(:updated_at))
+      expect(result).to include(:created_at).and(include(:updated_at)).and(include(:written))
     end
 
     it "sets timestamps on multi-tuple inputs" do
