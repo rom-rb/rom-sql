@@ -20,7 +20,7 @@ module ROM
 
       # @api public
       def project_relation(relation)
-        relation.select(*map { |attribute| attribute.meta[:name] })
+        relation.select(*attributes.keys)
       end
 
       # @api private
