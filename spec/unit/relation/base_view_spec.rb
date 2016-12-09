@@ -1,11 +1,11 @@
-RSpec.describe 'Plugin / Base View' do
+RSpec.describe 'Relation / Base View' do
   include_context 'database setup'
 
   with_adapters do
     it 'defines base view' do
       module Test
         class Users < ROM::Relation[:sql]
-          dataset :users
+          schema(:users, infer: true)
           register_as :users
         end
       end

@@ -8,7 +8,6 @@ require 'rom/sql/relation/writing'
 
 require 'rom/plugins/relation/view'
 require 'rom/plugins/relation/key_inference'
-require 'rom/plugins/relation/sql/base_view'
 require 'rom/plugins/relation/sql/auto_combine'
 require 'rom/plugins/relation/sql/auto_wrap'
 
@@ -26,7 +25,6 @@ module ROM
 
       use :key_inference
       use :view
-      use :base_view
       use :auto_combine
       use :auto_wrap
 
@@ -53,6 +51,9 @@ module ROM
           end
 
           dataset do
+            # TODO: feels strange to do it here - we need a new hook for this during finalization
+            klass.define_default_views!
+
             table = opts[:from].first
 
             if db.table_exists?(table)
@@ -63,15 +64,18 @@ module ROM
               self
             end
           end
+        end
+      end
 
-          # @!method by_pk(pk)
-          #   Return a relation restricted by its primary key
-          #   @param [Object] pk The primary key value
-          #   @return [SQL::Relation]
-          #   @api public
-          view(:by_pk, attributes[:base]) do |pk|
-            where(primary_key => pk)
-          end
+      # @api private
+      def self.define_default_views!
+        # @!method by_pk(pk)
+        #   Return a relation restricted by its primary key
+        #   @param [Object] pk The primary key value
+        #   @return [SQL::Relation]
+        #   @api public
+        view(:by_pk, attributes[:base]) do |pk|
+          where(primary_key => pk)
         end
       end
 

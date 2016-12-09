@@ -18,6 +18,11 @@ module ROM
         @primary_key_names = EMPTY_ARRAY
       end
 
+      # @api public
+      def project_relation(relation)
+        relation.select(*attributes.keys)
+      end
+
       # @api private
       def finalize!(*)
         super do
