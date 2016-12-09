@@ -226,4 +226,17 @@ RSpec.describe 'Schema inference for common datatypes' do
       end
     end
   end
+
+  with_adapters(:postgres) do
+    context 'with a table without columns' do
+      before do
+        conn.create_table(:dummy) unless conn.table_exists?(:dummy) 
+        conf.relation(:dummy) { schema(infer: true) }
+      end
+
+      it 'does not fail with a weird error when a relation does not have attributes' do
+        expect(container.relations[:dummy].attributes).to be_empty
+      end
+    end
+  end
 end
