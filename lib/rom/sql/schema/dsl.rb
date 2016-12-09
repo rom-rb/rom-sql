@@ -12,7 +12,7 @@ module ROM
         end
 
         def call
-          SQL::Schema.new(name, attributes, opts)
+          SQL::Schema.new(name, opts.merge(attributes: attributes))
         end
 
         def opts
