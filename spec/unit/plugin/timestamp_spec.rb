@@ -28,18 +28,31 @@ RSpec.describe 'Plugin / Timestamp' do
     end
 
     it "applies timestamps by default" do
+      time   = DateTime.now
       result = container.command(:notes).create.call(text: "This is a test")
 
-      expect(result).to include(:created_at).and(include(:updated_at)).and(include(:written))
+      created = DateTime.parse(result[:created_at].to_s)
+      updated = DateTime.parse(result[:updated_at].to_s)
+
+      expect(created).to be_within(1).of(time)
+      expect(updated).to eq created
+    end
+
+    it "applies datestamps by default" do
+      result = container.command(:notes).create.call(text: "This is a test")
+      expect(Date.parse(result[:written].to_s)).to eq Date.today
     end
 
     it "sets timestamps on multi-tuple inputs" do
+      time = DateTime.now
       input = [{text: "note one"}, {text: "note two"}]
 
       results = container.command(:notes).create_many.call(input)
 
       results.each do |result|
-        expect(result).to include(:created_at).and(include(:updated_at))
+        created = DateTime.parse(result[:created_at].to_s)
+
+        expect(created).to be_within(1).of(time)
       end
     end
 
