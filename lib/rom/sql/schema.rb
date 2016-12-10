@@ -18,8 +18,14 @@ module ROM
         @primary_key_names = EMPTY_ARRAY
       end
 
+      # Create a new relation based on the schema definition
+      #
+      # @param [Relation] relation The source relation
+      #
+      # @return [Relation]
+      #
       # @api public
-      def project_relation(relation)
+      def call(relation)
         relation.select(*self)
       end
 
