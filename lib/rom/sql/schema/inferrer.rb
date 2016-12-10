@@ -37,13 +37,15 @@ module ROM
         end
 
         # @api private
-        def call(dataset, gateway)
+        def call(source, gateway)
+          dataset = source.dataset
+
           columns = gateway.connection.schema(dataset)
           fks = fks_for(gateway, dataset)
 
           columns.each_with_object({}) do |(name, definition), attrs|
             type = build_type(definition.merge(foreign_key: fks[name]))
-            attrs[name] = type.meta(name: name)
+            attrs[name] = type.meta(name: name, source: source)
           end
         end
 
@@ -55,7 +57,7 @@ module ROM
           else
             mapped_type = map_type(type, db_type, rest)
             mapped_type = mapped_type.optional if allow_null
-            mapped_type = mapped_type.meta(foreign_key: true, relation: foreign_key) if foreign_key
+            mapped_type = mapped_type.meta(foreign_key: true, target: foreign_key) if foreign_key
             mapped_type
           end
         end

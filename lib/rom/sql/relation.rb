@@ -40,10 +40,10 @@ module ROM
         klass.class_eval do
           schema_dsl SQL::Schema::DSL
 
-          schema_inferrer -> (dataset, gateway) do
+          schema_inferrer -> (name, gateway) do
             inferrer_for_db = ROM::SQL::Schema::Inferrer.get(gateway.connection.database_type.to_sym)
             begin
-              inferrer_for_db.new.call(dataset, gateway)
+              inferrer_for_db.new.call(name, gateway)
             rescue Sequel::Error => e
               warn "Error when inferring #{dataset.inspect} relation: #{e.message}"
               {}

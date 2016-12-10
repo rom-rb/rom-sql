@@ -35,14 +35,16 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
     end
 
     it 'can infer attributes for dataset' do
+      source = container.relations[:test_inferrence].name
+
       expect(schema.attributes).to eql(
-        id: ROM::SQL::Types::PG::UUID.meta(name: :id, primary_key: true),
-        json_data: ROM::SQL::Types::PG::JSON.optional.meta(name: :json_data),
-        jsonb_data: ROM::SQL::Types::PG::JSONB.optional.meta(name: :jsonb_data),
-        money: ROM::SQL::Types::Decimal.meta(name: :money),
-        tags: ROM::SQL::Types::PG::Array('text').optional.meta(name: :tags),
-        tag_ids: ROM::SQL::Types::PG::Array('biging').optional.meta(name: :tag_ids),
-        color: ROM::SQL::Types::String.enum(*colors).optional.meta(name: :color)
+        id: ROM::SQL::Types::PG::UUID.meta(name: :id, source: source, primary_key: true),
+        json_data: ROM::SQL::Types::PG::JSON.optional.meta(name: :json_data, source: source),
+        jsonb_data: ROM::SQL::Types::PG::JSONB.optional.meta(name: :jsonb_data, source: source),
+        money: ROM::SQL::Types::Decimal.meta(name: :money, source: source),
+        tags: ROM::SQL::Types::PG::Array('text').optional.meta(name: :tags, source: source),
+        tag_ids: ROM::SQL::Types::PG::Array('biging').optional.meta(name: :tag_ids, source: source),
+        color: ROM::SQL::Types::String.enum(*colors).optional.meta(name: :color, source: source)
       )
     end
   end

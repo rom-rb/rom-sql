@@ -20,7 +20,7 @@ module ROM
 
       # @api public
       def project_relation(relation)
-        relation.select(*attributes.keys)
+        relation.select(*self)
       end
 
       # @api private

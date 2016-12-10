@@ -1,3 +1,4 @@
+require 'rom/sql/type'
 require 'rom/sql/schema/inferrer'
 require 'rom/sql/schema/associations_dsl'
 
@@ -8,11 +9,11 @@ module ROM
         attr_reader :associations_dsl
 
         def associations(&block)
-          @associations_dsl = AssociationsDSL.new(name, &block)
+          @associations_dsl = AssociationsDSL.new(relation, &block)
         end
 
         def call
-          SQL::Schema.new(name, opts.merge(attributes: attributes))
+          SQL::Schema.define(relation, opts.merge(attributes: attributes, type_class: SQL::Type))
         end
 
         def opts

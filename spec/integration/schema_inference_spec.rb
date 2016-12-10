@@ -19,25 +19,28 @@ RSpec.describe 'Schema inference for common datatypes' do
 
       context 'for simple table' do
         let(:dataset) { :users }
+        let(:source) { ROM::Relation::Name[dataset] }
 
         it 'can infer attributes for dataset' do
           expect(schema.attributes).to eql(
-            id: ROM::SQL::Types::Serial.meta(name: :id),
-            name: ROM::SQL::Types::String.meta(name: :name)
+            id: ROM::SQL::Types::Serial.meta(name: :id, source: source),
+            name: ROM::SQL::Types::String.meta(name: :name, source: source)
           )
         end
       end
 
       context 'for a table with FKs' do
         let(:dataset) { :tasks }
+        let(:source) { ROM::Relation::Name[:tasks] }
 
         it 'can infer attributes for dataset' do
           expect(schema.attributes).to eql(
-            id: ROM::SQL::Types::Serial.meta(name: :id),
-            title: ROM::SQL::Types::String.optional.meta(name: :title),
+            id: ROM::SQL::Types::Serial.meta(name: :id, source: source),
+            title: ROM::SQL::Types::String.optional.meta(name: :title, source: source),
             user_id: ROM::SQL::Types::Int.optional.meta(name: :user_id,
                                                         foreign_key: true,
-                                                        relation: :users)
+                                                        source: source,
+                                                        target: :users)
          )
         end
       end
@@ -63,15 +66,16 @@ RSpec.describe 'Schema inference for common datatypes' do
         end
 
         let(:dataset) { :test_inferrence }
+        let(:source) { ROM::Relation::Name[dataset] }
 
         it 'can infer attributes for dataset' do
           expect(schema.attributes).to eql(
-            id: ROM::SQL::Types::Serial.meta(name: :id),
-            text: ROM::SQL::Types::String.meta(name: :text),
-            flag: ROM::SQL::Types::Bool.meta(name: :flag),
-            date: ROM::SQL::Types::Date.optional.meta(name: :date),
-            datetime: ROM::SQL::Types::Time.meta(name: :datetime),
-            data: ROM::SQL::Types::Blob.optional.meta(name: :data)
+            id: ROM::SQL::Types::Serial.meta(name: :id, source: source),
+            text: ROM::SQL::Types::String.meta(name: :text, source: source),
+            flag: ROM::SQL::Types::Bool.meta(name: :flag, source: source),
+            date: ROM::SQL::Types::Date.optional.meta(name: :date, source: source),
+            datetime: ROM::SQL::Types::Time.meta(name: :datetime, source: source),
+            data: ROM::SQL::Types::Blob.optional.meta(name: :data, source: source)
           )
         end
       end
