@@ -53,7 +53,7 @@ module ROM
           if primary_key
             map_pk_type(type, db_type)
           else
-            mapped_type = map_type(type, db_type)
+            mapped_type = map_type(type, db_type, rest)
             mapped_type = mapped_type.optional if allow_null
             mapped_type = mapped_type.meta(foreign_key: true, relation: foreign_key) if foreign_key
             mapped_type
@@ -64,7 +64,7 @@ module ROM
           self.class.numeric_pk_type.meta(primary_key: true)
         end
 
-        def map_type(ruby_type, db_type)
+        def map_type(ruby_type, db_type, **_kw)
           self.class.ruby_type_mapping.fetch(ruby_type) {
             raise UnknownDBTypeError, "Cannot find corresponding type for #{ruby_type || db_type}"
           }
