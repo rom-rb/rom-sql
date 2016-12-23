@@ -18,6 +18,15 @@ module ROM
         @primary_key_names = EMPTY_ARRAY
       end
 
+      # Return a new schema with attributes marked as qualified
+      #
+      # @return [Schema]
+      #
+      # @api public
+      def qualified
+        new(map { |attr| [attr.name, attr.qualified] }.to_h)
+      end
+
       # Create a new relation based on the schema definition
       #
       # @param [Relation] relation The source relation
