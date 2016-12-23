@@ -21,9 +21,9 @@ module ROM
         meta[:qualified].equal?(true)
       end
 
-      # @api private
-      def sql_literal_append(ds, sql)
-        identifier =
+      # @api public
+      def to_sym
+        @_to_sym ||=
           if qualified? && aliased?
             :"#{source.dataset}__#{name}___#{meta[:alias]}"
           elsif qualified?
@@ -33,8 +33,11 @@ module ROM
           else
             name
           end
+      end
 
-        ds.__send__(:literal_symbol_append, sql, identifier)
+      # @api private
+      def sql_literal_append(ds, sql)
+        ds.__send__(:literal_symbol_append, sql, to_sym)
       end
     end
   end
