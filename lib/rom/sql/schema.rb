@@ -35,7 +35,7 @@ module ROM
       #
       # @api public
       def call(relation)
-        relation.select(*self)
+        relation.select(*self).with(schema: self)
       end
 
       # @api private
