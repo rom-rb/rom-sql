@@ -24,7 +24,9 @@ module ROM
       # @api private
       def sql_literal_append(ds, sql)
         identifier =
-          if qualified?
+          if qualified? && aliased?
+            :"#{source.dataset}__#{name}___#{meta[:alias]}"
+          elsif qualified?
             :"#{source.dataset}__#{name}"
           elsif aliased?
             :"#{name}___#{meta[:alias]}"
