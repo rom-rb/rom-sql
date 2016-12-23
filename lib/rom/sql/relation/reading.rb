@@ -184,7 +184,7 @@ module ROM
         #
         # @api public
         def select(*args, &block)
-          __new__(dataset.__send__(__method__, *args, &block))
+          new(dataset.__send__(__method__, *args, &block))
         end
 
         # Append specific columns to select clause
@@ -199,7 +199,7 @@ module ROM
         #
         # @api public
         def select_append(*args, &block)
-          __new__(dataset.__send__(__method__, *args, &block))
+          new(dataset.__send__(__method__, *args, &block))
         end
 
         # Returns a copy of the relation with a SQL DISTINCT clause.
@@ -213,7 +213,7 @@ module ROM
         #
         # @api public
         def distinct(*args, &block)
-          __new__(dataset.__send__(__method__, *args, &block))
+          new(dataset.__send__(__method__, *args, &block))
         end
 
         # Returns a result of SQL SUM clause.
@@ -290,7 +290,7 @@ module ROM
         #
         # @api public
         def where(*args, &block)
-          __new__(dataset.__send__(__method__, *args, &block))
+          new(dataset.__send__(__method__, *args, &block))
         end
 
         # Restrict a relation to not match criteria
@@ -304,7 +304,7 @@ module ROM
         #
         # @api public
         def exclude(*args, &block)
-          __new__(dataset.__send__(__method__, *args, &block))
+          new(dataset.__send__(__method__, *args, &block))
         end
 
         # Restrict a relation to match grouping criteria
@@ -322,7 +322,7 @@ module ROM
         #
         # @api public
         def having(*args, &block)
-          __new__(dataset.__send__(__method__, *args, &block))
+          new(dataset.__send__(__method__, *args, &block))
         end
 
         # Inverts the current WHERE and HAVING clauses. If there is neither a
@@ -338,7 +338,7 @@ module ROM
         #
         # @api public
         def invert
-          __new__(dataset.invert)
+          new(dataset.invert)
         end
 
         # Set order for the relation
@@ -352,7 +352,7 @@ module ROM
         #
         # @api public
         def order(*args, &block)
-          __new__(dataset.__send__(__method__, *args, &block))
+          new(dataset.__send__(__method__, *args, &block))
         end
 
         # Reverse the order of the relation
@@ -364,7 +364,7 @@ module ROM
         #
         # @api public
         def reverse(*args, &block)
-          __new__(dataset.__send__(__method__, *args, &block))
+          new(dataset.__send__(__method__, *args, &block))
         end
 
         # Limit a relation to a specific number of tuples
@@ -381,7 +381,7 @@ module ROM
         #
         # @api public
         def limit(*args, &block)
-          __new__(dataset.__send__(__method__, *args, &block))
+          new(dataset.__send__(__method__, *args, &block))
         end
 
         # Set offset for the relation
@@ -395,7 +395,7 @@ module ROM
         #
         # @api public
         def offset(*args, &block)
-          __new__(dataset.__send__(__method__, *args, &block))
+          new(dataset.__send__(__method__, *args, &block))
         end
 
         # Join with another relation using INNER JOIN
@@ -410,7 +410,7 @@ module ROM
         #
         # @api public
         def inner_join(*args, &block)
-          __new__(dataset.__send__(__method__, *args, &block))
+          new(dataset.__send__(__method__, *args, &block))
         end
 
         # Join other relation using LEFT OUTER JOIN
@@ -425,7 +425,7 @@ module ROM
         #
         # @api public
         def left_join(*args, &block)
-          __new__(dataset.__send__(__method__, *args, &block))
+          new(dataset.__send__(__method__, *args, &block))
         end
 
         # Group by specific columns
@@ -439,7 +439,7 @@ module ROM
         #
         # @api public
         def group(*args, &block)
-          __new__(dataset.__send__(__method__, *args, &block))
+          new(dataset.__send__(__method__, *args, &block))
         end
 
         # Group by specific columns and count by group
@@ -454,7 +454,7 @@ module ROM
         #
         # @api public
         def group_and_count(*args, &block)
-          __new__(dataset.__send__(__method__, *args, &block))
+          new(dataset.__send__(__method__, *args, &block))
         end
 
         # Select and group by specific columns
@@ -469,7 +469,7 @@ module ROM
         #
         # @api public
         def select_group(*args, &block)
-          __new__(dataset.__send__(__method__, *args, &block))
+          new(dataset.__send__(__method__, *args, &block))
         end
 
         # Adds a UNION clause for relation dataset using second relation dataset
@@ -489,7 +489,7 @@ module ROM
         #
         # @api public
         def union(relation, options = EMPTY_HASH, &block)
-          __new__(dataset.__send__(__method__, relation.dataset, options, &block))
+          new(dataset.__send__(__method__, relation.dataset, options, &block))
         end
 
         # Return if a restricted relation has 0 tuples
@@ -521,7 +521,7 @@ module ROM
         #
         # @api public
         def read(sql)
-          __new__(dataset.db[sql])
+          new(dataset.db[sql])
         end
       end
     end

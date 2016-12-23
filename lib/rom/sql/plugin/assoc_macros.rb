@@ -87,7 +87,7 @@ module ROM
 
         # @api private
         def graph(*args)
-          __new__(dataset.__send__(__method__, *args))
+          new(dataset.__send__(__method__, *args))
         end
 
         private

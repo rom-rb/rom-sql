@@ -71,7 +71,7 @@ module ROM
         # @api public
         def page(num)
           next_pager = pager.at(dataset, num)
-          __new__(next_pager.dataset, pager: next_pager)
+          new(next_pager.dataset, pager: next_pager)
         end
 
         # Set limit for pagination
@@ -82,7 +82,7 @@ module ROM
         # @api public
         def per_page(num)
           next_pager = pager.at(dataset, pager.current_page, num)
-          __new__(next_pager.dataset, pager: next_pager)
+          new(next_pager.dataset, pager: next_pager)
         end
       end
     end
