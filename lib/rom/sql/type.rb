@@ -26,6 +26,8 @@ module ROM
         identifier =
           if qualified?
             :"#{source.dataset}__#{name}"
+          elsif aliased?
+            :"#{name}___#{meta[:alias]}"
           else
             name
           end
