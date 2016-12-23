@@ -12,9 +12,25 @@ module ROM
         self.class.new(type.meta(qualified: true))
       end
 
+      # Return if an attribute type is qualified
+      #
+      # @return [Boolean]
+      #
+      # @api public
+      def qualified?
+        meta[:qualified].equal?(true)
+      end
+
       # @api private
       def sql_literal_append(ds, sql)
-        ds.__send__(:literal_symbol_append, sql, :"#{source.dataset}__#{name}")
+        identifier =
+          if qualified?
+            :"#{source.dataset}__#{name}"
+          else
+            name
+          end
+
+        ds.__send__(:literal_symbol_append, sql, identifier)
       end
     end
   end
