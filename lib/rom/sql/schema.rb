@@ -35,7 +35,7 @@ module ROM
       #
       # @api public
       def call(relation)
-        relation.select(*self).with(schema: self)
+        relation.new(relation.dataset.select(*self), schema: self)
       end
 
       # @api private
