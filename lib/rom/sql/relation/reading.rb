@@ -75,7 +75,7 @@ module ROM
         #
         # @api public
         def prefix(name = Dry::Core::Inflector.singularize(table))
-          rename(header.prefix(name).to_h)
+          schema.prefix(name).(self)
         end
 
         # Qualifies all columns in a relation
@@ -89,7 +89,7 @@ module ROM
         #
         # @api public
         def qualified
-          select(*qualified_columns)
+          schema.qualified.(self)
         end
 
         # Return a list of qualified column names
@@ -104,7 +104,7 @@ module ROM
         #
         # @api public
         def qualified_columns
-          header.qualified.to_a
+          schema.qualified.map(&:to_sym)
         end
 
         # Map tuples from the relation
@@ -154,7 +154,7 @@ module ROM
         #
         # @api public
         def project(*names)
-          select(*header.project(*names))
+          schema.project(*names).(self)
         end
 
         # Rename columns in a relation
@@ -171,7 +171,7 @@ module ROM
         #
         # @api public
         def rename(options)
-          select(*header.rename(options))
+          schema.rename(options).(self)
         end
 
         # Select specific columns for select clause

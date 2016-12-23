@@ -17,26 +17,26 @@ RSpec.describe 'Plugins / :auto_wrap' do
       end
 
       context 'when parent relation is registered under dataset name' do
-        subject(:tasks) { container.relations[:tasks] }
+        subject(:tasks) { relations[:tasks] }
 
-        let(:users) { container.relations[:users] }
+        let(:users) { relations[:users] }
 
         before do
-          conf.relation(:tasks)
-          conf.relation(:users)
+          conf.relation(:tasks) { schema(infer: true) }
+          conf.relation(:users) { schema(infer: true) }
         end
 
         include_context 'joined tuple'
       end
 
       context 'when parent relation is registered under a custom name' do
-        subject(:tasks) { container.relations[:tasks] }
+        subject(:tasks) { relations[:tasks] }
 
-        let(:users) { container.relations[:authors] }
+        let(:users) { relations[:authors] }
 
         before do
-          conf.relation(:tasks)
-          conf.relation(:authors) { dataset :users }
+          conf.relation(:tasks) { schema(infer: true) }
+          conf.relation(:authors) { schema(:users, infer: true) }
         end
 
         include_context 'joined tuple'

@@ -5,6 +5,8 @@ RSpec.describe ROM::Relation, '#rename' do
 
   before do
     conf.relation(:users) do
+      schema(infer: true)
+
       def sorted
         order(:id)
       end
