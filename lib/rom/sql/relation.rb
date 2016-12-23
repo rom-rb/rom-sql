@@ -59,7 +59,7 @@ module ROM
             if db.table_exists?(table)
               pk_header = klass.primary_key_header(db, table)
               col_names = klass.schema ? klass.schema.attributes.keys : columns
-              select(*col_names).order(*pk_header.qualified)
+              select(*col_names).order(*pk_header)
             else
               self
             end
@@ -94,7 +94,7 @@ module ROM
           else
             [:id]
           end
-        Header.new(names, table)
+        names.map { |col| :"#{table}__#{col}" }
       end
 
       # Set primary key
