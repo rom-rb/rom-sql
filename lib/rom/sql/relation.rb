@@ -53,13 +53,16 @@ module ROM
           dataset do
             # TODO: feels strange to do it here - we need a new hook for this during finalization
             klass.define_default_views!
+            schema = klass.schema
 
             table = opts[:from].first
 
             if db.table_exists?(table)
-              pk_header = klass.primary_key_header(db, table)
-              col_names = klass.schema ? klass.schema.attributes.keys : columns
-              select(*col_names).order(*pk_header)
+              if schema
+                select(*schema.map(&:to_sym)).order(*schema.project(*schema.primary_key_names).qualified.map(&:to_sym))
+              else
+                select(*columns).order(*klass.primary_key_columns(db, table))
+              end
             else
               self
             end
@@ -85,15 +88,8 @@ module ROM
       end
 
       # @api private
-      def self.primary_key_header(db, table)
-        names =
-          if schema
-            schema.primary_key_names
-          elsif db.respond_to?(:primary_key)
-            Array(db.primary_key(table))
-          else
-            [:id]
-          end
+      def self.primary_key_columns(db, table)
+        names = db.respond_to?(:primary_key) ? Array(db.primary_key(table)) : [:id]
         names.map { |col| :"#{table}__#{col}" }
       end
 
