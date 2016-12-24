@@ -219,16 +219,8 @@ RSpec.describe 'Commands / Create', :postgres do
 
     it 're-raises database errors' do
       expect {
-        Test::Params.attribute :bogus_field, Types::Int
-        users.try { users.create.call(name: 'some name', bogus_field: 23) }
-      }.to raise_error(ROM::SQL::DatabaseError)
-    end
-
-    it 'supports [] syntax instead of call' do
-      expect {
-        Test::Params.attribute :bogus_field, Types::Int
-        users.try { users.create[name: 'some name', bogus_field: 23] }
-      }.to raise_error(ROM::SQL::DatabaseError)
+        users.try { users.create.call(name: nil) }
+      }.to raise_error(ROM::SQL::NotNullConstraintError)
     end
 
     describe '#execute' do

@@ -22,6 +22,10 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
     end
   end
 
+  after do
+    conn.drop_table?(:test_inferrence)
+  end
+
   let(:dataset) { :test_inferrence }
 
   let(:schema) { container.relations[dataset].schema }

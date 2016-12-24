@@ -45,8 +45,7 @@ module ROM
             begin
               inferrer_for_db.new.call(name, gateway)
             rescue Sequel::Error => e
-              warn "Error when inferring #{dataset.inspect} relation: #{e.message}"
-              {}
+              []
             end
           end
 

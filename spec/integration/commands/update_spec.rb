@@ -64,12 +64,6 @@ RSpec.describe 'Commands / Update' do
         relation.insert(name: 'Jane')
       end
 
-      it 'respects configured input handler' do
-        expect(update.input[foo: 'bar', id: 1, name: 'Jane']).to eql(
-          foo: 'bar', id: 1, name: 'Jane'
-        )
-      end
-
       context '#transaction' do
         it 'update record if there was no errors' do
           result = users.update.transaction do
@@ -118,10 +112,10 @@ RSpec.describe 'Commands / Update' do
           expect(result.value.to_a).to be_empty
         end
 
-        it 're-reaises database errors' do
+        it 're-raises database errors' do
           expect {
-            users.try { users.update.by_id(piotr[:id]).call(bogus_field: '#trollface') }
-          }.to raise_error(ROM::SQL::DatabaseError, /bogus_field/)
+            users.try { users.update.by_id(piotr[:id]).call(name: nil) }
+          }.to raise_error(ROM::SQL::NotNullConstraintError, /name/)
         end
 
         describe '#execute' do
