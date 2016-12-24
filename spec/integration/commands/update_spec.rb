@@ -84,32 +84,12 @@ RSpec.describe 'Commands / Update' do
       end
 
       describe '#call' do
-        it 'updates everything when there is no original tuple' do
+        it 'updates relation tuples' do
           result = users.try do
             users.update.by_id(piotr[:id]).call(peter)
           end
 
           expect(result.value.to_a).to match_array([{ id: 1, name: 'Peter' }])
-        end
-
-        it 'updates when attributes changed' do
-          result = users.try do
-            users.as(:entity).update.by_id(piotr[:id]).change(Test::User.new(piotr)).call(peter)
-          end
-
-          expect(result.value.to_a).to match_array([Test::User.new(id: 1, name: 'Peter')])
-        end
-
-        it 'does not update when attributes did not change' do
-          result = users.try do
-            command = users.update.by_id(piotr[:id]).change(piotr)
-
-            expect(command.relation).not_to receive(:update)
-
-            command.call(name: piotr[:name])
-          end
-
-          expect(result.value.to_a).to be_empty
         end
 
         it 're-raises database errors' do
