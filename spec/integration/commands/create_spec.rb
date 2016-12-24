@@ -27,10 +27,6 @@ RSpec.describe 'Commands / Create', :postgres do
       define(:create) do
         input Test::Params
 
-        validator -> tuple {
-          raise ROM::CommandError, 'name cannot be empty' if tuple[:name] == ''
-        }
-
         result :one
       end
 
@@ -80,18 +76,13 @@ RSpec.describe 'Commands / Create', :postgres do
 
       it 'creates nothing if command error was raised' do
         expect {
-          passed = false
-
-          result = users.create.transaction {
-            users.create.call(name: 'Jane')
-            users.create.call(name: '')
-          } >-> _value {
-            passed = true
-          }
-
-          expect(result.value).to be(nil)
-          expect(result.error.message).to eql('name cannot be empty')
-          expect(passed).to be(false)
+          begin
+            users.create.transaction {
+              users.create.call(name: 'Jane')
+              users.create.call(name: nil)
+            }
+          rescue ROM::SQL::Error
+          end
         }.to_not change { container.relations.users.count }
       end
 

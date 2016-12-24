@@ -28,7 +28,6 @@ module ROM
         # @api public
         def execute(tuple)
           attributes = input[tuple]
-          validator.call(attributes)
 
           changed = diff(attributes.to_h)
 
