@@ -12,10 +12,10 @@ module ROM
       #   @return [Array<Symbol>] A list of all pk names
       attr_reader :primary_key_names
 
+      # @api private
       def initialize(*)
         super
-        @primary_key_name = nil
-        @primary_key_names = EMPTY_ARRAY
+        initialize_primary_key_names
       end
 
       # Return a new schema with attributes marked as qualified
@@ -40,11 +40,14 @@ module ROM
 
       # @api private
       def finalize!(*)
-        super do
-          if primary_key.size > 0
-            @primary_key_name = primary_key[0].meta[:name]
-            @primary_key_names = primary_key.map { |type| type.meta[:name] }
-          end
+        super { initialize_primary_key_names }
+      end
+
+      # @api private
+      def initialize_primary_key_names
+        if primary_key.size > 0
+          @primary_key_name = primary_key[0].meta[:name]
+          @primary_key_names = primary_key.map { |type| type.meta[:name] }
         end
       end
     end
