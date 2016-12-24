@@ -37,7 +37,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
     it 'can infer attributes for dataset' do
       source = container.relations[:test_inferrence].name
 
-      expect(schema.attributes).to eql(
+      expect(schema.to_h).to eql(
         id: ROM::SQL::Types::PG::UUID.meta(name: :id, source: source, primary_key: true),
         json_data: ROM::SQL::Types::PG::JSON.optional.meta(name: :json_data, source: source),
         jsonb_data: ROM::SQL::Types::PG::JSONB.optional.meta(name: :jsonb_data, source: source),

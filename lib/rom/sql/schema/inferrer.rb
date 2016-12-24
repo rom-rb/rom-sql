@@ -43,9 +43,9 @@ module ROM
           columns = gateway.connection.schema(dataset)
           fks = fks_for(gateway, dataset)
 
-          columns.each_with_object({}) do |(name, definition), attrs|
+          columns.map do |(name, definition)|
             type = build_type(definition.merge(foreign_key: fks[name]))
-            attrs[name] = type.meta(name: name, source: source)
+            type.meta(name: name, source: source)
           end
         end
 

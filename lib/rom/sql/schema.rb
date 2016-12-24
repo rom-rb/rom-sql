@@ -24,7 +24,7 @@ module ROM
       #
       # @api public
       def qualified
-        new(map { |attr| [attr.name, attr.qualified] }.to_h)
+        new(map(&:qualified))
       end
 
       # Create a new relation based on the schema definition

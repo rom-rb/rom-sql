@@ -22,7 +22,7 @@ RSpec.describe 'Schema inference for common datatypes' do
         let(:source) { ROM::Relation::Name[dataset] }
 
         it 'can infer attributes for dataset' do
-          expect(schema.attributes).to eql(
+          expect(schema.to_h).to eql(
             id: ROM::SQL::Types::Serial.meta(name: :id, source: source),
             name: ROM::SQL::Types::String.meta(name: :name, source: source)
           )
@@ -34,7 +34,7 @@ RSpec.describe 'Schema inference for common datatypes' do
         let(:source) { ROM::Relation::Name[:tasks] }
 
         it 'can infer attributes for dataset' do
-          expect(schema.attributes).to eql(
+          expect(schema.to_h).to eql(
             id: ROM::SQL::Types::Serial.meta(name: :id, source: source),
             title: ROM::SQL::Types::String.optional.meta(name: :title, source: source),
             user_id: ROM::SQL::Types::Int.optional.meta(name: :user_id,
@@ -69,7 +69,7 @@ RSpec.describe 'Schema inference for common datatypes' do
         let(:source) { ROM::Relation::Name[dataset] }
 
         it 'can infer attributes for dataset' do
-          expect(schema.attributes).to eql(
+          expect(schema.to_h).to eql(
             id: ROM::SQL::Types::Serial.meta(name: :id, source: source),
             text: ROM::SQL::Types::String.meta(name: :text, source: source),
             flag: ROM::SQL::Types::Bool.meta(name: :flag, source: source),

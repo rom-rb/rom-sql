@@ -13,7 +13,9 @@ module ROM
         end
 
         def call
-          SQL::Schema.define(relation, opts.merge(attributes: attributes, type_class: SQL::Type))
+          SQL::Schema.define(
+            relation, opts.merge(attributes: attributes.values, type_class: SQL::Type)
+          )
         end
 
         def opts
