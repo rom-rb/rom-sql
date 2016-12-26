@@ -6,7 +6,6 @@ require 'rom/sql/schema'
 require 'rom/sql/relation/reading'
 require 'rom/sql/relation/writing'
 
-require 'rom/plugins/relation/view'
 require 'rom/plugins/relation/key_inference'
 require 'rom/plugins/relation/sql/auto_combine'
 require 'rom/plugins/relation/sql/auto_wrap'
@@ -24,7 +23,6 @@ module ROM
       adapter :sql
 
       use :key_inference
-      use :view
       use :auto_combine
       use :auto_wrap
 
@@ -76,7 +74,7 @@ module ROM
         #   @param [Object] pk The primary key value
         #   @return [SQL::Relation]
         #   @api public
-        view(:by_pk, attributes[:base]) do |pk|
+        view(:by_pk, attributes[:base].map(&:name)) do |pk|
           where(primary_key => pk)
         end
       end
