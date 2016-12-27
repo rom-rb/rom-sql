@@ -3,6 +3,15 @@ require 'rom/schema/type'
 module ROM
   module SQL
     class Type < ROM::Schema::Type
+      # Return a new type marked as a FK
+      #
+      # @return [SQL::Type]
+      #
+      # @api public
+      def foreign_key
+        self.class.new(type.meta(foreign_key: true))
+      end
+
       # Return a new type marked as qualified
       #
       # @return [SQL::Type]

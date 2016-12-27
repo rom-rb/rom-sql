@@ -9,18 +9,17 @@ module ROM
           left = relations[target.relation]
           right = relations[source.relation]
 
+          left_pk = left.primary_key
+          right_fk = left.foreign_key(source.relation)
+
           left_schema = left.schema
           right_schema = right.schema.project_pk
 
-          left_fk = right_schema.foreign_key(target.relation)
-
           schema =
-            if left_fk
-              left_schema.merge(right_schema)
+            if left.schema.key?(right_fk)
+              left_schema
             else
-              left_schema.merge(
-                right_schema.rename(right.primary_key => left.foreign_key(source.relation))
-              )
+              left_schema.merge(right_schema.project_fk(left_pk => right_fk))
             end.qualified
 
           relation = left

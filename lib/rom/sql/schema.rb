@@ -32,6 +32,11 @@ module ROM
         project(*primary_key_names)
       end
 
+      # @api private
+      def project_fk(mapping)
+        new(rename(mapping).map(&:foreign_key))
+      end
+
       # Create a new relation based on the schema definition
       #
       # @param [Relation] relation The source relation
