@@ -1,3 +1,34 @@
+## v1.0.0 to-be-released
+
+This release is based on rom core 3.0.0 with its improved Schema API, which is extended with SQL-specific features.
+
+Please refer to [the upgrading guide] if you're moving from 0.9.x to 1.0.0.
+
+### Added
+
+* [BREAKING] All relations have schemas (inferred by default, but still possible to override and/or extend) (solnic)
+* [BREAKING] Schemas are used when defining relation views (solnic)
+* [BREAKING] Default dataset is set up based on schema (solnic)
+* Extended query API with support for schema attributes (solnic)
+* Schemas can project relations automatically (solnic)
+* New `Schema#qualified` (solnic)
+* Schema attribute types are now SQL-specific and compatible with query DSL (ie you can pass relation attributes to `select` and they will be automatically converted to valid SQL expressions) (solnic)
+* Associations support setting custom `foreign_key` names (solnic)
+* Support for self-referencing associations (ie categories have_many child categories) (solnic)
+
+### Changed
+
+* [BREAKING] `Relation#header` has been removed in favor of schemas (solnic)
+* [BREAKING] `Relation#base` has been removed as now a vanilla relation *is a base relation view* (solnic)
+* [BREAKING] Deprecated `Commands::Update#change` has been removed (solnic)
+* [BREAKING] Deprecated `Commands.validator` has been removed (solnic)
+* [BREAKING] `assoc_macros` plugin has been removed, please use associations from now (solnic)
+* [internal] Associations use schemas for relation projections (solnic)
+* [internal] `select`, `select_append` and `project` use schemas internally (solnic)
+* [internal] Deprecation and constants are now based on dry-core (flash-gordon)
+
+[Compare v0.9.1...v1.0.0](https://github.com/rom-rb/rom-sql/compare/v0.9.1...v1.0.0)
+
 ## v0.9.1 2016-12-23
 
 ### Added
