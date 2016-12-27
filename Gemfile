@@ -8,7 +8,7 @@ gem 'rom-support', git: 'https://github.com/rom-rb/rom-support.git', branch: 'ma
 group :test do
   gem 'byebug', platforms: :mri
   gem 'dry-struct'
-  gem 'activesupport', '~> 4.2'
+  gem 'activesupport', '~> 5.0'
   gem 'rspec', '~> 3.1'
   gem 'codeclimate-test-reporter', require: false
   gem 'simplecov', require: false
