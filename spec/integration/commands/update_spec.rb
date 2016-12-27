@@ -74,25 +74,19 @@ RSpec.describe 'Commands / Update' do
         }.to raise_error(ROM::SQL::NotNullConstraintError, /name/)
       end
 
-      describe '#execute' do
-        context 'with a single record' do
-          it 'materializes the result' do
-            result = users.update.by_name('Piotr').execute(name: 'Pete')
-            expect(result).to eq([
-              { id: 1, name: 'Pete' }
-            ])
-          end
-        end
+      it 'materializes single result' do
+        result = users.update.by_name('Piotr').call(name: 'Pete')
+        expect(result).to eq([
+          { id: 1, name: 'Pete' }
+        ])
+      end
 
-        context 'with multiple records' do
-          it 'materializes the results' do
-            result = users.update.by_name(%w(Piotr Jane)).execute(name: 'Josie')
-            expect(result).to eq([
-              { id: 1, name: 'Josie' },
-              { id: 2, name: 'Josie' }
-            ])
-          end
-        end
+      it 'materializes multiple results' do
+        result = users.update.by_name(%w(Piotr Jane)).call(name: 'Josie')
+        expect(result).to eq([
+          { id: 1, name: 'Josie' },
+          { id: 2, name: 'Josie' }
+        ])
       end
     end
   end
