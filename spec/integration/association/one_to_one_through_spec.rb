@@ -57,7 +57,7 @@ RSpec.describe ROM::SQL::Association::OneToOneThrough do
       it 'prepares joined relations' do
         relation = assoc.call(container.relations)
 
-        expect(relation.attributes).to eql(%i[id account_id pan user_id])
+        expect(relation.schema.map(&:name)).to eql(%i[id account_id pan user_id])
         expect(relation.to_a).to eql([id: 1, account_id: 1, pan: '*6789', user_id: 1])
       end
     end
@@ -74,7 +74,7 @@ RSpec.describe ROM::SQL::Association::OneToOneThrough do
       it 'prepares joined relations through other association' do
         relation = assoc.call(container.relations)
 
-        expect(relation.attributes).to eql(%i[id card_id service user_id])
+        expect(relation.schema.map(&:name)).to eql(%i[id card_id service user_id])
         expect(relation.to_a).to eql([id: 1, card_id: 1, service: 'aws', user_id: 1])
       end
     end

@@ -74,7 +74,7 @@ module ROM
         #   @param [Object] pk The primary key value
         #   @return [SQL::Relation]
         #   @api public
-        view(:by_pk, attributes[:base].map(&:name)) do |pk|
+        view(:by_pk, schema.map(&:name)) do |pk|
           where(primary_key => pk)
         end
       end

@@ -26,15 +26,18 @@ module ROM
 
           left_fk = join_rel.foreign_key(source.relation)
 
-          columns = right.header.exclude(left_fk).qualified.to_a
-          columns << left_fk unless right.header.names.include?(left_fk)
+          schema =
+            if left.schema.key?(left_fk)
+              left.schema.project(*(right.schema.map(&:name) + [left_fk]))
+            else
+              right.schema.merge(join_rel.schema.project(left_fk))
+            end.qualified
 
           relation = left
             .inner_join(source, join_keys(relations))
-            .select(*columns)
             .order(*right.header.project(*right.primary_key).qualified)
 
-          relation.with(attributes: relation.header.names)
+          schema.(relation)
         end
 
         # @api public

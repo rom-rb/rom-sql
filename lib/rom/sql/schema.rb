@@ -27,6 +27,11 @@ module ROM
         new(map(&:qualified))
       end
 
+      # @api private
+      def project_pk
+        project(*primary_key_names)
+      end
+
       # Create a new relation based on the schema definition
       #
       # @param [Relation] relation The source relation

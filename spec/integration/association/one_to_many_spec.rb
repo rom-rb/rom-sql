@@ -27,7 +27,7 @@ RSpec.describe ROM::SQL::Association::OneToMany do
       it 'prepares joined relations' do
         relation = assoc.call(container.relations)
 
-        expect(relation.attributes).to eql(%i[id user_id title])
+        expect(relation.schema.map(&:name)).to eql(%i[id user_id title])
 
         expect(relation.order(:tasks__id).to_a).to eql([
           { id: 1, user_id: 2, title: "Joe's task" },

@@ -8,14 +8,13 @@ module ROM
         def call(relations)
           with_keys(relations) do |left_pk, right_fk|
             right = relations[target.relation]
-            columns = right.header.qualified.to_a
+            schema = right.schema.qualified
 
             relation = right
               .inner_join(source, left_pk => right_fk)
-              .select(*columns)
               .order(*right.header.project(*right.primary_key).qualified)
 
-            relation.with(attributes: relation.header.names)
+            schema.(relation)
           end
         end
 

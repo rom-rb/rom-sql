@@ -239,7 +239,7 @@ RSpec.describe 'Schema inference for common datatypes' do
       end
 
       it 'does not fail with a weird error when a relation does not have attributes' do
-        expect(container.relations[:dummy].attributes).to be_empty
+        expect(container.relations[:dummy].schema).to be_empty
       end
     end
   end

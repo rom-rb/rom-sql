@@ -9,22 +9,25 @@ module ROM
           left = relations[target.relation]
           right = relations[source.relation]
 
-          right_pk = right.schema.primary_key.map { |a| a.meta[:name] }
-          right_fk = right.foreign_key(target.relation)
+          left_schema = left.schema
+          right_schema = right.schema.project_pk
 
-          pk_to_fk = Hash[right_pk.product(Array(left.foreign_key(source.relation)))]
+          left_fk = right_schema.foreign_key(target.relation)
 
-          columns = left.header.qualified.to_a + right.header
-            .project(*right_pk)
-            .rename(pk_to_fk)
-            .qualified.to_a
+          schema =
+            if left_fk
+              left_schema.merge(right_schema)
+            else
+              left_schema.merge(
+                right_schema.rename(right.primary_key => left.foreign_key(source.relation))
+              )
+            end.qualified
 
           relation = left
-            .inner_join(source, right_fk => left.primary_key)
-            .select(*columns)
-            .order(*right.header.project(*right.primary_key).qualified)
+            .inner_join(source, right.foreign_key(target.relation) => left.primary_key)
+            .order(*right_schema.qualified)
 
-          relation.with(attributes: relation.header.names)
+          schema.(relation)
         end
 
         # @api public

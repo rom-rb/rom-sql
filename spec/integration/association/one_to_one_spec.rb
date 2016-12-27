@@ -28,7 +28,7 @@ RSpec.describe ROM::SQL::Association::OneToOne do
       it 'prepares joined relations' do |example|
         relation = assoc.call(container.relations)
 
-        expect(relation.attributes).to eql(%i[id user_id number balance])
+        expect(relation.schema.map(&:name)).to eql(%i[id user_id number balance])
 
         # TODO: this if caluse should be removed when (and if) https://github.com/xerial/sqlite-jdbc/issues/112
         # will be resolved. See https://github.com/rom-rb/rom-sql/issues/49 for details
