@@ -31,9 +31,7 @@ module ROM
               other = __registry__[name]
               other_dataset = other.name.dataset
 
-              inner_join(other_dataset, keys)
-                .select(*qualified.header.columns)
-                .select_append(*other.prefix(other_dataset).qualified.header)
+              schema.merge(other.schema.wrap).qualified.(inner_join(other_dataset, keys))
             end
           end
         end
