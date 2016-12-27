@@ -1,6 +1,4 @@
-require 'rom/sql/header'
 require 'rom/sql/types'
-
 require 'rom/sql/schema'
 
 require 'rom/sql/relation/reading'
@@ -108,26 +106,6 @@ module ROM
         rel.schema? ? rel.schema.primary_key_name : :id
       }
 
-      # Return table name from relation's sql statement
-      #
-      # This value is used by `header` for prefixing column names
-      #
-      # @return [Symbol]
-      #
-      # @api private
-      def table
-        @table ||= dataset.opts[:from].first
-      end
-
-      # Return a header for this relation
-      #
-      # @return [Header]
-      #
-      # @api private
-      def header
-        @header ||= Header.new(selected_columns, table)
-      end
-
       # Return raw column names
       #
       # @return [Array<Symbol>]
@@ -135,20 +113,6 @@ module ROM
       # @api private
       def columns
         @columns ||= dataset.columns
-      end
-
-      protected
-
-      # Return a list of columns from *the sql select* statement or default to
-      # dataset columns
-      #
-      # This is used to construct relation's header
-      #
-      # @return [Array<Symbol>]
-      #
-      # @api private
-      def selected_columns
-        @selected_columns ||= dataset.opts.fetch(:select, columns)
       end
     end
   end

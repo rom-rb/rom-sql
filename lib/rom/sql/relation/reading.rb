@@ -74,7 +74,7 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def prefix(name = Dry::Core::Inflector.singularize(table))
+        def prefix(name = Dry::Core::Inflector.singularize(schema.name.dataset))
           schema.prefix(name).(self)
         end
 
