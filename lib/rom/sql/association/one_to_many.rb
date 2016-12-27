@@ -12,7 +12,7 @@ module ROM
 
             relation = right
               .inner_join(source, left_pk => right_fk)
-              .order(*right.header.project(*right.primary_key).qualified)
+              .order(*right.schema.project_pk.qualified)
 
             schema.(relation)
           end
