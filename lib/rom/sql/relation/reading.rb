@@ -291,7 +291,7 @@ module ROM
         # @api public
         def where(*args, &block)
           if block
-            new(dataset.where(*args).where(schema.restriction(&block)))
+            new(dataset.where(*args).where(self.class.schema.restriction(&block)))
           else
             new(dataset.__send__(__method__, *args))
           end
@@ -327,7 +327,7 @@ module ROM
         # @api public
         def having(*args, &block)
           if block
-            new(dataset.having(*args).having(schema.restriction(&block)))
+            new(dataset.having(*args).having(self.class.schema.restriction(&block)))
           else
             new(dataset.__send__(__method__, *args, &block))
           end

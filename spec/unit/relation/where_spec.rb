@@ -20,5 +20,9 @@ RSpec.describe ROM::Relation, '#where' do
     it 'restricts relation using provided conditions in a block' do
       expect(relation.where { (id > 2) & title.like("%Jane%") }.to_a).to be_empty
     end
+
+    it 'restricts relation using canonical attributes' do
+      expect(relation.rename(id: :user_id).where { id > 3 }.to_a).to be_empty
+    end
   end
 end
