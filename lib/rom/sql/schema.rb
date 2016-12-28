@@ -1,4 +1,5 @@
 require 'rom/schema'
+require 'rom/sql/projection_dsl'
 
 module ROM
   module SQL
@@ -27,6 +28,15 @@ module ROM
         new(map(&:qualified))
       end
 
+      # @api public
+      def project(*names, &block)
+        if block
+          super(*(names + ProjectionDSL.new(self).(&block)))
+        else
+          super
+        end
+      end
+
       # @api private
       def project_pk
         project(*primary_key_names)
@@ -35,6 +45,17 @@ module ROM
       # @api private
       def project_fk(mapping)
         new(rename(mapping).map(&:foreign_key))
+      end
+
+      # @api public
+      def join(dataset)
+        schema = relations.detect { |_, r| r.schema.name.dataset == dataset.to_sym }[1].schema
+        merge(schema.joined)
+      end
+
+      # @api public
+      def joined
+        new(map(&:joined))
       end
 
       # Create a new relation based on the schema definition
@@ -50,7 +71,9 @@ module ROM
 
       # @api private
       def finalize!(*)
-        super { initialize_primary_key_names }
+        super do
+          initialize_primary_key_names
+        end
       end
 
       # @api private

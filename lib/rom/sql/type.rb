@@ -9,7 +9,7 @@ module ROM
       #
       # @api public
       def foreign_key
-        self.class.new(type.meta(foreign_key: true))
+        meta(foreign_key: true)
       end
 
       # Return a new type marked as qualified
@@ -18,7 +18,25 @@ module ROM
       #
       # @api public
       def qualified
-        self.class.new(type.meta(qualified: true))
+        meta(qualified: true)
+      end
+
+      # Return a new type marked as joined
+      #
+      # @return [SQL::Type]
+      #
+      # @api public
+      def joined
+        meta(joined: true)
+      end
+
+      # Return if an attribute was used in a join
+      #
+      # @return [Boolean]
+      #
+      # @api public
+      def joined?
+        meta[:joined].equal?(true)
       end
 
       # Return if an attribute type is qualified

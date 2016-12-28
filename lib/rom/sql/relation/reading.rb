@@ -184,7 +184,7 @@ module ROM
         #
         # @api public
         def select(*args, &block)
-          new(dataset.__send__(__method__, *args, &block))
+          schema.project(*args, &block).(self)
         end
 
         # Append specific columns to select clause
@@ -199,7 +199,7 @@ module ROM
         #
         # @api public
         def select_append(*args, &block)
-          new(dataset.__send__(__method__, *args, &block))
+          schema.merge(self.class.schema.project(*args, &block)).(self)
         end
 
         # Returns a copy of the relation with a SQL DISTINCT clause.
@@ -410,7 +410,7 @@ module ROM
         #
         # @api public
         def inner_join(*args, &block)
-          new(dataset.__send__(__method__, *args, &block))
+          __join__(:inner, *args, &block)
         end
 
         # Join other relation using LEFT OUTER JOIN
@@ -425,7 +425,7 @@ module ROM
         #
         # @api public
         def left_join(*args, &block)
-          new(dataset.__send__(__method__, *args, &block))
+          __join__(:left, *args, &block)
         end
 
         # Group by specific columns
@@ -469,7 +469,8 @@ module ROM
         #
         # @api public
         def select_group(*args, &block)
-          new(dataset.__send__(__method__, *args, &block))
+          new_schema = schema.project(*args, &block)
+          new_schema.(self).group(*new_schema)
         end
 
         # Adds a UNION clause for relation dataset using second relation dataset
@@ -522,6 +523,14 @@ module ROM
         # @api public
         def read(sql)
           new(dataset.db[sql])
+        end
+
+        private
+
+        # @api private
+        def __join__(type, *args, &block)
+          ds = dataset.__send__(:"#{type}_join", *args, &block)
+          new(ds, schema: ds.opts[:join].reduce(schema) { |s, j| s.join(j.table) })
         end
       end
     end
