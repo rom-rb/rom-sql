@@ -7,6 +7,8 @@ RSpec.describe ROM::Relation, '#left_join' do
     it 'joins relations using left outer join' do
       result = relation.left_join(:tasks, user_id: :id).select(:name, :title)
 
+      expect(result.schema.map(&:name)).to eql(%i[name title])
+
       expect(result.to_a).to match_array([
         { name: 'Joe', title: "Joe's task" },
         { name: 'Jane', title: "Jane's task" }

@@ -61,29 +61,4 @@ RSpec.describe ROM::SQL::Gateway, :postgres, skip_tables: true do
       end
     end
   end
-
-  context 'setting up' do
-    it 'skips settings up associations when tables are missing' do
-      conf = ROM::Configuration.new(:sql, uri) do |config|
-        config.relation(:foos) do
-          use :assoc_macros
-          one_to_many :bars, key: :foo_id
-        end
-      end
-      expect { ROM.container(conf) }.not_to raise_error
-    end
-
-    it 'skips finalization a relation when table is missing' do
-      conf = ROM::Configuration.new(:sql, uri) do |config|
-        class Foos < ROM::Relation[:sql]
-          dataset :foos
-          use :assoc_macros
-          one_to_many :bars, key: :foo_id
-        end
-      end
-
-      expect { ROM.container(conf) }.not_to raise_error
-      expect { Foos.model.dataset }.to raise_error(Sequel::Error, /no dataset/i)
-    end
-  end
 end
