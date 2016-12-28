@@ -7,6 +7,8 @@ RSpec.describe ROM::Relation, '#inner_join' do
     it 'joins relations using inner join' do
       result = relation.inner_join(:tasks, user_id: :id).select(:name, :title)
 
+      expect(result.schema.map(&:name)).to eql(%i[name title])
+
       expect(result.to_a).to eql([
         { name: 'Jane', title: "Jane's task" },
         { name: 'Joe', title: "Joe's task" }

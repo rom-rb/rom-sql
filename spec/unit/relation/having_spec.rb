@@ -2,8 +2,9 @@ RSpec.describe ROM::Relation, '#having' do
   subject(:relation) do
     container.relations.users
       .inner_join(:tasks, user_id: :id)
-      .select_group(:users__id, :users__name)
-      .select_append { count(:tasks).as(:task_count) }
+      .qualified
+      .select_group(:id, :name)
+      .select_append { int::count(:tasks).as(:task_count) }
   end
 
   include_context 'users and tasks'
