@@ -1,5 +1,6 @@
 require 'rom/schema'
 require 'rom/sql/projection_dsl'
+require 'rom/sql/restriction_dsl'
 
 module ROM
   module SQL
@@ -17,6 +18,11 @@ module ROM
       def initialize(*)
         super
         initialize_primary_key_names
+      end
+
+      # @api public
+      def restriction(&block)
+        RestrictionDSL.new(self).call(&block)
       end
 
       # Return a new schema with attributes marked as qualified

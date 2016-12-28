@@ -1,16 +1,12 @@
 module ROM
   module SQL
     class Function < ROM::Schema::Type
-      def as(aliaz)
-        aliased(aliaz)
+      def as(name)
+        meta(name: name)
       end
 
       def sql_literal_append(ds, sql)
-        if aliased?
-          ds.literal_append(sql, func.as(meta[:alias]))
-        else
-          ds.literal_append(sql, func)
-        end
+        ds.literal_append(sql, func.as(name))
       end
 
       if RUBY_VERSION < '2.3'
@@ -22,11 +18,11 @@ module ROM
       private
 
       def func
-        Sequel::SQL::Function.new(name, *meta[:args])
+        Sequel::SQL::Function.new(meta[:op], *meta[:args])
       end
 
-      def method_missing(name, *args)
-        meta(name: name, args: args)
+      def method_missing(op, *args)
+        meta(op: op, args: args)
       end
     end
 
