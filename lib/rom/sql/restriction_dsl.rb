@@ -4,12 +4,14 @@ require 'rom/sql/expression'
 module ROM
   module SQL
     class RestrictionDSL < DSL
+      # @api private
       def call(&block)
         instance_exec(&block)
       end
 
       private
 
+      # @api private
       def method_missing(meth, *args, &block)
         if schema.key?(meth)
           ::ROM::SQL::Expression.new(schema[meth])
