@@ -58,7 +58,7 @@ module ROM
       #
       # @api public
       def qualify(name, attribute)
-        QualifiedAttribute[name.dataset, attribute]
+        QualifiedAttribute[name.to_sym, attribute]
       end
 
       protected
@@ -66,6 +66,10 @@ module ROM
       # @api private
       def join_key_map(relations)
         join_keys(relations).to_a.flatten.map(&:to_sym)
+      end
+
+      def self_ref?
+        source.dataset == target.dataset
       end
     end
   end
