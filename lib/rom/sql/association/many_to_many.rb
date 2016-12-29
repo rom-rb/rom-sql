@@ -24,7 +24,7 @@ module ROM
           left = assocs[target].call(relations)
           right = relations[target.relation]
 
-          left_fk = join_rel.foreign_key(source.relation)
+          left_fk = foreign_key || join_rel.foreign_key(source.relation)
 
           schema =
             if left.schema.key?(left_fk)
@@ -71,7 +71,7 @@ module ROM
         # @api private
         def with_keys(relations, &block)
           source_key = relations[source.relation].primary_key
-          target_key = relations[through.relation].foreign_key(source.relation)
+          target_key = foreign_key || relations[through.relation].foreign_key(source.relation)
           return [source_key, target_key] unless block
           yield(source_key, target_key)
         end
