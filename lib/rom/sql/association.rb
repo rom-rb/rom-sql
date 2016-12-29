@@ -67,6 +67,10 @@ module ROM
       def join_key_map(relations)
         join_keys(relations).to_a.flatten.map(&:to_sym)
       end
+
+      def self_ref?
+        source.dataset == target.dataset
+      end
     end
   end
 end

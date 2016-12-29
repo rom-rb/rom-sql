@@ -23,7 +23,7 @@ module ROM
             end.qualified
 
           relation = left
-            .inner_join(source, join_keys(relations))
+            .inner_join(source_table, join_keys(relations))
             .order(*right_schema.qualified)
 
           schema.(relation)
@@ -37,7 +37,7 @@ module ROM
         # @api public
         def join_keys(relations)
           with_keys(relations) { |source_key, target_key|
-            { qualify(source, source_key) => qualify(target, target_key) }
+            { qualify(source_alias, source_key) => qualify(target, target_key) }
           }
         end
 
@@ -48,6 +48,16 @@ module ROM
         end
 
         protected
+
+        # @api private
+        def source_table
+          self_ref? ? :"#{source.dataset}___#{source_alias}" : source
+        end
+
+        # @api private
+        def source_alias
+          self_ref? ? :"#{source.dataset.to_s[0]}_0" : source
+        end
 
         # @api private
         def with_keys(relations, &block)

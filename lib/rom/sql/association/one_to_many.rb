@@ -41,12 +41,9 @@ module ROM
           self_ref? ? :"#{source.dataset}___#{source_alias}" : source
         end
 
+        # @api private
         def source_alias
           self_ref? ? :"#{source.dataset.to_s[0]}_0" : source
-        end
-
-        def self_ref?
-          source.dataset == target.dataset
         end
 
         # @api private
