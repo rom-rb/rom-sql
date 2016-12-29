@@ -63,8 +63,13 @@ module ROM
       end
 
       # @api private
-      def sql_literal_append(ds, sql)
-        ds.__send__(:literal_symbol_append, sql, to_sym)
+      def sql_literal(ds)
+        sql_expr.sql_literal(ds)
+      end
+
+      # @api private
+      def sql_expr
+        Sequel.expr(to_sym)
       end
     end
   end

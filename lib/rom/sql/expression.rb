@@ -3,7 +3,7 @@ module ROM
     class Expression
       attr_reader :expr, :type
 
-      def initialize(type, expr = ::Sequel.expr(type.to_sym))
+      def initialize(type, expr = type.sql_expr)
         @type = type
         @expr = expr
       end
