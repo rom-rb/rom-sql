@@ -1,15 +1,9 @@
+require 'rom/sql/dsl'
 require 'rom/sql/expression'
 
 module ROM
   module SQL
-    class RestrictionDSL < BasicObject
-      attr_reader :schema, :vr
-
-      def initialize(schema)
-        @schema = schema
-        @vr = ::Sequel::VIRTUAL_ROW
-      end
-
+    class RestrictionDSL < DSL
       def call(&block)
         instance_exec(&block)
       end
@@ -20,7 +14,7 @@ module ROM
         if schema.key?(meth)
           ::ROM::SQL::Expression.new(schema[meth])
         else
-          vr.__send__(meth, *args, &block)
+          ::Sequel::VIRTUAL_ROW.__send__(meth, *args, &block)
         end
       end
     end

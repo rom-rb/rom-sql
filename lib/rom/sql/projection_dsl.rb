@@ -1,15 +1,9 @@
+require 'rom/sql/dsl'
 require 'rom/sql/function'
 
 module ROM
   module SQL
-    class ProjectionDSL < BasicObject
-      attr_reader :schema
-
-      def initialize(schema)
-        @schema = schema
-        @attributes = []
-      end
-
+    class ProjectionDSL < DSL
       def call(&block)
         ::Kernel.Array(instance_exec(&block))
       end
