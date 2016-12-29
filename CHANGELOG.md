@@ -2,7 +2,7 @@
 
 This release is based on rom core 3.0.0 with its improved Schema API, which is extended with SQL-specific features.
 
-Please refer to [the upgrading guide] if you're moving from 0.9.x to 1.0.0.
+Please refer to [the upgrading guide](https://github.com/rom-rb/rom-sql/wiki/Upgrading-from-0.9.x-to-1.0.0) if you're moving from 0.9.x to 1.0.0.
 
 ### Added
 
