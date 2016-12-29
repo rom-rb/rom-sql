@@ -1,63 +1,38 @@
+require 'rom/sql/dsl'
+require 'rom/sql/function'
+
 module ROM
   module SQL
-    class Function < ROM::Schema::Type
-      def as(aliaz)
-        aliased(aliaz)
-      end
-
-      def sql_literal_append(ds, sql)
-        if aliased?
-          ds.literal_append(sql, func.as(meta[:alias]))
-        else
-          ds.literal_append(sql, func)
-        end
-      end
-
-      if RUBY_VERSION < '2.3'
-        def to_ary
-          [self]
-        end
-      end
-
-      private
-
-      def func
-        Sequel::SQL::Function.new(name, *meta[:args])
-      end
-
-      def method_missing(name, *args)
-        meta(name: name, args: args)
-      end
-    end
-
-    class ProjectionDSL < BasicObject
-      attr_reader :schema
-
-      def initialize(schema)
-        @schema = schema
-        @attributes = []
-      end
-
+    class ProjectionDSL < DSL
+      # @api private
       def call(&block)
         ::Kernel.Array(instance_exec(&block))
       end
 
-      private
-
-      def type(identifier)
-        types.const_get(::Dry::Core::Inflector.classify(identifier))
+      # @api private
+      def respond_to_missing?(name, include_private = false)
+        super || type(name)
       end
 
+      private
+
+      # @api private
+      def type(identifier)
+        type_name = ::Dry::Core::Inflector.classify(identifier)
+        types.const_get(type_name) if types.const_defined?(type_name)
+      end
+
+      # @api private
       def types
         ::ROM::SQL::Types
       end
 
       # @api private
-      def method_missing(name, *args, &block)
-        if schema.key?(name)
-          schema[name]
+      def method_missing(meth, *args, &block)
+        if schema.key?(meth)
+          schema[meth]
         else
-          type = type(name)
+          type = type(meth)
 
           if type
             ::ROM::SQL::Function.new(type)

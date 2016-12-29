@@ -290,7 +290,11 @@ module ROM
         #
         # @api public
         def where(*args, &block)
-          new(dataset.__send__(__method__, *args, &block))
+          if block
+            new(dataset.where(*args).where(self.class.schema.restriction(&block)))
+          else
+            new(dataset.__send__(__method__, *args))
+          end
         end
 
         # Restrict a relation to not match criteria
@@ -322,7 +326,11 @@ module ROM
         #
         # @api public
         def having(*args, &block)
-          new(dataset.__send__(__method__, *args, &block))
+          if block
+            new(dataset.having(*args).having(self.class.schema.restriction(&block)))
+          else
+            new(dataset.__send__(__method__, *args, &block))
+          end
         end
 
         # Inverts the current WHERE and HAVING clauses. If there is neither a
