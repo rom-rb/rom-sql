@@ -15,6 +15,8 @@ module ROM
           left_schema = left.schema
           right_schema = right.schema.project_pk
 
+          join_fk = foreign_key || right.foreign_key(target.relation)
+
           schema =
             if left.schema.key?(right_fk)
               left_schema
@@ -23,7 +25,7 @@ module ROM
             end.qualified
 
           relation = left
-            .inner_join(source, right.foreign_key(target.relation) => left.primary_key)
+            .inner_join(source, join_fk => left.primary_key)
             .order(*right_schema.qualified)
 
           schema.(relation)

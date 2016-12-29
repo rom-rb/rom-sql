@@ -33,6 +33,10 @@ module ROM
       #   @return [Symbol] an optional association alias name
       option :as, accepts: [Symbol], reader: true, default: -> assoc { assoc.target.to_sym }
 
+      # @!attribute [r] foreign_key
+      #   @return [Symbol] an optional association alias name
+      option :foreign_key, accepts: [Symbol], reader: true
+
       alias_method :name, :as
 
       # @api private
