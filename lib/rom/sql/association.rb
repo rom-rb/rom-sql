@@ -58,7 +58,7 @@ module ROM
       #
       # @api public
       def qualify(name, attribute)
-        QualifiedAttribute[name.dataset, attribute]
+        QualifiedAttribute[name.to_sym, attribute]
       end
 
       protected

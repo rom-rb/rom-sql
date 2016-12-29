@@ -6,16 +6,14 @@ module ROM
 
         # @api public
         def call(relations)
-          with_keys(relations) do |left_pk, right_fk|
-            right = relations[target.relation]
-            schema = right.schema.qualified
+          right = relations[target.relation]
+          schema = right.schema.qualified
 
-            relation = right
-              .inner_join(source, left_pk => right_fk)
-              .order(*right.schema.project_pk.qualified)
+          relation = right
+                       .inner_join(source_table, join_keys(relations))
+                       .order(*right.schema.project_pk.qualified)
 
-            schema.(relation)
-          end
+          schema.(relation)
         end
 
         # @api public
@@ -26,7 +24,7 @@ module ROM
         # @api public
         def join_keys(relations)
           with_keys(relations) { |source_key, target_key|
-            { qualify(source, source_key) => qualify(target, target_key) }
+            { qualify(source_alias, source_key) => qualify(target, target_key) }
           }
         end
 
@@ -37,6 +35,19 @@ module ROM
         end
 
         protected
+
+        # @api private
+        def source_table
+          self_ref? ? :"#{source.dataset}___#{source_alias}" : source
+        end
+
+        def source_alias
+          self_ref? ? :"#{source.dataset.to_s[0]}_0" : source
+        end
+
+        def self_ref?
+          source.dataset == target.dataset
+        end
 
         # @api private
         def with_keys(relations, &block)

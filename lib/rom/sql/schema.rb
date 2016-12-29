@@ -54,8 +54,11 @@ module ROM
       end
 
       # @api public
-      def join(dataset)
-        schema = relations.detect { |_, r| r.schema.name.dataset == dataset.to_sym }[1].schema
+      def join(name)
+        schema = relations.detect { |_, r|
+          r.schema.name.dataset == name.to_sym
+        }[1].schema
+
         merge(schema.joined)
       end
 

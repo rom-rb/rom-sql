@@ -61,8 +61,16 @@ module ROM
           relation_name.relation
         end
 
-        def sql_literal_append(ds, sql)
-          ds.literal_append(sql, dataset)
+        def as(aliaz)
+          Name[relation_name.relation, relation_name.dataset, aliaz]
+        end
+
+        def to_sym
+          dataset
+        end
+
+        def sql_literal(ds)
+          Sequel.expr(aliased? ? :"#{dataset}___#{key}" : dataset).sql_literal(ds)
         end
       end
     end
