@@ -5,8 +5,8 @@ module ROM
         meta(name: name)
       end
 
-      def sql_literal_append(ds, sql)
-        ds.literal_append(sql, func.as(name))
+      def sql_literal(ds)
+        func.as(name).sql_literal(ds)
       end
 
       if RUBY_VERSION < '2.3'

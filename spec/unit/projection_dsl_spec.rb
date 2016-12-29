@@ -1,12 +1,28 @@
 require 'spec_helper'
 
-RSpec.describe ROM::SQL::ProjectionDSL, helpers: true do
+RSpec.describe ROM::SQL::ProjectionDSL, :sqlite, helpers: true do
+  include_context 'database setup'
+
   subject(:dsl) do
     ROM::SQL::ProjectionDSL.new(schema)
   end
 
   let(:schema) do
     define_schema(:users, id: ROM::SQL::Types::Serial, name: ROM::SQL::Types::String)
+  end
+
+  let(:ds) do
+    conn[:users]
+  end
+
+  describe '#call' do
+    it 'evaluates the block and returns an array with attribute types' do
+      literals = dsl
+                   .call { int::count(id).as(:count) }
+                   .map { |attr| attr.sql_literal(ds) }
+
+      expect(literals).to eql(["count(`id`) AS 'count'"])
+    end
   end
 
   describe '#method_missing' do
