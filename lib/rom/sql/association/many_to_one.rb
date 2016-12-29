@@ -23,7 +23,7 @@ module ROM
             end.qualified
 
           relation = left
-            .inner_join(source, right.foreign_key(target.relation) => left.primary_key)
+            .inner_join(source, join_keys(relations))
             .order(*right_schema.qualified)
 
           schema.(relation)
@@ -51,7 +51,7 @@ module ROM
 
         # @api private
         def with_keys(relations, &block)
-          source_key = relations[source.relation].foreign_key(target.relation)
+          source_key = foreign_key || relations[source.relation].foreign_key(target.relation)
           target_key = relations[target.relation].primary_key
           return [source_key, target_key] unless block
           yield(source_key, target_key)

@@ -41,7 +41,7 @@ module ROM
         # @api private
         def with_keys(relations, &block)
           source_key = relations[source.relation].primary_key
-          target_key = relations[target.relation].foreign_key(source.relation)
+          target_key = foreign_key || relations[target.relation].foreign_key(source.relation)
           return [source_key, target_key] unless block
           yield(source_key, target_key)
         end
