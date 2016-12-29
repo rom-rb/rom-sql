@@ -24,7 +24,7 @@ Please refer to [the upgrading guide](https://github.com/rom-rb/rom-sql/wiki/Upg
 * [BREAKING] Deprecated `Commands.validator` has been removed (solnic)
 * [BREAKING] `assoc_macros` plugin has been removed, please use associations from now (solnic)
 * [internal] Associations use schemas for relation projections (solnic)
-* [internal] `select`, `select_append` and `project` use schemas internally (solnic)
+* [internal] `select`, `select_append`, `project`, `inner_join` and `left_join` use schemas internally (solnic)
 * [internal] Deprecation and constants are now based on dry-core (flash-gordon)
 
 [Compare v0.9.1...v1.0.0](https://github.com/rom-rb/rom-sql/compare/v0.9.1...v1.0.0)
