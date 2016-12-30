@@ -18,6 +18,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
       Decimal :money, null: false
       column :tags, "text[]"
       column :tag_ids, "bigint[]"
+      column :ip, "inet"
       rainbow :color
     end
   end
@@ -34,7 +35,9 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
     before do
       dataset = self.dataset
       conf.relation(dataset) do
-        schema(dataset, infer: true)
+        schema(dataset, infer: true) do
+          attribute :ip, ROM::SQL::Types::String
+        end
       end
     end
 
@@ -48,7 +51,8 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
         money: ROM::SQL::Types::Decimal.meta(name: :money, source: source),
         tags: ROM::SQL::Types::PG::Array('text').optional.meta(name: :tags, source: source),
         tag_ids: ROM::SQL::Types::PG::Array('biging').optional.meta(name: :tag_ids, source: source),
-        color: ROM::SQL::Types::String.enum(*colors).optional.meta(name: :color, source: source)
+        color: ROM::SQL::Types::String.enum(*colors).optional.meta(name: :color, source: source),
+        ip: ROM::SQL::Types::String.meta(name: :ip, source: source)
       )
     end
   end

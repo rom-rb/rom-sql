@@ -43,10 +43,15 @@ module ROM
           columns = gateway.connection.schema(dataset)
           fks = fks_for(gateway, dataset)
 
-          columns.map do |(name, definition)|
+          inferred = columns.map do |(name, definition)|
             type = build_type(definition.merge(foreign_key: fks[name]))
-            type.meta(name: name, source: source)
-          end
+
+            if type
+              type.meta(name: name, source: source)
+            end
+          end.compact
+
+          [inferred.compact, columns.map(&:first) - inferred.map { |attr| attr.meta[:name] }]
         end
 
         private
@@ -56,9 +61,12 @@ module ROM
             map_pk_type(type, db_type)
           else
             mapped_type = map_type(type, db_type, rest)
-            mapped_type = mapped_type.optional if allow_null
-            mapped_type = mapped_type.meta(foreign_key: true, target: foreign_key) if foreign_key
-            mapped_type
+
+            if mapped_type
+              mapped_type = mapped_type.optional if allow_null
+              mapped_type = mapped_type.meta(foreign_key: true, target: foreign_key) if foreign_key
+              mapped_type
+            end
           end
         end
 
@@ -67,9 +75,7 @@ module ROM
         end
 
         def map_type(ruby_type, db_type, **_kw)
-          self.class.ruby_type_mapping.fetch(ruby_type) {
-            raise UnknownDBTypeError, "Cannot find corresponding type for #{ruby_type || db_type}"
-          }
+          self.class.ruby_type_mapping[ruby_type]
         end
 
         # @api private

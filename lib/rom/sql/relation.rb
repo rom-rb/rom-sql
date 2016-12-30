@@ -41,7 +41,7 @@ module ROM
             begin
               inferrer_for_db.new.call(name, gateway)
             rescue Sequel::Error => e
-              []
+              ROM::Schema::DEFAULT_INFERRER.()
             end
           end
 
