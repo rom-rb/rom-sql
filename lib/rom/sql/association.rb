@@ -1,3 +1,7 @@
+require 'dry/core/constants'
+require 'dry/core/class_attributes'
+
+require 'rom/types'
 require 'rom/sql/qualified_attribute'
 require 'rom/sql/association/name'
 
@@ -9,7 +13,7 @@ module ROM
     class Association
       include Dry::Equalizer(:source, :target, :result)
       include Options
-      extend ClassMacros
+      extend Dry::Core::ClassAttributes
 
       defines :result
 
