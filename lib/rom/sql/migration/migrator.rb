@@ -1,20 +1,19 @@
+require 'pathname'
+require 'rom/types'
+require 'rom/initializer'
+
 module ROM
   module SQL
     module Migration
       class Migrator
-        include Options
+        extend Initializer
 
         DEFAULT_PATH = 'db/migrate'.freeze
         VERSION_FORMAT = '%Y%m%d%H%M%S'.freeze
 
-        option :path, reader: true, default: DEFAULT_PATH
+        param :connection
 
-        attr_reader :connection
-
-        def initialize(connection, options = {})
-          super
-          @connection = connection
-        end
+        option :path, type: ROM::Types.Definition(Pathname), reader: true, default: proc { DEFAULT_PATH }
 
         def run(options = {})
           Sequel::Migrator.run(connection, path.to_s, options)

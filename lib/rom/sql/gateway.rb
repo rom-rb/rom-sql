@@ -1,5 +1,8 @@
 require 'logger'
 
+require 'dry/core/constants'
+
+require 'rom/types'
 require 'rom/gateway'
 require 'rom/sql/migration'
 require 'rom/sql/commands'
@@ -16,7 +19,7 @@ module ROM
     #
     # @api public
     class Gateway < ROM::Gateway
-      include Options
+      include Dry::Core::Constants
       include Migration
 
       class << self
@@ -33,6 +36,9 @@ module ROM
       #
       # @api public
       attr_reader :logger
+
+      # @api private
+      attr_reader :options
 
       # SQL gateway interface
       #
@@ -55,14 +61,13 @@ module ROM
       #   gateway = ROM::SQL::Gateway.new(DB)
       #
       # @api public
-      def initialize(uri, options = {})
-        repo_options = self.class.option_definitions.names
-        conn_options = options.reject { |k, _| repo_options.include?(k) }
-
-        @connection = connect(uri, conn_options)
+      def initialize(uri, options = EMPTY_HASH)
+        @connection = connect(uri, options)
         load_extensions(Array(options[:extensions]))
 
-        super(uri, options.reject { |k, _| conn_options.keys.include?(k) })
+        @options = options
+
+        super
 
         self.class.instance = self
       end

@@ -30,13 +30,12 @@ module ROM
     module Migration
       Sequel.extension :migration
 
-      def self.included(klass)
-        super
-        klass.class_eval do
-          option :migrator, reader: true, default: proc { |gateway|
-            Migrator.new(gateway.connection)
-          }
-        end
+      # @api public
+      attr_reader :migrator
+
+      # @api private
+      def initialize(uri, options = EMPTY_HASH)
+        @migrator = options.fetch(:migrator) { Migrator.new(connection) }
       end
 
       # @see ROM::SQL::Migration.pending?

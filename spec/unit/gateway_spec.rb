@@ -38,12 +38,12 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
       migrator = double('migrator')
 
       expect(Sequel).to receive(:connect)
-        .with(uri, host: '127.0.0.1')
+        .with(uri, host: '127.0.0.1', migrator: migrator)
         .and_return(conn)
 
       gateway = ROM::SQL::Gateway.new(uri, migrator: migrator, host: '127.0.0.1')
 
-      expect(gateway.options).to eql(migrator: migrator)
+      expect(gateway.options).to eql(migrator: migrator, host: '127.0.0.1')
     end
 
     it 'allows extensions' do
