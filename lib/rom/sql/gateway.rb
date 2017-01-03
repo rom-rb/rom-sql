@@ -24,7 +24,7 @@ module ROM
       end
 
       CONNECTION_EXTENSIONS = {
-        postgres: %i(pg_array pg_json)
+        postgres: %i(pg_array pg_json pg_enum)
       }.freeze
 
       # Return optionally configured logger
