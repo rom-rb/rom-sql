@@ -1,12 +1,12 @@
+require 'rom/types'
+
 module ROM
   module SQL
     class Association
       class ManyToMany < Association
-        attr_reader :through
-
         result :many
 
-        option :through, default: nil, type: Symbol
+        option :through, type: Types::Strict::Symbol.optional
 
         # @api private
         def initialize(*)

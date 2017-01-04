@@ -1,3 +1,8 @@
+require 'dry/core/constants'
+require 'dry/core/class_attributes'
+
+require 'rom/types'
+require 'rom/initializer'
 require 'rom/sql/qualified_attribute'
 require 'rom/sql/association/name'
 
@@ -7,43 +12,46 @@ module ROM
     #
     # @api public
     class Association
+      include Dry::Core::Constants
       include Dry::Equalizer(:source, :target, :result)
-      include Options
-      extend ClassMacros
+      extend Initializer
+      extend Dry::Core::ClassAttributes
 
       defines :result
 
       # @!attribute [r] source
       #   @return [ROM::Relation::Name] the source relation name
-      attr_reader :source
+      param :source
 
       # @!attribute [r] target
       #   @return [ROM::Relation::Name] the target relation name
-      attr_reader :target
+      param :target
 
       # @!attribute [r] relation
       #   @return [Symbol] an optional relation identifier for the target
-      option :relation, accepts: [Symbol], reader: true
+      option :relation, Types::Strict::Symbol, reader: true, optional: true
 
       # @!attribute [r] result
       #   @return [Symbol] either :one or :many
-      option :result, accepts: [Symbol], reader: true, default: -> assoc { assoc.class.result }
+      option :result, Types::Strict::Symbol, reader: true, default: -> assoc { assoc.class.result }
 
       # @!attribute [r] as
       #   @return [Symbol] an optional association alias name
-      option :as, accepts: [Symbol], reader: true, default: -> assoc { assoc.target.to_sym }
+      option :as, Types::Strict::Symbol, reader: true, optional: true, default: -> assoc { assoc.target.to_sym }
 
       # @!attribute [r] foreign_key
       #   @return [Symbol] an optional association alias name
-      option :foreign_key, accepts: [Symbol], reader: true
+      option :foreign_key, Types::Strict::Symbol, optional: true, reader: true, default: proc { nil }
 
       alias_method :name, :as
 
-      # @api private
-      def initialize(source, target, options = EMPTY_HASH)
-        @source = Name[source]
-        @target = Name[options[:relation] || target, target, options[:as] || target]
-        super
+      # @api public
+      def self.new(source, target, options = EMPTY_HASH)
+        super(
+          Name[source],
+          Name[options[:relation] || target, target, options[:as] || target],
+          options
+        )
       end
 
       # Returns a qualified attribute name for a given dataset

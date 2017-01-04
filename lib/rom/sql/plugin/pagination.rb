@@ -1,20 +1,17 @@
+require 'rom/initializer'
+
 module ROM
   module SQL
     module Plugin
       module Pagination
         class Pager
-          include Options
+          extend Initializer
           include Dry::Equalizer(:dataset, :options)
 
-          option :current_page, reader: true, default: 1
+          param :dataset
+
+          option :current_page, reader: true, default: proc { 1 }
           option :per_page, reader: true
-
-          attr_reader :dataset
-
-          def initialize(dataset, options = {})
-            super
-            @dataset = dataset
-          end
 
           def next_page
             num = current_page + 1

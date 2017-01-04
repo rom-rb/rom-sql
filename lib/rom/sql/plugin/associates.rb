@@ -106,7 +106,7 @@ module ROM
                 "#{name} association is already defined for #{self.class}"
             end
 
-            option :association, reader: true, default: {}
+            option :association, reader: true, default: proc { Hash.new }
 
             include InstanceMethods
 

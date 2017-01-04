@@ -1,9 +1,11 @@
+require 'dry/core/class_attributes'
+
 module ROM
   module SQL
     class Schema < ROM::Schema
       # @api private
       class Inferrer
-        extend ClassMacros
+        extend Dry::Core::ClassAttributes
 
         defines :ruby_type_mapping, :numeric_pk_type, :db_type, :db_registry
 
@@ -51,7 +53,7 @@ module ROM
             end
           end.compact
 
-          [inferred.compact, columns.map(&:first) - inferred.map { |attr| attr.meta[:name] }]
+          [inferred, columns.map(&:first) - inferred.map { |attr| attr.meta[:name] }]
         end
 
         private
