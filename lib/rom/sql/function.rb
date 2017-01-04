@@ -9,12 +9,6 @@ module ROM
         func.as(name).sql_literal(ds)
       end
 
-      if RUBY_VERSION < '2.3'
-        def to_ary
-          [self]
-        end
-      end
-
       private
 
       def func

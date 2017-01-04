@@ -6,7 +6,13 @@ module ROM
     class ProjectionDSL < DSL
       # @api private
       def call(&block)
-        ::Kernel.Array(instance_exec(&block))
+        result = instance_exec(&block)
+
+        if result.is_a?(::Array)
+          result
+        else
+          [result]
+        end
       end
 
       # @api private
