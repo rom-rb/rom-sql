@@ -200,7 +200,8 @@ RSpec.describe 'Commands / Create', :postgres do
       }.to raise_error(ROM::SQL::UniqueConstraintError)
     end
 
-    it 're-raises fk constraint violation error' do
+    it 're-raises fk constraint violation error' do |ex|
+      pending 'Waits for https://github.com/jeremyevans/sequel/pull/1283' if jruby? && sqlite?(ex)
       expect {
         tasks.try {
           tasks.create.call(user_id: 918_273_645)
