@@ -23,7 +23,6 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'dry-types', '~> 0.9'
   spec.add_runtime_dependency 'dry-core', '~> 0.2', '>= 0.2.3'
   spec.add_runtime_dependency 'rom', '~> 3.0.0.beta'
-  spec.add_runtime_dependency 'rom-support', '~> 2.0'
 
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'rake', '~> 10.0'

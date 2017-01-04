@@ -3,7 +3,6 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'rom', git: 'https://github.com/rom-rb/rom.git', branch: 'master'
-gem 'rom-support', git: 'https://github.com/rom-rb/rom-support.git', branch: 'master'
 
 group :test do
   gem 'byebug', platforms: :mri
