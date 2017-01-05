@@ -55,7 +55,7 @@ module ROM
 
       # @api public
       def join(name)
-        schema = relations.detect { |_, r|
+        schema = relations.detect(method(:join_table_not_found)) { |_, r|
           r.schema.name.dataset == name.to_sym
         }[1].schema
 
@@ -91,6 +91,12 @@ module ROM
           @primary_key_name = primary_key[0].meta[:name]
           @primary_key_names = primary_key.map { |type| type.meta[:name] }
         end
+      end
+
+      private
+
+      def join_table_not_found
+        raise ROM::SQL::Error, "can't join with '#{name}'; table not found"
       end
     end
   end

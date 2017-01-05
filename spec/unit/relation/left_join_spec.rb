@@ -14,5 +14,11 @@ RSpec.describe ROM::Relation, '#left_join' do
         { name: 'Jane', title: "Jane's task" }
       ])
     end
+
+    it "fails gracefully when the table can't be found" do
+      expect {
+        relation.left_join(:task, user_id: :id)
+      }.to raise_error(ROM::SQL::Error, /\btask\b/)
+    end
   end
 end
