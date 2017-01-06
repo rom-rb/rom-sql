@@ -13,6 +13,33 @@ RSpec.describe 'Plugins / :associates' do
         end
       end
 
+      describe '#with_association' do
+        let(:user) do
+          users[:create].call(name: 'Jane')
+        end
+
+        let(:task) do
+          { title: 'Task one' }
+        end
+
+        before do
+          conf.commands(:users) do
+            define(:create) { result :one }
+          end
+
+          conf.commands(:tasks) do
+            define(:create) { result :one }
+          end
+        end
+
+        it 'returns a command prepared for the given association' do
+          command = tasks[:create].with_association(:user, key: %i[user_id id])
+
+          expect(command.call(task, user)).
+            to eql(id: 1, title: 'Task one', user_id: user[:id])
+        end
+      end
+
       shared_context 'automatic FK setting' do
         it 'sets foreign key prior execution for many tuples' do
           create_user = users[:create].with(name: 'Jade')

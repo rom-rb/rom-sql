@@ -13,6 +13,8 @@ module ROM
             defines :associations
 
             associations []
+
+            option :associations, reader: true, optional: true, default: -> cmd { cmd.class.associations }
           end
           super
         end
@@ -54,6 +56,11 @@ module ROM
               end
           end
 
+          # @api public
+          def with_association(name, opts = EMPTY_HASH)
+            self.class.build(relation, options.merge(associations: [[name, opts]]))
+          end
+
           # @api private
           def __registry__
             relation.__registry__
@@ -66,6 +73,7 @@ module ROM
           # @api public
           def build(relation, options = EMPTY_HASH)
             command = super
+            associations = command.associations
 
             before_hooks = associations.each_with_object([]) do |(name, opts), acc|
               relation.associations.try(name) do |assoc|
