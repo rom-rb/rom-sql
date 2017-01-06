@@ -7,51 +7,36 @@ module ROM
       module Associates
         # @api private
         def self.included(klass)
-          klass.extend(ClassMethods)
+          klass.class_eval do
+            extend ClassMethods
+            include InstanceMethods
+            defines :associations
+
+            associations []
+          end
           super
         end
 
         module InstanceMethods
-          attr_reader :assoc, :__registry__
-
-          # @api private
-          def initialize(*)
-            super
-            @__registry__ = relation.__registry__
-            assoc_name, assoc_opts = self.class.associations[0]
-            @assoc =
-              if assoc_opts.any?
-                assoc_opts[:key]
-              else
-                relation.associations[assoc_name]
-              end
-          end
-
           # Set fk on tuples from parent tuple
           #
           # @param [Array<Hash>, Hash] tuples The input tuple(s)
           # @param [Hash] parent The parent tuple with its pk already set
           #
-          # @return [Array<Hash>,Hash]
-          #
-          # @overload SQL::Commands::Create#execute
+          # @return [Array<Hash>]
           #
           # @api public
-          def execute(tuples, parent)
+          def associate(tuples, parent, assoc:, keys:)
             input_tuples =
               case assoc
-              when Array
-                fk, pk = assoc
+              when Symbol
+                fk, pk = keys
 
-                input_tuples = with_input_tuples(tuples).map { |tuple|
+                with_input_tuples(tuples).map { |tuple|
                   tuple.merge(fk => parent.fetch(pk))
                 }
-
-                super(input_tuples)
               when Association::ManyToMany
-                new_tuples = super(tuples)
-
-                join_tuples = assoc.associate(__registry__, new_tuples, parent)
+                join_tuples = assoc.associate(__registry__, tuples, parent)
                 join_relation = assoc.join_relation(__registry__)
                 join_relation.multi_insert(join_tuples)
 
@@ -61,22 +46,48 @@ module ROM
 
                 pk_extend = { fk => parent[pk] }
 
-                new_tuples.map { |tuple| tuple.update(pk_extend) }
+                tuples.map { |tuple| tuple.update(pk_extend) }
               when Association
-                input_tuples = with_input_tuples(tuples).map { |tuple|
+                with_input_tuples(tuples).map { |tuple|
                   assoc.associate(relation.__registry__, tuple, parent)
                 }
-                super(input_tuples)
               end
+          end
+
+          # @api private
+          def __registry__
+            relation.__registry__
           end
         end
 
         module ClassMethods
-          # @api private
-          def inherited(klass)
-            klass.defines :associations
-            klass.associations []
-            super
+          # @see ROM::Command::ClassInterface.build
+          #
+          # @api public
+          def build(relation, options = EMPTY_HASH)
+            command = super
+
+            before_hooks = associations.each_with_object([]) do |(name, opts), acc|
+              relation.associations.try(name) do |assoc|
+                unless assoc.is_a?(Association::ManyToMany)
+                  acc << { associate: { assoc: assoc, keys: assoc.join_keys(relation.__registry__) } }
+                else
+                  true
+                end
+              end or acc << { associate: { assoc: name, keys: opts[:key] } }
+            end
+
+            after_hooks = associations.each_with_object([]) do |(name, opts), acc|
+              next unless relation.associations.key?(name)
+
+              assoc = relation.associations[name]
+
+              if assoc.is_a?(Association::ManyToMany)
+                acc << { associate: { assoc: assoc, keys: assoc.join_keys(relation.__registry__) } }
+              end
+            end
+
+            command.before(*before_hooks).after(*after_hooks)
           end
 
           # Set command to associate tuples with a parent tuple using provided keys
@@ -100,17 +111,13 @@ module ROM
           # @option options [Array] :key The association keys
           #
           # @api public
-          def associates(name, options = {})
+          def associates(name, options = EMPTY_HASH)
             if associations.map(&:first).include?(name)
               raise ArgumentError,
-                "#{name} association is already defined for #{self.class}"
+                    "#{name} association is already defined for #{self.class}"
             end
 
-            option :association, reader: true, default: proc { Hash.new }
-
-            include InstanceMethods
-
-            associations << [name, options]
+            associations(associations.dup << [name, options])
           end
         end
       end
