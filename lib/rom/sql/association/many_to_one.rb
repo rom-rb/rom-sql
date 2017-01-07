@@ -26,7 +26,11 @@ module ROM
             .inner_join(source_table, join_keys(relations))
             .order(*right_schema.qualified)
 
-          schema.(relation)
+          if view
+            schema.(relation.public_send(view))
+          else
+            schema.(relation)
+          end
         end
 
         # @api public

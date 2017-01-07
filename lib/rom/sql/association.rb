@@ -43,6 +43,10 @@ module ROM
       #   @return [Symbol] an optional association alias name
       option :foreign_key, Types::Strict::Symbol, optional: true, reader: true, default: proc { nil }
 
+      # @!attribute [r] view
+      #   @return [Symbol] An optional view that should be used to extend assoc relation
+      option :view, reader: true, optional: true, default: proc { nil }
+
       alias_method :name, :as
 
       # @api public
