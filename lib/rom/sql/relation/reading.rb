@@ -418,7 +418,7 @@ module ROM
         #
         # @api public
         def inner_join(*args, &block)
-          __join__(:inner, *args, &block)
+          __join__(__method__, *args, &block)
         end
 
         # Join other relation using LEFT OUTER JOIN
@@ -433,7 +433,7 @@ module ROM
         #
         # @api public
         def left_join(*args, &block)
-          __join__(:left, *args, &block)
+          __join__(__method__, *args, &block)
         end
 
         # Group by specific columns
@@ -536,9 +536,20 @@ module ROM
         private
 
         # @api private
-        def __join__(type, *args, &block)
-          ds = dataset.__send__(:"#{type}_join", *args, &block)
-          new(ds, schema: ds.opts[:join].reduce(schema) { |s, j| s.join(j.table) })
+        def __join__(type, other, opts = EMPTY_HASH, &block)
+          case other
+          when Symbol, Association::Name
+            new(dataset.__send__(type, other.to_sym, opts, &block))
+          when Relation
+            __send__(type, other.name.dataset, join_keys(other))
+          else
+            raise ArgumentError, "+other+ must be either a symbol or a relation, #{other.class} given"
+          end
+        end
+
+        # @api private
+        def join_keys(other)
+          other.associations[name].join_keys(__registry__)
         end
       end
     end
