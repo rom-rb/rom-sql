@@ -61,4 +61,43 @@ RSpec.describe ROM::SQL::Gateway, :postgres, skip_tables: true do
       end
     end
   end
+
+  describe 'transactions' do
+    before do
+      conn.drop_table?(:names)
+
+      conn.create_table(:names) do
+        String :name
+      end
+    end
+
+    let(:gw) { container.gateways[:default] }
+    let(:names) { gw.dataset(:names) }
+
+    it 'can run the code inside a transaction' do
+      names.insert name: 'Jade'
+
+      gw.transaction do |t|
+        names.insert name: 'John'
+
+        t.rollback!
+        names.insert name: 'Jack'
+      end
+
+      expect(names.to_a).to eql([name: 'Jade'])
+    end
+
+    it 'sets isolation level to read commited' do
+      gw = container.gateways[:default]
+      names = gw.dataset(:names)
+
+      gw.transaction do |t|
+        names.insert name: 'John'
+        concurrent_names = nil
+        Thread.new { concurrent_names = names.to_a }.join
+
+        expect(concurrent_names).to eql([])
+      end
+    end
+  end
 end
