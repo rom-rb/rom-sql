@@ -417,9 +417,10 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def inner_join(*args, &block)
+        def join(*args, &block)
           __join__(__method__, *args, &block)
         end
+        alias_method :inner_join, :join
 
         # Join other relation using LEFT OUTER JOIN
         #
