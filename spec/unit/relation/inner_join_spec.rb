@@ -7,6 +7,8 @@ RSpec.describe ROM::Relation, '#inner_join' do
 
   with_adapters do
     it 'joins relations using inner join' do
+      relation.insert id: 3, name: 'Jade'
+
       result = relation.
                  inner_join(:tasks, user_id: :id).
                  select(:name, tasks[:title])
@@ -32,6 +34,8 @@ RSpec.describe ROM::Relation, '#inner_join' do
             associations { belongs_to :user }
           end
         end
+
+        relation.insert id: 3, name: 'Jade'
       end
 
       it 'joins relation with join keys inferred' do

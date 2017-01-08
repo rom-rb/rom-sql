@@ -7,6 +7,8 @@ RSpec.describe ROM::Relation, '#left_join' do
 
   with_adapters do
     it 'joins relations using left outer join' do
+      relation.insert id: 3, name: 'Jade'
+
       result = relation.
                  left_join(:tasks, user_id: :id).
                  select(:name, tasks[:title])
@@ -15,7 +17,8 @@ RSpec.describe ROM::Relation, '#left_join' do
 
       expect(result.to_a).to match_array([
         { name: 'Joe', title: "Joe's task" },
-        { name: 'Jane', title: "Jane's task" }
+        { name: 'Jane', title: "Jane's task" },
+        { name: 'Jade', title: nil }
       ])
     end
 
@@ -32,6 +35,8 @@ RSpec.describe ROM::Relation, '#left_join' do
             associations { belongs_to :user }
           end
         end
+
+        relation.insert id: 3, name: 'Jade'
       end
 
       it 'joins relation with join keys inferred' do
@@ -43,7 +48,8 @@ RSpec.describe ROM::Relation, '#left_join' do
 
         expect(result.to_a).to eql([
                                      { name: 'Jane', title: "Jane's task" },
-                                     { name: 'Joe', title: "Joe's task" }
+                                     { name: 'Joe', title: "Joe's task" },
+                                     { name: 'Jade', title: nil }
                                    ])
       end
     end
