@@ -6,6 +6,7 @@ require 'rom/types'
 require 'rom/gateway'
 require 'rom/sql/migration'
 require 'rom/sql/commands'
+require 'rom/sql/transaction'
 
 module ROM
   module SQL
@@ -196,8 +197,13 @@ module ROM
           ROM::SQL.load_extensions(db_type)
         end
 
-        extensions = (CONNECTION_EXTENSIONS.fetch(db_type) { [] } + exts).uniq
+        extensions = (CONNECTION_EXTENSIONS.fetch(db_type, EMPTY_ARRAY) + exts).uniq
         connection.extension(*extensions)
+      end
+
+      # @api private
+      def transaction_runner(_)
+        ROM::SQL::Transaction.new(connection)
       end
     end
   end
