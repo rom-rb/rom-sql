@@ -437,6 +437,22 @@ module ROM
           __join__(__method__, *args, &block)
         end
 
+        # Join other relation using RIGHT JOIN
+        #
+        # @example
+        #   users.right_join(:tasks, id: :user_id)
+        #   users.right_join(tasks)
+        #
+        # @param [Symbol] relation name
+        # @param [Hash] join keys
+        #
+        # @return [Relation]
+        #
+        # @api public
+        def right_join(*args, &block)
+          __join__(__method__, *args, &block)
+        end
+
         # Group by specific columns
         #
         # @example
