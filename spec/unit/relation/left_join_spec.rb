@@ -9,7 +9,7 @@ RSpec.describe ROM::Relation, '#left_join' do
     it 'joins relations using left outer join' do
       result = relation.
                  left_join(:tasks, user_id: :id).
-                 select(:name, tasks.schema[:title])
+                 select(:name, tasks[:title])
 
       expect(result.schema.map(&:name)).to eql(%i[name title])
 
@@ -37,7 +37,7 @@ RSpec.describe ROM::Relation, '#left_join' do
       it 'joins relation with join keys inferred' do
         result = relation.
                    left_join(tasks).
-                   select(:name, tasks.schema[:title])
+                   select(:name, tasks[:title])
 
         expect(result.schema.map(&:name)).to eql(%i[name title])
 
