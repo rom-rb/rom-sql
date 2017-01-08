@@ -20,5 +20,11 @@ RSpec.describe ROM::Relation, '#inner_join' do
         relation.inner_join(:tasks, user_id: :id).to_a
       }.to raise_error(Sequel::DatabaseError, /ambiguous/)
     end
+
+    it "fails gracefully when the table can't be found" do
+      expect {
+        relation.inner_join(:task, user_id: :id)
+      }.to raise_error(ROM::SQL::Error, /\btask\b/)
+    end
   end
 end
