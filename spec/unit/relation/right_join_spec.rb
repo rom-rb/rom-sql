@@ -7,6 +7,7 @@ RSpec.describe ROM::Relation, '#right_join' do
 
   with_adapters :postgres, :mysql do
     it 'joins relations using left outer join' do
+      users.insert id: 3, name: 'Jade'
       relation.insert id: 3, title: 'Unassigned'
 
       result = relation.
@@ -17,7 +18,8 @@ RSpec.describe ROM::Relation, '#right_join' do
 
       expect(result.to_a).to match_array([
         { name: 'Joe', title: "Joe's task" },
-        { name: 'Jane', title: "Jane's task" }
+        { name: 'Jane', title: "Jane's task" },
+        { name: 'Jade', title: nil }
       ])
     end
 
@@ -37,6 +39,7 @@ RSpec.describe ROM::Relation, '#right_join' do
       end
 
       it 'joins relation with join keys inferred' do
+        users.insert id: 3, name: 'Jade'
         relation.insert id: 3, title: 'Unassigned'
 
         result = relation.
@@ -47,7 +50,8 @@ RSpec.describe ROM::Relation, '#right_join' do
 
         expect(result.to_a).to match_array([
                                              { name: 'Joe', title: "Joe's task" },
-                                             { name: 'Jane', title: "Jane's task" }
+                                             { name: 'Jane', title: "Jane's task" },
+                                             { name: 'Jade', title: nil }
                                            ])
       end
     end
