@@ -5,17 +5,6 @@ module ROM
   module SQL
     class ProjectionDSL < DSL
       # @api private
-      def call(&block)
-        result = instance_exec(&block)
-
-        if result.is_a?(::Array)
-          result
-        else
-          [result]
-        end
-      end
-
-      # @api private
       def respond_to_missing?(name, include_private = false)
         super || type(name)
       end

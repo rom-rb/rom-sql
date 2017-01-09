@@ -4,11 +4,6 @@ require 'rom/sql/expression'
 module ROM
   module SQL
     class OrderDSL < DSL
-      # @api private
-      def call(&block)
-        instance_exec(&block).map(&:expr)
-      end
-
       private
 
       # @api private
