@@ -202,7 +202,7 @@ module ROM
 
         # this will be default in Sequel 5.0.0 and since we don't rely
         # on dataset mutation it is safe to enable it already
-        connection.extension(:freeze_datasets)
+        connection.extension(:freeze_datasets) unless RUBY_ENGINE == 'rbx'
       end
 
       # @api private
