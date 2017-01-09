@@ -1,14 +1,15 @@
 RSpec.describe ROM::Relation, '#distinct' do
-  subject(:relation) { container.relations.users }
+  subject(:relation) { relations[:users] }
 
   include_context 'users and tasks'
 
-  with_adapters do
-    if !metadata[:sqlite]
-      it 'delegates to dataset and returns a new relation' do
-        expect(relation.dataset).to receive(:distinct).with(:name).and_call_original
-        expect(relation.distinct(:name)).to_not eql(relation)
-      end
+  before do
+    relation.insert id: 3, name: 'Jane'
+  end
+
+  with_adapters :postgres do
+    it 'delegates to dataset and returns a new relation' do
+      expect(relation.distinct(:name).order(:name).group(:name, :id).to_a).to eql([{ id: 1, name: 'Jane' }, { id: 2, name: 'Joe' }])
     end
   end
 end
