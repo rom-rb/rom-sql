@@ -14,5 +14,16 @@ RSpec.describe ROM::Relation, '#order' do
       expect(ordered.to_a).
         to eql([{ id: 3, name: 'Jade' }, { id: 1, name: 'Jane' }, { id: 2, name: 'Joe' }])
     end
+
+    it 'orders by provided attributes using a block' do
+      ordered = relation.
+                  qualified.
+                  select(:id, :name).
+                  left_join(:tasks, user_id: :id).
+                  order { [name.qualified.desc, id.qualified.desc] }
+
+      expect(ordered.to_a).
+        to eql([{ id: 2, name: 'Joe' }, { id: 1, name: 'Jane' }, { id: 3, name: 'Jade' }])
+    end
   end
 end

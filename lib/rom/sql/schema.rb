@@ -1,4 +1,5 @@
 require 'rom/schema'
+require 'rom/sql/order_dsl'
 require 'rom/sql/projection_dsl'
 require 'rom/sql/restriction_dsl'
 
@@ -23,6 +24,11 @@ module ROM
       # @api public
       def restriction(&block)
         RestrictionDSL.new(self).call(&block)
+      end
+
+      # @api public
+      def order(&block)
+        OrderDSL.new(self).call(&block)
       end
 
       # Return a new schema with attributes marked as qualified

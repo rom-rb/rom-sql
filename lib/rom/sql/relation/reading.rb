@@ -353,6 +353,7 @@ module ROM
         #
         # @example
         #   users.order(:name)
+        #   users.order { [name.desc, id.qualified.desc]}
         #
         # @param [Array<Symbol>] *args A list with column names
         #
@@ -360,7 +361,11 @@ module ROM
         #
         # @api public
         def order(*args, &block)
-          new(dataset.__send__(__method__, *args, &block))
+          if block
+            new(dataset.order(*args, *self.class.schema.order(&block)))
+          else
+            new(dataset.__send__(__method__, *args, &block))
+          end
         end
 
         # Reverse the order of the relation
