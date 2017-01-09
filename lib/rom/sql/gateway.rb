@@ -199,6 +199,10 @@ module ROM
 
         extensions = (CONNECTION_EXTENSIONS.fetch(db_type, EMPTY_ARRAY) + exts).uniq
         connection.extension(*extensions)
+
+        # this will be default in Sequel 5.0.0 and since we don't rely
+        # on dataset mutation it is safe to enable it already
+        connection.extension(:freeze_datasets)
       end
 
       # @api private
