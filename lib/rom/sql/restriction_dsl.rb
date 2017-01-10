@@ -13,7 +13,7 @@ module ROM
       # @api private
       def method_missing(meth, *args, &block)
         if schema.key?(meth)
-          schema[meth].with_sql_expr
+          schema[meth]
         else
           ::Sequel::VIRTUAL_ROW.__send__(meth, *args, &block)
         end

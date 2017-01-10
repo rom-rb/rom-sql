@@ -35,8 +35,8 @@ RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
 
   describe '#method_missing' do
     it 'responds to methods matching attribute names' do
-      expect(dsl.id).to eql(schema[:id].with_sql_expr)
-      expect(dsl.name).to eql(schema[:name].with_sql_expr)
+      expect(dsl.id).to eql(schema[:id])
+      expect(dsl.name).to eql(schema[:name])
     end
 
     it 'responds to methods matching type identifiers' do
