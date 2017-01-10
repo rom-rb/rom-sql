@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe ROM::SQL::ProjectionDSL, :sqlite, helpers: true do
+RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
   include_context 'database setup'
 
   subject(:dsl) do
@@ -8,7 +8,7 @@ RSpec.describe ROM::SQL::ProjectionDSL, :sqlite, helpers: true do
   end
 
   let(:schema) do
-    define_schema(:users, id: ROM::SQL::Types::Serial, name: ROM::SQL::Types::String)
+    define_schema(:users, id: ROM::SQL::Types::Serial, name: ROM::SQL::Types::String, meta: ROM::SQL::Types::PG::JSONB)
   end
 
   let(:ds) do
@@ -21,14 +21,22 @@ RSpec.describe ROM::SQL::ProjectionDSL, :sqlite, helpers: true do
                    .call { int::count(id).as(:count) }
                    .map { |attr| attr.sql_literal(ds) }
 
-      expect(literals).to eql(["count(`id`) AS 'count'"])
+      expect(literals).to eql([%(count("id") AS "count")])
+    end
+
+    it 'supports chaining db functions' do
+      literals = dsl
+                   .call { meta.pg_jsonb.get_text("name").as(:name) }
+                   .map { |attr| attr.sql_literal(ds) }
+
+      expect(literals).to eql([%{("meta" ->> 'name') AS "name"}])
     end
   end
 
   describe '#method_missing' do
     it 'responds to methods matching attribute names' do
-      expect(dsl.id).to eql(schema[:id])
-      expect(dsl.name).to eql(schema[:name])
+      expect(dsl.id).to eql(schema[:id].with_sql_expr)
+      expect(dsl.name).to eql(schema[:name].with_sql_expr)
     end
 
     it 'responds to methods matching type identifiers' do

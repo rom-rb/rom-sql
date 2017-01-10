@@ -1,5 +1,4 @@
 require 'rom/sql/dsl'
-require 'rom/sql/expression'
 
 module ROM
   module SQL
@@ -9,8 +8,7 @@ module ROM
       # @api private
       def method_missing(meth, *args, &block)
         if schema.key?(meth)
-          attr = schema[meth]
-          ::ROM::SQL::Expression.new(schema[meth])
+          schema[meth].with_sql_expr
         else
           ::Sequel::VIRTUAL_ROW.__send__(meth, *args, &block)
         end

@@ -18,7 +18,24 @@ module ROM
       #
       # @api public
       def qualified
-        meta(qualified: true)
+        if sql_expr
+          meta(qualified: true).with_sql_expr
+        else
+          meta(qualified: true)
+        end
+      end
+
+      # Return a new type with an alias
+      #
+      # @return [SQL::Type]
+      #
+      # @api public
+      def aliased(aliaz)
+        if sql_expr
+          super.with_sql_expr
+        else
+          super
+        end
       end
 
       # Return a new type marked as joined
@@ -64,12 +81,41 @@ module ROM
 
       # @api private
       def sql_literal(ds)
-        sql_expr.sql_literal(ds)
+        if sql_expr
+          sql_expr.sql_literal(ds)
+        else
+          Sequel[to_sym].sql_literal(ds)
+        end
       end
 
       # @api private
+      def with_sql_expr(expr = Sequel[to_sym])
+        meta(sql_expr: expr)
+      end
+
+      # @api public
+      def as(name)
+        if sql_expr
+          with_sql_expr(sql_expr.as(name))
+        else
+          super
+        end
+      end
+
+      private
+
+      # @api private
       def sql_expr
-        Sequel.expr(to_sym)
+        meta[:sql_expr]
+      end
+
+      # @api private
+      def method_missing(meth, *args, &block)
+        if sql_expr
+          with_sql_expr(sql_expr.__send__(meth, *args, &block))
+        else
+          super
+        end
       end
     end
   end

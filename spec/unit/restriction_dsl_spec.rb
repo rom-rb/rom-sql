@@ -23,8 +23,8 @@ RSpec.describe ROM::SQL::RestrictionDSL, :sqlite, helpers: true do
 
   describe '#method_missing' do
     it 'responds to methods matching attribute names' do
-      expect(dsl.id.type).to eql(schema[:id])
-      expect(dsl.name.type).to eql(schema[:name])
+      expect(dsl.id.name).to be(:id)
+      expect(dsl.name.name).to be(:name)
     end
 
     it 'delegates to sequel virtual row' do

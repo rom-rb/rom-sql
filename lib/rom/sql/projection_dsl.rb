@@ -25,7 +25,7 @@ module ROM
       # @api private
       def method_missing(meth, *args, &block)
         if schema.key?(meth)
-          schema[meth]
+          schema[meth].with_sql_expr
         else
           type = type(meth)
 
