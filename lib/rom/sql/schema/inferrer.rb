@@ -84,7 +84,13 @@ module ROM
         end
 
         def map_type(ruby_type, db_type, **_kw)
-          self.class.ruby_type_mapping[ruby_type]
+          type = self.class.ruby_type_mapping[ruby_type]
+
+          if db_type.is_a?(String) && db_type.include?('numeric') || db_type.include?('decimal')
+            self.class.ruby_type_mapping[:decimal]
+          else
+            type
+          end
         end
 
         # @api private

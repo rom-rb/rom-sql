@@ -57,6 +57,7 @@ RSpec.describe 'Schema inference for common datatypes' do
             Time :time
             Date :date
             DateTime :datetime, null: false
+            BigDecimal :bigdec
 
             if ctx.sqlite?(example)
               add_constraint(:test_constraint) { char_length(text) > 3 }
@@ -81,7 +82,8 @@ RSpec.describe 'Schema inference for common datatypes' do
             time: ROM::SQL::Types::Time.optional.meta(name: :time, source: source),
             date: ROM::SQL::Types::Date.optional.meta(name: :date, source: source),
             datetime: ROM::SQL::Types::Time.meta(name: :datetime, source: source),
-            data: ROM::SQL::Types::Blob.optional.meta(name: :data, source: source)
+            data: ROM::SQL::Types::Blob.optional.meta(name: :data, source: source),
+            bigdec: ROM::SQL::Types::Decimal.optional.meta(name: :bigdec, source: source)
           )
         end
       end
