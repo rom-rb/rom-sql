@@ -58,6 +58,10 @@ RSpec.describe 'Schema inference for common datatypes' do
             Date :date
             DateTime :datetime, null: false
 
+            if ctx.sqlite?(example)
+              add_constraint(:test_constraint) { char_length(text) > 3 }
+            end
+
             if ctx.postgres?(example)
               Bytea :data
             else

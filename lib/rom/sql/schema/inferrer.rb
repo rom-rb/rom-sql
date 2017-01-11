@@ -25,6 +25,8 @@ module ROM
 
         db_registry Hash.new(self)
 
+        CONSTRAINT_DB_TYPE = 'add_constraint'.freeze
+
         def self.inherited(klass)
           super
 
@@ -43,7 +45,7 @@ module ROM
         def call(source, gateway)
           dataset = source.dataset
 
-          columns = gateway.connection.schema(dataset)
+          columns = filter_columns(gateway.connection.schema(dataset))
           fks = fks_for(gateway, dataset)
 
           inferred = columns.map do |(name, definition)|
@@ -58,6 +60,10 @@ module ROM
         end
 
         private
+
+        def filter_columns(schema)
+          schema.reject { |(_, definition)| definition[:db_type] == CONSTRAINT_DB_TYPE }
+        end
 
         def build_type(primary_key:, db_type:, type:, allow_null:, foreign_key:, **rest)
           if primary_key
