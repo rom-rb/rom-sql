@@ -12,6 +12,7 @@ module ROM
         ruby_type_mapping(
           integer: Types::Int,
           string: Types::String,
+          time: Types::Time,
           date: Types::Date,
           datetime: Types::Time,
           boolean: Types::Bool,

@@ -54,6 +54,7 @@ RSpec.describe 'Schema inference for common datatypes' do
             primary_key :id
             String :text, null: false
             Boolean :flag, null: false
+            Time :time
             Date :date
             DateTime :datetime, null: false
 
@@ -73,6 +74,7 @@ RSpec.describe 'Schema inference for common datatypes' do
             id: ROM::SQL::Types::Serial.meta(name: :id, source: source),
             text: ROM::SQL::Types::String.meta(name: :text, source: source),
             flag: ROM::SQL::Types::Bool.meta(name: :flag, source: source),
+            time: ROM::SQL::Types::Time.optional.meta(name: :time, source: source),
             date: ROM::SQL::Types::Date.optional.meta(name: :date, source: source),
             datetime: ROM::SQL::Types::Time.meta(name: :datetime, source: source),
             data: ROM::SQL::Types::Blob.optional.meta(name: :data, source: source)
