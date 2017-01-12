@@ -20,6 +20,7 @@ module ROM
             klass.defines :timestamp_columns, :datestamp_columns
             klass.timestamp_columns Set.new
             klass.datestamp_columns Set.new
+
             super
           end
 
@@ -46,7 +47,6 @@ module ROM
             include InstanceMethods
           end
           alias timestamp timestamps
-
 
           # Set up attributes to datestamp when the command is called
           #
@@ -75,6 +75,11 @@ module ROM
 
         module InstanceMethods
           # @api private
+          def self.included(base)
+            base.before :set_timestamps
+          end
+
+          # @api private
           def timestamp_columns
             self.class.timestamp_columns
           end
@@ -90,20 +95,16 @@ module ROM
           #
           # @return [Array<Hash>, Hash]
           #
-          # @overload SQL::Commands::Create#execute
-          #
-          # @api public
-          def execute(tuples)
+          # @api private
+          def set_timestamps(tuples)
             timestamps = build_timestamps
 
-            input_tuples = case tuples
-                           when Hash
-                             timestamps.merge(tuples)
-                           when Array
-                             tuples.map { |t| timestamps.merge(t) }
-                           end
-
-            super input_tuples
+            case tuples
+            when Hash
+              timestamps.merge(tuples)
+            when Array
+              tuples.map { |t| timestamps.merge(t) }
+            end
           end
 
           private
