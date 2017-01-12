@@ -21,6 +21,7 @@ Please refer to [the upgrading guide](https://github.com/rom-rb/rom-sql/wiki/Upg
 
 * [BREAKING] `Relation#header` has been removed in favor of schemas (solnic)
 * [BREAKING] `Relation#base` has been removed as now a vanilla relation *is a base relation view* (solnic)
+* [BREAKING] Deprecated `Relation.primary_key` has been removed in favor of schema (solnic)
 * [BREAKING] Deprecated `Commands::Update#change` has been removed (solnic)
 * [BREAKING] Deprecated `Commands.validator` has been removed (solnic)
 * [BREAKING] `assoc_macros` plugin has been removed, please use associations from now (solnic)
