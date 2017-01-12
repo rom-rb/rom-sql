@@ -558,10 +558,10 @@ module ROM
         private
 
         # @api private
-        def __join__(type, other, opts = EMPTY_HASH, &block)
+        def __join__(type, other, join_cond = EMPTY_HASH, opts = EMPTY_HASH, &block)
           case other
           when Symbol, Association::Name
-            new(dataset.__send__(type, other.to_sym, opts, &block))
+            new(dataset.__send__(type, other.to_sym, join_cond, opts, &block))
           when Relation
             __send__(type, other.name.dataset, join_keys(other))
           else

@@ -21,6 +21,21 @@ RSpec.describe ROM::Relation, '#inner_join' do
       ])
     end
 
+    it 'allows specifying table_aliases' do
+      relation.insert id: 3, name: 'Jade'
+
+      result = relation.
+                 inner_join(:tasks, {user_id: :id}, table_alias: :t1).
+                 select(:name, tasks[:title])
+
+      expect(result.schema.map(&:name)).to eql(%i[name title])
+
+      expect(result.to_a).to eql([
+        { name: 'Jane', title: "Jane's task" },
+        { name: 'Joe', title: "Joe's task" }
+      ])
+    end
+
     context 'with associations' do
       before do
         conf.relation(:users) do
