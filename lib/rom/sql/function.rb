@@ -20,8 +20,12 @@ module ROM
       end
 
       def method_missing(meth, *args)
-        if func && func.respond_to?(meth)
-          meta(func: func.__send__(meth, *args))
+        if func
+          if func.respond_to?(meth)
+            meta(func: func.__send__(meth, *args))
+          else
+            super
+          end
         else
           meta(func: Sequel::SQL::Function.new(meth.to_s.upcase, *args))
         end
