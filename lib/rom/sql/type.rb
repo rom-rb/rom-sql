@@ -3,6 +3,8 @@ require 'rom/schema/type'
 module ROM
   module SQL
     class Type < ROM::Schema::Type
+      QualifyError = Class.new(StandardError)
+
       # Return a new type marked as a FK
       #
       # @return [SQL::Type]
@@ -13,9 +15,10 @@ module ROM
       end
 
       # @api public
-      def as(name)
+      def aliased(name)
         super.meta(sql_expr: sql_expr.as(name))
       end
+      alias_method :as, :aliased
 
       # Return a new type marked as qualified
       #
@@ -23,7 +26,15 @@ module ROM
       #
       # @api public
       def qualified
-        meta(qualified: true)
+        return self if qualified?
+
+        case sql_expr
+        when Sequel::SQL::AliasedExpression, Sequel::SQL::Identifier
+          type = meta(qualified: true)
+          type.meta(qualified: true, sql_expr: Sequel[type.to_sym])
+        else
+          raise QualifyError, "can't qualify #{name.inspect} (#{sql_expr.inspect})"
+        end
       end
 
       # Return a new type marked as joined

@@ -14,4 +14,8 @@ module Helpers
       type_class: ROM::SQL::Type
     )
   end
+
+  def define_type(name, id, **opts)
+    ROM::SQL::Type.new(ROM::Types.const_get(id).meta(name: name, **opts))
+  end
 end
