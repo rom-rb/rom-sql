@@ -8,8 +8,6 @@ require 'rom/plugins/relation/key_inference'
 require 'rom/plugins/relation/sql/auto_combine'
 require 'rom/plugins/relation/sql/auto_wrap'
 
-require 'dry/core/deprecations'
-
 module ROM
   module SQL
     # Sequel-specific relation extensions
@@ -88,23 +86,7 @@ module ROM
         names.map { |col| :"#{table}__#{col}" }
       end
 
-      # Set primary key
-      #
-      # @deprecated
-      #
-      # @api public
-      def self.primary_key(value)
-        Dry::Core::Deprecations.announce(
-          :primary_key,
-          "use schema definition to configure primary key",
-          tag: :rom
-        )
-        option :primary_key, reader: true, default: value
-      end
-
-      option :primary_key, reader: true, default: -> rel {
-        rel.schema? ? rel.schema.primary_key_name : :id
-      }
+      option :primary_key, reader: true, default: -> rel { rel.schema.primary_key_name }
 
       # Return raw column names
       #
