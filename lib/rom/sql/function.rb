@@ -1,22 +1,30 @@
 module ROM
   module SQL
     class Function < ROM::Schema::Type
-      def as(name)
-        meta(name: name)
+      def sql_literal(ds)
+        if name
+          func.as(name).sql_literal(ds)
+        else
+          func.sql_literal(ds)
+        end
       end
 
-      def sql_literal(ds)
-        func.as(name).sql_literal(ds)
+      def name
+        meta[:alias] || super
       end
 
       private
 
       def func
-        Sequel::SQL::Function.new(meta[:op], *meta[:args])
+        meta[:func]
       end
 
-      def method_missing(op, *args)
-        meta(op: op, args: args)
+      def method_missing(meth, *args)
+        if func && func.respond_to?(meth)
+          meta(func: func.__send__(meth, *args))
+        else
+          meta(func: Sequel::SQL::Function.new(meth.to_s.upcase, *args))
+        end
       end
     end
   end

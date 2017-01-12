@@ -10,7 +10,7 @@ module Helpers
   def define_schema(name, attrs)
     ROM::SQL::Schema.define(
       name,
-      attributes: attrs.map { |key, value| value.meta(name: key) },
+      attributes: attrs.map { |key, value| value.meta(name: key, source: ROM::Relation::Name.new(name)) },
       type_class: ROM::SQL::Type
     )
   end

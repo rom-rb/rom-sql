@@ -21,15 +21,47 @@ RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
                    .call { int::count(id).as(:count) }
                    .map { |attr| attr.sql_literal(ds) }
 
-      expect(literals).to eql([%(count("id") AS "count")])
+      expect(literals).to eql([%(COUNT("id") AS "count")])
     end
 
-    it 'supports chaining db functions' do
+    it 'supports chaining attribute db functions' do
       literals = dsl
                    .call { meta.pg_jsonb.get_text("name").as(:name) }
                    .map { |attr| attr.sql_literal(ds) }
 
       expect(literals).to eql([%{("meta" ->> 'name') AS "name"}])
+    end
+
+    it 'supports functions with args and chaining with other functions' do
+      literals = dsl
+                   .call { int::count(id.qualified).distinct }
+                   .map { |attr| attr.sql_literal(ds) }
+
+      expect(literals).to eql([%(COUNT(DISTINCT "users"."id"))])
+    end
+
+    it 'supports functions with args and chaining with other functions and an alias' do
+      literals = dsl
+                   .call { int::count(id.qualified).distinct.as(:count) }
+                   .map { |attr| attr.sql_literal(ds) }
+
+      expect(literals).to eql([%(COUNT(DISTINCT "users"."id") AS "count")])
+    end
+
+    it 'supports functions with arg being an attribute' do
+      literals = dsl
+                   .call { int::count(id).as(:count) }
+                   .map { |attr| attr.sql_literal(ds) }
+
+      expect(literals).to eql([%(COUNT("id") AS "count")])
+    end
+
+    it 'supports functions with arg being a qualified attribute' do
+      literals = dsl
+                   .call { int::count(id.qualified).as(:count) }
+                   .map { |attr| attr.sql_literal(ds) }
+
+      expect(literals).to eql([%(COUNT("users"."id") AS "count")])
     end
   end
 
