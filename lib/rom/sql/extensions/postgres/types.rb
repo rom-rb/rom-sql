@@ -1,5 +1,6 @@
 require 'dry-types'
 require 'sequel'
+require 'ipaddr'
 
 Sequel.extension(*%i(pg_array pg_array_ops pg_json pg_json_ops))
 
@@ -55,6 +56,10 @@ module ROM
         Bytea = Dry::Types::Definition
                 .new(Sequel::SQL::Blob)
                 .constructor(Sequel::SQL::Blob.method(:new))
+
+        IPAddress = Dry::Types::Definition
+                    .new(IPAddr)
+                    .constructor(IPAddr.method(:new))
 
         # MONEY
 
