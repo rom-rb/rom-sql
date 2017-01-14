@@ -20,6 +20,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
       column :tag_ids, "bigint[]"
       column :ip, "inet"
       column :subnet, "cidr"
+      column :hw_address, "macaddr"
       rainbow :color
     end
   end
@@ -52,7 +53,8 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
         tag_ids: ROM::SQL::Types::PG::Array('biging').optional.meta(name: :tag_ids, source: source),
         color: ROM::SQL::Types::String.enum(*colors).optional.meta(name: :color, source: source),
         ip: ROM::SQL::Types::PG::IPAddress.optional.meta(name: :ip, source: source),
-        subnet: ROM::SQL::Types::PG::IPAddress.optional.meta(name: :subnet, source: source)
+        subnet: ROM::SQL::Types::PG::IPAddress.optional.meta(name: :subnet, source: source),
+        hw_address: ROM::SQL::Types::String.optional.meta(name: :hw_address, source: source)
       )
     end
   end

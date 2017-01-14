@@ -22,6 +22,7 @@ module ROM
           'jsonb' => Types::PG::JSONB,
           'inet' => Types::PG::IPAddress,
           'cidr' => Types::PG::IPAddress,
+          'macaddr' => Types::String,
         ).freeze
 
         db_array_type_matcher Sequel::Postgres::PGArray::EMPTY_BRACKET
