@@ -15,6 +15,7 @@ module ROM
             associations Hash.new
 
             option :associations, reader: true, optional: true, default: -> cmd { cmd.class.associations }
+            option :configured_associations, reader: true, optional: true, default: proc { [] }
           end
           super
         end
@@ -63,6 +64,14 @@ module ROM
             )
           end
 
+          def associations_configured?
+            if configured_associations.empty?
+              false
+            else
+              configured_associations.all? { |name| associations.key?(name) }
+            end
+          end
+
           # @api private
           def __registry__
             relation.__registry__
@@ -75,7 +84,13 @@ module ROM
           # @api public
           def build(relation, options = EMPTY_HASH)
             command = super
+
+            if command.associations_configured?
+              return command
+            end
+
             associations = command.associations
+            assoc_names = []
 
             before_hooks = associations.each_with_object([]) do |(name, opts), acc|
               relation.associations.try(name) do |assoc|
@@ -85,6 +100,8 @@ module ROM
                   true
                 end
               end or acc << { associate: { assoc: name, keys: opts[:key] } }
+
+              assoc_names << name
             end
 
             after_hooks = associations.each_with_object([]) do |(name, opts), acc|
@@ -94,10 +111,14 @@ module ROM
 
               if assoc.is_a?(Association::ManyToMany)
                 acc << { associate: { assoc: assoc, keys: assoc.join_keys(relation.__registry__) } }
+                assoc_names << name
               end
             end
 
-            command.before(*before_hooks).after(*after_hooks)
+            command.
+              with_opts(configured_associations: assoc_names).
+              before(*before_hooks).
+              after(*after_hooks)
           end
 
           # Set command to associate tuples with a parent tuple using provided keys
