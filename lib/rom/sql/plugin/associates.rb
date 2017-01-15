@@ -12,7 +12,7 @@ module ROM
             include InstanceMethods
             defines :associations
 
-            associations []
+            associations Hash.new
 
             option :associations, reader: true, optional: true, default: -> cmd { cmd.class.associations }
           end
@@ -58,7 +58,9 @@ module ROM
 
           # @api public
           def with_association(name, opts = EMPTY_HASH)
-            self.class.build(relation, options.merge(associations: [[name, opts]]))
+            self.class.build(
+              relation, options.merge(associations: associations.merge(name => opts))
+            )
           end
 
           # @api private
@@ -120,12 +122,12 @@ module ROM
           #
           # @api public
           def associates(name, options = EMPTY_HASH)
-            if associations.map(&:first).include?(name)
+            if associations.key?(name)
               raise ArgumentError,
                     "#{name} association is already defined for #{self.class}"
             end
 
-            associations(associations.dup << [name, options])
+            associations(associations.merge(name => options))
           end
         end
       end
