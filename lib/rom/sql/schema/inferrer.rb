@@ -26,6 +26,7 @@ module ROM
         db_registry Hash.new(self)
 
         CONSTRAINT_DB_TYPE = 'add_constraint'.freeze
+        DECIMAL_REGEX = /(?:decimal|numeric)\((\d+)(?:,\s*(\d+))?\)/.freeze
 
         def self.inherited(klass)
           super
@@ -87,7 +88,7 @@ module ROM
           type = self.class.ruby_type_mapping[ruby_type]
 
           if db_type.is_a?(String) && db_type.include?('numeric') || db_type.include?('decimal')
-            self.class.ruby_type_mapping[:decimal]
+            map_decimal_type(db_type)
           else
             type
           end
@@ -108,6 +109,22 @@ module ROM
           else
             # We don't have support for multicolumn foreign keys
             columns[0]
+          end
+        end
+
+        # @api private
+        def map_decimal_type(type)
+          precision = DECIMAL_REGEX.match(type)
+
+          if precision
+            prcsn, scale = precision[1..2].map(&:to_i)
+
+            self.class.ruby_type_mapping[:decimal].meta(
+              precision: prcsn,
+              scale: scale
+            )
+          else
+            self.class.ruby_type_mapping[:decimal]
           end
         end
       end
