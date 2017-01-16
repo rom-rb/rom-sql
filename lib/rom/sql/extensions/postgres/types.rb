@@ -23,43 +23,27 @@ module ROM
 
         # JSON
 
-        JSONArray = Dry::Types::Definition
-                    .new(Sequel::Postgres::JSONArray)
-                    .constructor(Sequel.method(:pg_json))
+        JSONArray = Types.Constructor(Sequel::Postgres::JSONArray, &Sequel.method(:pg_json))
 
-        JSONHash = Dry::Types::Definition
-                   .new(Sequel::Postgres::JSONHash)
-                   .constructor(Sequel.method(:pg_json))
+        JSONHash = Types.Constructor(Sequel::Postgres::JSONArray, &Sequel.method(:pg_json))
 
-        JSONOp = Dry::Types::Definition
-                 .new(Sequel::Postgres::JSONOp)
-                 .constructor(Sequel.method(:pg_json))
+        JSONOp = Types.Constructor(Sequel::Postgres::JSONOp, &Sequel.method(:pg_json))
 
         JSON = JSONArray | JSONHash | JSONOp
 
         # JSONB
 
-        JSONBArray = Dry::Types::Definition
-                     .new(Sequel::Postgres::JSONBArray)
-                     .constructor(Sequel.method(:pg_jsonb))
+        JSONBArray = Types.Constructor(Sequel::Postgres::JSONBArray, &Sequel.method(:pg_jsonb))
 
-        JSONBHash = Dry::Types::Definition
-                    .new(Sequel::Postgres::JSONBHash)
-                    .constructor(Sequel.method(:pg_jsonb))
+        JSONBHash = Types.Constructor(Sequel::Postgres::JSONBHash, &Sequel.method(:pg_jsonb))
 
-        JSONBOp = Dry::Types::Definition
-                  .new(Sequel::Postgres::JSONBOp)
-                  .constructor(Sequel.method(:pg_jsonb))
+        JSONBOp = Types.Constructor(Sequel::Postgres::JSONBOp, &Sequel.method(:pg_jsonb))
 
         JSONB = JSONBArray | JSONBHash | JSONBOp
 
-        Bytea = Dry::Types::Definition
-                .new(Sequel::SQL::Blob)
-                .constructor(Sequel::SQL::Blob.method(:new))
+        Bytea = Types.Constructor(Sequel::SQL::Blob, &Sequel::SQL::Blob.method(:new))
 
-        IPAddress = Dry::Types::Definition
-                    .new(IPAddr)
-                    .constructor(IPAddr.method(:new))
+        IPAddress = Types.Constructor(IPAddr, &IPAddr.method(:new))
 
         # MONEY
 
