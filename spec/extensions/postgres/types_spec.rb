@@ -114,12 +114,16 @@ RSpec.describe 'ROM::SQL::Types' do
   end
 
   describe ROM::SQL::Types::PG::IPAddress do
-    it 'coerces to builtin IPAddr type' do
-      expect(described_class['127.0.0.1']).to eql(IPAddr.new('127.0.0.1'))
+    it 'converts IPAddr to a string' do
+      expect(described_class[IPAddr.new('127.0.0.1')]).to eql('127.0.0.1')
+    end
+
+    it 'coerces to builtin IPAddr type on read' do
+      expect(described_class.meta[:read]['127.0.0.1']).to eql(IPAddr.new('127.0.0.1'))
     end
 
     it 'supports networks' do
-      class_a = described_class['10.0.0.0/8']
+      class_a = described_class.meta[:read]['10.0.0.0/8']
 
       expect(class_a).to eql(IPAddr.new('10.0.0.0/8'))
       expect(class_a).to include(IPAddr.new('10.8.8.8'))

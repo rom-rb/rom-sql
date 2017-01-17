@@ -43,7 +43,9 @@ module ROM
 
         Bytea = Types.Constructor(Sequel::SQL::Blob, &Sequel::SQL::Blob.method(:new))
 
-        IPAddress = Types.Constructor(IPAddr, &IPAddr.method(:new))
+        IPAddressR = Types.Constructor(IPAddr, &IPAddr.method(:new))
+
+        IPAddress = Types.Constructor(IPAddr, &:to_s).meta(read: IPAddressR)
 
         Money = Types::Decimal
 

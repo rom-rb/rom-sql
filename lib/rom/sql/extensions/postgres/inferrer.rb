@@ -23,7 +23,7 @@ module ROM
           'inet' => Types::PG::IPAddress,
           'cidr' => Types::PG::IPAddress,
           'macaddr' => Types::String,
-          'point' => [Types::PG::PointT, Types::PG::PointTR]
+          'point' => Types::PG::PointT
         ).freeze
 
         db_array_type_matcher Sequel::Postgres::PGArray::EMPTY_BRACKET

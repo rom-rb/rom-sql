@@ -70,9 +70,10 @@ module ROM
           if primary_key
             map_pk_type(type, db_type)
           else
-            mapped_type, read_type = map_type(type, db_type, rest)
+            mapped_type = map_type(type, db_type, rest)
 
             if mapped_type
+              read_type = mapped_type.meta[:read]
               mapped_type = mapped_type.optional if allow_null
               mapped_type = mapped_type.meta(foreign_key: true, target: foreign_key) if foreign_key
               if read_type && allow_null

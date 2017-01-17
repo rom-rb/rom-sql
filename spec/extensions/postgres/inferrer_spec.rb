@@ -53,8 +53,16 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
         tags: ROM::SQL::Types::PG::Array('text').optional.meta(name: :tags, source: source),
         tag_ids: ROM::SQL::Types::PG::Array('biging').optional.meta(name: :tag_ids, source: source),
         color: ROM::SQL::Types::String.enum(*colors).optional.meta(name: :color, source: source),
-        ip: ROM::SQL::Types::PG::IPAddress.optional.meta(name: :ip, source: source),
-        subnet: ROM::SQL::Types::PG::IPAddress.optional.meta(name: :subnet, source: source),
+        ip: ROM::SQL::Types::PG::IPAddress.optional.meta(
+          name: :ip,
+          source: source,
+          read: ROM::SQL::Types::PG::IPAddressR.optional
+        ),
+        subnet: ROM::SQL::Types::PG::IPAddress.optional.meta(
+          name: :subnet,
+          source: source,
+          read: ROM::SQL::Types::PG::IPAddressR.optional
+        ),
         hw_address: ROM::SQL::Types::String.optional.meta(name: :hw_address, source: source),
         center: ROM::SQL::Types::PG::PointT.optional.meta(
           name: :center,

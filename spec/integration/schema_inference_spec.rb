@@ -288,6 +288,7 @@ RSpec.describe 'Schema inference for common datatypes' do
         conn.drop_table?(:test_bidirectional)
         conn.create_table(:test_bidirectional) do
           primary_key :id
+          inet :ip
           point :center
         end
 
@@ -301,12 +302,14 @@ RSpec.describe 'Schema inference for common datatypes' do
       end
 
       let(:point) { ROM::SQL::Types::PG::Point.new(7.5, 30.5) }
+      let(:dns) { IPAddr.new('8.8.8.8') }
+
       let(:relation) { container.relations[:test_bidirectional] }
       let(:create) { commands[:test_bidirectional].create }
 
       it 'writes and reads data' do
-        inserted = create.call(id: 1, center: point)
-        expect(inserted).to eql(id: 1, center: point)
+        inserted = create.call(id: 1, center: point, ip: dns)
+        expect(inserted).to eql(id: 1, center: point, ip: dns)
         expect(relation.to_a).to eql([inserted])
       end
     end
