@@ -43,7 +43,7 @@ module ROM
 
         Bytea = Types.Constructor(Sequel::SQL::Blob, &Sequel::SQL::Blob.method(:new))
 
-        IPAddressR = Types.Constructor(IPAddr, &IPAddr.method(:new))
+        IPAddressR = Types.Constructor(IPAddr) { |ip| IPAddr.new(ip.to_s) }
 
         IPAddress = Types.Constructor(IPAddr, &:to_s).meta(read: IPAddressR)
 
@@ -52,7 +52,7 @@ module ROM
         Point = Struct.new(:x, :y)
 
         PointTR = Types.Constructor(Point) do |p|
-          x, y = p[1...-1].split(',', 2)
+          x, y = p.to_s[1...-1].split(',', 2)
           Point.new(Float(x), Float(y))
         end
 
