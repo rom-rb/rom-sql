@@ -59,7 +59,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
         center: ROM::SQL::Types::PG::PointT.optional.meta(
           name: :center,
           source: source,
-          read: ROM::SQL::Types::PG::PointTR
+          read: ROM::SQL::Types::PG::PointTR.optional
         )
       )
     end
