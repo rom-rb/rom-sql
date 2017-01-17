@@ -125,4 +125,16 @@ RSpec.describe 'ROM::SQL::Types' do
       expect(class_a).to include(IPAddr.new('10.8.8.8'))
     end
   end
+
+  describe ROM::SQL::Types::PG::PointT do
+    let(:point) { ROM::SQL::Types::PG::Point.new(7.5, 30.5) }
+
+    it 'serializes a point down to a string' do
+      expect(described_class[point]).to eql('(7.5,30.5)')
+    end
+
+    it 'reads serialized format' do
+      expect(described_class.meta[:read]['(7.5,30.5)']).to eql(point)
+    end
+  end
 end

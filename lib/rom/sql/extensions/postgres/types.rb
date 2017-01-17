@@ -45,9 +45,16 @@ module ROM
 
         IPAddress = Types.Constructor(IPAddr, &IPAddr.method(:new))
 
-        # MONEY
-
         Money = Types::Decimal
+
+        Point = Struct.new(:x, :y)
+
+        PointTR = Types.Constructor(Point) do |p|
+          x, y = p[1...-1].split(',', 2)
+          Point.new(Float(x), Float(y))
+        end
+
+        PointT = Types.Constructor(Point) { |p| "(#{ p.x },#{ p.y })" }.meta(read: PointTR)
       end
     end
   end

@@ -22,6 +22,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
       column :subnet, "cidr"
       column :hw_address, "macaddr"
       rainbow :color
+      point :center
     end
   end
 
@@ -54,7 +55,12 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
         color: ROM::SQL::Types::String.enum(*colors).optional.meta(name: :color, source: source),
         ip: ROM::SQL::Types::PG::IPAddress.optional.meta(name: :ip, source: source),
         subnet: ROM::SQL::Types::PG::IPAddress.optional.meta(name: :subnet, source: source),
-        hw_address: ROM::SQL::Types::String.optional.meta(name: :hw_address, source: source)
+        hw_address: ROM::SQL::Types::String.optional.meta(name: :hw_address, source: source),
+        center: ROM::SQL::Types::PG::PointT.optional.meta(
+          name: :center,
+          source: source,
+          read: ROM::SQL::Types::PG::PointTR
+        )
       )
     end
   end

@@ -282,5 +282,33 @@ RSpec.describe 'Schema inference for common datatypes' do
         expect(container.relations[:dummy].schema).to be_empty
       end
     end
+
+    context 'with a column with bi-directional mapping' do
+      before do
+        conn.drop_table?(:test_bidirectional)
+        conn.create_table(:test_bidirectional) do
+          primary_key :id
+          point :center
+        end
+
+        conf.relation(:test_bidirectional) { schema(infer: true) }
+
+        conf.commands(:test_bidirectional) do
+          define(:create) do
+            result :one
+          end
+        end
+      end
+
+      let(:point) { ROM::SQL::Types::PG::Point.new(7.5, 30.5) }
+      let(:relation) { container.relations[:test_bidirectional] }
+      let(:create) { commands[:test_bidirectional].create }
+
+      it 'writes and reads data' do
+        inserted = create.call(id: 1, center: point)
+        expect(inserted).to eql(id: 1, center: point)
+        expect(relation.to_a).to eql([inserted])
+      end
+    end
   end
 end
