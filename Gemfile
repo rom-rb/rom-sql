@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'rom', git: 'https://github.com/rom-rb/rom.git', branch: 'feature/bi-directional-type-coercion'
+gem 'rom', git: 'https://github.com/rom-rb/rom.git', branch: 'master'
 gem 'rom-mapper', git: 'https://github.com/rom-rb/rom-mapper.git', branch: 'master'
 
 group :test do
