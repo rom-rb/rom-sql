@@ -96,6 +96,11 @@ RSpec.describe 'Schema inference for common datatypes' do
             decimal :dec, null: false
             decimal :dec_prec, size: 12, null: false
             numeric :num, size: [5, 2], null: false
+            smallint :small
+            integer :int
+            bigint :big
+            float :floating
+            double :double_p
           end
         end
 
@@ -115,7 +120,12 @@ RSpec.describe 'Schema inference for common datatypes' do
             id: ROM::SQL::Types::Serial.meta(name: :id, source: source),
             dec: default_precision,
             dec_prec: decimal.meta(name: :dec_prec, precision: 12, scale: 0),
-            num: decimal.meta(name: :num, precision: 5, scale: 2)
+            num: decimal.meta(name: :num, precision: 5, scale: 2),
+            small: ROM::SQL::Types::Int.optional.meta(name: :small, source: source),
+            int: ROM::SQL::Types::Int.optional.meta(name: :int, source: source),
+            big: ROM::SQL::Types::Int.optional.meta(name: :big, source: source),
+            floating: ROM::SQL::Types::Float.optional.meta(name: :floating, source: source),
+            double_p: ROM::SQL::Types::Float.optional.meta(name: :double_p, source: source),
           )
         end
       end
@@ -267,50 +277,6 @@ RSpec.describe 'Schema inference for common datatypes' do
             end
           end
         end
-      end
-    end
-  end
-
-  with_adapters(:postgres) do
-    context 'with a table without columns' do
-      before do
-        conn.create_table(:dummy) unless conn.table_exists?(:dummy)
-        conf.relation(:dummy) { schema(infer: true) }
-      end
-
-      it 'does not fail with a weird error when a relation does not have attributes' do
-        expect(container.relations[:dummy].schema).to be_empty
-      end
-    end
-
-    context 'with a column with bi-directional mapping' do
-      before do
-        conn.drop_table?(:test_bidirectional)
-        conn.create_table(:test_bidirectional) do
-          primary_key :id
-          inet :ip
-          point :center
-        end
-
-        conf.relation(:test_bidirectional) { schema(infer: true) }
-
-        conf.commands(:test_bidirectional) do
-          define(:create) do
-            result :one
-          end
-        end
-      end
-
-      let(:point) { ROM::SQL::Types::PG::Point.new(7.5, 30.5) }
-      let(:dns) { IPAddr.new('8.8.8.8') }
-
-      let(:relation) { container.relations[:test_bidirectional] }
-      let(:create) { commands[:test_bidirectional].create }
-
-      it 'writes and reads data' do
-        inserted = create.call(id: 1, center: point, ip: dns)
-        expect(inserted).to eql(id: 1, center: point, ip: dns)
-        expect(relation.to_a).to eql([inserted])
       end
     end
   end
