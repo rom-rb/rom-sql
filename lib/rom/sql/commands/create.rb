@@ -16,6 +16,8 @@ module ROM
         use :associates
         use :schema
 
+        after :finalize
+
         # Inserts provided tuples into the database table
         #
         # @api public
@@ -33,6 +35,11 @@ module ROM
         end
 
         private
+
+        # @api private
+        def finalize(tuples, *)
+          tuples.map { |t| relation.output_schema[t] }
+        end
 
         # Executes insert statement and returns inserted tuples
         #
@@ -54,7 +61,7 @@ module ROM
         #
         # @api private
         def with_input_tuples(tuples)
-          input_tuples = Array([tuples]).flatten.map
+          input_tuples = Array([tuples]).flatten(1).map
           return input_tuples unless block_given?
           input_tuples.each { |tuple| yield(tuple) }
         end

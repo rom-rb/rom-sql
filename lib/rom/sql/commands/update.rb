@@ -15,6 +15,8 @@ module ROM
 
         use :schema
 
+        after :finalize
+
         # Updates existing tuple in a relation
         #
         # @return [Array<Hash>, Hash]
@@ -25,6 +27,11 @@ module ROM
         end
 
         private
+
+        # @api private
+        def finalize(tuples, *)
+          tuples.map { |t| relation.output_schema[t] }
+        end
 
         # Executes update statement for a given tuple
         #
