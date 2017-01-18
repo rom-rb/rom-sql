@@ -139,7 +139,7 @@ RSpec.describe ROM::SQL::Association::ManyToMany do
                      select_append(tags[:name].as(:tag)).
                      for_combine(assoc).call(tasks.call)
 
-        expect(relation.to_a).to eql([id: 1, tag: 'important', task_id: 1])
+        expect(relation.to_a).to eql([id: 1, tag: 'important', name: 'important', task_id: 1])
       end
     end
   end

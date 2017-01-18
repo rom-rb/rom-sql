@@ -28,7 +28,11 @@ module ROM
 
           schema =
             if left.schema.key?(left_fk)
-              left.schema.project(*(right.schema.map(&:name) + [left_fk]))
+              if target_rel
+                target_rel.schema.merge(left.schema.project(left_fk))
+              else
+                left.schema.project(*(right.schema.map(&:name) + [left_fk]))
+              end
             else
               right.schema.merge(join_rel.schema.project(left_fk))
             end.qualified
