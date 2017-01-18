@@ -57,7 +57,6 @@ RSpec.describe 'Schema inference for common datatypes' do
             Time :time
             Date :date
             DateTime :datetime, null: false
-            BigDecimal :bigdec
 
             if ctx.sqlite?(example)
               add_constraint(:test_constraint) { char_length(text) > 3 }
@@ -83,7 +82,50 @@ RSpec.describe 'Schema inference for common datatypes' do
             date: ROM::SQL::Types::Date.optional.meta(name: :date, source: source),
             datetime: ROM::SQL::Types::Time.meta(name: :datetime, source: source),
             data: ROM::SQL::Types::Blob.optional.meta(name: :data, source: source),
-            bigdec: ROM::SQL::Types::Decimal.optional.meta(name: :bigdec, source: source)
+          )
+        end
+      end
+
+      context 'numeric datatypes' do
+        before do |example|
+          ctx = self
+          conn.drop_table?(:test_numeric)
+
+          conn.create_table :test_numeric do
+            primary_key :id
+            decimal :dec, null: false
+            decimal :dec_prec, size: 12, null: false
+            numeric :num, size: [5, 2], null: false
+            smallint :small
+            integer :int
+            bigint :big
+            float :floating
+            double :double_p
+          end
+        end
+
+        let(:dataset) { :test_numeric }
+        let(:source) { ROM::Relation::Name[dataset] }
+
+        let(:decimal) { ROM::SQL::Types::Decimal.meta(source: source) }
+
+        it 'infers attributes with precision' do |example|
+          if mysql?(example)
+            default_precision = decimal.meta(name: :dec, precision: 10, scale: 0)
+          else
+            default_precision = decimal.meta(name: :dec)
+          end
+
+          expect(schema.to_h).to eql(
+            id: ROM::SQL::Types::Serial.meta(name: :id, source: source),
+            dec: default_precision,
+            dec_prec: decimal.meta(name: :dec_prec, precision: 12, scale: 0),
+            num: decimal.meta(name: :num, precision: 5, scale: 2),
+            small: ROM::SQL::Types::Int.optional.meta(name: :small, source: source),
+            int: ROM::SQL::Types::Int.optional.meta(name: :int, source: source),
+            big: ROM::SQL::Types::Int.optional.meta(name: :big, source: source),
+            floating: ROM::SQL::Types::Float.optional.meta(name: :floating, source: source),
+            double_p: ROM::SQL::Types::Float.optional.meta(name: :double_p, source: source),
           )
         end
       end
@@ -235,19 +277,6 @@ RSpec.describe 'Schema inference for common datatypes' do
             end
           end
         end
-      end
-    end
-  end
-
-  with_adapters(:postgres) do
-    context 'with a table without columns' do
-      before do
-        conn.create_table(:dummy) unless conn.table_exists?(:dummy) 
-        conf.relation(:dummy) { schema(infer: true) }
-      end
-
-      it 'does not fail with a weird error when a relation does not have attributes' do
-        expect(container.relations[:dummy].schema).to be_empty
       end
     end
   end

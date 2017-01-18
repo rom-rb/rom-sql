@@ -1,5 +1,6 @@
 require 'dry-types'
 require 'sequel'
+require 'ipaddr'
 
 Sequel.extension(*%i(pg_array pg_array_ops pg_json pg_json_ops))
 
@@ -22,43 +23,40 @@ module ROM
 
         # JSON
 
-        JSONArray = Dry::Types::Definition
-                    .new(Sequel::Postgres::JSONArray)
-                    .constructor(Sequel.method(:pg_json))
+        JSONArray = Types.Constructor(Sequel::Postgres::JSONArray, &Sequel.method(:pg_json))
 
-        JSONHash = Dry::Types::Definition
-                   .new(Sequel::Postgres::JSONHash)
-                   .constructor(Sequel.method(:pg_json))
+        JSONHash = Types.Constructor(Sequel::Postgres::JSONArray, &Sequel.method(:pg_json))
 
-        JSONOp = Dry::Types::Definition
-                 .new(Sequel::Postgres::JSONOp)
-                 .constructor(Sequel.method(:pg_json))
+        JSONOp = Types.Constructor(Sequel::Postgres::JSONOp, &Sequel.method(:pg_json))
 
         JSON = JSONArray | JSONHash | JSONOp
 
         # JSONB
 
-        JSONBArray = Dry::Types::Definition
-                     .new(Sequel::Postgres::JSONBArray)
-                     .constructor(Sequel.method(:pg_jsonb))
+        JSONBArray = Types.Constructor(Sequel::Postgres::JSONBArray, &Sequel.method(:pg_jsonb))
 
-        JSONBHash = Dry::Types::Definition
-                    .new(Sequel::Postgres::JSONBHash)
-                    .constructor(Sequel.method(:pg_jsonb))
+        JSONBHash = Types.Constructor(Sequel::Postgres::JSONBHash, &Sequel.method(:pg_jsonb))
 
-        JSONBOp = Dry::Types::Definition
-                  .new(Sequel::Postgres::JSONBOp)
-                  .constructor(Sequel.method(:pg_jsonb))
+        JSONBOp = Types.Constructor(Sequel::Postgres::JSONBOp, &Sequel.method(:pg_jsonb))
 
         JSONB = JSONBArray | JSONBHash | JSONBOp
 
-        Bytea = Dry::Types::Definition
-                .new(Sequel::SQL::Blob)
-                .constructor(Sequel::SQL::Blob.method(:new))
+        Bytea = Types.Constructor(Sequel::SQL::Blob, &Sequel::SQL::Blob.method(:new))
 
-        # MONEY
+        IPAddressR = Types.Constructor(IPAddr) { |ip| IPAddr.new(ip.to_s) }
+
+        IPAddress = Types.Constructor(IPAddr, &:to_s).meta(read: IPAddressR)
 
         Money = Types::Decimal
+
+        Point = ::Struct.new(:x, :y)
+
+        PointTR = Types.Constructor(Point) do |p|
+          x, y = p.to_s[1...-1].split(',', 2)
+          Point.new(Float(x), Float(y))
+        end
+
+        PointT = Types.Constructor(Point) { |p| "(#{ p.x },#{ p.y })" }.meta(read: PointTR)
       end
     end
   end

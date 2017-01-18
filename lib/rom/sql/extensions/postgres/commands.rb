@@ -12,7 +12,7 @@ module ROM
           def insert(tuples)
             tuples.map do |tuple|
               relation.dataset.returning(*relation.columns).insert(tuple)
-            end.flatten
+            end.flatten(1)
           end
 
           # Executes multi_insert statement and returns inserted tuples

@@ -8,6 +8,14 @@ module ROM
       require 'rom/sql/extensions/postgres'
     end
 
+    register_extension(:mysql) do
+      require 'rom/sql/extensions/mysql'
+    end
+
+    register_extension(:sqlite) do
+      require 'rom/sql/extensions/sqlite'
+    end
+
     register_extension(:active_support_notifications) do
       require 'rom/sql/extensions/active_support_notifications'
     end

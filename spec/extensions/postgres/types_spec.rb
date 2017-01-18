@@ -112,4 +112,33 @@ RSpec.describe 'ROM::SQL::Types' do
       expect(output).to be_instance_of(BigDecimal)
     end
   end
+
+  describe ROM::SQL::Types::PG::IPAddress do
+    it 'converts IPAddr to a string' do
+      expect(described_class[IPAddr.new('127.0.0.1')]).to eql('127.0.0.1')
+    end
+
+    it 'coerces to builtin IPAddr type on read' do
+      expect(described_class.meta[:read]['127.0.0.1']).to eql(IPAddr.new('127.0.0.1'))
+    end
+
+    it 'supports networks' do
+      class_a = described_class.meta[:read]['10.0.0.0/8']
+
+      expect(class_a).to eql(IPAddr.new('10.0.0.0/8'))
+      expect(class_a).to include(IPAddr.new('10.8.8.8'))
+    end
+  end
+
+  describe ROM::SQL::Types::PG::PointT do
+    let(:point) { ROM::SQL::Types::PG::Point.new(7.5, 30.5) }
+
+    it 'serializes a point down to a string' do
+      expect(described_class[point]).to eql('(7.5,30.5)')
+    end
+
+    it 'reads serialized format' do
+      expect(described_class.meta[:read]['(7.5,30.5)']).to eql(point)
+    end
+  end
 end
