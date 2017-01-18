@@ -12,7 +12,7 @@ module ROM
           def insert(tuples)
             tuples.map do |tuple|
               relation.dataset.returning(*relation.columns).insert(tuple)
-            end.flatten.map { |t| relation.read_schema[t] }
+            end.flatten.map { |t| relation.output_schema[t] }
           end
 
           # Executes multi_insert statement and returns inserted tuples
@@ -20,7 +20,7 @@ module ROM
           # @api private
           def multi_insert(tuples)
             relation.dataset.returning(*relation.columns).multi_insert(tuples).map { |t|
-              relation.read_schema[t]
+              relation.output_schema[t]
             }
           end
 
@@ -29,7 +29,7 @@ module ROM
           #
           # @api private
           def upsert(tuple, opts = EMPTY_HASH)
-            relation.read_schema[
+            relation.output_schema[
               relation.dataset.returning(*relation.columns).insert_conflict(opts).insert(tuple)
             ]
           end
@@ -40,7 +40,7 @@ module ROM
           #
           # @api private
           def update(tuple)
-            relation.read_schema[
+            relation.output_schema[
               relation.dataset.returning(*relation.columns).update(tuple)
             ]
           end
@@ -101,7 +101,7 @@ module ROM
               upsert(input[tuple], upsert_options)
             end
 
-            inserted_tuples.flatten.map { |t| relation.read_schema[t] }
+            inserted_tuples.flatten.map { |t| relation.output_schema[t] }
           end
 
           # @api private
