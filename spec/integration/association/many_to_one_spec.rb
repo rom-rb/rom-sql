@@ -66,6 +66,17 @@ RSpec.describe ROM::SQL::Association::ManyToOne, helpers: true do
           { id: 1, task_id: 2, name: 'Jane' }
         ])
       end
+
+      it 'maintains original relation' do
+        users.accounts.insert(user_id: 2, number: 'a1', balance: 0)
+
+        relation = users.
+                     join(:accounts, user_id: :id).
+                     select_append(users.accounts[:number].as(:account_num)).
+                     for_combine(assoc).call(tasks.call)
+
+        expect(relation.to_a).to eql([{ id: 2, task_id: 1, name: 'Joe', account_num: 'a1' }])
+      end
     end
 
     context 'arbitrary name conventions' do

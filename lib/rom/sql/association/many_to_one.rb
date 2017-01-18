@@ -5,8 +5,7 @@ module ROM
         result :one
 
         # @api public
-        def call(relations)
-          left = relations[target.relation]
+        def call(relations, left = relations[target.relation])
           right = relations[source.relation]
 
           left_pk = left.primary_key

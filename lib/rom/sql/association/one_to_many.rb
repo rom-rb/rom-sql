@@ -5,8 +5,7 @@ module ROM
         result :many
 
         # @api public
-        def call(relations)
-          right = relations[target.relation]
+        def call(relations, right = relations[target.relation])
           schema = right.schema.qualified
 
           relation = right

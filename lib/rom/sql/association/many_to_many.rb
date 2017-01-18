@@ -17,11 +17,11 @@ module ROM
         end
 
         # @api public
-        def call(relations)
+        def call(relations, target_rel = nil)
           join_rel = join_relation(relations)
           assocs = join_rel.associations
 
-          left = assocs[target].call(relations)
+          left = target_rel ? assocs[target].(relations, target_rel) : assocs[target].(relations)
           right = relations[target.relation]
 
           left_fk = foreign_key || join_rel.foreign_key(source.relation)
