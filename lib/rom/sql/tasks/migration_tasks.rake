@@ -24,11 +24,11 @@ module ROM
 end
 
 namespace :db do
-  desc "Perform migration reset (full erase and migration up)"
   task :rom_configuration do
     Rake::Task["db:setup"].invoke
   end
 
+  desc "Perform migration reset (full erase and migration up)"
   task reset: :rom_configuration do
     ROM::SQL::RakeSupport.run_migrations(target: 0)
     ROM::SQL::RakeSupport.run_migrations
