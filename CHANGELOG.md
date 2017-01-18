@@ -16,6 +16,8 @@ Please refer to [the upgrading guide](https://github.com/rom-rb/rom-sql/wiki/Upg
 * Associations support setting custom `view` that will be used to extend association relation (solnic)
 * Associations support setting custom `foreign_key` names (solnic)
 * Support for self-referencing associations (ie categories have_many child categories) (solnic)
+* Inferrers for mysql and sqlite were added (flash-gordon)
+* PG's auto-inferrer can handle `inet`/`cidr` data types in a two-way manner, i.e. converting them back and forth on reading and writing. Same for `point` datatype (flash-gordon)
 
 ### Changed
 
