@@ -5,7 +5,9 @@ module ROM
     module Types
       include ROM::Types
 
-      singleton_class.send(:define_method, :Constructor, &ROM::Types.method(:Constructor))
+      def self.Constructor(*args, &block)
+        ROM::Types.Constructor(*args, &block)
+      end
 
       Serial = Int.constrained(gt: 0).meta(primary_key: true)
 
