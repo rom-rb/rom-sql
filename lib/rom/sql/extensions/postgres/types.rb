@@ -49,7 +49,7 @@ module ROM
 
         Money = Types::Decimal
 
-        Point = Struct.new(:x, :y)
+        Point = ::Struct.new(:x, :y)
 
         PointTR = Types.Constructor(Point) do |p|
           x, y = p.to_s[1...-1].split(',', 2)
