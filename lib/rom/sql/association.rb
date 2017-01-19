@@ -73,7 +73,11 @@ module ROM
         QualifiedAttribute[name.to_sym, attribute]
       end
 
-      protected
+      # @api protected
+      def apply_view(schema, relation)
+        view_rel = relation.public_send(view)
+        schema.merge(view_rel.schema.qualified).uniq(&:to_sym).(view_rel)
+      end
 
       # @api private
       def join_key_map(relations)

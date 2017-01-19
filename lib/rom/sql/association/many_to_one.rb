@@ -26,7 +26,7 @@ module ROM
             .order(*right_schema.qualified)
 
           if view
-            schema.(relation.public_send(view))
+            apply_view(schema, relation)
           else
             schema.(relation)
           end
