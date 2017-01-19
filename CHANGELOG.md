@@ -12,6 +12,7 @@ Please refer to [the upgrading guide](https://github.com/rom-rb/rom-sql/wiki/Upg
 * Extended query API with support for schema attributes (solnic)
 * Schemas can project relations automatically (solnic)
 * New `Schema#qualified` (solnic)
+* New `Relation#assoc` method which is a shortcut for accessing relation created by the given association (solnic)
 * Schema attribute types are now SQL-specific and compatible with query DSL (ie you can pass relation attributes to `select` and they will be automatically converted to valid SQL expressions) (solnic)
 * Associations support setting custom `view` that will be used to extend association relation (solnic)
 * Associations support setting custom `foreign_key` names (solnic)
