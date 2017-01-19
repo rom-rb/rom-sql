@@ -89,6 +89,23 @@ module ROM
 
       option :primary_key, reader: true, default: -> rel { rel.schema.primary_key_name }
 
+      # Return relation that will load associated tuples of this relation
+      #
+      # This method is useful for defining custom relation views for relation
+      # composition when you want to enhance default association query
+      #
+      # @example
+      #   assoc(:tasks).where(tasks[:title] => "Task One")
+      #
+      # @param [Symbol] name The association name
+      #
+      # @return [Relation]
+      #
+      # @api public
+      def assoc(name)
+        associations[name].(__registry__)
+      end
+
       # Return raw column names
       #
       # @return [Array<Symbol>]
