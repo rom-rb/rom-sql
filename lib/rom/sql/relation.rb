@@ -3,6 +3,7 @@ require 'rom/sql/schema'
 
 require 'rom/sql/relation/reading'
 require 'rom/sql/relation/writing'
+require 'rom/sql/relation/sequel_api'
 
 require 'rom/plugins/relation/key_inference'
 require 'rom/plugins/relation/sql/auto_combine'
