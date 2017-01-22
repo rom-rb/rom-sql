@@ -19,7 +19,7 @@ module ROM
 
       class << self
         # FIXME: get rid of this and figure out a nicer way of handling migration DSL
-        #       we want to have global access ONLY when running migration tasks
+        # we want to have global access ONLY when running migration tasks
         attr_accessor :instance
       end
 
