@@ -360,17 +360,33 @@ module ROM
 
         # Restrict a relation to match grouping criteria
         #
-        # @example
-        #   users.
-        #     qualified.
-        #     left_join(tasks).
-        #     select { [id, name, int::count(:tasks__id).as(:task_count)] }.
-        #     group(users[:id].qualified).
-        #     having { count(id.qualified) >= 1 }.
-        #     first
-        #   # {:id => 1, :name => "Jane", :task_count => 2}
+        # @overload having(conditions)
+        #   Return a new relation with having clause from conditions hash
         #
-        # @param [Hash] *args An optional hash with conditions for HAVING clause
+        #   @example
+        #     users.
+        #       qualified.
+        #       left_join(tasks).
+        #       select { [id, name, int::count(:tasks__id).as(:task_count)] }.
+        #       group(users[:id].qualified).
+        #       having(task_count: 2)
+        #       first
+        #     # {:id => 1, :name => "Jane", :task_count => 2}
+        #
+        #   @param [Hash] conditions A hash with conditions
+        #
+        # @overload having(&block)
+        #   Return a new relation with having clause created from restriction DSL
+        #
+        #   @example
+        #     users.
+        #       qualified.
+        #       left_join(tasks).
+        #       select { [id, name, int::count(:tasks__id).as(:task_count)] }.
+        #       group(users[:id].qualified).
+        #       having { count(id.qualified) >= 1 }.
+        #       first
+        #     # {:id => 1, :name => "Jane", :task_count => 2}
         #
         # @return [Relation]
         #
