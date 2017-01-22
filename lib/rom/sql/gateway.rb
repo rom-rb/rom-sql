@@ -12,11 +12,6 @@ module ROM
   module SQL
     # SQL gateway
     #
-    # @example
-    #   gateway = ROM::SQL::Gateway.new('sqlite::memory')
-    #
-    #   users = gateway.dataset(:users)
-    #
     # @api public
     class Gateway < ROM::Gateway
       include Dry::Core::Constants
@@ -32,35 +27,64 @@ module ROM
         postgres: %i(pg_array pg_json pg_enum)
       }.freeze
 
-      # Return optionally configured logger
-      #
-      # @return [Object] logger
-      #
-      # @api public
+      # @!attribute [r] logger
+      #   @return [Object] configured gateway logger
       attr_reader :logger
 
-      # @api private
+      # @!attribute [r] options
+      #   @return [Hash] Options used for connection
       attr_reader :options
 
-      # SQL gateway interface
+      # Initialize an SQL gateway
       #
-      # @overload connect(uri, options)
-      #   Connects to database via uri passing options
+      # Gateways are typically initialized via ROM::Configuration object, gateway constructor
+      # arguments such as URI and options are passed directly to this constructor
       #
-      #   @param [String,Symbol] uri connection URI
-      #   @param [Hash] options connection options
+      # @overload initialize(uri)
+      #   Connects to a database via URI
       #
-      # @overload connect(connection)
-      #   Re-uses connection instance
+      #   @example
+      #     ROM.container(:sql, 'postgres://localhost/db_name')
       #
       #   @param [Sequel::Database] connection a connection instance
       #
-      # @example
-      #   gateway = ROM::SQL::Gateway.new('postgres://localhost/rom')
+      # @overload initialize(uri, options)
+      #   Connects to a database via URI and options
       #
-      #   # or reuse connection
-      #   DB = Sequel.connect('postgres://localhost/rom')
-      #   gateway = ROM::SQL::Gateway.new(DB)
+      #   @example
+      #     ROM.container(:sql, 'postgres://localhost/db_name', extensions: %w[pg_enum])
+      #
+      #   @param [String,Symbol] uri connection URI
+      #
+      #   @param [Hash] options connection options
+      #
+      #   @option options [Array<Symbol>] :inferrable_relations
+      #     A list of dataset names that should be inferred. If
+      #     this is set explicitly to an empty array relations
+      #     won't be inferred at all
+      #
+      #   @option options [Array<Symbol>] :not_inferrable_relations
+      #     A list of dataset names that should NOT be inferred
+      #
+      #   @option options [Array<Symbol>] :extensions
+      #     A list of connection extensions supported by Sequel
+      #
+      #   @option options [String] :user Database username
+      #
+      #   @option options [String] :password Database password
+      #
+      # @overload initialize(connection)
+      #   Creates a gateway from an existing database connection. This
+      #   works with Sequel connections exclusively.
+      #
+      #   @example
+      #     ROM.container(:sql, Sequel.connect(:sqlite))
+      #
+      #   @param [Sequel::Database] connection a connection instance
+      #
+      # @return [SQL::Gateway]
+      #
+      # @see https://github.com/jeremyevans/sequel/blob/master/doc/opening_databases.rdoc Sequel connection docs
       #
       # @api public
       def initialize(uri, options = EMPTY_HASH)
@@ -74,7 +98,7 @@ module ROM
         self.class.instance = self
       end
 
-      # Disconnect from database
+      # Disconnect from the gateway's database
       #
       # @api public
       def disconnect
@@ -83,7 +107,9 @@ module ROM
 
       # Return dataset with the given name
       #
-      # @param [String] name dataset name
+      # Thsi returns a raw Sequel database
+      #
+      # @param [String, Symbol] name The dataset name
       #
       # @return [Dataset]
       #
@@ -93,6 +119,15 @@ module ROM
       end
 
       # Setup a logger
+      #
+      # @example set a logger during configuration process
+      #   rom = ROM.container(:sql, 'sqlite::memory') do |config|
+      #     config.gateways[:default].use_logger(Logger.new($stdout))
+      #   end
+      #
+      # @example set logger after gateway has been established
+      #   rom = ROM.container(:sql, 'sqlite::memory')
+      #   rom.gateways[:default].use_logger(Logger.new($stdout))
       #
       # @param [Object] logger
       #
@@ -115,7 +150,7 @@ module ROM
         connection[name]
       end
 
-      # Check if dataset exists
+      # Check if a dataset exists
       #
       # @param [String] name dataset name
       #
@@ -124,10 +159,10 @@ module ROM
         schema.include?(name)
       end
 
-      # Extend database-specific behavior
+      # Extend the command class with database-specific behavior
       #
-      # @param [Class] klass command class
-      # @param [Object] dataset a dataset that will be used
+      # @param [Class] klass Command class
+      # @param [Sequel::Dataset] dataset A dataset that will be used
       #
       # Note: Currently, only postgres is supported.
       #
