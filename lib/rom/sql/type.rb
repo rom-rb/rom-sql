@@ -2,6 +2,9 @@ require 'rom/schema/type'
 
 module ROM
   module SQL
+    # Extended schema types tailored for SQL databases
+    #
+    # @api public
     class Type < ROM::Schema::Type
       QualifyError = Class.new(StandardError)
 
