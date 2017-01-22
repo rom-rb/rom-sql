@@ -142,22 +142,6 @@ module ROM
           map(name)
         end
 
-        # Project a relation
-        #
-        # This method is intended to be used internally within a relation object
-        #
-        # @example
-        #   users.project(:id, :name) }
-        #
-        # @param [Symbol] *names A list of symbol column names
-        #
-        # @return [Relation]
-        #
-        # @api public
-        def project(*names)
-          schema.project(*names).(self)
-        end
-
         # Rename columns in a relation
         #
         # This method is intended to be used internally within a relation object
@@ -231,6 +215,7 @@ module ROM
         def select(*args, &block)
           schema.project(*args, &block).(self)
         end
+        alias_method :project, :select
 
         # Append specific columns to select clause
         #
