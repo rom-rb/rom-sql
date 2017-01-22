@@ -2,6 +2,7 @@ module ROM
   module Plugins
     module Relation
       module SQL
+        # @api private
         module AutoCombine
           # @api private
           def self.included(klass)
@@ -12,7 +13,9 @@ module ROM
             end
           end
 
+          # @api private
           module ClassInterface
+            # @api private
             def inherited(klass)
               super
               klass.auto_curry :for_combine
@@ -20,6 +23,7 @@ module ROM
             end
           end
 
+          # @api private
           module InstanceInterface
             # Default methods for fetching combined relation
             #
