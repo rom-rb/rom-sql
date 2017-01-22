@@ -6,14 +6,23 @@ module ROM
     # on a specific gateway, use ROM::SQL::Gateway#migration
     #
     # @example
-    #   ROM.setup(
+    #   rom = ROM.container(
     #     default: [:sql, 'sqlite::memory'],
     #     other: [:sql, 'postgres://localhost/test']
     #   )
     #
-    #   ROM.finalize
-    #
+    #   # default gateway migrations
     #   ROM::SQL.migration do
+    #     change do
+    #       create_table(:users) do
+    #         primary_key :id
+    #         String :name
+    #       end
+    #     end
+    #   end
+    #
+    #   # other gateway migrations
+    #   rom.gateways[:other].migration do
     #     change do
     #       create_table(:users) do
     #         primary_key :id
@@ -30,7 +39,8 @@ module ROM
     module Migration
       Sequel.extension :migration
 
-      # @api public
+      # @!attribute [r] migrator
+      #   @return [Migrator] Migrator instance
       attr_reader :migrator
 
       # @api private
@@ -38,6 +48,8 @@ module ROM
         @migrator = options.fetch(:migrator) { Migrator.new(connection) }
       end
 
+      # Check if there are any pending migrations
+      #
       # @see ROM::SQL::Migration.pending?
       #
       # @api public
@@ -45,6 +57,8 @@ module ROM
         migrator.pending?
       end
 
+      # Migration DSL
+      #
       # @see ROM::SQL.migration
       #
       # @api public
@@ -52,13 +66,11 @@ module ROM
         migrator.migration(&block)
       end
 
-      # Run migrations for a given gateway
+      # Run migrations
       #
       # @example
-      #   ROM.setup(:sql, ['sqlite::memory'])
-      #   ROM.finalize
-      #   ROM.env.gateways[:default].run_migrations
-      #
+      #   rom = ROM.container(:sql, ['sqlite::memory'])
+      #   rom.gateways[:default].run_migrations
       #
       # @param [Hash] options The options used by Sequel migrator
       #
