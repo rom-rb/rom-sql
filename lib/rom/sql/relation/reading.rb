@@ -83,7 +83,8 @@ module ROM
         # This method is intended to be used internally within a relation object
         #
         # @example
-        #   users.qualified
+        #   users.qualified.dataset.sql
+        #   # SELECT "users"."id", "users"."name" ...
         #
         # @return [Relation]
         #
@@ -176,9 +177,53 @@ module ROM
 
         # Select specific columns for select clause
         #
-        # @example
-        #   users.select(:id, :name).first
-        #   # {:id => 1, :name => "Jane" }
+        # @overload select(*columns)
+        #   Project relation using column names
+        #
+        #   @example using column names
+        #     users.select(:id, :name).first
+        #     # {:id => 1, :name => "Jane"}
+        #
+        #   @param [Array<Symbol>] columns A list of column names
+        #
+        # @overload select(*attributes)
+        #   Project relation using schema attributes
+        #
+        #   @example using attributes
+        #     users.select(:id, :name).first
+        #     # {:id => 1, :name => "Jane"}
+        #
+        #   @example using schema
+        #     users.select(*schema.project(:id)).first
+        #     # {:id => 1}
+        #
+        #   @param [Array<SQL::Type>] columns A list of schema attributes
+        #
+        # @overload select(&block)
+        #   Project relation using projection DSL
+        #
+        #   @example using attributes
+        #     users.select { id.as(:user_id) }
+        #     # {:user_id => 1}
+        #
+        #     users.select { [id, name] }
+        #     # {:id => 1, :name => "Jane"}
+        #
+        #   @example using SQL functions
+        #     users.select { string::concat(id, '-', name).as(:uid) }.first
+        #     # {:uid => "1-Jane"}
+        #
+        # @overload select(*columns, &block)
+        #   Project relation using column names and projection DSL
+        #
+        #   @example using attributes
+        #     users.select(:id) { int::count(id).as(:count) }.group(:id).first
+        #     # {:id => 1, :count => 1}
+        #
+        #     users.select { [id, name] }
+        #     # {:id => 1, :name => "Jane"}
+        #
+        #   @param [Array<SQL::Type>] columns A list of schema attributes
         #
         # @return [Relation]
         #
@@ -189,11 +234,7 @@ module ROM
 
         # Append specific columns to select clause
         #
-        # @example
-        #   users.select(:id, :name).select_append(:email)
-        #   # {:id => 1, :name => "Jane", :email => "jane@doe.org"}
-        #
-        # @param [Array<Symbol>] *args A list with column names
+        # @see Relation#select
         #
         # @return [Relation]
         #
@@ -204,10 +245,20 @@ module ROM
 
         # Returns a copy of the relation with a SQL DISTINCT clause.
         #
-        # @example
-        #   users.distinct(:country)
+        # @overload distinct(*columns)
+        #   Create a distinct statement from column names
         #
-        # @param [Array<Symbol>] *args A list with column names
+        #   @example
+        #     users.distinct(:country)
+        #
+        #   @param [Array<Symbol>] columns A list with column names
+        #
+        # @overload distinct(&block)
+        #   Create a distinct statement from a block
+        #
+        #   @example
+        #     users.distinct { func(id) }
+        #     # SELECT DISTINCT ON (count("id")) "id" ...
         #
         # @return [Relation]
         #
@@ -274,19 +325,30 @@ module ROM
 
         # Restrict a relation to match criteria
         #
-        # If block is passed it'll be executed in the context of a condition
-        # builder object.
+        # @overload where(conditions)
+        #   Restrict a relation using a hash with conditions
         #
-        # @example
-        #   users.where(name: 'Jane')
+        #   @example
+        #     users.where(name: 'Jane', age: 30)
         #
-        #   users.where { age >= 18 }
+        #   @param [Hash] conditions A hash with conditions
         #
-        # @param [Hash] *args An optional hash with conditions for WHERE clause
+        # @overload where(conditions, &block)
+        #   Restrict a relation using a hash with conditions and restriction DSL
+        #
+        #   @example
+        #     users.where(name: 'Jane') { age > 18 }
+        #
+        #   @param [Hash] conditions A hash with conditions
+        #
+        # @overload where(&block)
+        #   Restrict a relation using restriction DSL
+        #
+        #   @example
+        #     users.where { age > 18 }
+        #     users.where { (id < 10) | (id > 20) }
         #
         # @return [Relation]
-        #
-        # @see http://sequel.jeremyevans.net/rdoc/files/doc/dataset_filtering_rdoc.html
         #
         # @api public
         def where(*args, &block)
@@ -314,15 +376,18 @@ module ROM
         # Restrict a relation to match grouping criteria
         #
         # @example
-        #   users.with_task_count.having( task_count: 2 )
-        #
-        #   users.with_task_count.having { task_count > 3 }
+        #   users.
+        #     qualified.
+        #     left_join(tasks).
+        #     select { [id, name, int::count(:tasks__id).as(:task_count)] }.
+        #     group(users[:id].qualified).
+        #     having { count(id.qualified) >= 1 }.
+        #     first
+        #   # {:id => 1, :name => "Jane", :task_count => 2}
         #
         # @param [Hash] *args An optional hash with conditions for HAVING clause
         #
         # @return [Relation]
-        #
-        # @see http://sequel.jeremyevans.net/rdoc/files/doc/dataset_filtering_rdoc.html
         #
         # @api public
         def having(*args, &block)
@@ -351,11 +416,31 @@ module ROM
 
         # Set order for the relation
         #
-        # @example
-        #   users.order(:name)
-        #   users.order { [name.desc, id.qualified.desc]}
+        # @overload order(*columns)
+        #   Return a new relation ordered by provided columns (ASC by default)
         #
-        # @param [Array<Symbol>] *args A list with column names
+        #   @example
+        #     users.order(:name, :id)
+        #
+        #   @param [Array<Symbol>] columns A list with column names
+        #
+        # @overload order(*attributes)
+        #   Return a new relation ordered by provided schema attributes
+        #
+        #   @example
+        #     users.order(self[:name].qualified.desc, self[:id].qualified.desc)
+        #
+        #   @param [Array<SQL::Type>] attributes A list with schema attributes
+        #
+        # @overload order(&block)
+        #   Return a new relation ordered using order DSL
+        #
+        #   @example using attribute
+        #     users.order { id.desc }
+        #     users.order { price.desc(nulls: :first) }
+        #
+        #   @example using a function
+        #     users.order { nullif(name.qualified, `''`).desc(nulls: :first) }
         #
         # @return [Relation]
         #
@@ -413,11 +498,35 @@ module ROM
 
         # Join with another relation using INNER JOIN
         #
-        # @example
-        #   users.inner_join(:tasks, id: :user_id)
+        # @overload join(dataset, join_conditions)
+        #   Join with another relation using dataset name and join conditions
         #
-        # @param [Symbol] relation name
-        # @param [Hash] join keys
+        #   @example
+        #     users.join(:tasks, id: :user_id)
+        #
+        #   @param [Symbol] dataset Join table name
+        #   @param [Hash] join_conditions A hash with join conditions
+        #
+        # @overload join(dataset, join_conditions, options)
+        #   Join with another relation using dataset name and join conditions
+        #   with additional join options
+        #
+        #   @example
+        #     users.join(:tasks, { id: :user_id }, { table_alias: :tasks_1 })
+        #
+        #   @param [Symbol] dataset Join table name
+        #   @param [Hash] join_conditions A hash with join conditions
+        #   @param [Hash] options Additional join options
+        #
+        # @overload join(relation)
+        #   Join with another relation
+        #
+        #   Join conditions are automatically set based on schema association
+        #
+        #   @example
+        #     users.join(tasks)
+        #
+        #   @param [Relation] relation A relation for join
         #
         # @return [Relation]
         #
@@ -427,13 +536,37 @@ module ROM
         end
         alias_method :inner_join, :join
 
-        # Join other relation using LEFT OUTER JOIN
+        # Join with another relation using LEFT OUTER JOIN
         #
-        # @example
-        #   users.left_join(:tasks, id: :user_id)
+        # @overload left_join(dataset, left_join_conditions)
+        #   Left_Join with another relation using dataset name and left_join conditions
         #
-        # @param [Symbol] relation name
-        # @param [Hash] join keys
+        #   @example
+        #     users.left_join(:tasks, id: :user_id)
+        #
+        #   @param [Symbol] dataset Left_Join table name
+        #   @param [Hash] left_join_conditions A hash with left_join conditions
+        #
+        # @overload left_join(dataset, left_join_conditions, options)
+        #   Left_Join with another relation using dataset name and left_join conditions
+        #   with additional left_join options
+        #
+        #   @example
+        #     users.left_join(:tasks, { id: :user_id }, { table_alias: :tasks_1 })
+        #
+        #   @param [Symbol] dataset Left_Join table name
+        #   @param [Hash] left_join_conditions A hash with left_join conditions
+        #   @param [Hash] options Additional left_join options
+        #
+        # @overload left_join(relation)
+        #   Left_Join with another relation
+        #
+        #   Left_Join conditions are automatically set based on schema association
+        #
+        #   @example
+        #     users.left_join(tasks)
+        #
+        #   @param [Relation] relation A relation for left_join
         #
         # @return [Relation]
         #
@@ -442,14 +575,37 @@ module ROM
           __join__(__method__, *args, &block)
         end
 
-        # Join other relation using RIGHT JOIN
+        # Join with another relation using RIGHT JOIN
         #
-        # @example
-        #   users.right_join(:tasks, id: :user_id)
-        #   users.right_join(tasks)
+        # @overload right_join(dataset, right_join_conditions)
+        #   Right_Join with another relation using dataset name and right_join conditions
         #
-        # @param [Symbol] relation name
-        # @param [Hash] join keys
+        #   @example
+        #     users.right_join(:tasks, id: :user_id)
+        #
+        #   @param [Symbol] dataset Right_Join table name
+        #   @param [Hash] right_join_conditions A hash with right_join conditions
+        #
+        # @overload right_join(dataset, right_join_conditions, options)
+        #   Right_Join with another relation using dataset name and right_join conditions
+        #   with additional right_join options
+        #
+        #   @example
+        #     users.right_join(:tasks, { id: :user_id }, { table_alias: :tasks_1 })
+        #
+        #   @param [Symbol] dataset Right_Join table name
+        #   @param [Hash] right_join_conditions A hash with right_join conditions
+        #   @param [Hash] options Additional right_join options
+        #
+        # @overload right_join(relation)
+        #   Right_Join with another relation
+        #
+        #   Right_Join conditions are automatically set based on schema association
+        #
+        #   @example
+        #     users.right_join(tasks)
+        #
+        #   @param [Relation] relation A relation for right_join
         #
         # @return [Relation]
         #
@@ -460,10 +616,21 @@ module ROM
 
         # Group by specific columns
         #
-        # @example
-        #   tasks.group(:user_id)
+        # @overload group(*columns)
+        #   Return a new relation grouped by provided columns
         #
-        # @param [Array<Symbol>] *args A list of column names
+        #   @example
+        #     tasks.group(:user_id)
+        #
+        #   @param [Array<Symbol>] columns A list with column names
+        #
+        # @overload group(*attributes)
+        #   Return a new relation grouped by provided schema attributes
+        #
+        #   @example
+        #     tasks.group(tasks[:id], tasks[:title])
+        #
+        #   @param [Array<SQL::Type>] columns A list with column names
         #
         # @return [Relation]
         #
@@ -557,6 +724,8 @@ module ROM
 
         private
 
+        # Common join method used by other join methods
+        #
         # @api private
         def __join__(type, other, join_cond = EMPTY_HASH, opts = EMPTY_HASH, &block)
           case other
@@ -569,6 +738,8 @@ module ROM
           end
         end
 
+        # Return join key conditions for the provided relation
+        #
         # @api private
         def join_keys(other)
           other.associations[name].join_keys(__registry__)
