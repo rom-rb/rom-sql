@@ -18,7 +18,8 @@ Please refer to [the upgrading guide](https://github.com/rom-rb/rom-sql/wiki/Upg
 * Associations support setting custom `foreign_key` names (solnic)
 * Support for self-referencing associations (ie categories have_many child categories) (solnic)
 * Inferrers for mysql and sqlite were added (flash-gordon)
-* PG's auto-inferrer can handle `inet`/`cidr` data types in a two-way manner, i.e. converting them back and forth on reading and writing. Same for `point` datatype (flash-gordon)
+* PG's auto-inferrer can handle `inet`/`cidr`/`point` data types in a two-way manner, i.e. converting them back and forth on reading and writing (flash-gordon)
+* Support for inferring more PG types: `macaddr`, `xml` (flash-gordon)
 * `ROM::SQL::Relation::SequelAPI` extension for backward-compatible query API (this will be deprecated in 1.1.0 and removed in 2.0.0) (solnic)
 
 ### Changed

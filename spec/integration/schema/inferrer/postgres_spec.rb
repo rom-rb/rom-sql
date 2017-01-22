@@ -24,6 +24,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
       column :hw_address, "macaddr"
       rainbow :color
       point :center
+      xml :page
     end
   end
 
@@ -69,7 +70,8 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
           name: :center,
           source: source,
           read: ROM::SQL::Types::PG::PointTR.optional
-        )
+        ),
+        page: ROM::SQL::Types::String.optional.meta(name: :page, source: source)
       )
     end
   end
