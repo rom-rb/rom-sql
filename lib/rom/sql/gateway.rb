@@ -13,8 +13,7 @@ module ROM
     # SQL gateway
     #
     # @example
-    #   db = Sequel.connect(:sqlite)
-    #   gateway = ROM::SQL::Gateway.new(db)
+    #   gateway = ROM::SQL::Gateway.new('sqlite::memory')
     #
     #   users = gateway.dataset(:users)
     #
@@ -24,6 +23,8 @@ module ROM
       include Migration
 
       class << self
+        # FIXME: get rid of this and figure out a nicer way of handling migration DSL
+        #       we want to have global access ONLY when running migration tasks
         attr_accessor :instance
       end
 
