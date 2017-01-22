@@ -192,4 +192,28 @@ RSpec.describe 'Plugins / :associates' do
       end
     end
   end
+
+  context 'misconfigured assocs', :sqlite do
+    subject(:command) do
+      container.commands[:users][:create]
+    end
+
+    context 'when keys are missing in class-level config' do
+      before do
+        conf.commands(:users) do
+          define(:create) do
+            associates :tasks
+          end
+        end
+      end
+
+      it 'raises error' do
+        expect { command }.
+          to raise_error(
+               ROM::SQL::Plugin::Associates::MissingJoinKeysError,
+               ':create command for :users relation is missing join keys configuration for :tasks association'
+             )
+      end
+    end
+  end
 end

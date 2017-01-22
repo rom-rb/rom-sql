@@ -5,6 +5,21 @@ module ROM
       #
       # @api private
       module Associates
+        class MissingJoinKeysError < StandardError
+          ERROR_TEMPLATE = ':%{command} command for :%{relation} relation ' \
+                           'is missing join keys configuration for :%{name} association'
+
+          def initialize(command, assoc_name)
+            super(ERROR_TEMPLATE % tokens(command, assoc_name))
+          end
+
+          def tokens(command, assoc_name)
+            { command: command.register_as,
+              relation: command.relation,
+              name: assoc_name }
+          end
+        end
+
         # @api private
         def self.included(klass)
           klass.class_eval do
@@ -114,6 +129,10 @@ module ROM
                 assoc_names << name
               end
             end
+
+            [*before_hooks, *after_hooks].
+              map { |hook| hook[:associate] }.
+              each { |conf| raise MissingJoinKeysError.new(self, conf[:assoc]) unless conf[:keys] }
 
             command.
               with_opts(configured_associations: assoc_names).
