@@ -1,5 +1,6 @@
 module ROM
   module SQL
+    # @api private
     class DSL < BasicObject
       # @api private
       attr_reader :schema

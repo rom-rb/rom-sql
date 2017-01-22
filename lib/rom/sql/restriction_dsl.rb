@@ -2,6 +2,7 @@ require 'rom/sql/dsl'
 
 module ROM
   module SQL
+    # @api private
     class RestrictionDSL < DSL
       # @api private
       def call(&block)

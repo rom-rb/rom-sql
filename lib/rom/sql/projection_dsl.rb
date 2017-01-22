@@ -3,6 +3,7 @@ require 'rom/sql/function'
 
 module ROM
   module SQL
+    # @api private
     class ProjectionDSL < DSL
       # @api private
       def respond_to_missing?(name, include_private = false)

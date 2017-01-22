@@ -2,6 +2,7 @@ require 'rom/sql/dsl'
 
 module ROM
   module SQL
+    # @api private
     class OrderDSL < DSL
       private
 

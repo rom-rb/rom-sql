@@ -1,5 +1,6 @@
 module ROM
   module SQL
+    # @api private
     class Function < ROM::Schema::Type
       def sql_literal(ds)
         if name
