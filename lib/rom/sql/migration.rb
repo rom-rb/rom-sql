@@ -66,26 +66,6 @@ module ROM
       def run_migrations(options = {})
         migrator.run(options)
       end
-
-      # TODO: this should be removed in favor of migration API in Gateway
-      class << self
-        attr_writer :path
-        attr_accessor :connection
-
-        def path
-          @path || Migrator::DEFAULT_PATH
-        end
-
-        def run(options = {})
-          warn "ROM::SQL::Migration.run is deprecated please ROM::SQL::Gateway#run_migrations (#{caller[0]})"
-          ::Sequel::Migrator.run(connection, path, options)
-        end
-
-        def create(&block)
-          warn "ROM::SQL::Migration.create is deprecated please use ROM::SQL.migration (#{caller[0]})"
-          ::Sequel.migration(&block)
-        end
-      end
     end
   end
 end
