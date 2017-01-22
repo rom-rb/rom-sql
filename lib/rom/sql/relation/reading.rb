@@ -467,19 +467,28 @@ module ROM
 
         # Limit a relation to a specific number of tuples
         #
-        # @example
-        #   users.limit(1)
+        # @overload limit(num)
+        #   Return a new relation with the limit set to the provided num
         #
-        #   users.limit(10, 2)
+        #   @example
+        #     users.limit(1)
         #
-        # @param [Integer] limit The limit value
-        # @param [Integer] offset An optional offset
+        #   @param [Integer] num The limit value
+        #
+        # @overload limit(num, offset)
+        #   Return a new relation with the limit set to the provided num
+        #
+        #   @example
+        #     users.limit(10, 2)
+        #
+        #   @param [Integer] num The limit value
+        #   @param [Integer] offset The offset value
         #
         # @return [Relation]
         #
         # @api public
-        def limit(*args, &block)
-          new(dataset.__send__(__method__, *args, &block))
+        def limit(*args)
+          new(dataset.__send__(__method__, *args))
         end
 
         # Set offset for the relation
@@ -492,8 +501,8 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def offset(*args, &block)
-          new(dataset.__send__(__method__, *args, &block))
+        def offset(num)
+          new(dataset.__send__(__method__, num))
         end
 
         # Join with another relation using INNER JOIN
