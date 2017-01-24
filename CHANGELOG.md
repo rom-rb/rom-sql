@@ -22,6 +22,7 @@ Please refer to [the upgrading guide](https://github.com/rom-rb/rom-sql/wiki/Upg
 * PG's auto-inferrer can handle `inet`/`cidr`/`point` data types in a two-way manner, i.e. converting them back and forth on reading and writing (flash-gordon)
 * Support for inferring more PG types: `macaddr`, `xml` (flash-gordon)
 * `ROM::SQL::Relation::SequelAPI` extension for backward-compatible query API (this will be deprecated in 1.1.0 and removed in 2.0.0) (solnic)
+* Added `Object` type for `SQLite` which is used by the inferrer for columns without a type affinity (flash-gordon)
 
 ### Changed
 

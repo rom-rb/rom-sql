@@ -47,7 +47,7 @@ Dir[root.join('support/**/*')].each { |f| require f }
 require 'dry/core/deprecations'
 Dry::Core::Deprecations.set_logger!(root.join('../log/deprecations.log'))
 
-ROM::SQL.load_extensions(:postgres)
+ROM::SQL.load_extensions(:postgres, :sqlite)
 
 require 'dry-types'
 module Types
