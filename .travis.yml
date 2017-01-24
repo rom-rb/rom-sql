@@ -6,10 +6,6 @@ services:
   - postgresql
   - mysql
 bundler_args: --without yard guard benchmarks tools
-before_install:
-  - gem update --system
-  - rvm @global do gem uninstall bundler -a -x
-  - rvm @global do gem install bundler -v 1.13.7
 before_script:
   - psql -c 'create database rom_sql;' -U postgres
   - mysql -u root -e 'create database rom_sql;'
