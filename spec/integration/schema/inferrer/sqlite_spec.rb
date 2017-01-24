@@ -7,6 +7,7 @@ RSpec.describe 'ROM::SQL::Schema::SqliteInferrer', :sqlite do
     conn.create_table :test_inferrence do
       tinyint :tiny
       int8 :big
+      column :dummy, nil
     end
   end
 
@@ -31,6 +32,7 @@ RSpec.describe 'ROM::SQL::Schema::SqliteInferrer', :sqlite do
     expect(schema.to_h).to eql(
       tiny: ROM::SQL::Types::Int.optional.meta(name: :tiny, source: source),
       big: ROM::SQL::Types::Int.optional.meta(name: :big, source: source),
+      dummy: ROM::SQL::Types::SQLite::Object.optional.meta(name: :dummy, source: source)
     )
   end
 end
