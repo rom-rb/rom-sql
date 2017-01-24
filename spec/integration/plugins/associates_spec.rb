@@ -193,6 +193,61 @@ RSpec.describe 'Plugins / :associates' do
     end
   end
 
+  with_adapters :sqlite do
+    context 'with Update command' do
+      subject(:command) do
+        container.commands[:tasks][:update].with_association(:user).by_pk(jane_task[:id])
+      end
+
+      let(:john) do
+        container.commands[:users][:create].call(name: 'John')
+      end
+
+      let(:jane) do
+        container.commands[:users][:create].call(name: 'Jane')
+      end
+
+      let(:jane_task) do
+        container.commands[:tasks][:create].call(user_id: jane[:id], title: 'Jane Task')
+      end
+
+      let(:john_task) do
+        container.commands[:tasks][:create].call(user_id: john[:id], title: 'John Task')
+      end
+
+      before do
+        conf.relation_classes[1].class_eval do
+          schema(infer: true) do
+            associations do
+              belongs_to :user
+            end
+          end
+        end
+
+        conf.commands(:users) do
+          define(:create) do
+            result :one
+          end
+        end
+
+        conf.commands(:tasks) do
+          define(:create) do
+            result :one
+          end
+
+          define(:update) do
+            result :one
+          end
+        end
+      end
+
+      it 'automatically sets FK prior execution' do
+        expect(command.curry(title: 'Another John task').call(john)).
+          to eql(id: jane_task[:id], user_id: john[:id], title: 'Another John task')
+      end
+    end
+  end
+
   context 'misconfigured assocs', :sqlite do
     subject(:command) do
       container.commands[:users][:create]

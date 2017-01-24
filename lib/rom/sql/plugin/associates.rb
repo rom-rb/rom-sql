@@ -70,6 +70,8 @@ module ROM
                   assoc.associate(relation.__registry__, tuple, parent)
                 }
               end
+
+            one? ? input_tuples[0] : input_tuples
           end
 
           # @api public

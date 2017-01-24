@@ -14,6 +14,7 @@ module ROM
         include ErrorWrapper
 
         use :schema
+        use :associates
 
         after :finalize
 
@@ -46,6 +47,15 @@ module ROM
         # @api private
         def primary_key
           relation.primary_key
+        end
+
+        # Yields tuples for insertion or return an enumerator
+        #
+        # @api private
+        def with_input_tuples(tuples)
+          input_tuples = Array([tuples]).flatten(1).map
+          return input_tuples unless block_given?
+          input_tuples.each { |tuple| yield(tuple) }
         end
       end
     end
