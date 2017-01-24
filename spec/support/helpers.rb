@@ -11,11 +11,11 @@ module Helpers
     ROM::SQL::Schema.define(
       name,
       attributes: attrs.map { |key, value| value.meta(name: key, source: ROM::Relation::Name.new(name)) },
-      type_class: ROM::SQL::Type
+      attr_class: ROM::SQL::Attribute
     )
   end
 
   def define_type(name, id, **opts)
-    ROM::SQL::Type.new(ROM::Types.const_get(id).meta(name: name, **opts))
+    ROM::SQL::Attribute.new(ROM::Types.const_get(id).meta(name: name, **opts))
   end
 end

@@ -1,4 +1,4 @@
-require 'rom/sql/type'
+require 'rom/sql/attribute'
 require 'rom/sql/schema/inferrer'
 require 'rom/sql/schema/associations_dsl'
 
@@ -49,7 +49,7 @@ module ROM
         # @api private
         def call
           SQL::Schema.define(
-            relation, opts.merge(attributes: attributes.values, type_class: SQL::Type)
+            relation, opts.merge(attributes: attributes.values, attr_class: SQL::Attribute)
           )
         end
 

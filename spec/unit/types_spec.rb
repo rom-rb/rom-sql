@@ -68,7 +68,7 @@ RSpec.describe ROM::SQL::Types, :postgres do
 
       specify do
         expect { sql_literal }.
-          to raise_error(ROM::SQL::Type::QualifyError, "can't qualify :age (#{func.inspect})")
+          to raise_error(ROM::SQL::Attribute::QualifyError, "can't qualify :age (#{func.inspect})")
       end
     end
   end

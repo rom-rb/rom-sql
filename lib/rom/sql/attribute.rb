@@ -1,16 +1,16 @@
-require 'rom/schema/type'
+require 'rom/schema/attribute'
 
 module ROM
   module SQL
-    # Extended schema types tailored for SQL databases
+    # Extended schema attributes tailored for SQL databases
     #
     # @api public
-    class Type < ROM::Schema::Type
+    class Attribute < ROM::Schema::Attribute
       QualifyError = Class.new(StandardError)
 
       # Return a new type marked as a FK
       #
-      # @return [SQL::Type]
+      # @return [SQL::Attribute]
       #
       # @api public
       def foreign_key
@@ -25,7 +25,7 @@ module ROM
 
       # Return a new type marked as qualified
       #
-      # @return [SQL::Type]
+      # @return [SQL::Attribute]
       #
       # @api public
       def qualified
@@ -42,7 +42,7 @@ module ROM
 
       # Return a new type marked as joined
       #
-      # @return [SQL::Type]
+      # @return [SQL::Attribute]
       #
       # @api public
       def joined

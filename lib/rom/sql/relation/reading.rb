@@ -181,7 +181,7 @@ module ROM
         #     users.select(*schema.project(:id)).first
         #     # {:id => 1}
         #
-        #   @param [Array<SQL::Type>] columns A list of schema attributes
+        #   @param [Array<SQL::Attribute>] columns A list of schema attributes
         #
         # @overload select(&block)
         #   Project relation using projection DSL
@@ -207,7 +207,7 @@ module ROM
         #     users.select { [id, name] }
         #     # {:id => 1, :name => "Jane"}
         #
-        #   @param [Array<SQL::Type>] columns A list of schema attributes
+        #   @param [Array<SQL::Attribute>] columns A list of schema attributes
         #
         # @return [Relation]
         #
@@ -431,7 +431,7 @@ module ROM
         #   @example
         #     users.order(self[:name].qualified.desc, self[:id].qualified.desc)
         #
-        #   @param [Array<SQL::Type>] attributes A list with schema attributes
+        #   @param [Array<SQL::Attribute>] attributes A list with schema attributes
         #
         # @overload order(&block)
         #   Return a new relation ordered using order DSL
@@ -640,7 +640,7 @@ module ROM
         #   @example
         #     tasks.group(tasks[:id], tasks[:title])
         #
-        #   @param [Array<SQL::Type>] columns A list with column names
+        #   @param [Array<SQL::Attribute>] columns A list with column names
         #
         # @return [Relation]
         #
