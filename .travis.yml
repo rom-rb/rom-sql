@@ -10,12 +10,12 @@ before_script:
   - psql -c 'create database rom_sql;' -U postgres
   - mysql -u root -e 'create database rom_sql;'
 after_success:
-  - '[ "$TRAVIS_RUBY_VERSION" = "2.3.1" ] && [ "$TRAVIS_BRANCH" = "master" ] && bundle exec codeclimate-test-reporter'
+  - '[ "${TRAVIS_JOB_NUMBER#*.}" = "1" ] && [ "$TRAVIS_BRANCH" = "master" ] && bundle exec codeclimate-test-reporter'
 script: "bundle exec rake ci"
 rvm:
-  - 2.2.5
-  - 2.3.3
-  - 2.4.0
+  - 2.4
+  - 2.3
+  - 2.2
   - rbx-3
   - jruby
 env:
