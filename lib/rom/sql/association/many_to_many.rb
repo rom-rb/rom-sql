@@ -64,9 +64,14 @@ module ROM
         def associate(relations, children, parent)
           ((spk, sfk), (tfk, tpk)) = join_key_map(relations)
 
-          children.map { |tuple|
-            { sfk => tuple.fetch(spk), tfk => parent.fetch(tpk) }
-          }
+          case parent
+          when Array
+            parent.map { |p| associate(relations, children, p) }.flatten(1)
+          else
+            children.map { |tuple|
+              { sfk => tuple.fetch(spk), tfk => parent.fetch(tpk) }
+            }
+          end
         end
 
         # @api private

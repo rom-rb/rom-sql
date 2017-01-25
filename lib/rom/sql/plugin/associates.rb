@@ -45,7 +45,9 @@ module ROM
           #
           # @api public
           def associate(tuples, parent, assoc:, keys:)
-            input_tuples =
+            result_type = result
+
+            output_tuples =
               case assoc
               when Symbol
                 fk, pk = keys
@@ -54,6 +56,8 @@ module ROM
                   tuple.merge(fk => parent.fetch(pk))
                 }
               when Association::ManyToMany
+                result_type = tuples.is_a?(Array) ? :many : :one
+
                 join_tuples = assoc.associate(__registry__, tuples, parent)
                 join_relation = assoc.join_relation(__registry__)
                 join_relation.multi_insert(join_tuples)
@@ -62,16 +66,21 @@ module ROM
                   .associations[assoc.source]
                   .combine_keys(__registry__).to_a.flatten
 
-                pk_extend = { fk => parent[pk] }
-
-                tuples.map { |tuple| tuple.update(pk_extend) }
+                case parent
+                when Array
+                  parent.map do |p|
+                    tuples.map { |tuple| tuple.merge(fk => p[pk]) }
+                  end.flatten(1)
+                else
+                  tuples.map { |tuple| Hash(tuple).update(fk => parent[pk]) }
+                end
               when Association
                 with_input_tuples(tuples).map { |tuple|
                   assoc.associate(relation.__registry__, tuple, parent)
                 }
               end
 
-            one? ? input_tuples[0] : input_tuples
+            result_type == :one ? output_tuples[0] : output_tuples
           end
 
           # @api public

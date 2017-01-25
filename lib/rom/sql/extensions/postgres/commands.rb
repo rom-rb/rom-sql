@@ -95,7 +95,7 @@ module ROM
               upsert(input[tuple], upsert_options)
             end
 
-            inserted_tuples.flatten
+            inserted_tuples.flatten(1)
           end
 
           # @api private
