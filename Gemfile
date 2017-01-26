@@ -25,3 +25,7 @@ group :test do
   gem 'sqlite3', platforms: [:mri, :rbx]
   gem 'jdbc-sqlite3', platforms: :jruby
 end
+
+group :tools do
+  gem 'rom-repository', git: 'https://github.com/rom-rb/rom-repository.git', branch: 'master'
+end
