@@ -39,6 +39,10 @@ ADAPTERS = DB_URIS.keys
 PG_LTE_95 = ENV.fetch('PG_LTE_95', 'true') == 'true'
 
 SPEC_ROOT = root = Pathname(__FILE__).dirname
+
+# Redirect inferrer warnings to a log file
+$stderr.reopen(SPEC_ROOT.join('../log/warnings.log'), 'w')
+
 TMP_PATH = root.join('../tmp')
 
 Dir[root.join('shared/**/*')].each { |f| require f }

@@ -40,6 +40,7 @@ module ROM
             begin
               inferrer_for_db.new.call(name, gateway)
             rescue Sequel::Error => e
+              inferrer_for_db.on_error(klass, e)
               ROM::Schema::DEFAULT_INFERRER.()
             end
           end
