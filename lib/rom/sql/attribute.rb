@@ -6,24 +6,26 @@ module ROM
     #
     # @api public
     class Attribute < ROM::Schema::Attribute
+      # Error raised when an attribute cannot be qualified
       QualifyError = Class.new(StandardError)
 
-      # Return a new type marked as a FK
+      # Return a new attribute with an alias
+      #
+      # @example
+      #   users[:id].aliased(:user_id)
       #
       # @return [SQL::Attribute]
       #
-      # @api public
-      def foreign_key
-        meta(foreign_key: true)
-      end
-
       # @api public
       def aliased(name)
         super.meta(sql_expr: sql_expr.as(name))
       end
       alias_method :as, :aliased
 
-      # Return a new type marked as qualified
+      # Return a new attribute marked as qualified
+      #
+      # @example
+      #   users[:id].aliased(:user_id)
       #
       # @return [SQL::Attribute]
       #
@@ -40,7 +42,10 @@ module ROM
         end
       end
 
-      # Return a new type marked as joined
+      # Return a new attribute marked as joined
+      #
+      # Whenever you join two schemas, the right schema's attribute
+      # will be marked as joined using this method
       #
       # @return [SQL::Attribute]
       #
@@ -51,6 +56,12 @@ module ROM
 
       # Return if an attribute was used in a join
       #
+      # @example
+      #   schema = users.schema.join(tasks.schema)
+      #
+      #   schema[:id, :tasks].joined?
+      #   # => true
+      #
       # @return [Boolean]
       #
       # @api public
@@ -60,6 +71,12 @@ module ROM
 
       # Return if an attribute type is qualified
       #
+      # @example
+      #   id = users[:id].qualify
+      #
+      #   id.qualified?
+      #   # => true
+      #
       # @return [Boolean]
       #
       # @api public
@@ -67,6 +84,32 @@ module ROM
         meta[:qualified].equal?(true)
       end
 
+      # Return a new attribute marked as a FK
+      #
+      # @return [SQL::Attribute]
+      #
+      # @api public
+      def foreign_key
+        meta(foreign_key: true)
+      end
+
+      # Return symbol representation of an attribute
+      #
+      # This uses convention from sequel where double underscore in the name
+      # is used for qualifying, and triple underscore means aliasing
+      #
+      # @example
+      #   users[:id].qualified.to_sym
+      #   # => :users__id
+      #
+      #   users[:id].as(:user_id).to_sym
+      #   # => :id___user_id
+      #
+      #   users[:id].qualified.as(:user_id).to_sym
+      #   # => :users__id___user_id
+      #
+      # @return [Symbol]
+      #
       # @api public
       def to_sym
         @_to_sym ||=
@@ -81,6 +124,10 @@ module ROM
           end
       end
 
+      # Sequel calls this method to coerce an attribute into SQL string
+      #
+      # @param [Sequel::Dataset]
+      #
       # @api private
       def sql_literal(ds)
         if sql_expr
@@ -92,11 +139,15 @@ module ROM
 
       private
 
+      # Return Sequel Expression object for an attribute
+      #
       # @api private
       def sql_expr
         @sql_expr ||= (meta[:sql_expr] || Sequel[to_sym])
       end
 
+      # Delegate to sql expression if it responds to a given method
+      #
       # @api private
       def method_missing(meth, *args, &block)
         if sql_expr.respond_to?(meth)
