@@ -46,7 +46,10 @@ module ROM
 
             # @api private
             def preload(source_key, target_key, source)
-              where(target_key => source.pluck(source_key.to_sym))
+              target_pks = source.pluck(source_key.to_sym).uniq
+              target_pks.uniq!
+
+              where(target_key => target_pks)
             end
           end
         end
