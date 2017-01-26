@@ -9,7 +9,7 @@ module ROM
         ROM::Types.Constructor(*args, &block)
       end
 
-      Serial = Int.constrained(gt: 0).meta(primary_key: true)
+      Serial = Int.meta(primary_key: true)
 
       Blob = Constructor(Sequel::SQL::Blob, &Sequel::SQL::Blob.method(:new))
     end
