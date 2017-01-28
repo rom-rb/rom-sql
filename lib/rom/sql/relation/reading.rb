@@ -640,13 +640,68 @@ module ROM
         #   @example
         #     tasks.group(tasks[:id], tasks[:title])
         #
-        #   @param [Array<SQL::Attribute>] columns A list with column names
+        #   @param [Array<SQL::Attribute>] columns A list with relation attributes
+        #
+        # @overload group(*attributes, &block)
+        #   Return a new relation grouped by provided attributes from a block
+        #
+        #   @example
+        #     tasks.group(tasks[:id]) { title.qualified }
+        #
+        #   @param [Array<SQL::Attributes>] attributes A list with relation attributes
         #
         # @return [Relation]
         #
         # @api public
         def group(*args, &block)
-          new(dataset.__send__(__method__, *args, &block))
+          if block
+            if args.size > 0
+              group(*args).group_append(&block)
+            else
+              new(dataset.__send__(__method__, *schema.group(&block)))
+            end
+          else
+            new(dataset.__send__(__method__, *schema.project(*args).canonical))
+          end
+        end
+
+        # Group by more columns
+        #
+        # @overload group_append(*columns)
+        #   Return a new relation grouped by provided columns
+        #
+        #   @example
+        #     tasks.group_append(:user_id)
+        #
+        #   @param [Array<Symbol>] columns A list with column names
+        #
+        # @overload group_append(*attributes)
+        #   Return a new relation grouped by provided schema attributes
+        #
+        #   @example
+        #     tasks.group_append(tasks[:id], tasks[:title])
+        #
+        # @overload group_append(*attributes, &block)
+        #   Return a new relation grouped by provided schema attributes from a block
+        #
+        #   @example
+        #     tasks.group_append(tasks[:id]) { id.qualified }
+        #
+        #   @param [Array<SQL::Attribute>] columns A list with column names
+        #
+        # @return [Relation]
+        #
+        # @api public
+        def group_append(*args, &block)
+          if block
+            if args.size > 0
+              group_append(*args).group_append(&block)
+            else
+              new(dataset.group_append(*schema.group(&block)))
+            end
+          else
+            new(dataset.group_append(*args))
+          end
         end
 
         # Group by specific columns and count by group

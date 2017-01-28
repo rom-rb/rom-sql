@@ -1,5 +1,6 @@
 require 'rom/schema'
 require 'rom/sql/order_dsl'
+require 'rom/sql/group_dsl'
 require 'rom/sql/projection_dsl'
 require 'rom/sql/restriction_dsl'
 
@@ -31,6 +32,11 @@ module ROM
         OrderDSL.new(self).call(&block)
       end
 
+      # @api public
+      def group(&block)
+        GroupDSL.new(self).call(&block)
+      end
+
       # Return a new schema with attributes marked as qualified
       #
       # @return [Schema]
@@ -38,6 +44,15 @@ module ROM
       # @api public
       def qualified
         new(map(&:qualified))
+      end
+
+      # Return a new schema with attributes restored to canonical form
+      #
+      # @return [Schema]
+      #
+      # @api public
+      def canonical
+        new(map(&:canonical))
       end
 
       # @api public

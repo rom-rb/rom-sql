@@ -22,6 +22,17 @@ module ROM
       end
       alias_method :as, :aliased
 
+      # Return a new attribute in its canonical form
+      #
+      # @api public
+      def canonical
+        if aliased?
+          meta(alias: nil, sql_expr: nil)
+        else
+          self
+        end
+      end
+
       # Return a new attribute marked as qualified
       #
       # @example
