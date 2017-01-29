@@ -4,7 +4,6 @@ gemspec
 
 gem 'rom', git: 'https://github.com/rom-rb/rom.git', branch: 'master'
 gem 'rom-mapper', git: 'https://github.com/rom-rb/rom-mapper.git', branch: 'master'
-gem 'transproc', git: 'https://github.com/solnic/transproc.git', branch: 'master'
 
 group :test do
   gem 'byebug', platforms: :mri
