@@ -23,6 +23,7 @@ Please refer to [the upgrading guide](https://github.com/rom-rb/rom-sql/wiki/Upg
 * Support for inferring more PG types: `macaddr`, `xml` (flash-gordon)
 * `ROM::SQL::Relation::SequelAPI` extension for backward-compatible query API (this will be deprecated in 1.1.0 and removed in 2.0.0) (solnic)
 * Added `Object` type for `SQLite` which is used by the inferrer for columns without a type affinity (flash-gordon)
+* Support for composite PKs in the default `by_pk` view (solnic)
 
 ### Changed
 
@@ -32,6 +33,7 @@ Please refer to [the upgrading guide](https://github.com/rom-rb/rom-sql/wiki/Upg
 * [BREAKING] Deprecated `Commands::Update#change` has been removed (solnic)
 * [BREAKING] Deprecated `Commands.validator` has been removed (solnic)
 * [BREAKING] `assoc_macros` plugin has been removed, please use associations from now (solnic)
+* Default `by_pk` uses schema attributes, it will raise exception if PK attribute is missing in the schema (solnic)
 * [internal] Associations use schemas for relation projections (solnic)
 * [internal] `select`, `select_append`, `project`, `inner_join` and `left_join` use schemas internally (solnic)
 * [internal] Deprecation and constants are now based on dry-core (flash-gordon)
