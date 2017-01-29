@@ -22,6 +22,10 @@ module ROM
         )
       end
 
+      def ==(other)
+        ::Sequel::SQL::BooleanExpression.new(:'=', func, other)
+      end
+
       private
 
       def func
