@@ -49,6 +49,13 @@ module ROM
         end
 
         # @api public
+        def join(relations, type, source = relations[self.source], target = relations[self.target])
+          through_assoc = source.associations[through]
+          joined = through_assoc.join(relations, type, source)
+          joined.__send__(type, target.name.dataset, join_keys(relations)).qualified
+        end
+
+        # @api public
         def join_keys(relations)
           with_keys(relations) { |source_key, target_key|
             { qualify(source, source_key) => qualify(through, target_key) }

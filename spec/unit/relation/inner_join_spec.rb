@@ -2,6 +2,7 @@ RSpec.describe ROM::Relation, '#inner_join' do
   subject(:relation) { relations[:users] }
 
   let(:tasks) { relations[:tasks] }
+  let(:tags) { relations[:tags] }
 
   include_context 'users and tasks'
 
@@ -44,9 +45,22 @@ RSpec.describe ROM::Relation, '#inner_join' do
           end
         end
 
+        conf.relation(:task_tags) do
+          schema(infer: true) do
+            associations do
+              belongs_to :tasks
+              belongs_to :tags
+            end
+          end
+        end
+
         conf.relation(:tasks) do
           schema(infer: true) do
-            associations { belongs_to :user }
+            associations do
+              belongs_to :user
+              has_many :task_tags
+              has_many :tags, through: :task_tags
+            end
           end
         end
 
@@ -64,6 +78,12 @@ RSpec.describe ROM::Relation, '#inner_join' do
                                      { name: 'Jane', title: "Jane's task" },
                                      { name: 'Joe', title: "Joe's task" }
                                    ])
+      end
+
+      it 'joins relation with join keys inferred for m:m-through' do
+        result = tasks.inner_join(tags)
+
+        expect(result.to_a).to eql([{ id: 1, user_id: 2, title: "Joe's task" }])
       end
     end
 

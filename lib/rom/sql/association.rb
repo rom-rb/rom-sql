@@ -58,6 +58,11 @@ module ROM
         )
       end
 
+      # @api public
+      def join(relations, type, source = relations[self.source], target = relations[self.target])
+        source.__send__(type, target.name.dataset, join_keys(relations)).qualified
+      end
+
       # Returns a qualified attribute name for a given dataset
       #
       # This is compatible with Sequel's SQL generator and can be used in query

@@ -797,17 +797,10 @@ module ROM
           when Symbol, Association::Name
             new(dataset.__send__(type, other.to_sym, join_cond, opts, &block))
           when Relation
-            __send__(type, other.name.dataset, join_keys(other))
+            associations[other.name.dataset].join(__registry__, type, self, other)
           else
             raise ArgumentError, "+other+ must be either a symbol or a relation, #{other.class} given"
           end
-        end
-
-        # Return join key conditions for the provided relation
-        #
-        # @api private
-        def join_keys(other)
-          other.associations[name].join_keys(__registry__)
         end
       end
     end
