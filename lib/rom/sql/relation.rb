@@ -67,13 +67,32 @@ module ROM
 
       # @api private
       def self.define_default_views!
-        # @!method by_pk(pk)
-        #   Return a relation restricted by its primary key
-        #   @param [Object] pk The primary key value
-        #   @return [SQL::Relation]
-        #   @api public
-        define_method(:by_pk) do |pk|
-          where(self[primary_key] => pk)
+        if schema.primary_key.size > 1
+          # @!method by_pk(val1, val2)
+          #   Return a relation restricted by its composite primary key
+          #
+          #   @param [Array] args A list with composite pk values
+          #
+          #   @return [SQL::Relation]
+          #
+          #   @api public
+          class_eval <<-RUBY, __FILE__, __LINE__ + 1
+            def by_pk(#{schema.primary_key.map(&:name).join(', ')})
+              where(#{schema.primary_key.map { |attr| "schema[:#{attr.name}] => #{attr.name}" }.join(', ')})
+            end
+          RUBY
+        else
+          # @!method by_pk(pk)
+          #   Return a relation restricted by its primary key
+          #
+          #   @param [Object] pk The primary key value
+          #
+          #   @return [SQL::Relation]
+          #
+          #   @api public
+          define_method(:by_pk) do |pk|
+            where(schema[primary_key] => pk)
+          end
         end
       end
 
