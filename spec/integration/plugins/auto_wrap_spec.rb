@@ -14,6 +14,16 @@ RSpec.describe 'Plugins / :auto_wrap' do
             id: 2, user_id: 1, title: "Jane's task", users_name: "Jane", users_id: 1
           )
         end
+
+        it 'works with by_pk' do
+          task_with_user = tasks
+                             .for_wrap({ id: :user_id }, users.name.relation)
+                             .by_pk(1)
+                             .one
+
+          expect(task_with_user).
+            to eql(id: 1, user_id: 2, title: "Joe's task", users_name: "Joe", users_id: 2)
+        end
       end
 
       context 'when parent relation is registered under dataset name' do
