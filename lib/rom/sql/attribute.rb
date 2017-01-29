@@ -138,16 +138,44 @@ module ROM
           end
       end
 
+      # Return a boolean expression with `=` operator
+      #
+      # @example
+      #   users.where { id.is(1) }
+      #
+      #   users.where(users[:id].is(1))
+      #
+      # @param [Object] other Any SQL-compatible object type
+      #
       # @api public
       def is(other)
         Sequel::SQL::BooleanExpression.new(:'=', self, other)
       end
 
+      # Create a function DSL from the attribute
+      #
+      # @example
+      #   users[:id].func { int::count(id).as(:count) }
+      #
+      # @return [SQL::Function]
+      #
       # @api public
       def func(&block)
         ProjectionDSL.new(name => self).call(&block).first
       end
 
+      # Create a CONCAT function from the attribute
+      #
+      # @example with default separator (' ')
+      #   users[:id].concat(users[:name])
+      #
+      # @example with custom separator
+      #   users[:id].concat(users[:name], '-')
+      #
+      # @param [SQL::Attribute] other
+      #
+      # @return [SQL::Function]
+      #
       # @api public
       def concat(other, sep = ' ')
         Function.new(type).concat(self, sep, other)
