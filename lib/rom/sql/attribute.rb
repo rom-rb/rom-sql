@@ -141,6 +141,11 @@ module ROM
         ProjectionDSL.new(name => self).call(&block).first
       end
 
+      # @api public
+      def concat(other, sep = ' ')
+        Function.new(type).concat(self, sep, other)
+      end
+
       # Sequel calls this method to coerce an attribute into SQL string
       #
       # @param [Sequel::Dataset]
