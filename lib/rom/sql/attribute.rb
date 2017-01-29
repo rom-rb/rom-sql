@@ -1,3 +1,5 @@
+require 'sequel/core'
+
 require 'rom/schema/attribute'
 require 'rom/sql/projection_dsl'
 
@@ -134,6 +136,11 @@ module ROM
           else
             name
           end
+      end
+
+      # @api public
+      def is(other)
+        Sequel::SQL::BooleanExpression.new(:'=', self, other)
       end
 
       # @api public
