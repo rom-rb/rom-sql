@@ -16,6 +16,12 @@ module ROM
         meta[:alias] || super
       end
 
+      def qualified
+        meta(
+          func: ::Sequel::SQL::Function.new(func.name, *func.args.map { |arg| arg.respond_to?(:qualified) ? arg.qualified : arg })
+        )
+      end
+
       private
 
       def func

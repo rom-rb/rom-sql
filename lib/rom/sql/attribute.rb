@@ -1,4 +1,5 @@
 require 'rom/schema/attribute'
+require 'rom/sql/projection_dsl'
 
 module ROM
   module SQL
@@ -133,6 +134,11 @@ module ROM
           else
             name
           end
+      end
+
+      # @api public
+      def func(&block)
+        ProjectionDSL.new(name => self).call(&block).first
       end
 
       # Sequel calls this method to coerce an attribute into SQL string
