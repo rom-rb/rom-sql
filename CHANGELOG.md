@@ -1,3 +1,9 @@
+## v1.0.1 to-be-released
+
+### Added
+
+* Support for inferring the PostgreSQL `hstore` data type (flash-gordon)
+
 ## v1.0.0 2017-01-29
 
 This release is based on rom core 3.0.0 with its improved Schema API, which is extended with SQL-specific features.

@@ -50,7 +50,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
       extensions = [:pg_array, :pg_array_ops]
       connection = Sequel.connect uri
 
-      expect(connection).to receive(:extension).with(:pg_array, :pg_json, :pg_enum, :pg_array_ops)
+      expect(connection).to receive(:extension).with(:pg_array, :pg_json, :pg_enum, :pg_hstore, :pg_array_ops)
       expect(connection).to receive(:extension).with(:freeze_datasets) unless RUBY_ENGINE == 'rbx'
 
       ROM::SQL::Gateway.new(connection, extensions: extensions)

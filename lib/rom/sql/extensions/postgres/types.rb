@@ -2,7 +2,7 @@ require 'dry-types'
 require 'sequel'
 require 'ipaddr'
 
-Sequel.extension(*%i(pg_array pg_array_ops pg_json pg_json_ops))
+Sequel.extension(*%i(pg_array pg_array_ops pg_json pg_json_ops pg_hstore))
 
 module ROM
   module SQL
@@ -40,6 +40,11 @@ module ROM
         JSONBOp = Types.Constructor(Sequel::Postgres::JSONBOp, &Sequel.method(:pg_jsonb))
 
         JSONB = JSONBArray | JSONBHash | JSONBOp
+
+        # HStore
+
+        HStoreR = Types.Constructor(Hash, &:to_hash)
+        HStore = Types.Constructor(Sequel::Postgres::HStore, &Sequel.method(:hstore)).meta(read: HStoreR)
 
         Bytea = Types.Constructor(Sequel::SQL::Blob, &Sequel::SQL::Blob.method(:new))
 

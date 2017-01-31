@@ -1,4 +1,3 @@
-
 RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
   include_context 'database setup'
 
@@ -7,6 +6,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
   before do
     conn.extension :pg_enum
 
+    conn.execute('create extension if not exists hstore')
     conn.drop_table?(:test_inferrence)
     conn.drop_enum(:rainbow, if_exists: true)
 
@@ -25,6 +25,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
       rainbow :color
       point :center
       xml :page
+      hstore :mapping
     end
   end
 
@@ -71,7 +72,12 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
           source: source,
           read: ROM::SQL::Types::PG::PointTR.optional
         ),
-        page: ROM::SQL::Types::String.optional.meta(name: :page, source: source)
+        page: ROM::SQL::Types::String.optional.meta(name: :page, source: source),
+        mapping: ROM::SQL::Types::PG::HStore.optional.meta(
+          name: :mapping,
+          source: source,
+          read: ROM::SQL::Types::PG::HStoreR.optional
+        )
       )
     end
   end
@@ -90,10 +96,13 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
   context 'with a column with bi-directional mapping' do
     before do
       conn.drop_table?(:test_bidirectional)
+      conn.execute('create extension if not exists hstore')
+
       conn.create_table(:test_bidirectional) do
         primary_key :id
         inet :ip
         point :center
+        hstore :mapping
       end
 
       conf.relation(:test_bidirectional) { schema(infer: true) }
@@ -107,13 +116,14 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
 
     let(:point) { ROM::SQL::Types::PG::Point.new(7.5, 30.5) }
     let(:dns) { IPAddr.new('8.8.8.8') }
+    let(:mapping) { Hash['hot' => 'cold'] }
 
     let(:relation) { container.relations[:test_bidirectional] }
     let(:create) { commands[:test_bidirectional].create }
 
     it 'writes and reads data' do
-      inserted = create.call(id: 1, center: point, ip: dns)
-      expect(inserted).to eql(id: 1, center: point, ip: dns)
+      inserted = create.call(id: 1, center: point, ip: dns, mapping: mapping)
+      expect(inserted).to eql(id: 1, center: point, ip: dns, mapping: mapping)
       expect(relation.to_a).to eql([inserted])
     end
   end

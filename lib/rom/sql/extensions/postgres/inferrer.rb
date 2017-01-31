@@ -24,7 +24,8 @@ module ROM
           'cidr' => Types::PG::IPAddress,
           'macaddr' => Types::String,
           'point' => Types::PG::PointT,
-          'xml' => Types::String
+          'xml' => Types::String,
+          'hstore' => Types::PG::HStore
         ).freeze
 
         db_array_type_matcher Sequel::Postgres::PGArray::EMPTY_BRACKET

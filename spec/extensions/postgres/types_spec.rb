@@ -141,4 +141,19 @@ RSpec.describe 'ROM::SQL::Types' do
       expect(described_class.meta[:read]['(7.5,30.5)']).to eql(point)
     end
   end
+
+  describe ROM::SQL::Types::PG::HStore do
+    let(:mapping) { Hash['hot' => 'cold'] }
+    let(:read_type) { described_class.meta[:read] }
+
+    it 'covertss data to Sequel::Postgres::HStore' do
+      expect(described_class[mapping]).to be_a Sequel::Postgres::HStore
+      expect(described_class[mapping]).to eql(Sequel.hstore(hot: :cold))
+    end
+
+    it 'reads Sequel::Postgres::HStore as a Hash object' do
+      expect(read_type[Sequel.hstore(mapping)]).to eql(mapping)
+      expect(read_type[Sequel.hstore(mapping)]).to be_a(Hash)
+    end
+  end
 end
