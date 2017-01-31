@@ -73,6 +73,16 @@ module ROM
         end
 
         LineT = Types.Constructor(Line) { |ln| "{#{ ln.a },#{ ln.b },#{ln.c}}"}.meta(read: LineTR)
+
+        Circle = ::Struct.new(:center, :radius)
+
+        CircleTR = Types.Constructor(Circle) do |c|
+          x, y, r = c.to_s.gsub(/[\(\)<>\s]/, '').split(',', 3)
+          center = Point.new(Float(x), Float(y))
+          Circle.new(center, Float(r))
+        end
+
+        CircleT = Types.Constructor(Circle) { |c| "<(#{ c.center.x },#{ c.center.y }),#{ c.radius }>" }.meta(read: CircleTR)
       end
     end
   end

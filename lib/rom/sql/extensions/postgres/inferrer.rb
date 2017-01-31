@@ -26,7 +26,8 @@ module ROM
           'point' => Types::PG::PointT,
           'xml' => Types::String,
           'hstore' => Types::PG::HStore,
-          'line' => Types::PG::LineT
+          'line' => Types::PG::LineT,
+          'circle' => Types::PG::CircleT
         ).freeze
 
         db_array_type_matcher Sequel::Postgres::PGArray::EMPTY_BRACKET

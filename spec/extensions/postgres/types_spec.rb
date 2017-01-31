@@ -168,4 +168,17 @@ RSpec.describe 'ROM::SQL::Types' do
       expect(described_class.meta[:read]['{2.3,4.9,3.1415}']).to eql(line)
     end
   end
+
+  describe ROM::SQL::Types::PG::CircleT do
+    let(:center) { ROM::SQL::Types::PG::Point.new(7.5, 30.5) }
+    let(:circle) { ROM::SQL::Types::PG::Circle.new(center, 1.2) }
+
+    it 'serializes a circle using the <(x,y),r> format' do
+      expect(described_class[circle]).to eql('<(7.5,30.5),1.2>')
+    end
+
+    it 'reads the <(x,y),r> format' do
+      expect(described_class.meta[:read]['<(7.5,30.5),1.2>']).to eql(circle)
+    end
+  end
 end
