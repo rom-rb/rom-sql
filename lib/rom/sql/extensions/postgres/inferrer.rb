@@ -25,7 +25,8 @@ module ROM
           'macaddr' => Types::String,
           'point' => Types::PG::PointT,
           'xml' => Types::String,
-          'hstore' => Types::PG::HStore
+          'hstore' => Types::PG::HStore,
+          'line' => Types::PG::LineT
         ).freeze
 
         db_array_type_matcher Sequel::Postgres::PGArray::EMPTY_BRACKET

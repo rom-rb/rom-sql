@@ -156,4 +156,16 @@ RSpec.describe 'ROM::SQL::Types' do
       expect(read_type[Sequel.hstore(mapping)]).to be_a(Hash)
     end
   end
+
+  describe ROM::SQL::Types::PG::LineT do
+    let(:line) { ROM::SQL::Types::PG::Line.new(2.3, 4.9, 3.1415) }
+
+    it 'serializes a line using the {A,B,C} format' do
+      expect(described_class[line]).to eql('{2.3,4.9,3.1415}')
+    end
+
+    it 'reads the {A,B,C} format' do
+      expect(described_class.meta[:read]['{2.3,4.9,3.1415}']).to eql(line)
+    end
+  end
 end

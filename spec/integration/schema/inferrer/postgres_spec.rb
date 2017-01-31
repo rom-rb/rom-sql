@@ -26,6 +26,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
       point :center
       xml :page
       hstore :mapping
+      line :line
     end
   end
 
@@ -77,6 +78,11 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
           name: :mapping,
           source: source,
           read: ROM::SQL::Types::PG::HStoreR.optional
+        ),
+        line: ROM::SQL::Types::PG::LineT.optional.meta(
+          name: :line,
+          source: source,
+          read: ROM::SQL::Types::PG::LineTR.optional
         )
       )
     end
@@ -103,6 +109,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
         inet :ip
         point :center
         hstore :mapping
+        line :line
       end
 
       conf.relation(:test_bidirectional) { schema(infer: true) }
@@ -115,6 +122,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
     end
 
     let(:point) { ROM::SQL::Types::PG::Point.new(7.5, 30.5) }
+    let(:line) { ROM::SQL::Types::PG::Line.new(2.3, 4.9, 3.1415) }
     let(:dns) { IPAddr.new('8.8.8.8') }
     let(:mapping) { Hash['hot' => 'cold'] }
 
@@ -122,8 +130,8 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
     let(:create) { commands[:test_bidirectional].create }
 
     it 'writes and reads data' do
-      inserted = create.call(id: 1, center: point, ip: dns, mapping: mapping)
-      expect(inserted).to eql(id: 1, center: point, ip: dns, mapping: mapping)
+      inserted = create.call(id: 1, center: point, ip: dns, mapping: mapping, line: line)
+      expect(inserted).to eql(id: 1, center: point, ip: dns, mapping: mapping, line: line)
       expect(relation.to_a).to eql([inserted])
     end
   end

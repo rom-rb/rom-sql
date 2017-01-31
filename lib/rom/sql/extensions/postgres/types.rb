@@ -54,6 +54,8 @@ module ROM
 
         Money = Types::Decimal
 
+        # Geometric types
+
         Point = ::Struct.new(:x, :y)
 
         PointTR = Types.Constructor(Point) do |p|
@@ -62,6 +64,15 @@ module ROM
         end
 
         PointT = Types.Constructor(Point) { |p| "(#{ p.x },#{ p.y })" }.meta(read: PointTR)
+
+        Line = ::Struct.new(:a, :b, :c)
+
+        LineTR = Types.Constructor(Line) do |ln|
+          a, b, c = ln.to_s[1..-2].split(',', 3)
+          Line.new(Float(a), Float(b), Float(c))
+        end
+
+        LineT = Types.Constructor(Line) { |ln| "{#{ ln.a },#{ ln.b },#{ln.c}}"}.meta(read: LineTR)
       end
     end
   end
