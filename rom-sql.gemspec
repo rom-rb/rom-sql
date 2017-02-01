@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
 
-  spec.add_runtime_dependency 'sequel', '~> 4.42'
+  spec.add_runtime_dependency 'sequel', '~> 4.43'
   spec.add_runtime_dependency 'dry-equalizer', '~> 0.2'
   spec.add_runtime_dependency 'dry-types', '~> 0.9', '>= 0.9.4'
   spec.add_runtime_dependency 'dry-core', '~> 0.2', '>= 0.2.3'
