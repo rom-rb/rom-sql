@@ -27,7 +27,8 @@ module ROM
           'xml' => Types::String,
           'hstore' => Types::PG::HStore,
           'line' => Types::PG::LineT,
-          'circle' => Types::PG::CircleT
+          'circle' => Types::PG::CircleT,
+          'box' => Types::PG::BoxT
         ).freeze
 
         db_array_type_matcher Sequel::Postgres::PGArray::EMPTY_BRACKET

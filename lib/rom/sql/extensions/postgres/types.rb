@@ -83,6 +83,18 @@ module ROM
         end
 
         CircleT = Types.Constructor(Circle) { |c| "<(#{ c.center.x },#{ c.center.y }),#{ c.radius }>" }.meta(read: CircleTR)
+
+        Box = ::Struct.new(:upper_right, :lower_left)
+
+        BoxTR = Types.Constructor(Box) do |b|
+          x_right, y_right, x_left, y_left = b.to_s.gsub(/[()\s]/, '').split(',', 4)
+
+          upper_right = Point.new(Float(x_right), Float(y_right))
+          lower_left = Point.new(Float(x_left), Float(y_left))
+          Box.new(upper_right, lower_left)
+        end
+
+        BoxT = Types.Constructor(Box) { |b| "((#{ b.upper_right.x },#{ b.upper_right.y }),(#{ b.lower_left.x },#{ b.lower_left.y }))" }.meta(read: BoxTR)
       end
     end
   end

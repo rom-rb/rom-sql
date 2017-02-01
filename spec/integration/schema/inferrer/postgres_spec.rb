@@ -28,6 +28,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
       hstore :mapping
       line :line
       circle :circle
+      box :box
     end
   end
 
@@ -89,6 +90,11 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
           name: :circle,
           source: source,
           read: ROM::SQL::Types::PG::CircleTR.optional
+        ),
+        box: ROM::SQL::Types::PG::BoxT.optional.meta(
+          name: :box,
+          source: source,
+          read: ROM::SQL::Types::PG::BoxTR.optional
         )
       )
     end
@@ -117,6 +123,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
         hstore :mapping
         line :line
         circle :circle
+        box :box
       end
 
       conf.relation(:test_bidirectional) { schema(infer: true) }
@@ -137,9 +144,24 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
     let(:relation) { container.relations[:test_bidirectional] }
     let(:create) { commands[:test_bidirectional].create }
 
-    it 'writes and reads data' do
-      inserted = create.call(id: 1, center: point, ip: dns, mapping: mapping, line: line, circle: circle)
-      expect(inserted).to eql(id: 1, center: point, ip: dns, mapping: mapping, line: line, circle: circle)
+    let(:box) do
+      upper_left = ROM::SQL::Types::PG::Point.new(7.5, 30.5)
+      lower_right = ROM::SQL::Types::PG::Point.new(8.5, 20.5)
+
+      ROM::SQL::Types::PG::Box.new(upper_left, lower_right)
+    end
+
+    let(:box_corrected) do
+      lower_left = ROM::SQL::Types::PG::Point.new(7.5, 20.5)
+      upper_right = ROM::SQL::Types::PG::Point.new(8.5, 30.5)
+
+      ROM::SQL::Types::PG::Box.new(upper_right, lower_left)
+    end
+
+    it 'writes and reads data & corrects data' do
+      # Box coordinates are reordered if necessary
+      inserted = create.call(id: 1, center: point, ip: dns, mapping: mapping, line: line, circle: circle, box: box)
+      expect(inserted).to eql(id: 1, center: point, ip: dns, mapping: mapping, line: line, circle: circle, box: box_corrected)
       expect(relation.to_a).to eql([inserted])
     end
   end

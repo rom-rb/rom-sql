@@ -181,4 +181,19 @@ RSpec.describe 'ROM::SQL::Types' do
       expect(described_class.meta[:read]['<(7.5,30.5),1.2>']).to eql(circle)
     end
   end
+
+  describe ROM::SQL::Types::PG::BoxT do
+    let(:lower_left) { ROM::SQL::Types::PG::Point.new(7.5, 20.5) }
+    let(:upper_right) { ROM::SQL::Types::PG::Point.new(8.5, 30.5) }
+
+    let(:box) { ROM::SQL::Types::PG::Box.new(upper_right, lower_left) }
+
+    it 'serializes a box' do
+      expect(described_class[box]).to eql('((8.5,30.5),(7.5,20.5))')
+    end
+
+    it 'reads serialized format' do
+      expect(described_class.meta[:read]['((8.5,30.5),(7.5,20.5))']).to eql(box)
+    end
+  end
 end
