@@ -29,3 +29,5 @@ end
 group :tools do
   gem 'rom-repository', git: 'https://github.com/rom-rb/rom-repository.git', branch: 'master'
 end
+
+gem 'sequel', git: 'https://github.com/jeremyevans/sequel.git', branch: 'master'
