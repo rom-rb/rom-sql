@@ -95,6 +95,19 @@ module ROM
         end
 
         BoxT = Types.Constructor(Box) { |b| "((#{ b.upper_right.x },#{ b.upper_right.y }),(#{ b.lower_left.x },#{ b.lower_left.y }))" }.meta(read: BoxTR)
+
+        LineSegment = ::Struct.new(:begin, :end)
+
+        LineSegmentTR = Types.Constructor(LineSegment) do |lseg|
+          x_begin, y_begin, x_end, y_end = lseg.to_s.gsub(/[\[\]()\s]/, '').split(',', 4)
+          point_begin = Point.new(Float(x_begin), Float(y_begin))
+          point_end = Point.new(Float(x_end), Float(y_end))
+          LineSegment.new(point_begin, point_end)
+        end
+
+        LineSegmentT = Types.Constructor(LineSegment) do |lseg|
+          "[(#{ lseg.begin.x },#{ lseg.begin.y }),(#{ lseg.end.x },#{ lseg.end.y })]"
+        end.meta(read: LineSegmentTR)
       end
     end
   end

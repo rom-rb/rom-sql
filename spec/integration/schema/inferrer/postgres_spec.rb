@@ -29,6 +29,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
       line :line
       circle :circle
       box :box
+      lseg :lseg
     end
   end
 
@@ -95,6 +96,11 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
           name: :box,
           source: source,
           read: ROM::SQL::Types::PG::BoxTR.optional
+        ),
+        lseg: ROM::SQL::Types::PG::LineSegmentT.optional.meta(
+          name: :lseg,
+          source: source,
+          read: ROM::SQL::Types::PG::LineSegmentTR.optional
         )
       )
     end
@@ -124,6 +130,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
         line :line
         circle :circle
         box :box
+        lseg :lseg
       end
 
       conf.relation(:test_bidirectional) { schema(infer: true) }
@@ -136,32 +143,27 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
     end
 
     let(:point) { ROM::SQL::Types::PG::Point.new(7.5, 30.5) }
+    let(:point_2) { ROM::SQL::Types::PG::Point.new(8.5, 35.5) }
     let(:line) { ROM::SQL::Types::PG::Line.new(2.3, 4.9, 3.1415) }
     let(:dns) { IPAddr.new('8.8.8.8') }
     let(:mapping) { Hash['hot' => 'cold'] }
     let(:circle) { ROM::SQL::Types::PG::Circle.new(point, 1.0) }
-
-    let(:relation) { container.relations[:test_bidirectional] }
-    let(:create) { commands[:test_bidirectional].create }
-
+    let(:lseg) { ROM::SQL::Types::PG::LineSegment.new(point, point_2) }
+    let(:box_corrected) { ROM::SQL::Types::PG::Box.new(point_2, point) }
     let(:box) do
-      upper_left = ROM::SQL::Types::PG::Point.new(7.5, 30.5)
-      lower_right = ROM::SQL::Types::PG::Point.new(8.5, 20.5)
+      upper_left = ROM::SQL::Types::PG::Point.new(point.x, point_2.y)
+      lower_right = ROM::SQL::Types::PG::Point.new(point_2.x, point.y)
 
       ROM::SQL::Types::PG::Box.new(upper_left, lower_right)
     end
 
-    let(:box_corrected) do
-      lower_left = ROM::SQL::Types::PG::Point.new(7.5, 20.5)
-      upper_right = ROM::SQL::Types::PG::Point.new(8.5, 30.5)
-
-      ROM::SQL::Types::PG::Box.new(upper_right, lower_left)
-    end
+    let(:relation) { container.relations[:test_bidirectional] }
+    let(:create) { commands[:test_bidirectional].create }
 
     it 'writes and reads data & corrects data' do
       # Box coordinates are reordered if necessary
-      inserted = create.call(id: 1, center: point, ip: dns, mapping: mapping, line: line, circle: circle, box: box)
-      expect(inserted).to eql(id: 1, center: point, ip: dns, mapping: mapping, line: line, circle: circle, box: box_corrected)
+      inserted = create.call(id: 1, center: point, ip: dns, mapping: mapping, line: line, circle: circle, lseg: lseg, box: box)
+      expect(inserted).to eql(id: 1, center: point, ip: dns, mapping: mapping, line: line, circle: circle, lseg: lseg, box: box_corrected)
       expect(relation.to_a).to eql([inserted])
     end
   end

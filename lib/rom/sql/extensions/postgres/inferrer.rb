@@ -28,7 +28,8 @@ module ROM
           'hstore' => Types::PG::HStore,
           'line' => Types::PG::LineT,
           'circle' => Types::PG::CircleT,
-          'box' => Types::PG::BoxT
+          'box' => Types::PG::BoxT,
+          'lseg' => Types::PG::LineSegmentT
         ).freeze
 
         db_array_type_matcher Sequel::Postgres::PGArray::EMPTY_BRACKET
