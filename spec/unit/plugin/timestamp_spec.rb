@@ -65,13 +65,17 @@ RSpec.describe 'Plugin / Timestamp' do
       expect(updated[:updated_at]).not_to eq initial[:updated_at]
     end
 
-    it "allows overriding timestamps" do
+    it "allows overriding timestamps" do |ex|
       tomorrow = (Time.now + (60 * 60 * 24))
 
       container.command(:notes).create.call(text: "testing")
       updated = container.command(:notes).update.call(text: "updated test", updated_at: tomorrow).first
 
-      expect(updated[:updated_at].iso8601).to eq tomorrow.iso8601
+      if jruby? && sqlite?(ex)
+        expect(updated[:updated_at]).to eql(tomorrow.strftime('%Y-%m-%d %H:%M:%S.%6N'))
+      else
+        expect(updated[:updated_at].iso8601).to eql(tomorrow.iso8601)
+      end
     end
   end
 end
