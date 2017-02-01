@@ -3,6 +3,7 @@
 ### Added
 
 * Support for inferring the PostgreSQL `hstore` data type (flash-gordon)
+* Added inferring for timestamp types with specified precision (flash-gordon)
 
 ## v1.0.0 2017-01-29
 

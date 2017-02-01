@@ -26,6 +26,9 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
       point :center
       xml :page
       hstore :mapping
+      timestamp :created_at
+      column :datetime, "timestamp(0) without time zone"
+      column :datetime_tz, "timestamp(0) with time zone"
     end
   end
 
@@ -77,7 +80,10 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
           name: :mapping,
           source: source,
           read: ROM::SQL::Types::PG::HStoreR.optional
-        )
+        ),
+        created_at: ROM::SQL::Types::Time.optional.meta(name: :created_at, source: source),
+        datetime: ROM::SQL::Types::Time.optional.meta(name: :datetime, source: source),
+        datetime_tz: ROM::SQL::Types::Time.optional.meta(name: :datetime_tz, source: source)
       )
     end
   end
