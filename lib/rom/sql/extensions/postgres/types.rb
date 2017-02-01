@@ -77,7 +77,7 @@ module ROM
         Circle = ::Struct.new(:center, :radius)
 
         CircleTR = Types.Constructor(Circle) do |c|
-          x, y, r = c.to_s.gsub(/[\(\)<>\s]/, '').split(',', 3)
+          x, y, r = c.to_s.gsub(/[()<>\s]/, '').split(',', 3)
           center = Point.new(Float(x), Float(y))
           Circle.new(center, Float(r))
         end
