@@ -14,8 +14,7 @@ module ROM
 
         # Array
 
-        Array = Dry::Types::Definition
-                .new(Sequel::Postgres::PGArray)
+        Array = Types.Definition(Sequel::Postgres::PGArray)
 
         def self.Array(db_type)
           Array.constructor(-> (v) { Sequel.pg_array(v, db_type) }).meta(type: db_type)
