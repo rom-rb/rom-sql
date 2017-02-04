@@ -31,6 +31,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
       box :box
       lseg :lseg
       polygon :polygon
+      path :path
     end
   end
 
@@ -107,6 +108,11 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
           name: :polygon,
           source: source,
           read: ROM::SQL::Types::PG::PolygonTR.optional
+        ),
+        path: ROM::SQL::Types::PG::PathT.optional.meta(
+          name: :path,
+          source: source,
+          read: ROM::SQL::Types::PG::PathTR.optional
         )
       )
     end
@@ -138,6 +144,8 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
         box :box
         lseg :lseg
         polygon :polygon
+        path :closed_path
+        path :open_path
       end
 
       conf.relation(:test_bidirectional) { schema(infer: true) }
@@ -164,6 +172,8 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
       ROM::SQL::Types::PG::Box.new(upper_left, lower_right)
     end
     let(:polygon) { ROM::SQL::Types::PG::Polygon[[point, point_2]] }
+    let(:closed_path) { ROM::SQL::Types::PG::Path.new([point, point_2], :closed) }
+    let(:open_path) { ROM::SQL::Types::PG::Path.new([point, point_2], :open) }
 
     let(:relation) { container.relations[:test_bidirectional] }
     let(:create) { commands[:test_bidirectional].create }
@@ -173,12 +183,12 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
       inserted = create.call(
         id: 1, center: point, ip: dns, mapping: mapping,
         line: line, circle: circle, lseg: lseg, box: box,
-        polygon: polygon
+        polygon: polygon, closed_path: closed_path, open_path: open_path
       )
       expect(inserted).to eql(
         id: 1, center: point, ip: dns, mapping: mapping,
         line: line, circle: circle, lseg: lseg, box: box_corrected,
-        polygon: polygon
+        polygon: polygon, closed_path: closed_path, open_path: open_path
       )
       expect(relation.to_a).to eql([inserted])
     end

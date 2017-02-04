@@ -215,15 +215,38 @@ RSpec.describe 'ROM::SQL::Types' do
   describe ROM::SQL::Types::PG::PolygonT do
     let(:first) { ROM::SQL::Types::PG::Point.new(8.5, 30.5) }
     let(:second) { ROM::SQL::Types::PG::Point.new(7.5, 20.5) }
+    let(:third) { ROM::SQL::Types::PG::Point.new(6.5, 10.5) }
 
-    let(:polygon) { ROM::SQL::Types::PG::Polygon[[first, second]] }
+    let(:polygon) { ROM::SQL::Types::PG::Polygon[[first, second, third]] }
 
-    it 'serializes a polygon using ( ( x1 , y1 ) , ( x2 , y2 ) ) format' do
-      expect(described_class[polygon]).to eql('((8.5,30.5),(7.5,20.5))')
+    it 'serializes a polygon using ( ( x1 , y1 ) ... ( xn , yn ) ) format' do
+      expect(described_class[polygon]).to eql('((8.5,30.5),(7.5,20.5),(6.5,10.5))')
     end
 
     it 'reads serialized format' do
-      expect(described_class.meta[:read]['((8.5,30.5),(7.5,20.5))']).to eql(polygon)
+      expect(described_class.meta[:read]['((8.5,30.5),(7.5,20.5),(6.5,10.5))']).to eql(polygon)
+    end
+  end
+
+  describe ROM::SQL::Types::PG::PathT do
+    let(:first) { ROM::SQL::Types::PG::Point.new(8.5, 30.5) }
+    let(:second) { ROM::SQL::Types::PG::Point.new(7.5, 20.5) }
+    let(:third) { ROM::SQL::Types::PG::Point.new(6.5, 10.5) }
+
+    let(:closed_path) { ROM::SQL::Types::PG::Path.new([first, second, third], :closed) }
+    let(:open_path) { ROM::SQL::Types::PG::Path.new([first, second, third], :open) }
+
+    it 'serializes a closed path using ( ( x1 , y1 ) ... ( xn , yn ) ) format' do
+      expect(described_class[closed_path]).to eql('((8.5,30.5),(7.5,20.5),(6.5,10.5))')
+    end
+
+    it 'serializes an open path' do
+      expect(described_class[open_path]).to eql('[(8.5,30.5),(7.5,20.5),(6.5,10.5)]')
+    end
+
+    it 'reads serialized format' do
+      expect(described_class.meta[:read]['((8.5,30.5),(7.5,20.5),(6.5,10.5))']).to eql(closed_path)
+      expect(described_class.meta[:read]['[(8.5,30.5),(7.5,20.5),(6.5,10.5)]']).to eql(open_path)
     end
   end
 end

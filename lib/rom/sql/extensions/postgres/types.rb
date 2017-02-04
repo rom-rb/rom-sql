@@ -118,9 +118,48 @@ module ROM
           Polygon[points]
         end
 
-        PolygonT = Types.Constructor(::String) do |polygon|
-          '(' + polygon.map { |p| "(#{ p.x },#{ p.y })" }.join(',') + ')'
+        PolygonT = PointD.constructor do |path|
+          '(' + path.map { |p| "(#{ p.x },#{ p.y })" }.join(',') + ')'
         end.meta(read: PolygonTR)
+
+        Path = ::Struct.new(:points, :type) do
+          def open?
+            type == :open
+          end
+
+          def closed?
+            type == :closed
+          end
+
+          def to_a
+            points
+          end
+        end
+
+        PathD = Types.Definition(Path)
+
+        PathTR = PathD.constructor do |p|
+          open = p.to_s.start_with?('[') && p.to_s.end_with?(']')
+
+          coordinates = p.to_s.gsub(/[\[\]()\s]/, '').split(',').each_slice(2)
+          points = coordinates.map { |x, y| Point.new(Float(x), Float(y)) }
+
+          if open
+            Path.new(points, :open)
+          else
+            Path.new(points, :closed)
+          end
+        end
+
+        PathT = PathD.constructor do |p|
+          points_joined = p.to_a.map { |p| "(#{ p.x },#{ p.y })" }.join(',')
+
+          if p.open?
+            "[#{ points_joined }]"
+          else
+            "(#{ points_joined })"
+          end
+        end.meta(read: PathTR)
       end
     end
   end

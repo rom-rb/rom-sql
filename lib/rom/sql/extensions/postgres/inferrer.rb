@@ -30,7 +30,8 @@ module ROM
           'circle' => Types::PG::CircleT,
           'box' => Types::PG::BoxT,
           'lseg' => Types::PG::LineSegmentT,
-          'polygon' => Types::PG::PolygonT
+          'polygon' => Types::PG::PolygonT,
+          'path' => Types::PG::PathT
         ).freeze
 
         db_array_type_matcher Sequel::Postgres::PGArray::EMPTY_BRACKET
