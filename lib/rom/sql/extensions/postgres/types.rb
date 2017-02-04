@@ -57,6 +57,8 @@ module ROM
 
         Point = ::Struct.new(:x, :y)
 
+        PointD = Types.Definition(Point)
+
         PointTR = Types.Constructor(Point) do |p|
           x, y = p.to_s[1...-1].split(',', 2)
           Point.new(Float(x), Float(y))
@@ -107,6 +109,18 @@ module ROM
         LineSegmentT = Types.Constructor(LineSegment) do |lseg|
           "[(#{ lseg.begin.x },#{ lseg.begin.y }),(#{ lseg.end.x },#{ lseg.end.y })]"
         end.meta(read: LineSegmentTR)
+
+        Polygon = Types::Strict::Array.member(PointD)
+
+        PolygonTR = Polygon.constructor do |p|
+          coordinates = p.to_s.gsub(/[()\s]/, '').split(',').each_slice(2)
+          points = coordinates.map { |x, y| Point.new(Float(x), Float(y)) }
+          Polygon[points]
+        end
+
+        PolygonT = Types.Constructor(::String) do |polygon|
+          '(' + polygon.map { |p| "(#{ p.x },#{ p.y })" }.join(',') + ')'
+        end.meta(read: PolygonTR)
       end
     end
   end

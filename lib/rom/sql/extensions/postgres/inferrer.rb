@@ -29,7 +29,8 @@ module ROM
           'line' => Types::PG::LineT,
           'circle' => Types::PG::CircleT,
           'box' => Types::PG::BoxT,
-          'lseg' => Types::PG::LineSegmentT
+          'lseg' => Types::PG::LineSegmentT,
+          'polygon' => Types::PG::PolygonT
         ).freeze
 
         db_array_type_matcher Sequel::Postgres::PGArray::EMPTY_BRACKET

@@ -30,6 +30,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
       circle :circle
       box :box
       lseg :lseg
+      polygon :polygon
     end
   end
 
@@ -101,6 +102,11 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
           name: :lseg,
           source: source,
           read: ROM::SQL::Types::PG::LineSegmentTR.optional
+        ),
+        polygon: ROM::SQL::Types::PG::PolygonT.optional.meta(
+          name: :polygon,
+          source: source,
+          read: ROM::SQL::Types::PG::PolygonTR.optional
         )
       )
     end
@@ -131,6 +137,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
         circle :circle
         box :box
         lseg :lseg
+        polygon :polygon
       end
 
       conf.relation(:test_bidirectional) { schema(infer: true) }
@@ -156,14 +163,23 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
 
       ROM::SQL::Types::PG::Box.new(upper_left, lower_right)
     end
+    let(:polygon) { ROM::SQL::Types::PG::Polygon[[point, point_2]] }
 
     let(:relation) { container.relations[:test_bidirectional] }
     let(:create) { commands[:test_bidirectional].create }
 
     it 'writes and reads data & corrects data' do
       # Box coordinates are reordered if necessary
-      inserted = create.call(id: 1, center: point, ip: dns, mapping: mapping, line: line, circle: circle, lseg: lseg, box: box)
-      expect(inserted).to eql(id: 1, center: point, ip: dns, mapping: mapping, line: line, circle: circle, lseg: lseg, box: box_corrected)
+      inserted = create.call(
+        id: 1, center: point, ip: dns, mapping: mapping,
+        line: line, circle: circle, lseg: lseg, box: box,
+        polygon: polygon
+      )
+      expect(inserted).to eql(
+        id: 1, center: point, ip: dns, mapping: mapping,
+        line: line, circle: circle, lseg: lseg, box: box_corrected,
+        polygon: polygon
+      )
       expect(relation.to_a).to eql([inserted])
     end
   end

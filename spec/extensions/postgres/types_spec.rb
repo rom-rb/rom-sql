@@ -211,4 +211,19 @@ RSpec.describe 'ROM::SQL::Types' do
       expect(described_class.meta[:read]['[(8.5,30.5),(7.5,20.5)]']).to eql(lseg)
     end
   end
+
+  describe ROM::SQL::Types::PG::PolygonT do
+    let(:first) { ROM::SQL::Types::PG::Point.new(8.5, 30.5) }
+    let(:second) { ROM::SQL::Types::PG::Point.new(7.5, 20.5) }
+
+    let(:polygon) { ROM::SQL::Types::PG::Polygon[[first, second]] }
+
+    it 'serializes a polygon using ( ( x1 , y1 ) , ( x2 , y2 ) ) format' do
+      expect(described_class[polygon]).to eql('((8.5,30.5),(7.5,20.5))')
+    end
+
+    it 'reads serialized format' do
+      expect(described_class.meta[:read]['((8.5,30.5),(7.5,20.5))']).to eql(polygon)
+    end
+  end
 end
