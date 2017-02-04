@@ -78,7 +78,7 @@ module ROM
         Circle = ::Struct.new(:center, :radius)
 
         CircleTR = Types.Constructor(Circle) do |c|
-          x, y, r = c.to_s.gsub(/[()<>\s]/, '').split(',', 3)
+          x, y, r = c.to_s.tr('()<>', '').split(',', 3)
           center = Point.new(Float(x), Float(y))
           Circle.new(center, Float(r))
         end
@@ -88,8 +88,7 @@ module ROM
         Box = ::Struct.new(:upper_right, :lower_left)
 
         BoxTR = Types.Constructor(Box) do |b|
-          x_right, y_right, x_left, y_left = b.to_s.gsub(/[()\s]/, '').split(',', 4)
-
+          x_right, y_right, x_left, y_left = b.to_s.tr('()', '').split(',', 4)
           upper_right = Point.new(Float(x_right), Float(y_right))
           lower_left = Point.new(Float(x_left), Float(y_left))
           Box.new(upper_right, lower_left)
@@ -100,7 +99,7 @@ module ROM
         LineSegment = ::Struct.new(:begin, :end)
 
         LineSegmentTR = Types.Constructor(LineSegment) do |lseg|
-          x_begin, y_begin, x_end, y_end = lseg.to_s.gsub(/[\[\]()\s]/, '').split(',', 4)
+          x_begin, y_begin, x_end, y_end = lseg.to_s.tr('()[]', '').split(',', 4)
           point_begin = Point.new(Float(x_begin), Float(y_begin))
           point_end = Point.new(Float(x_end), Float(y_end))
           LineSegment.new(point_begin, point_end)
@@ -113,13 +112,14 @@ module ROM
         Polygon = Types::Strict::Array.member(PointD)
 
         PolygonTR = Polygon.constructor do |p|
-          coordinates = p.to_s.gsub(/[()\s]/, '').split(',').each_slice(2)
+          coordinates = p.to_s.tr('()', '').split(',').each_slice(2)
           points = coordinates.map { |x, y| Point.new(Float(x), Float(y)) }
           Polygon[points]
         end
 
         PolygonT = PointD.constructor do |path|
-          '(' + path.map { |p| "(#{ p.x },#{ p.y })" }.join(',') + ')'
+          points_joined = path.map { |p| "(#{ p.x },#{ p.y })" }.join(',')
+          "(#{ points_joined })"
         end.meta(read: PolygonTR)
 
         Path = ::Struct.new(:points, :type) do
@@ -138,10 +138,9 @@ module ROM
 
         PathD = Types.Definition(Path)
 
-        PathTR = PathD.constructor do |p|
-          open = p.to_s.start_with?('[') && p.to_s.end_with?(']')
-
-          coordinates = p.to_s.gsub(/[\[\]()\s]/, '').split(',').each_slice(2)
+        PathTR = PathD.constructor do |path|
+          open = path.to_s.start_with?('[') && path.to_s.end_with?(']')
+          coordinates = path.to_s.tr('()[]', '').split(',').each_slice(2)
           points = coordinates.map { |x, y| Point.new(Float(x), Float(y)) }
 
           if open
@@ -151,10 +150,10 @@ module ROM
           end
         end
 
-        PathT = PathD.constructor do |p|
-          points_joined = p.to_a.map { |p| "(#{ p.x },#{ p.y })" }.join(',')
+        PathT = PathD.constructor do |path|
+          points_joined = path.to_a.map { |p| "(#{ p.x },#{ p.y })" }.join(',')
 
-          if p.open?
+          if path.open?
             "[#{ points_joined }]"
           else
             "(#{ points_joined })"
