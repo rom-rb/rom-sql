@@ -25,5 +25,30 @@ RSpec.describe ROM::Relation, '#by_pk' do
         expect(relation.by_pk(1, 1).to_a).to eql([{ tag_id: 1, task_id: 1 }])
       end
     end
+
+    context 'without PK' do
+      subject(:relation) { relations[:people] }
+
+      before do
+        conn.drop_table?(:people)
+
+        conn.create_table(:people) do
+          column :name, String
+        end
+
+        conf.relation(:people) do
+          schema do
+            attribute :name, ROM::SQL::Types::String
+          end
+        end
+      end
+
+      it 'raises a meaningful exception' do
+        expect { relation.by_pk(1) }.to \
+          raise_error(
+            ROM::SQL::MissingPrimaryKeyError,
+            'Missing primary key for :people')
+      end
+    end
   end
 end

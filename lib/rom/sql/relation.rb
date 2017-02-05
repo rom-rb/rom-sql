@@ -91,7 +91,12 @@ module ROM
           #
           #   @api public
           define_method(:by_pk) do |pk|
-            where(schema[primary_key] => pk)
+            if primary_key.nil?
+              raise MissingPrimaryKeyError.new("Missing primary key for "\
+                                               ":#{ schema.name }")
+            else
+              where(schema[primary_key] => pk)
+            end
           end
         end
       end

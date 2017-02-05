@@ -11,6 +11,7 @@ module ROM
     ForeignKeyConstraintError = Class.new(ConstraintError)
     CheckConstraintError      = Class.new(ConstraintError)
     UnknownDBTypeError        = Class.new(StandardError)
+    MissingPrimaryKeyError    = Class.new(StandardError)
 
     ERROR_MAP = {
       Sequel::DatabaseError => DatabaseError,
