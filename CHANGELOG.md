@@ -3,6 +3,11 @@
 ### Added
 
 * Support for inferring the PostgreSQL `hstore` data type (flash-gordon)
+* Added inferring for timestamp types with specified precision (flash-gordon)
+
+### Fixed
+
+* Missing primary key now leads to a more meaningful error (flash-gordon)
 
 ## v1.0.0 2017-01-29
 

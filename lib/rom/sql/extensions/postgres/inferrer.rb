@@ -59,7 +59,8 @@ module ROM
         end
 
         def map_db_type(db_type)
-          self.class.db_type_mapping[db_type]
+          self.class.db_type_mapping[db_type] ||
+            (db_type.start_with?('timestamp') ? Types::Time : nil)
         end
 
         def numeric?(ruby_type, db_type)

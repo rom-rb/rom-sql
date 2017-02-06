@@ -7,6 +7,7 @@ gem 'rom-mapper', git: 'https://github.com/rom-rb/rom-mapper.git', branch: 'mast
 
 group :test do
   gem 'byebug', platforms: :mri
+  gem 'pry', platforms: %i(jruby rbx)
   gem 'dry-struct'
   gem 'activesupport', '~> 5.0'
   gem 'rspec', '~> 3.1'
