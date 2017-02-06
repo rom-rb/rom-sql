@@ -149,7 +149,37 @@ module ROM
       #
       # @api public
       def is(other)
-        Sequel::SQL::BooleanExpression.new(:'=', self, other)
+        __cmp__(:'=', other)
+      end
+
+      # Return a boolean expression with an inclusion test
+      #
+      # If the single argument passed to the method is a Range object
+      # then the resulting expression will restrict the attribute value
+      # with range's bounds. Upper bound condition will be inclusive/non-inclusive
+      # depending on the range type.
+      #
+      # If more than one argument is passed to the method or the first
+      # argument is not Range then the result will be a simple IN check.
+      #
+      # @example
+      #   users.where { id.in(1..100) | created_at(((Time.now - 86400)..Time.now)) }
+      #   users.where { id.in(1, 2, 3) }
+      #   users.where(users[:id].in(1, 2, 3))
+      #
+      # @param [Array<Object>] *args A range or a list of values for an inclusion check
+      #
+      # @api public
+      def in(*args)
+        if args.first.is_a?(Range)
+          range = args.first
+          lower_cond = __cmp__(:>=, range.begin)
+          upper_cond = __cmp__(range.exclude_end? ? :< : :<=, range.end)
+
+          Sequel::SQL::BooleanExpression.new(:AND, lower_cond, upper_cond)
+        else
+          __cmp__(:IN, args)
+        end
       end
 
       # Create a function DSL from the attribute
@@ -212,6 +242,14 @@ module ROM
         else
           super
         end
+      end
+
+      # A simple wrapper for the boolean expression constructor where
+      # the left part is the attribute value
+      #
+      # @api private
+      def __cmp__(op, r)
+        Sequel::SQL::BooleanExpression.new(op, self, r)
       end
     end
   end
