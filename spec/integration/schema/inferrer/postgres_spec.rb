@@ -26,6 +26,12 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
       point :center
       xml :page
       hstore :mapping
+      line :line
+      circle :circle
+      box :box
+      lseg :lseg
+      polygon :polygon
+      path :path
       timestamp :created_at
       column :datetime, "timestamp(0) without time zone"
       column :datetime_tz, "timestamp(0) with time zone"
@@ -81,6 +87,36 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
           source: source,
           read: ROM::SQL::Types::PG::HStoreR.optional
         ),
+        line: ROM::SQL::Types::PG::LineT.optional.meta(
+          name: :line,
+          source: source,
+          read: ROM::SQL::Types::PG::LineTR.optional
+        ),
+        circle: ROM::SQL::Types::PG::CircleT.optional.meta(
+          name: :circle,
+          source: source,
+          read: ROM::SQL::Types::PG::CircleTR.optional
+        ),
+        box: ROM::SQL::Types::PG::BoxT.optional.meta(
+          name: :box,
+          source: source,
+          read: ROM::SQL::Types::PG::BoxTR.optional
+        ),
+        lseg: ROM::SQL::Types::PG::LineSegmentT.optional.meta(
+          name: :lseg,
+          source: source,
+          read: ROM::SQL::Types::PG::LineSegmentTR.optional
+        ),
+        polygon: ROM::SQL::Types::PG::PolygonT.optional.meta(
+          name: :polygon,
+          source: source,
+          read: ROM::SQL::Types::PG::PolygonTR.optional
+        ),
+        path: ROM::SQL::Types::PG::PathT.optional.meta(
+          name: :path,
+          source: source,
+          read: ROM::SQL::Types::PG::PathTR.optional
+        ),
         created_at: ROM::SQL::Types::Time.optional.meta(name: :created_at, source: source),
         datetime: ROM::SQL::Types::Time.optional.meta(name: :datetime, source: source),
         datetime_tz: ROM::SQL::Types::Time.optional.meta(name: :datetime_tz, source: source)
@@ -109,6 +145,13 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
         inet :ip
         point :center
         hstore :mapping
+        line :line
+        circle :circle
+        box :box
+        lseg :lseg
+        polygon :polygon
+        path :closed_path
+        path :open_path
       end
 
       conf.relation(:test_bidirectional) { schema(infer: true) }
@@ -121,15 +164,38 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
     end
 
     let(:point) { ROM::SQL::Types::PG::Point.new(7.5, 30.5) }
+    let(:point_2) { ROM::SQL::Types::PG::Point.new(8.5, 35.5) }
+    let(:line) { ROM::SQL::Types::PG::Line.new(2.3, 4.9, 3.1415) }
     let(:dns) { IPAddr.new('8.8.8.8') }
     let(:mapping) { Hash['hot' => 'cold'] }
+    let(:circle) { ROM::SQL::Types::PG::Circle.new(point, 1.0) }
+    let(:lseg) { ROM::SQL::Types::PG::LineSegment.new(point, point_2) }
+    let(:box_corrected) { ROM::SQL::Types::PG::Box.new(point_2, point) }
+    let(:box) do
+      upper_left = ROM::SQL::Types::PG::Point.new(point.x, point_2.y)
+      lower_right = ROM::SQL::Types::PG::Point.new(point_2.x, point.y)
+
+      ROM::SQL::Types::PG::Box.new(upper_left, lower_right)
+    end
+    let(:polygon) { ROM::SQL::Types::PG::Polygon[[point, point_2]] }
+    let(:closed_path) { ROM::SQL::Types::PG::Path.new([point, point_2], :closed) }
+    let(:open_path) { ROM::SQL::Types::PG::Path.new([point, point_2], :open) }
 
     let(:relation) { container.relations[:test_bidirectional] }
     let(:create) { commands[:test_bidirectional].create }
 
-    it 'writes and reads data' do
-      inserted = create.call(id: 1, center: point, ip: dns, mapping: mapping)
-      expect(inserted).to eql(id: 1, center: point, ip: dns, mapping: mapping)
+    it 'writes and reads data & corrects data' do
+      # Box coordinates are reordered if necessary
+      inserted = create.call(
+        id: 1, center: point, ip: dns, mapping: mapping,
+        line: line, circle: circle, lseg: lseg, box: box,
+        polygon: polygon, closed_path: closed_path, open_path: open_path
+      )
+      expect(inserted).to eql(
+        id: 1, center: point, ip: dns, mapping: mapping,
+        line: line, circle: circle, lseg: lseg, box: box_corrected,
+        polygon: polygon, closed_path: closed_path, open_path: open_path
+      )
       expect(relation.to_a).to eql([inserted])
     end
   end

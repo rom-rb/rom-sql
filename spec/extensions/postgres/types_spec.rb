@@ -156,4 +156,97 @@ RSpec.describe 'ROM::SQL::Types' do
       expect(read_type[Sequel.hstore(mapping)]).to be_a(Hash)
     end
   end
+
+  describe ROM::SQL::Types::PG::LineT do
+    let(:line) { ROM::SQL::Types::PG::Line.new(2.3, 4.9, 3.1415) }
+
+    it 'serializes a line using the {A,B,C} format' do
+      expect(described_class[line]).to eql('{2.3,4.9,3.1415}')
+    end
+
+    it 'reads the {A,B,C} format' do
+      expect(described_class.meta[:read]['{2.3,4.9,3.1415}']).to eql(line)
+    end
+  end
+
+  describe ROM::SQL::Types::PG::CircleT do
+    let(:center) { ROM::SQL::Types::PG::Point.new(7.5, 30.5) }
+    let(:circle) { ROM::SQL::Types::PG::Circle.new(center, 1.2) }
+
+    it 'serializes a circle using the <(x,y),r> format' do
+      expect(described_class[circle]).to eql('<(7.5,30.5),1.2>')
+    end
+
+    it 'reads the <(x,y),r> format' do
+      expect(described_class.meta[:read]['<(7.5,30.5),1.2>']).to eql(circle)
+    end
+  end
+
+  describe ROM::SQL::Types::PG::BoxT do
+    let(:lower_left) { ROM::SQL::Types::PG::Point.new(7.5, 20.5) }
+    let(:upper_right) { ROM::SQL::Types::PG::Point.new(8.5, 30.5) }
+
+    let(:box) { ROM::SQL::Types::PG::Box.new(upper_right, lower_left) }
+
+    it 'serializes a box' do
+      expect(described_class[box]).to eql('((8.5,30.5),(7.5,20.5))')
+    end
+
+    it 'reads serialized format' do
+      expect(described_class.meta[:read]['((8.5,30.5),(7.5,20.5))']).to eql(box)
+    end
+  end
+
+  describe ROM::SQL::Types::PG::LineSegmentT do
+    let(:first) { ROM::SQL::Types::PG::Point.new(8.5, 30.5) }
+    let(:second) { ROM::SQL::Types::PG::Point.new(7.5, 20.5) }
+
+    let(:lseg) { ROM::SQL::Types::PG::LineSegment.new(first, second) }
+
+    it 'serializes a lseg using [ ( x1 , y1 ) , ( x2 , y2 ) ] format' do
+      expect(described_class[lseg]).to eql('[(8.5,30.5),(7.5,20.5)]')
+    end
+
+    it 'reads serialized format' do
+      expect(described_class.meta[:read]['[(8.5,30.5),(7.5,20.5)]']).to eql(lseg)
+    end
+  end
+
+  describe ROM::SQL::Types::PG::PolygonT do
+    let(:first) { ROM::SQL::Types::PG::Point.new(8.5, 30.5) }
+    let(:second) { ROM::SQL::Types::PG::Point.new(7.5, 20.5) }
+    let(:third) { ROM::SQL::Types::PG::Point.new(6.5, 10.5) }
+
+    let(:polygon) { ROM::SQL::Types::PG::Polygon[[first, second, third]] }
+
+    it 'serializes a polygon using ( ( x1 , y1 ) ... ( xn , yn ) ) format' do
+      expect(described_class[polygon]).to eql('((8.5,30.5),(7.5,20.5),(6.5,10.5))')
+    end
+
+    it 'reads serialized format' do
+      expect(described_class.meta[:read]['((8.5,30.5),(7.5,20.5),(6.5,10.5))']).to eql(polygon)
+    end
+  end
+
+  describe ROM::SQL::Types::PG::PathT do
+    let(:first) { ROM::SQL::Types::PG::Point.new(8.5, 30.5) }
+    let(:second) { ROM::SQL::Types::PG::Point.new(7.5, 20.5) }
+    let(:third) { ROM::SQL::Types::PG::Point.new(6.5, 10.5) }
+
+    let(:closed_path) { ROM::SQL::Types::PG::Path.new([first, second, third], :closed) }
+    let(:open_path) { ROM::SQL::Types::PG::Path.new([first, second, third], :open) }
+
+    it 'serializes a closed path using ( ( x1 , y1 ) ... ( xn , yn ) ) format' do
+      expect(described_class[closed_path]).to eql('((8.5,30.5),(7.5,20.5),(6.5,10.5))')
+    end
+
+    it 'serializes an open path' do
+      expect(described_class[open_path]).to eql('[(8.5,30.5),(7.5,20.5),(6.5,10.5)]')
+    end
+
+    it 'reads serialized format' do
+      expect(described_class.meta[:read]['((8.5,30.5),(7.5,20.5),(6.5,10.5))']).to eql(closed_path)
+      expect(described_class.meta[:read]['[(8.5,30.5),(7.5,20.5),(6.5,10.5)]']).to eql(open_path)
+    end
+  end
 end
