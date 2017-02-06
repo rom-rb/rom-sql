@@ -3,6 +3,7 @@
 ### Added
 
 * Support for inferring the PostgreSQL `hstore` data type (flash-gordon)
+* Support for the rest of geometric PostgreSQL data types (box, lseg, polygon, etc.) (Morozzzko)
 * Added inferring for timestamp types with specified precision (flash-gordon)
 
 ### Fixed
