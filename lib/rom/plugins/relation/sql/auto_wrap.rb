@@ -32,10 +32,21 @@ module ROM
             #
             # @api private
             def for_wrap(keys, name)
-              other = __registry__[name]
-              other_dataset = other.name.dataset
+              rel, other =
+                if associations.key?(name)
+                  assoc = associations[name]
+                  other = __registry__[assoc.target.to_sym]
 
-              schema.merge(other.schema.wrap).qualified.(inner_join(other_dataset, keys))
+                  [assoc.join(__registry__, :inner_join, self), other]
+                else
+                  # TODO: deprecate this before 2.0
+                  other = __registry__[name]
+                  other_dataset = other.name.dataset
+
+                  [qualified.inner_join(other_dataset, keys), other]
+                end
+
+              rel.schema.merge(other.schema.wrap).qualified.(rel)
             end
           end
         end

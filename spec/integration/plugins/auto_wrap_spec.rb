@@ -4,9 +4,13 @@ RSpec.describe 'Plugins / :auto_wrap' do
 
     describe '#for_wrap' do
       shared_context 'joined tuple' do
+        let(:name) do
+          users.name.relation
+        end
+
         it 'returns joined tuples' do
           task_with_user = tasks
-            .for_wrap({ id: :user_id }, users.name.relation)
+            .for_wrap({ id: :user_id }, name)
             .where(tasks__id: 2)
             .one
 
@@ -50,6 +54,24 @@ RSpec.describe 'Plugins / :auto_wrap' do
         end
 
         include_context 'joined tuple'
+      end
+
+      context 'using association' do
+        subject(:tasks) { relations[:tasks] }
+
+        let(:users) { relations[:users] }
+
+        before do
+          conf.relation(:tasks) {
+            schema(infer: true) { associations { belongs_to :users, as: :assignee } }
+          }
+
+          conf.relation(:users) { schema(infer: true) }
+        end
+
+        include_context 'joined tuple' do
+          let(:name) { :assignee }
+        end
       end
     end
   end
