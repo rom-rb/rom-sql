@@ -1,7 +1,7 @@
 require 'rom/sql/plugin/pagination'
 
-RSpec.describe 'Plugin / Pagination' do
-  include_context 'database setup'
+RSpec.describe 'Plugin / Pagination', seeds: false do
+  include_context 'users'
 
   with_adapters do
     before do

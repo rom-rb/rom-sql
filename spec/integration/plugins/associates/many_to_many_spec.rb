@@ -1,5 +1,5 @@
-RSpec.describe 'Plugins / :associates / with many-to-many', :sqlite do
-  include_context 'database setup'
+RSpec.describe 'Plugins / :associates / with many-to-many', :sqlite, seeds: false do
+  include_context 'users and tasks'
 
   let(:tasks) { container.commands[:tasks] }
   let(:tags) { container.commands[:tags] }

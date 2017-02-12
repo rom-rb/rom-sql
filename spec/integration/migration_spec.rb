@@ -1,10 +1,11 @@
-RSpec.describe ROM::SQL, '.migration', :postgres, skip_tables: true do
+RSpec.describe ROM::SQL, '.migration', :postgres do
   include_context 'database setup'
 
   before do
-    conf
-    conn.drop_table?(:dragons)
+    inferrable_relations.concat %i(dragons schema_migrations)
   end
+
+  before { conf }
 
   it 'creates a migration for a specific gateway' do
     migration = ROM::SQL.migration do

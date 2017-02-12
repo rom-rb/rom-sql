@@ -1,6 +1,6 @@
 require 'dry-struct'
 
-RSpec.describe 'Commands / Create', :postgres do
+RSpec.describe 'Commands / Create', :postgres, seeds: false do
   include_context 'relations'
 
   let(:users) { commands[:users] }
@@ -19,10 +19,6 @@ RSpec.describe 'Commands / Create', :postgres do
 
     conn.add_index :users, :name, unique: true
 
-    conf.relation(:puppies) do
-      schema(infer: true)
-    end
-
     conf.commands(:users) do
       define(:create) do
         input Test::Params
@@ -38,10 +34,6 @@ RSpec.describe 'Commands / Create', :postgres do
     conf.commands(:tasks) do
       define(:create)
     end
-
-    conf.commands(:puppies) do
-      define(:create)
-    end
   end
 
   with_adapters do
@@ -51,7 +43,7 @@ RSpec.describe 'Commands / Create', :postgres do
           users.create.call(name: 'Jane')
         }
 
-        expect(result.value).to eq(id: 1, name: 'Jane')
+        expect(result.value).to eql(id: 1, name: 'Jane')
       end
 
       it 'creates multiple records if nothing was raised' do
@@ -71,7 +63,7 @@ RSpec.describe 'Commands / Create', :postgres do
           }
         }
 
-        expect(result.value).to eq(id: 1, name: 'Jane')
+        expect(result.value).to eql(id: 1, name: 'Jane')
       end
 
       it 'creates nothing if command error was raised' do
@@ -182,12 +174,30 @@ RSpec.describe 'Commands / Create', :postgres do
       }.to raise_error(ROM::SQL::NotNullConstraintError)
     end
 
-    it 're-raises not-null constraint violation error with nil boolean' do
-      puppies = commands[:puppies]
+    # Because Oracle doesn't have boolean in SQL
+    if !metadata[:oracle]
+      context 'with puppies' do
+        include_context 'puppies'
 
-      expect {
-        puppies.try { puppies.create.call(name: 'Charlie', cute: nil) }
-      }.to raise_error(ROM::SQL::NotNullConstraintError)
+        before do
+          conf.relation(:puppies) do
+            schema(infer: true)
+          end
+
+
+          conf.commands(:puppies) do
+            define(:create)
+          end
+        end
+
+        it 're-raises not-null constraint violation error with nil boolean' do
+          puppies = commands[:puppies]
+
+          expect {
+            puppies.try { puppies.create.call(name: 'Charlie', cute: nil) }
+          }.to raise_error(ROM::SQL::NotNullConstraintError)
+        end
+      end
     end
 
     it 're-raises uniqueness constraint violation error' do
@@ -239,7 +249,11 @@ RSpec.describe 'Commands / Create', :postgres do
 
       context 'with a composite pk' do
         before do
-          conn.create_table?(:user_group) do
+          inferrable_relations.concat %i(user_group)
+        end
+
+        before do
+          conn.create_table(:user_group) do
             primary_key [:user_id, :group_id]
             column :user_id, Integer, null: false
             column :group_id, Integer, null: false
@@ -254,16 +268,13 @@ RSpec.describe 'Commands / Create', :postgres do
           end
         end
 
-        after do
-          conn.drop_table(:user_group)
-        end
-
         # with a composite pk sequel returns 0 when inserting for MySQL
         if !metadata[:mysql]
-          it 'materializes the result' do
+          it 'materializes the result' do |ex|
             command = container.commands[:user_group][:create]
             result = command.call(user_id: 1, group_id: 2)
 
+            pending "if sequel could use Oracle's RETURNING statement, that would be possible" if oracle?(ex)
             expect(result).to eql(user_id: 1, group_id: 2)
           end
         end

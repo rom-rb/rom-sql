@@ -1,7 +1,7 @@
 require 'rom/sql/plugin/timestamps'
 
 RSpec.describe 'Plugin / Timestamp' do
-  include_context 'database setup'
+  include_context 'notes'
 
   with_adapters do
     before do

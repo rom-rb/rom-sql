@@ -1,5 +1,6 @@
 RSpec.describe 'Inferring schema from database' do
-  include_context 'database setup'
+  include_context 'users'
+  include_context 'posts'
 
   with_adapters do
     context "when database schema exists" do
@@ -13,13 +14,11 @@ RSpec.describe 'Inferring schema from database' do
 
     context "for empty database schemas" do
       it "returns an empty schema" do
-        drop_tables
-
-        expect { container.not_here }.to raise_error(NoMethodError)
+        expect { container.users }.to raise_error(NoMethodError)
       end
     end
 
-    context 'defining associations' do
+    context 'defining associations', seeds: false do
       it "allows defining a one-to-many" do
         class Test::Posts < ROM::Relation[:sql]
           schema(:posts) do

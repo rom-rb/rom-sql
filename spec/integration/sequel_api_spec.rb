@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe 'Using legacy sequel api', :sqlite do
-  include_context 'database setup'
+  include_context 'users'
 
   let(:users) { relations[:users] }
 

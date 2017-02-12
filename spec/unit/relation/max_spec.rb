@@ -1,7 +1,7 @@
 RSpec.describe ROM::Relation, '#max' do
   subject(:relation) { container.relations.users }
 
-  include_context 'users and tasks'
+  include_context 'users'
 
   with_adapters do
     it 'delegates to dataset and return value' do

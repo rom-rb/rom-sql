@@ -1,9 +1,13 @@
 RSpec.describe ROM::SQL::Association::ManyToMany, '#call' do
+  include_context 'users'
+
+  before do
+    inferrable_relations.concat %i(puzzles puzzle_solvers)
+  end
+
   subject(:assoc) do
     relations[:users].associations[:solved_puzzles]
   end
-
-  include_context 'database setup'
 
   with_adapters do
     before do
@@ -46,9 +50,6 @@ RSpec.describe ROM::SQL::Association::ManyToMany, '#call' do
         end
       end
 
-      joe_id = relations[:users].insert(name: 'Joe')
-      jane_id = relations[:users].insert(name: 'Jane')
-
       p1_id = relations[:puzzles].insert(text: 'P1')
       p2_id = relations[:puzzles].insert(text: 'P2', solved: true)
       p3_id = relations[:puzzles].insert(text: 'P3')
@@ -66,15 +67,15 @@ RSpec.describe ROM::SQL::Association::ManyToMany, '#call' do
     end
 
     it 'prepares joined relations using custom FK' do
-      relation = assoc.call(relations).order(:puzzles__text)
+      relation = assoc.call(relations).order(:puzzles__text, :puzzle_solvers__user_id)
 
       expect(relation.schema.map(&:to_sym)).
         to eql(%i[puzzles__id puzzles__text puzzles__solved puzzle_solvers__user_id])
 
       expect(relation.to_a).
         to eql([
-                 { id: 2, user_id: 1, solved: true, text: 'P2' },
-                 { id: 2, user_id: 2, solved: true, text: 'P2' }
+                 { id: 2, user_id: 1, solved: db_true, text: 'P2' },
+                 { id: 2, user_id: 2, solved: db_true, text: 'P2' }
                ])
     end
   end

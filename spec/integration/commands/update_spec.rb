@@ -1,7 +1,7 @@
 require 'dry-struct'
 
-RSpec.describe 'Commands / Update' do
-  include_context 'database setup'
+RSpec.describe 'Commands / Update', seeds: false do
+  include_context 'users'
 
   subject(:users) { container.command(:users) }
 
@@ -73,7 +73,7 @@ RSpec.describe 'Commands / Update' do
 
         expect {
           users.update.by_id(piotr[:id]).call(name: nil)
-        }.to raise_error(ROM::SQL::NotNullConstraintError, /name/)
+        }.to raise_error(ROM::SQL::NotNullConstraintError, /name/i)
       end
 
       it 'materializes single result' do

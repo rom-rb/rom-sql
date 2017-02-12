@@ -1,4 +1,19 @@
-shared_context 'database setup' do
+RSpec.shared_context 'database setup' do
+  all_tables = %i(users tasks users_tasks tags task_tags posts puppies
+                  accounts cards subscriptions notes
+                  destinations flights categories user_group
+                  test_inferrence test_bidirectional people dragons
+                  rabbits carrots names schema_migrations)
+
+  cleared_dbs = []
+
+  before do
+    unless cleared_dbs.include?(conn.database_type)
+      all_tables.reverse.each { |table| conn.drop_table?(table) }
+      cleared_dbs << conn.database_type
+    end
+  end
+
   let(:uri) do |example|
     meta = example.metadata
     adapters = ADAPTERS.select { |adapter| meta[adapter] }
@@ -12,97 +27,43 @@ shared_context 'database setup' do
   end
 
   let(:conn) { Sequel.connect(uri) }
-  let(:conf) { ROM::Configuration.new(:sql, conn) }
+  let(:database_type) { conn.database_type }
+  let(:inferrable_relations) { [] }
+  let(:conf) { ROM::Configuration.new(:sql, conn, inferrable_relations: inferrable_relations) }
   let(:container) { ROM.container(conf) }
   let(:relations) { container.relations }
   let(:commands) { container.commands }
 
-  def drop_tables
-    %i(task_tags users_tasks tasks tags
-       subscriptions cards accounts
-       posts users
-       rabbits carrots notes
-       puppies schema_migrations
-    ).each do |name|
-      conn.drop_table?(name)
-    end
-  end
-
-  before do |example|
-    ctx = self
+  before do
     conn.loggers << LOGGER
-
-    drop_tables
-    next if example.metadata[:skip_tables]
-
-    conn.create_table :users do
-      primary_key :id
-      String :name, null: false
-      check { char_length(name) > 2 } if ctx.postgres?(example)
-    end
-
-    conn.create_table :tasks do
-      primary_key :id
-      foreign_key :user_id, :users
-      String :title, unique: true
-      constraint(:title_length) { char_length(title) > 1 } if ctx.postgres?(example)
-      constraint(:title_length) { length(title) > 1 }      if ctx.sqlite?(example)
-    end
-
-    conn.create_table :tags do
-      primary_key :id
-      String :name
-    end
-
-    conn.create_table :task_tags do
-      primary_key [:tag_id, :task_id]
-      Integer :tag_id
-      Integer :task_id
-    end
-
-    conn.create_table :posts do
-      primary_key :post_id
-      foreign_key :author_id, :users
-      String :title
-      String :body
-    end
-
-    conn.create_table :accounts do
-      primary_key :id
-      Integer :user_id
-      String :number
-      Decimal :balance
-    end
-
-    conn.create_table :cards do
-      primary_key :id
-      Integer :account_id
-      String :pan
-    end
-
-    conn.create_table :subscriptions do
-      primary_key :id
-      Integer :card_id
-      String :service
-    end
-
-    conn.create_table :puppies do
-      primary_key :id
-      String :name, null: false
-      TrueClass :cute, null: false, default: true
-    end
-
-    conn.create_table :notes do
-      primary_key :id
-      String :text, null: false
-      DateTime :created_at, null: false
-      DateTime :updated_at, null: false
-      DateTime :completed_at
-      Date :written
-    end
   end
 
   after do
     conn.disconnect
+    # Prevent the auto-reconnect when the test completed
+    # This will save from hardly reproducible connection run outs
+    conn.pool.available_connections.freeze
+  end
+
+  after do
+    inferrable_relations.reverse.each do |name|
+      conn.drop_table?(name)
+    end
+  end
+
+  def db_true
+    if database_type == :oracle
+      'Y'
+    else
+      true
+    end
+  end
+
+  def db_false
+    if database_type == :oracle
+      'N'
+    else
+      false
+    end
   end
 end

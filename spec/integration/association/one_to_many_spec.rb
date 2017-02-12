@@ -5,9 +5,6 @@ RSpec.describe ROM::SQL::Association::OneToMany do
 
   include_context 'users and tasks'
 
-  let(:users) { container.relations[:users] }
-  let(:tasks) { container.relations[:tasks] }
-
   with_adapters do
     before do
       conf.relation(:tasks) do

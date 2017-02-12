@@ -1,11 +1,15 @@
 require 'spec_helper'
 
 RSpec.describe ROM::SQL::Association::OneToMany, '#call' do
+  include_context 'database setup'
+
+  before do
+    inferrable_relations.concat %i(categories)
+  end
+
   subject(:assoc) do
     relations[:categories].associations[:children]
   end
-
-  include_context 'database setup'
 
   with_adapters do
     before do
@@ -29,10 +33,6 @@ RSpec.describe ROM::SQL::Association::OneToMany, '#call' do
       c1_id = relations[:categories].insert(name: 'C3', parent_id: p2_id)
       c2_id = relations[:categories].insert(name: 'C4', parent_id: p1_id)
       c3_id = relations[:categories].insert(name: 'C5', parent_id: p1_id)
-    end
-
-    after do
-      conn.drop_table(:categories)
     end
 
     it 'prepares joined relations using custom FK for a self-ref association' do

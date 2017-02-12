@@ -1,4 +1,4 @@
-RSpec.describe 'Plugins / :associates' do
+RSpec.describe 'Plugins / :associates', seeds: false do
   include_context 'relations'
 
   with_adapters do

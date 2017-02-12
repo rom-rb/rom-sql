@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe ROM::SQL::Schema, '#call' do
-  include_context 'database setup'
+  include_context 'users'
 
   with_adapters :postgres do
     before do

@@ -1,18 +1,16 @@
-RSpec.describe ROM::SQL::Gateway, :postgres, skip_tables: true do
+RSpec.describe ROM::SQL::Gateway, :postgres do
   include_context 'database setup'
 
   describe 'migration' do
+    before do
+      inferrable_relations.concat %i(rabbits carrots)
+    end
+
     context 'creating migrations inline' do
       subject(:gateway) { container.gateways[:default] }
 
       let(:conf) { ROM::Configuration.new(:sql, conn) }
       let(:container) { ROM.container(conf) }
-
-      after do
-        [:rabbits, :carrots].each do |name|
-          gateway.connection.drop_table?(name)
-        end
-      end
 
       it 'allows creating and running migrations' do
         migration = gateway.migration do
@@ -39,6 +37,10 @@ RSpec.describe ROM::SQL::Gateway, :postgres, skip_tables: true do
     end
 
     context 'running migrations from a file system' do
+      before do
+        inferrable_relations.concat %i(schema_migrations)
+      end
+
       let(:migration_dir) do
         Pathname(__FILE__).dirname.join('../fixtures/migrations').realpath
       end
@@ -64,8 +66,10 @@ RSpec.describe ROM::SQL::Gateway, :postgres, skip_tables: true do
 
   describe 'transactions' do
     before do
-      conn.drop_table?(:names)
+      inferrable_relations.concat %i(names)
+    end
 
+    before do
       conn.create_table(:names) do
         String :name
       end

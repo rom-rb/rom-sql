@@ -1,11 +1,15 @@
 require 'spec_helper'
 
 RSpec.describe ROM::SQL::Association::OneToMany, '#call' do
+  include_context 'users'
+
+  before do
+    inferrable_relations.concat %i(puzzles)
+  end
+
   subject(:assoc) do
     relations[:users].associations[:solved_puzzles]
   end
-
-  include_context 'database setup'
 
   with_adapters do
     before do
@@ -33,15 +37,8 @@ RSpec.describe ROM::SQL::Association::OneToMany, '#call' do
         end
       end
 
-      joe_id = relations[:users].insert(name: 'Joe')
-      jane_id = relations[:users].insert(name: 'Jane')
-
       relations[:puzzles].insert(user_id: joe_id, text: 'P1')
       relations[:puzzles].insert(user_id: joe_id, solved: true, text: 'P2')
-    end
-
-    after do
-      conn.drop_table(:puzzles)
     end
 
     it 'prepares joined relations using custom view' do
@@ -51,7 +48,7 @@ RSpec.describe ROM::SQL::Association::OneToMany, '#call' do
         to eql(%i[puzzles__id puzzles__user_id puzzles__text puzzles__solved])
 
       expect(relation.count).to be(1)
-      expect(relation.first).to eql(id: 2, user_id: 1, solved: true, text: 'P2')
+      expect(relation.first).to eql(id: 2, user_id: 2, solved: db_true, text: 'P2')
     end
   end
 end

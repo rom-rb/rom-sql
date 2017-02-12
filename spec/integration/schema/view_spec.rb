@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-RSpec.describe 'Defining a view using schemas' do
-  include_context 'database setup'
+RSpec.describe 'Defining a view using schemas', seeds: false do
+  include_context 'users'
 
   with_adapters do
     describe 'defining a projected view' do

@@ -21,22 +21,32 @@ rescue LoadError
 end
 
 LOGGER = Logger.new(File.open('./log/test.log', 'a'))
+ENV['TZ'] ||= 'UTC'
+
+oracle_settings = {
+  db_name: ENV.fetch('ROM_ORACLE_DATABASE', 'xe'),
+  host: ENV.fetch('ROM_ORACLE_HOST', 'localhost'),
+  port: Integer(ENV.fetch('ROM_ORACLE_PORT', '1521'))
+}
 
 if defined? JRUBY_VERSION
   DB_URIS = {
     sqlite: 'jdbc:sqlite:::memory',
     postgres: 'jdbc:postgresql://localhost/rom_sql',
-    mysql: 'jdbc:mysql://localhost/rom_sql?user=root'
+    mysql: 'jdbc:mysql://localhost/rom_sql?user=root',
+    oracle: ENV['ROM_USE_ORACLE'] ? fail('Setup Oracle for JRuby!') : nil
   }
 else
   DB_URIS = {
     sqlite: 'sqlite::memory',
     postgres: 'postgres://localhost/rom_sql',
-    mysql: 'mysql2://root@localhost/rom_sql'
+    mysql: 'mysql2://root@localhost/rom_sql',
+    oracle: "oracle://#{ oracle_settings[:host] }:#{ oracle_settings[:port] }/" \
+            "#{ oracle_settings[:db_name] }?username=rom_sql&password=rom_sql&autosequence=true"
   }
 end
 
-ADAPTERS = DB_URIS.keys
+ADAPTERS = ENV['ROM_USE_ORACLE'] ? DB_URIS.keys : DB_URIS.keys - %i(oracle)
 PG_LTE_95 = ENV.fetch('PG_LTE_95', 'true') == 'true'
 
 SPEC_ROOT = root = Pathname(__FILE__).dirname
@@ -49,9 +59,6 @@ class ROM::SQL::Schema::Inferrer
   end
 end
 
-Dir[root.join('shared/**/*')].each { |f| require f }
-Dir[root.join('support/**/*')].each { |f| require f }
-
 require 'dry/core/deprecations'
 Dry::Core::Deprecations.set_logger!(root.join('../log/deprecations.log'))
 
@@ -62,30 +69,8 @@ module Types
   include Dry::Types.module
 end
 
-module ENVHelper
-  def db?(type, example)
-    example.metadata[type]
-  end
-
-  def postgres?(example)
-    db?(:postgres, example)
-  end
-
-  def mysql?(example)
-    db?(:mysql, example)
-  end
-
-  def sqlite?(example)
-    db?(:sqlite, example)
-  end
-
-  def jruby?
-    defined? JRUBY_VERSION
-  end
-end
-
 def with_adapters(*args, &block)
-  reset_adapter = { postgres: false, mysql: false, sqlite: false }
+  reset_adapter = Hash[*ADAPTERS.flat_map { |a| [a, false] }]
   adapters = args.empty? || args[0] == :all ? ADAPTERS : args
 
   adapters.each do |adapter|
@@ -96,7 +81,6 @@ end
 RSpec.configure do |config|
   config.disable_monkey_patching!
 
-  config.include ENVHelper
 
   config.before(:suite) do
     tmp_test_dir = TMP_PATH.join('test')
@@ -113,5 +97,9 @@ RSpec.configure do |config|
     Object.send(:remove_const, :Test)
   end
 
+  Dir[root.join('shared/**/*.rb')].each { |f| require f }
+  Dir[root.join('support/**/*.rb')].each { |f| require f }
+
   config.include(Helpers, helpers: true)
+  config.include ENVHelper
 end

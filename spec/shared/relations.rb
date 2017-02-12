@@ -1,5 +1,5 @@
 RSpec.shared_context 'relations' do
-  include_context 'database setup'
+  include_context 'users and tasks'
 
   before do
     conf.relation(:users)

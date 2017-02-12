@@ -1,10 +1,14 @@
 require 'spec_helper'
 
 RSpec.describe ROM::SQL::Association::ManyToOne, '#call' do
+  include_context 'database setup'
+
+  before do
+    inferrable_relations.concat %i(destinations flights)
+  end
+
   let(:assoc_from) { relations[:flights].associations[:from] }
   let(:assoc_to) { relations[:flights].associations[:to] }
-
-  include_context 'database setup'
 
   with_adapters do
     before do
@@ -33,11 +37,6 @@ RSpec.describe ROM::SQL::Association::ManyToOne, '#call' do
       to_id = relations[:destinations].insert(name: 'TO')
 
       relations[:flights].insert(code: 'F1', from_id: from_id, to_id: to_id)
-    end
-
-    after do
-      conn.drop_table(:flights)
-      conn.drop_table(:destinations)
     end
 
     it 'prepares joined relations using correct FKs based on association aliases' do

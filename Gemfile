@@ -25,6 +25,7 @@ group :test do
   gem 'jdbc-mysql', platforms: :jruby
   gem 'sqlite3', platforms: [:mri, :rbx]
   gem 'jdbc-sqlite3', platforms: :jruby
+  gem 'ruby-oci8', platforms: :mri if ENV['ROM_USE_ORACLE']
 end
 
 group :tools do

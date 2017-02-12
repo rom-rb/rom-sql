@@ -1,12 +1,10 @@
 RSpec.describe ROM::SQL::Association::OneToOneThrough do
+  include_context 'users'
+  include_context 'accounts'
+
   subject(:assoc) {
     ROM::SQL::Association::OneToOneThrough.new(:users, :cards, through: :accounts)
   }
-
-  include_context 'users and accounts'
-
-  let(:users) { container.relations[:users] }
-  let(:cards) { container.relations[:cards] }
 
   with_adapters do
     before do

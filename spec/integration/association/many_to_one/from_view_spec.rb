@@ -1,10 +1,14 @@
 require 'spec_helper'
 
 RSpec.describe ROM::SQL::Association::ManyToOne, '#call' do
+  include_context 'database setup'
+
+  before do
+    inferrable_relations.concat %i(destinations flights)
+  end
+
   let(:assoc_inter) { relations[:flights].associations[:inter_destination] }
   let(:assoc_final) { relations[:flights].associations[:final_destination] }
-
-  include_context 'database setup'
 
   with_adapters do
     before do
@@ -59,7 +63,7 @@ RSpec.describe ROM::SQL::Association::ManyToOne, '#call' do
       expect(relation.schema.map(&:to_sym)).
         to eql(%i(destinations__id destinations__name destinations__intermediate flights__id___flight_id))
 
-      expect(relation.first).to eql(id: 2, intermediate: true, name: 'Intermediate', flight_id: 1)
+      expect(relation.first).to eql(id: 2, intermediate: db_true, name: 'Intermediate', flight_id: 1)
       expect(relation.count).to be(1)
 
       relation = assoc_final.call(relations)
@@ -67,7 +71,7 @@ RSpec.describe ROM::SQL::Association::ManyToOne, '#call' do
       expect(relation.schema.map(&:to_sym)).
         to eql(%i(destinations__id destinations__name destinations__intermediate flights__id___flight_id))
 
-      expect(relation.first).to eql(id: 1, intermediate: false, name: 'Final', flight_id: 2)
+      expect(relation.first).to eql(id: 1, intermediate: db_false, name: 'Final', flight_id: 2)
       expect(relation.count).to be(1)
     end
   end

@@ -6,11 +6,13 @@ RSpec.describe ROM::Relation, '#group' do
   include_context 'users and tasks'
 
   with_adapters do
-    it 'groups by provided attribute name' do
+    it 'groups by provided attribute name' do |example|
+      # Oracle doesn't support concise GROUP BY
+      group_by = oracle?(example) ? %i(id name) : %i(id)
       grouped = relation.
                   qualified.
                   left_join(:tasks, tasks[:user_id].qualified => relation[:id].qualified).
-                  group(:id)
+                  group(*group_by)
 
       expect(grouped.to_a).to eql([{ id: 1, name: 'Jane' }, { id: 2, name: 'Joe'}])
     end
@@ -19,7 +21,7 @@ RSpec.describe ROM::Relation, '#group' do
       grouped = relation.
                   qualified.
                   left_join(:tasks, tasks[:user_id].qualified => relation[:id].qualified).
-                  group { id.qualified }
+                  group { [id.qualified, name.qualified] }
 
       expect(grouped.to_a).to eql([{ id: 1, name: 'Jane' }, { id: 2, name: 'Joe'}])
     end

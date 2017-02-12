@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-RSpec.describe 'ActiveSupport::Notifications support', :postgres do
+RSpec.describe 'ActiveSupport::Notifications support', :postgres, seeds: false do
   before do
     ROM::SQL.load_extensions(:active_support_notifications, :rails_log_subscriber)
   end
 
-  include_context 'database setup'
+  include_context 'users'
 
   it 'works' do
     container.gateways[:default].use_logger(LOGGER)
