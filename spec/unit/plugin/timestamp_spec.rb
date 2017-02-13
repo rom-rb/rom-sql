@@ -1,6 +1,7 @@
 require 'rom/sql/plugin/timestamps'
 
 RSpec.describe 'Plugin / Timestamp' do
+  include_context 'users'
   include_context 'notes'
 
   with_adapters do
@@ -22,6 +23,23 @@ RSpec.describe 'Plugin / Timestamp' do
         define :update do
           use :timestamps
           timestamp :updated_at
+        end
+
+        define :create_with_user, type: :create do
+          result :one
+          use :timestamps
+          timestamp :updated_at, :created_at
+
+          before :assign_user
+          def assign_user(tuple, user)
+            tuple.merge(user_id: user[:id])
+          end
+        end
+      end
+
+      conf.commands(:users) do
+        define :create do
+          result :one
         end
       end
     end
@@ -77,5 +95,23 @@ RSpec.describe 'Plugin / Timestamp' do
         expect(updated[:updated_at].iso8601).to eql(tomorrow.iso8601)
       end
     end
+
+    it "works with chained commands" do
+      create_user = container.command(:users).create.with(name: "John Doe")
+      create_note = container.command(:notes).create_with_user.with(text: "new note")
+
+      time   = DateTime.now
+      command = create_user >> create_note
+
+      result = command.call
+
+      created = DateTime.parse(result[:created_at].to_s)
+      updated = DateTime.parse(result[:updated_at].to_s)
+
+      expect(result[:user_id]).not_to be_nil
+      expect(created).to be_within(1).of(time)
+      expect(updated).to eq created
+   end
+
   end
 end
