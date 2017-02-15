@@ -1,3 +1,11 @@
+## v1.0.2 2017-02-16
+
+### Added
+
+* Support for selecting literal strings via `select { `'foo'`.as(:bar) }` (solnic)
+
+[Compare v1.0.1...v1.0.2](https://github.com/rom-rb/rom-sql/compare/v1.0.1...v1.0.2)
+
 ## v1.0.1 2017-02-09
 
 ### Added
@@ -10,6 +18,8 @@
 ### Fixed
 
 * Missing primary key now leads to a more meaningful error (flash-gordon)
+
+[Compare v1.0.0...v1.0.1](https://github.com/rom-rb/rom-sql/compare/v1.0.0...v1.0.1)
 
 ## v1.0.0 2017-01-29
 
