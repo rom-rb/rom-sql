@@ -21,7 +21,7 @@ module ROM
       #
       # @api public
       def aliased(name)
-        super.meta(sql_expr: sql_expr.as(name))
+        super.meta(name: meta.fetch(:name, name), sql_expr: sql_expr.as(name))
       end
       alias_method :as, :aliased
 

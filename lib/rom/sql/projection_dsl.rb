@@ -5,6 +5,12 @@ module ROM
   module SQL
     # @api private
     class ProjectionDSL < DSL
+      # @api public
+      def `(value)
+        expr = ::Sequel::VIRTUAL_ROW.instance_eval { `#{value}` }
+        ::ROM::SQL::Attribute.new(type(:string)).meta(sql_expr: expr)
+      end
+
       # @api private
       def respond_to_missing?(name, include_private = false)
         super || type(name)

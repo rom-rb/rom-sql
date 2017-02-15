@@ -29,5 +29,12 @@ RSpec.describe ROM::Relation, '#select' do
     it 'supports blocks' do
       expect(relation.select { [id, title] }.schema.map(&:name)).to eql(%i[id title])
     end
+
+    it 'supports selecting literal strings' do
+      new_rel = relation.select { `'event'`.as(:type) }
+
+      expect(new_rel.schema[:type].primitive).to be(String)
+      expect(new_rel.first).to eql(type: 'event')
+    end
   end
 end

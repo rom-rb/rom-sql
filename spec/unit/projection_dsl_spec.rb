@@ -63,6 +63,14 @@ RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
 
       expect(literals).to eql([%(COUNT("users"."id") AS "count")])
     end
+
+    it 'supports selecting literal strings' do
+      literals = dsl
+                   .call { `'event'`.as(:type) }
+                   .map { |attr| attr.sql_literal(ds) }
+
+      expect(literals).to eql([%('event' AS "type")])
+    end
   end
 
   describe '#method_missing' do
