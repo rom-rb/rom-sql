@@ -96,7 +96,7 @@ module ROM
           # @return [Array<Hash>, Hash]
           #
           # @api private
-          def set_timestamps(tuples)
+          def set_timestamps(tuples, *)
             timestamps = build_timestamps
 
             case tuples
