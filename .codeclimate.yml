@@ -1,0 +1,15 @@
+engines:
+ duplication:
+  enabled: true
+  config:
+    languages:
+      ruby:
+        mass_threshold: 25
+ rubocop:
+  enabled: true
+
+ratings:
+ paths:
+ - "**.rb"
+
+exclude_paths:
