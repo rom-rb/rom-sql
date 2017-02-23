@@ -33,23 +33,29 @@ module ROM
             #
             # @api private
             def for_combine(spec)
-              source_key, target_key, target =
-                case spec
-                when ROM::SQL::Association
-                  [*spec.join_keys(__registry__).flatten, spec.call(__registry__, self)]
-                else
-                  [*spec.flatten, self]
-                end
-
-              target.preload(source_key, target_key)
+              case spec
+              when ROM::SQL::Association
+                spec.call(__registry__, self).preload(spec)
+              else
+                preload(spec)
+              end
             end
 
             # @api private
-            def preload(source_key, target_key, source)
-              target_pks = source.pluck(source_key.to_sym).uniq
-              target_pks.uniq!
+            def preload(spec, source)
+              case spec
+              when ROM::SQL::Association::ManyToOne
+                pk = source.source[source.source.primary_key].qualified
 
-              where(target_key => target_pks)
+                where(pk => source.pluck(pk.name))
+              when Hash, ROM::SQL::Association
+                source_key, target_key = spec.is_a?(Hash) ? spec.flatten(1) : spec.join_keys(__registry__).flatten(1)
+
+                target_pks = source.pluck(source_key.to_sym)
+                target_pks.uniq!
+
+                where(target_key => target_pks)
+              end
             end
           end
         end
