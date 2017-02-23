@@ -4,6 +4,10 @@
 
 * `AutoCombine#preload` uses better restriction for `ManyToOne` association which greatly speeds up loading bigger amounts of data (solnic + flash-gordon)
 
+### Fixed
+
+* Fix the usage of timestamp in command chains (cflipse)
+
 [Compare v1.0.2...v1.0.3](https://github.com/rom-rb/rom-sql/compare/v1.0.2...v1.0.3)
 
 ## v1.0.2 2017-02-16
