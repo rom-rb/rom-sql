@@ -1,8 +1,16 @@
+## v1.0.3 to-be-released
+
+### Changed
+
+* `AutoCombine#preload` uses better restriction for `ManyToOne` association which greatly speeds up loading bigger amounts of data (solnic + flash-gordon)
+
+[Compare v1.0.2...v1.0.3](https://github.com/rom-rb/rom-sql/compare/v1.0.2...v1.0.3)
+
 ## v1.0.2 2017-02-16
 
 ### Added
 
-* Support for selecting literal strings via `select { `'foo'`.as(:bar) }` (solnic)
+* Support for selecting literal strings via ``select { `'foo'`.as(:bar) }`` (solnic)
 
 [Compare v1.0.1...v1.0.2](https://github.com/rom-rb/rom-sql/compare/v1.0.1...v1.0.2)
 
