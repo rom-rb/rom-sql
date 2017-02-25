@@ -8,9 +8,7 @@ module ROM
         def call(relations, right = relations[target.relation])
           schema = right.schema.qualified
 
-          relation = right
-                       .inner_join(source_table, join_keys(relations))
-                       .order(*right.schema.project_pk.qualified)
+          relation = right.inner_join(source_table, join_keys(relations))
 
           if view
             apply_view(schema, relation)

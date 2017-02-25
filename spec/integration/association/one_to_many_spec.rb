@@ -59,6 +59,15 @@ RSpec.describe ROM::SQL::Association::OneToMany do
 
         expect(relation.to_a).to eql([{ id: 1, user_id: 2, title: "Joe's task", tag_id: 1 }])
       end
+
+      it 'respects custom order' do
+        relation = tasks.
+                     order(tasks[:title].qualified).
+                     for_combine(assoc).call(users.call)
+
+        expect(relation.to_a).
+          to eql([{ id: 2, user_id: 1, title: "Jane's task" }, { id: 1, user_id: 2, title: "Joe's task" }])
+      end
     end
   end
 end

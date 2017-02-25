@@ -79,6 +79,21 @@ RSpec.describe ROM::SQL::Association::ManyToMany do
 
           expect(relation.to_a).to eql([id: 1, tag: 'important', name: 'important', task_id: 1])
         end
+
+        it 'respects custom order' do
+          conn[:tags].insert id: 2, name: 'boring'
+          conn[:task_tags].insert(tag_id: 2, task_id: 1)
+
+          relation = tags.
+                       order(tags[:name].qualified).
+                       for_combine(assoc).call(tasks.call)
+
+          expect(relation.to_a).
+            to eql([
+                     { id: 2, name: 'boring', task_id: 1 },
+                     { id: 1, name: 'important', task_id: 1 }
+                   ])
+        end
       end
     end
 
