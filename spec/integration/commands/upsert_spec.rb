@@ -6,6 +6,8 @@ RSpec.describe 'Commands / Postgres / Upsert', :postgres, seeds: false do
   let(:tasks) { commands[:tasks] }
 
   before do
+    conn.execute "ALTER TABLE tasks add CONSTRAINT tasks_title_key UNIQUE (title)"
+
     conn[:users].insert id: 1, name: 'Jane'
     conn[:users].insert id: 2, name: 'Joe'
     conn[:users].insert id: 3, name: 'Jean'

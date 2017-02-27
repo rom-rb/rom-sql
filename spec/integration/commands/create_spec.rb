@@ -6,7 +6,7 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
   let(:users) { commands[:users] }
   let(:tasks) { commands[:tasks] }
 
-  before do
+  before do |ex|
     module Test
       class Params < Dry::Struct
         attribute :name, Types::Strict::String.optional
@@ -18,6 +18,12 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
     end
 
     conn.add_index :users, :name, unique: true
+
+    if sqlite?(ex)
+      conn.add_index :tasks, :title, unique: true
+    else
+      conn.execute "ALTER TABLE tasks add CONSTRAINT tasks_title_key UNIQUE (title)"
+    end
 
     conf.commands(:users) do
       define(:create) do

@@ -1,3 +1,4 @@
+require 'set'
 require 'dry/core/class_attributes'
 
 module ROM
@@ -55,10 +56,12 @@ module ROM
           dataset = source.dataset
 
           columns = filter_columns(gateway.connection.schema(dataset))
+          all_indexes = indexes_for(gateway, dataset)
           fks = fks_for(gateway, dataset)
 
           inferred = columns.map do |(name, definition)|
-            type = build_type(definition.merge(foreign_key: fks[name]))
+            indexes = column_indexes(all_indexes, name)
+            type = build_type(**definition, foreign_key: fks[name], indexes: indexes)
 
             if type
               type.meta(name: name, source: source)
@@ -74,7 +77,7 @@ module ROM
           schema.reject { |(_, definition)| definition[:db_type] == CONSTRAINT_DB_TYPE }
         end
 
-        def build_type(primary_key:, db_type:, type:, allow_null:, foreign_key:, **rest)
+        def build_type(primary_key:, db_type:, type:, allow_null:, foreign_key:, indexes:, **rest)
           if primary_key
             map_pk_type(type, db_type)
           else
@@ -84,6 +87,8 @@ module ROM
               read_type = mapped_type.meta[:read]
               mapped_type = mapped_type.optional if allow_null
               mapped_type = mapped_type.meta(foreign_key: true, target: foreign_key) if foreign_key
+              mapped_type = mapped_type.meta(index: indexes) unless indexes.empty?
+
               if read_type && allow_null
                 mapped_type.meta(read: read_type.optional)
               elsif read_type
@@ -118,6 +123,24 @@ module ROM
           end
         end
 
+        # @api private
+        def indexes_for(gateway, dataset)
+          if gateway.connection.respond_to?(:indexes)
+            gateway.connection.indexes(dataset)
+          else
+            # index listing is not implemented
+            EMPTY_HASH
+          end
+        end
+
+        # @api private
+        def column_indexes(indexes, column)
+          indexes.each_with_object(Set.new) do |(name, idx), indexes|
+            indexes << name if idx[:columns][0] == column
+          end
+        end
+
+        # @api private
         def build_fk(columns: , table: , **rest)
           if columns.size == 1
             [columns[0], table]

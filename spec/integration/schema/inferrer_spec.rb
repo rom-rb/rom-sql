@@ -38,7 +38,13 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         let(:dataset) { :tasks }
         let(:source) { ROM::Relation::Name[:tasks] }
 
-        it 'can infer attributes for dataset' do
+        it 'can infer attributes for dataset' do |ex|
+          if mysql?(ex)
+            indexes = { index: %i(user_id).to_set }
+          else
+            indexes = {}
+          end
+
           expect(schema.to_h).
             to eql(
                  id: ROM::SQL::Types::Serial.meta(name: :id, source: source),
@@ -47,7 +53,8 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
                    name: :user_id,
                    foreign_key: true,
                    source: source,
-                   target: :users
+                   target: :users,
+                   **indexes
                  )
                )
         end
@@ -87,14 +94,15 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         it 'can infer attributes for dataset' do |ex|
           date_type = oracle?(ex) ? ROM::SQL::Types::Time : ROM::SQL::Types::Date
 
-          expect(schema.to_h).to eql(
-            id: ROM::SQL::Types::Serial.meta(name: :id, source: source),
-            text: ROM::SQL::Types::String.meta(name: :text, source: source),
-            time: ROM::SQL::Types::Time.optional.meta(name: :time, source: source),
-            date: date_type.optional.meta(name: :date, source: source),
-            datetime: ROM::SQL::Types::Time.meta(name: :datetime, source: source),
-            data: ROM::SQL::Types::Blob.optional.meta(name: :data, source: source),
-          )
+          expect(schema.to_h).
+            to eql(
+                 id: ROM::SQL::Types::Serial.meta(name: :id, source: source),
+                 text: ROM::SQL::Types::String.meta(name: :text, source: source),
+                 time: ROM::SQL::Types::Time.optional.meta(name: :time, source: source),
+                 date: date_type.optional.meta(name: :date, source: source),
+                 datetime: ROM::SQL::Types::Time.meta(name: :datetime, source: source),
+                 data: ROM::SQL::Types::Blob.optional.meta(name: :data, source: source),
+               )
         end
       end
 
@@ -130,16 +138,17 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
 
           pending 'Add precision inferrence for Oracle' if oracle?(example)
 
-          expect(schema.to_h).to eql(
-            id: ROM::SQL::Types::Serial.meta(name: :id, source: source),
-            dec: default_precision,
-            dec_prec: decimal.meta(name: :dec_prec, precision: 12, scale: 0),
-            num: decimal.meta(name: :num, precision: 5, scale: 2),
-            small: ROM::SQL::Types::Int.optional.meta(name: :small, source: source),
-            int: ROM::SQL::Types::Int.optional.meta(name: :int, source: source),
-            floating: ROM::SQL::Types::Float.optional.meta(name: :floating, source: source),
-            double_p: ROM::SQL::Types::Float.optional.meta(name: :double_p, source: source),
-          )
+          expect(schema.to_h).
+            to eql(
+                 id: ROM::SQL::Types::Serial.meta(name: :id, source: source),
+                 dec: default_precision,
+                 dec_prec: decimal.meta(name: :dec_prec, precision: 12, scale: 0),
+                 num: decimal.meta(name: :num, precision: 5, scale: 2),
+                 small: ROM::SQL::Types::Int.optional.meta(name: :small, source: source),
+                 int: ROM::SQL::Types::Int.optional.meta(name: :int, source: source),
+                 floating: ROM::SQL::Types::Float.optional.meta(name: :floating, source: source),
+                 double_p: ROM::SQL::Types::Float.optional.meta(name: :double_p, source: source),
+               )
         end
       end
     end
@@ -298,6 +307,40 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
             end
           end
         end
+      end
+    end
+
+    describe 'inferring indices', oracle: false do
+      before do |ex|
+        ctx = self
+
+        conn.create_table :test_inferrence do
+          primary_key :id
+          Integer :foo
+          Integer :bar, null: false
+          Integer :baz, null: false
+
+          index :foo, name: :foo_idx
+          index :bar, name: :bar_idx
+          index :baz, name: :baz1_idx
+          index :baz, name: :baz2_idx
+
+          index %i(bar baz), name: :composite_idx
+        end
+      end
+
+      let(:dataset) { :test_inferrence }
+      let(:source) { ROM::Relation::Name[dataset] }
+
+      it 'infers types with indices' do
+        int = ROM::SQL::Types::Int
+        expect(schema.to_h).
+          to eql(
+               id: int.meta(name: :id, source: source, primary_key: true),
+               foo: int.optional.meta(name: :foo, source: source, index: %i(foo_idx).to_set),
+               bar: int.meta(name: :bar, source: source, index: %i(bar_idx composite_idx).to_set),
+               baz: int.meta(name: :baz, source: source, index: %i(baz1_idx baz2_idx).to_set)
+             )
       end
     end
   end
