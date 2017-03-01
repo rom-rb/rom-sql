@@ -114,6 +114,20 @@ module ROM
       def left_join(*args, &block)
         new(dataset.__send__(__method__, *args, &block))
       end
+
+      # Group by specific columns
+      #
+      # @example
+      #   tasks.group(:user_id)
+      #
+      # @param [Array<Symbol>] *args A list of column names
+      #
+      # @return [Relation]
+      #
+      # @api public
+      def group(*args, &block)
+        __new__(dataset.__send__(__method__, *args, &block))
+      end
     end
   end
 end

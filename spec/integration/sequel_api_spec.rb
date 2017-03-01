@@ -28,4 +28,10 @@ RSpec.describe 'Using legacy sequel api', :sqlite do
       expect(users.where(name: 'Jane').first).to eql(id: 1, name: 'Jane')
     end
   end
+
+  describe '#order' do
+    it 'orders relation' do
+      expect(users.order(:users__name).first).to eql(id: 1, name: 'Jane')
+    end
+  end
 end
