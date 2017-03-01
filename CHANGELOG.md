@@ -5,6 +5,7 @@
 * Added inferring for database indices (flash-gordon)
 * Restriction conditions are now coerced using schema attributes (solnic)
 * `:instrumentation` relation plugin that can be configured with any instrumentation backend (solnic)
+* `:auto_restrictions` relation plugin, which defines `by_*` views restricting relations by their indexed attributes (solnic)
 
 ### Fixed
 
