@@ -797,7 +797,8 @@ module ROM
         def coerce_conditions(conditions)
           conditions.each_with_object({}) { |(k, v), h|
             if k.is_a?(Symbol) && self.class.schema.key?(k)
-              h[k] = self.class.schema[k][v]
+              type = self.class.schema[k]
+              h[k] = v.is_a?(Array) ? v.map { |e| type[e] } : type[v]
             else
               h[k] = v
             end

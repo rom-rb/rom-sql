@@ -82,6 +82,17 @@ RSpec.describe ROM::Relation, '#where' do
           to eql(id: 2, user_id: 1, title: "Jane's task")
       end
 
+      it 'applies write_schema to hash conditions where value is an array' do
+        ids = %w(1 2).map(&Test::Id.method(:new))
+        rel = tasks.where(id: ids)
+
+        expect(rel.to_a).
+          to eql([
+                   { id: 1, user_id: 2, title: "Joe's task" },
+                   { id: 2, user_id: 1, title: "Jane's task" }
+                 ])
+      end
+
       it 'applies write_schema to conditions with operators other than equality' do
         rel = tasks.where { id >= Test::Id.new('2') }
 
