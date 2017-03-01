@@ -39,5 +39,16 @@ RSpec.describe 'Plugins / :auto_restrictions', seeds: true do
 
       include_context 'auto-generated restriction view'
     end
+
+    it 'raises error when enabled w/o a schema' do
+      expect {
+        conf.relation(:tasks) do
+          use :auto_restrictions
+        end
+      }.to raise_error(
+             ROM::Plugins::Relation::SQL::AutoRestrictions::EmptySchemaError,
+             "ROM::Relation[Tasks] relation has no schema. Make sure :auto_restrictions is enabled after defining a schema"
+           )
+    end
   end
 end

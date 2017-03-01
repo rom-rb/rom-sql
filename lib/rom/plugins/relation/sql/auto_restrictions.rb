@@ -26,17 +26,26 @@ module ROM
         #
         # @api public
         module AutoRestrictions
+          EmptySchemaError = Class.new(ArgumentError) do
+            def initialize(klass)
+              super("#{klass} relation has no schema. " \
+                    "Make sure :auto_restrictions is enabled after defining a schema")
+            end
+          end
+
           def self.included(klass)
             super
-            methods, mod = restriction_methods(klass)
+            schema = klass.schema
+            raise EmptySchemaError, klass if schema.nil?
+            methods, mod = restriction_methods(schema)
             klass.include(mod)
             methods.each { |meth| klass.auto_curry(meth) }
           end
 
-          def self.restriction_methods(klass)
+          def self.restriction_methods(schema)
             mod = Module.new
 
-            indexed_attrs = klass.schema.select { |attr| attr.meta[:index] }
+            indexed_attrs = schema.select { |attr| attr.meta[:index] }
 
             methods = indexed_attrs.map do |attr|
               meth_name = :"by_#{attr.name}"
