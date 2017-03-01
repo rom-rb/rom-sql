@@ -10,6 +10,7 @@
 ### Fixed
 
 * Missing `group` method was added to legacy `SequelAPI` module (solnic)
+* Associations properly maintain `order` if it was set (solnic)
 
 [Compare v1.0.3...v1.1.0](https://github.com/rom-rb/rom-sql/compare/v1.0.3...v1.1.0)
 
