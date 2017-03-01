@@ -82,6 +82,13 @@ RSpec.describe ROM::Relation, '#where' do
           to eql(id: 2, user_id: 1, title: "Jane's task")
       end
 
+      it 'applies write_schema to conditions with operators other than equality' do
+        rel = tasks.where { id >= Test::Id.new('2') }
+
+        expect(rel.first).
+          to eql(id: 2, user_id: 1, title: "Jane's task")
+      end
+
       it 'applies write_schema to conditions in a block' do
         rel = tasks.where {
           id.is(Test::Id.new('2')) & title.is(Test::Title.new(:"Jane's task"))

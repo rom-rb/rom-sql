@@ -9,6 +9,8 @@ module ROM
     #
     # @api public
     class Attribute < ROM::Schema::Attribute
+      OPERATORS = %i[>= <= > <].freeze
+
       # Error raised when an attribute cannot be qualified
       QualifyError = Class.new(StandardError)
 
@@ -237,7 +239,9 @@ module ROM
       #
       # @api private
       def method_missing(meth, *args, &block)
-        if sql_expr.respond_to?(meth)
+        if OPERATORS.include?(meth)
+          __cmp__(meth, args[0])
+        elsif sql_expr.respond_to?(meth)
           meta(sql_expr: sql_expr.__send__(meth, *args, &block))
         else
           super
