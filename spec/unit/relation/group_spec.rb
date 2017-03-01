@@ -1,6 +1,7 @@
 RSpec.describe ROM::Relation, '#group' do
   subject(:relation) { relations[:users] }
 
+  let(:notes) { relations[:notes] }
   let(:tasks) { relations[:tasks] }
 
   include_context 'users and tasks'
@@ -36,6 +37,8 @@ RSpec.describe ROM::Relation, '#group' do
   end
 
   with_adapters :postgres do
+    include_context 'notes'
+
     it 'groups by provided attribute name in and attributes from a block' do
       grouped = relation.
                   qualified.
@@ -43,6 +46,17 @@ RSpec.describe ROM::Relation, '#group' do
                   group(tasks[:title]) { id.qualified }
 
       expect(grouped.to_a).to eql([{ id: 1, name: 'Jane' }, { id: 2, name: 'Joe'}])
+    end
+
+    it 'groups by a function' do
+      notes.insert user_id: 1, text: 'Foo', created_at: Time.now, updated_at: Time.now
+
+      grouped = notes
+                  .select { [int::count(id), time::date_trunc('day', created_at).as(:date)] }
+                  .group { date_trunc('day', created_at) }
+                  .order(nil)
+
+      expect(grouped.to_a).to eql([ count: 1, date: Date.today.to_time ])
     end
   end
 end

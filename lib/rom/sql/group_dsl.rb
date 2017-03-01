@@ -11,7 +11,7 @@ module ROM
         if schema.key?(meth)
           schema[meth].canonical
         else
-          ::Sequel::VIRTUAL_ROW.__send__(meth.to_s.upcase, *args, &block)
+          ::Sequel::VIRTUAL_ROW.__send__(meth.to_s, *args, &block)
         end
       end
     end
