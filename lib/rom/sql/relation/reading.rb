@@ -338,9 +338,11 @@ module ROM
         # @api public
         def where(*args, &block)
           if block
-            new(dataset.where(*args).where(self.class.schema.restriction(&block)))
+            where(*args).where(self.class.schema.restriction(&block))
+          elsif args.size == 1 && args[0].is_a?(Hash)
+            new(dataset.where(coerce_conditions(args[0])))
           else
-            new(dataset.__send__(__method__, *args))
+            new(dataset.where(*args))
           end
         end
 
@@ -788,6 +790,19 @@ module ROM
         end
 
         private
+
+        # Apply input types to condition values
+        #
+        # @api private
+        def coerce_conditions(conditions)
+          conditions.each_with_object({}) { |(k, v), h|
+            if k.is_a?(Symbol) && self.class.schema.key?(k)
+              h[k] = self.class.schema[k][v]
+            else
+              h[k] = v
+            end
+          }
+        end
 
         # Common join method used by other join methods
         #

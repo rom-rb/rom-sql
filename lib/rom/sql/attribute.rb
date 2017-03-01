@@ -248,8 +248,16 @@ module ROM
       # the left part is the attribute value
       #
       # @api private
-      def __cmp__(op, r)
-        Sequel::SQL::BooleanExpression.new(op, self, r)
+      def __cmp__(op, other)
+        value =
+          case other
+          when Sequel::SQL::Expression
+            value
+          else
+            type[other]
+          end
+
+        Sequel::SQL::BooleanExpression.new(op, self, value)
       end
     end
   end
