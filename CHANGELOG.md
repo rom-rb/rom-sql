@@ -1,8 +1,16 @@
-## v1.1.0 to-be-released
+## v1.1.0 2017-03-01
 
 ### Added
 
 * Added inferring for database indices (flash-gordon)
+* Restriction conditions are now coerced using schema attributes (solnic)
+* `:instrumentation` relation plugin that can be configured with any instrumentation backend (solnic)
+
+### Fixed
+
+* Missing `group` method was added to legacy `SequelAPI` module (solnic)
+
+[Compare v1.0.3...v1.1.0](https://github.com/rom-rb/rom-sql/compare/v1.0.3...v1.1.0)
 
 ## v1.0.3 2017-02-23
 
