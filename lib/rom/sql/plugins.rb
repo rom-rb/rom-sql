@@ -1,3 +1,5 @@
+require 'rom/plugins/relation/sql/instrumentation'
+
 require 'rom/sql/plugin/associates'
 require 'rom/sql/plugin/pagination'
 require 'rom/sql/plugin/timestamps'
