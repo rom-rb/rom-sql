@@ -38,6 +38,13 @@ RSpec.describe 'Plugins / :associates', seeds: false do
           expect(command.call(task, user)).
             to eql(id: 1, title: 'Task one', user_id: user[:id])
         end
+
+        it 'allows passing a parent explicitly' do
+          command = tasks[:create].with_association(:user, key: %i[user_id id], parent: user)
+
+          expect(command.call(task)).
+            to eql(id: 1, title: 'Task one', user_id: user[:id])
+        end
       end
 
       shared_context 'automatic FK setting' do

@@ -20,6 +20,34 @@ module ROM
           end
         end
 
+        class AssociateOptions
+          attr_reader :name, :assoc, :opts
+
+          def initialize(name, relation, opts)
+            @name = name
+            @opts = { assoc: name, keys: opts[:key] }
+
+            relation.associations.try(name) do |assoc|
+              @assoc = assoc
+              @opts.update(assoc: assoc, keys: assoc.join_keys(relation.__registry__))
+            end
+
+            @opts.update(parent: opts[:parent]) if opts[:parent]
+          end
+
+          def after?
+            assoc.is_a?(Association::ManyToMany)
+          end
+
+          def ensure_valid(command)
+            raise MissingJoinKeysError.new(command, name) unless opts[:keys]
+          end
+
+          def to_hash
+            { associate: opts }
+          end
+        end
+
         # @api private
         def self.included(klass)
           klass.class_eval do
@@ -35,6 +63,63 @@ module ROM
           super
         end
 
+        module ClassMethods
+          # @see ROM::Command::ClassInterface.build
+          #
+          # @api public
+          def build(relation, options = EMPTY_HASH)
+            command = super
+
+            if command.associations_configured?
+              return command
+            end
+
+            associate_options = command.associations.map { |(name, opts)|
+              AssociateOptions.new(name, relation, opts)
+            }
+
+            associate_options.each { |opts| opts.ensure_valid(self) }
+
+            before_hooks = associate_options.reject(&:after?).map(&:to_hash)
+            after_hooks = associate_options.select(&:after?).map(&:to_hash)
+
+            command.
+              with_opts(configured_associations: associate_options.map(&:name)).
+              before(*before_hooks).
+              after(*after_hooks)
+          end
+
+          # Set command to associate tuples with a parent tuple using provided keys
+          #
+          # @example
+          #   class CreateTask < ROM::Commands::Create[:sql]
+          #     relation :tasks
+          #     associates :user, key: [:user_id, :id]
+          #   end
+          #
+          #   create_user = rom.command(:user).create.with(name: 'Jane')
+          #
+          #   create_tasks = rom.command(:tasks).create
+          #     .with [{ title: 'One' }, { title: 'Two' } ]
+          #
+          #   command = create_user >> create_tasks
+          #   command.call
+          #
+          # @param [Symbol] name The name of associated table
+          # @param [Hash] options The options
+          # @option options [Array] :key The association keys
+          #
+          # @api public
+          def associates(name, options = EMPTY_HASH)
+            if associations.key?(name)
+              raise ArgumentError,
+                    "#{name} association is already defined for #{self.class}"
+            end
+
+            associations(associations.merge(name => options))
+          end
+        end
+
         module InstanceMethods
           # Set fk on tuples from parent tuple
           #
@@ -44,7 +129,7 @@ module ROM
           # @return [Array<Hash>]
           #
           # @api public
-          def associate(tuples, parent, assoc:, keys:)
+          def associate(tuples, curried_parent = nil, assoc:, keys:, parent: curried_parent)
             result_type = result
 
             output_tuples =
@@ -101,84 +186,6 @@ module ROM
           # @api private
           def __registry__
             relation.__registry__
-          end
-        end
-
-        module ClassMethods
-          # @see ROM::Command::ClassInterface.build
-          #
-          # @api public
-          def build(relation, options = EMPTY_HASH)
-            command = super
-
-            if command.associations_configured?
-              return command
-            end
-
-            associations = command.associations
-            assoc_names = []
-
-            before_hooks = associations.each_with_object([]) do |(name, opts), acc|
-              relation.associations.try(name) do |assoc|
-                unless assoc.is_a?(Association::ManyToMany)
-                  acc << { associate: { assoc: assoc, keys: assoc.join_keys(relation.__registry__) } }
-                else
-                  true
-                end
-              end or acc << { associate: { assoc: name, keys: opts[:key] } }
-
-              assoc_names << name
-            end
-
-            after_hooks = associations.each_with_object([]) do |(name, opts), acc|
-              next unless relation.associations.key?(name)
-
-              assoc = relation.associations[name]
-
-              if assoc.is_a?(Association::ManyToMany)
-                acc << { associate: { assoc: assoc, keys: assoc.join_keys(relation.__registry__) } }
-                assoc_names << name
-              end
-            end
-
-            [*before_hooks, *after_hooks].
-              map { |hook| hook[:associate] }.
-              each { |conf| raise MissingJoinKeysError.new(self, conf[:assoc]) unless conf[:keys] }
-
-            command.
-              with_opts(configured_associations: assoc_names).
-              before(*before_hooks).
-              after(*after_hooks)
-          end
-
-          # Set command to associate tuples with a parent tuple using provided keys
-          #
-          # @example
-          #   class CreateTask < ROM::Commands::Create[:sql]
-          #     relation :tasks
-          #     associates :user, key: [:user_id, :id]
-          #   end
-          #
-          #   create_user = rom.command(:user).create.with(name: 'Jane')
-          #
-          #   create_tasks = rom.command(:tasks).create
-          #     .with [{ title: 'One' }, { title: 'Two' } ]
-          #
-          #   command = create_user >> create_tasks
-          #   command.call
-          #
-          # @param [Symbol] name The name of associated table
-          # @param [Hash] options The options
-          # @option options [Array] :key The association keys
-          #
-          # @api public
-          def associates(name, options = EMPTY_HASH)
-            if associations.key?(name)
-              raise ArgumentError,
-                    "#{name} association is already defined for #{self.class}"
-            end
-
-            associations(associations.merge(name => options))
           end
         end
       end
