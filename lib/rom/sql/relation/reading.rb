@@ -45,7 +45,7 @@ module ROM
         #
         # @api public
         def first
-          dataset.first
+          limit(1).to_a.first
         end
 
         # Get last tuple from the relation
@@ -58,7 +58,7 @@ module ROM
         #
         # @api public
         def last
-          dataset.last
+          reverse.limit(1).first
         end
 
         # Prefix all columns in a relation
