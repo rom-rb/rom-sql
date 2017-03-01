@@ -95,6 +95,15 @@ module ROM
         relation.new(relation.dataset.select(*self), schema: self)
       end
 
+      # Return an empty schema
+      #
+      # @return [Schema]
+      #
+      # @api public
+      def empty
+        new(EMPTY_ARRAY)
+      end
+
       # @api private
       def finalize!(*)
         super do

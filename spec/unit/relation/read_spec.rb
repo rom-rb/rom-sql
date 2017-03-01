@@ -17,5 +17,9 @@ RSpec.describe ROM::Relation, '#read' do
       expect(materialized).to match_array([{ name: 'Jane' }, { name: 'Joe' }])
       expect(materialized.source).to be(users)
     end
+
+    it 'has empty schema' do
+      expect(users.schema).to be_empty
+    end
   end
 end

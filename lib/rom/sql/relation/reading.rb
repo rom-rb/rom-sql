@@ -786,7 +786,7 @@ module ROM
         #
         # @api public
         def read(sql)
-          new(dataset.db[sql])
+          new(dataset.db[sql], schema: schema.empty)
         end
 
         private
