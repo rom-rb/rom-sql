@@ -126,7 +126,7 @@ module ROM
       #
       # @api public
       def group(*args, &block)
-        __new__(dataset.__send__(__method__, *args, &block))
+        new(dataset.__send__(__method__, *args, &block))
       end
     end
   end
