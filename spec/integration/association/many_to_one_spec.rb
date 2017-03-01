@@ -52,8 +52,10 @@ RSpec.describe ROM::SQL::Association::ManyToOne, helpers: true do
           expect(relation.where(user_id: 2).one).to eql(id: 2, task_id: 1, name: 'Joe')
 
           expect(relation.to_a).
-            to eql([{ id: 2, task_id: 1, name: 'Joe' },
-                    { id: 1, task_id: 2, name: 'Jane' }])
+            to eql([
+                     { id: 1, task_id: 2, name: 'Jane' },
+                     { id: 2, task_id: 1, name: 'Joe' }
+                   ])
         end
       end
 
@@ -62,12 +64,14 @@ RSpec.describe ROM::SQL::Association::ManyToOne, helpers: true do
           relation = users.for_combine(assoc).call(tasks.call)
 
           expect(relation.to_a).
-            to eql([{ id: 2, task_id: 1, name: 'Joe' },
-                    { id: 1, task_id: 2, name: 'Jane' }])
+            to eql([
+                     { id: 1, task_id: 2, name: 'Jane' },
+                     { id: 2, task_id: 1, name: 'Joe' }
+                   ])
         end
 
         it 'maintains original relation' do
-          users.accounts.insert(user_id: 2, number: 'a1', balance: 0)
+          users.accounts.insert(user_id: 2, number: '31', balance: 0)
 
           relation = users.
                        join(:accounts, user_id: :id).
@@ -76,7 +80,7 @@ RSpec.describe ROM::SQL::Association::ManyToOne, helpers: true do
                        for_combine(assoc).call(tasks.call)
 
           expect(relation.to_a).
-            to eql([{ id: 2, task_id: 1, name: 'Joe', account_num: 'a1' },
+            to eql([{ id: 2, task_id: 1, name: 'Joe', account_num: '31' },
                     { id: 1, task_id: 2, name: 'Jane', account_num: '42' }])
         end
       end

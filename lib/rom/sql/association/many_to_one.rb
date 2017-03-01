@@ -21,9 +21,7 @@ module ROM
               left_schema.merge(right_schema.project_fk(left_pk => right_fk))
             end.qualified
 
-          relation = left
-            .inner_join(source_table, join_keys(relations))
-            .order(*right_schema.qualified)
+          relation = left.inner_join(source_table, join_keys(relations))
 
           if view
             apply_view(schema, relation)
