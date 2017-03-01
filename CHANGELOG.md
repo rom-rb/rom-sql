@@ -1,3 +1,9 @@
+## v1.1.0 to-be-released
+
+### Added
+
+* Added inferring for database indices (flash-gordon)
+
 ## v1.0.3 2017-02-23
 
 ### Changed
