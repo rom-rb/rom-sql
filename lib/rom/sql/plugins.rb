@@ -1,4 +1,5 @@
 require 'rom/plugins/relation/sql/instrumentation'
+require 'rom/plugins/relation/sql/auto_restrictions'
 
 require 'rom/sql/plugin/associates'
 require 'rom/sql/plugin/pagination'
