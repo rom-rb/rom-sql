@@ -1,3 +1,11 @@
+## v1.1.2 2017-03-02
+
+### Fixed
+
+* Fix grouping by a function in the block DSL (flash-gordon)
+
+[Compare v1.1.1...v1.1.2](https://github.com/rom-rb/rom-sql/compare/v1.1.1...v1.1.2)
+
 ## v1.1.1 2017-03-01
 
 ### Fixed
