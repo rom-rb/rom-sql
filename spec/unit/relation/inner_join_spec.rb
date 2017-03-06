@@ -41,7 +41,10 @@ RSpec.describe ROM::Relation, '#inner_join' do
       before do
         conf.relation(:users) do
           schema(infer: true) do
-            associations { has_many :tasks }
+            associations do
+              has_many :tasks
+              has_many :tasks, as: :todos, relation: :tasks
+            end
           end
         end
 
@@ -84,6 +87,22 @@ RSpec.describe ROM::Relation, '#inner_join' do
         result = tasks.inner_join(tags)
 
         expect(result.to_a).to eql([{ id: 1, user_id: 2, title: "Joe's task" }])
+      end
+
+      it 'joins by association name if no condition provided' do
+        result = relation.
+                   inner_join(:tasks).
+                   select(:name, tasks[:title])
+
+        expect(result.schema.map(&:name)).to eql(%i[name title])
+      end
+
+      it 'joins if association name differs from relation name' do
+        result = relation.
+                   inner_join(:todos).
+                   select(:name, tasks[:title])
+
+        expect(result.schema.map(&:name)).to eql(%i[name title])
       end
     end
 

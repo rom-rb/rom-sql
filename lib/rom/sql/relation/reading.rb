@@ -811,7 +811,12 @@ module ROM
         def __join__(type, other, join_cond = EMPTY_HASH, opts = EMPTY_HASH, &block)
           case other
           when Symbol, Association::Name
-            new(dataset.__send__(type, other.to_sym, join_cond, opts, &block))
+            if join_cond.empty?
+              assoc = associations[other]
+              assoc.join(__registry__, type, self, __registry__[assoc.target.relation])
+            else
+              new(dataset.__send__(type, other.to_sym, join_cond, opts, &block))
+            end
           when Relation
             associations[other.name.dataset].join(__registry__, type, self, other)
           else
