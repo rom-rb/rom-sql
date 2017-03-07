@@ -70,13 +70,12 @@ module ROM
           def build(relation, options = EMPTY_HASH)
             command = super
 
-            if command.associations_configured?
-              return command
-            end
+            configured_assocs = command.configured_associations
 
             associate_options = command.associations.map { |(name, opts)|
+              next if configured_assocs.include?(name)
               AssociateOptions.new(name, relation, opts)
-            }
+            }.compact
 
             associate_options.each { |opts| opts.ensure_valid(self) }
 
@@ -84,7 +83,7 @@ module ROM
             after_hooks = associate_options.select(&:after?).map(&:to_hash)
 
             command.
-              with_opts(configured_associations: associate_options.map(&:name)).
+              with_opts(configured_associations: configured_assocs + associate_options.map(&:name)).
               before(*before_hooks).
               after(*after_hooks)
           end
@@ -173,14 +172,6 @@ module ROM
             self.class.build(
               relation, options.merge(associations: associations.merge(name => opts))
             )
-          end
-
-          def associations_configured?
-            if configured_associations.empty?
-              false
-            else
-              configured_associations.all? { |name| associations.key?(name) }
-            end
           end
 
           # @api private

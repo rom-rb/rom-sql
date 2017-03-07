@@ -45,6 +45,14 @@ RSpec.describe 'Plugins / :associates', seeds: false do
           expect(command.call(task)).
             to eql(id: 1, title: 'Task one', user_id: user[:id])
         end
+
+        it 'allows setting up multiple associations' do
+          command = tasks[:create].
+                      with_association(:user, key: %i[user_id id], parent: user).
+                      with_association(:other, key: %i[other_id id])
+
+          expect(command.configured_associations).to eql(%i[user other])
+        end
       end
 
       shared_context 'automatic FK setting' do
