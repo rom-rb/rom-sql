@@ -809,15 +809,14 @@ module ROM
         #
         # @api private
         def __join__(type, other, join_cond = EMPTY_HASH, opts = EMPTY_HASH, &block)
-          case other
-          when Symbol, Association::Name
+          if other.is_a?(Symbol) || other.is_a?(Association::Name)
             if join_cond.empty?
               assoc = associations[other]
               assoc.join(__registry__, type, self, __registry__[assoc.target.relation])
             else
               new(dataset.__send__(type, other.to_sym, join_cond, opts, &block))
             end
-          when Relation
+          elsif other.respond_to?(:name) && other.name.is_a?(Relation::Name)
             associations[other.name.dataset].join(__registry__, type, self, other)
           else
             raise ArgumentError, "+other+ must be either a symbol or a relation, #{other.class} given"
