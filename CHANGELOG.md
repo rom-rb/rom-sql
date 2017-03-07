@@ -1,3 +1,11 @@
+## v1.2.0 to-be-released
+
+### Added
+
+* Support for configuring multiple associations for a command (solnic)
+
+[Compare v1.1.2...v1.2.0](https://github.com/rom-rb/rom-sql/compare/v1.1.2...v1.2.0)
+
 ## v1.1.2 2017-03-02
 
 ### Fixed
