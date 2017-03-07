@@ -4,6 +4,7 @@
 
 * Support for configuring multiple associations for a command (solnic)
 * Support for passing parent tuple(s) as `parent` option in `Command#with_association` (solnic)
+* Support for join using assocation name (flash-gordon)
 
 [Compare v1.1.2...v1.2.0](https://github.com/rom-rb/rom-sql/compare/v1.1.2...v1.2.0)
 
