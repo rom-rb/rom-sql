@@ -103,6 +103,21 @@ RSpec.describe ROM::Relation, '#inner_join' do
                                    ])
       end
 
+      let(:task_relation_proxy) { Class.new{ def name; ROM::Relation::Name.new(:tasks); end }.new }
+
+      it 'joins relation with relation proxy objects' do
+        result = relation.
+                   inner_join(task_relation_proxy).
+                   select(:name, tasks[:title])
+
+        expect(result.schema.map(&:name)).to eql(%i[name title])
+
+        expect(result.to_a).to eql([
+                                     { name: 'Jane', title: "Jane's task" },
+                                     { name: 'Joe', title: "Joe's task" }
+                                   ])
+      end
+
       it 'joins relation with join keys inferred for m:m-through' do
         result = tasks.inner_join(tags)
 
