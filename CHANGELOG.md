@@ -1,3 +1,11 @@
+## v1.2.1 2017-03-09
+
+### Fixed
+
+* Allow for joining by a `RelationProxy` instance from `rom-repository` (davydovanton)
+
+[Compare v1.2.0...v1.2.1](https://github.com/rom-rb/rom-sql/compare/v1.2.0...v1.2.1)
+
 ## v1.2.0 2017-03-07
 
 ### Added
