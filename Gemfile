@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'rom', git: 'https://github.com/rom-rb/rom.git', branch: 'master'
+gem 'rom', git: 'https://github.com/rom-rb/rom.git', branch: 'update-dry-initializer'
 gem 'rom-mapper', git: 'https://github.com/rom-rb/rom-mapper.git', branch: 'master'
 
 group :test do
@@ -31,3 +31,5 @@ end
 group :tools do
   gem 'rom-repository', git: 'https://github.com/rom-rb/rom-repository.git', branch: 'master'
 end
+
+gem 'dry-initializer', git: 'https://github.com/dry-rb/dry-initializer.git', branch: 'v1.3.0'

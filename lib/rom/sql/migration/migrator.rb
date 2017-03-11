@@ -15,7 +15,7 @@ module ROM
 
         param :connection
 
-        option :path, type: ROM::Types.Definition(Pathname), reader: true, default: proc { DEFAULT_PATH }
+        option :path, type: ROM::Types.Definition(Pathname), default: -> { DEFAULT_PATH }
 
         # @api private
         def run(options = {})

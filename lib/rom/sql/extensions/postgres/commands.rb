@@ -69,19 +69,19 @@ module ROM
 
           # @!attribute [r] constraint
           #  @return [Symbol] the name of the constraint expected to be violated
-          option :constraint, reader: true, default: -> c { c.class.constraint }
+          option :constraint, default: -> { self.class.constraint }
 
           # @!attribute [r] conflict_target
           #  @return [Object] the column or expression to handle a violation on
-          option :conflict_target, reader: true, default: -> c { c.class.conflict_target }
+          option :conflict_target, default: -> { self.class.conflict_target }
 
           # @!attribute [r] update_statement
           #  @return [Object] the update statement which will be executed in case of a violation
-          option :update_statement, reader: true, default: -> c { c.class.update_statement }
+          option :update_statement, default: -> { self.class.update_statement }
 
           # @!attribute [r] update_where
           #  @return [Object] the WHERE clause to be added to the update
-          option :update_where, reader: true, default: -> c { c.class.update_where }
+          option :update_where, default: -> { self.class.update_where }
 
           # Tries to insert provided tuples and do an update (or nothing)
           # when the inserted record violates a unique constraint and hence
