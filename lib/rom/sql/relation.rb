@@ -112,7 +112,7 @@ module ROM
         names.map { |col| :"#{table}__#{col}" }
       end
 
-      option :primary_key, reader: true, default: -> rel { rel.schema.primary_key_name }
+      option :primary_key, default: -> { schema.primary_key_name }
 
       # Return relation that will load associated tuples of this relation
       #

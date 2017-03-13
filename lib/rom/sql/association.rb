@@ -29,23 +29,23 @@ module ROM
 
       # @!attribute [r] relation
       #   @return [Symbol] an optional relation identifier for the target
-      option :relation, Types::Strict::Symbol, reader: true, optional: true
+      option :relation, Types::Strict::Symbol, optional: true
 
       # @!attribute [r] result
       #   @return [Symbol] either :one or :many
-      option :result, Types::Strict::Symbol, reader: true, default: -> assoc { assoc.class.result }
+      option :result, Types::Strict::Symbol, default: -> { self.class.result }
 
       # @!attribute [r] as
       #   @return [Symbol] an optional association alias name
-      option :as, Types::Strict::Symbol, reader: true, optional: true, default: -> assoc { assoc.target.to_sym }
+      option :as, Types::Strict::Symbol, default: -> { target.to_sym }
 
       # @!attribute [r] foreign_key
       #   @return [Symbol] an optional association alias name
-      option :foreign_key, Types::Strict::Symbol, optional: true, reader: true, default: proc { nil }
+      option :foreign_key, Types::Optional::Strict::Symbol, optional: true
 
       # @!attribute [r] view
       #   @return [Symbol] An optional view that should be used to extend assoc relation
-      option :view, reader: true, optional: true, default: proc { nil }
+      option :view, optional: true
 
       alias_method :name, :as
 

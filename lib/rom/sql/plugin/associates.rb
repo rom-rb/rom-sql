@@ -57,8 +57,8 @@ module ROM
 
             associations Hash.new
 
-            option :associations, reader: true, optional: true, default: -> cmd { cmd.class.associations }
-            option :configured_associations, reader: true, optional: true, default: proc { [] }
+            option :associations, default: -> { self.class.associations }
+            option :configured_associations, default: -> { EMPTY_ARRAY }
           end
           super
         end
@@ -170,7 +170,9 @@ module ROM
           # @api public
           def with_association(name, opts = EMPTY_HASH)
             self.class.build(
-              relation, options.merge(associations: associations.merge(name => opts))
+              relation,
+              **options,
+              associations: associations.merge(name => opts)
             )
           end
 

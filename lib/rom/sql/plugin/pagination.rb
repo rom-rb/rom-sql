@@ -10,8 +10,8 @@ module ROM
 
           param :dataset
 
-          option :current_page, reader: true, default: proc { 1 }
-          option :per_page, reader: true
+          option :current_page, default: -> { 1 }
+          option :per_page
 
           def next_page
             num = current_page + 1
@@ -50,8 +50,8 @@ module ROM
           klass.class_eval do
             defines :per_page
 
-            option :pager, reader: true, default: proc { |relation|
-              Pager.new(relation.dataset, per_page: relation.class.per_page)
+            option :pager, default: -> {
+              Pager.new(dataset, per_page: self.class.per_page)
             }
           end
         end
