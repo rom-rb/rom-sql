@@ -33,14 +33,14 @@ if defined? JRUBY_VERSION
   DB_URIS = {
     sqlite: 'jdbc:sqlite:::memory',
     postgres: 'jdbc:postgresql://localhost/rom_sql',
-    mysql: 'jdbc:mysql://localhost/rom_sql?user=root',
+    mysql: 'jdbc:mysql://localhost/rom_sql?user=root&sql_mode=STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION',
     oracle: ENV['ROM_USE_ORACLE'] ? fail('Setup Oracle for JRuby!') : nil
   }
 else
   DB_URIS = {
     sqlite: 'sqlite::memory',
     postgres: 'postgres://localhost/rom_sql',
-    mysql: 'mysql2://root@localhost/rom_sql',
+    mysql: 'mysql2://root@localhost/rom_sql?sql_mode=STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION',
     oracle: "oracle://#{ oracle_settings[:host] }:#{ oracle_settings[:port] }/" \
             "#{ oracle_settings[:db_name] }?username=rom_sql&password=rom_sql&autosequence=true"
   }
