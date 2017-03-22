@@ -3,12 +3,9 @@ require 'dry-struct'
 RSpec.describe 'Commands / Update', seeds: false do
   include_context 'users'
 
-  subject(:users) { container.command(:users) }
+  let(:update_user) { user_commands[:update] }
 
-  let(:update) { container.commands[:users][:update] }
-
-  let(:relation) { container.relations.users }
-  let(:piotr) { relation.by_name('Piotr').one }
+  let(:piotr) { users.by_name('Piotr').one }
   let(:peter) { { name: 'Peter' } }
 
   with_adapters do
@@ -36,33 +33,33 @@ RSpec.describe 'Commands / Update', seeds: false do
         register :users, entity: -> tuples { tuples.map { |tuple| Test::User.new(tuple) } }
       end
 
-      relation.insert(name: 'Piotr')
-      relation.insert(name: 'Jane')
+      users.insert(name: 'Piotr')
+      users.insert(name: 'Jane')
     end
 
     context '#transaction' do
       it 'update record if there was no errors' do
-        result = users.update.transaction do
-          users.update.by_id(piotr[:id]).call(peter)
+        result = update_user.transaction do
+          update_user.by_id(piotr[:id]).call(peter)
         end
 
         expect(result.value).to eq([{ id: 1, name: 'Peter' }])
       end
 
       it 'updates nothing if error was raised' do
-        users.update.transaction do
-          users.update.by_id(piotr[:id]).call(peter)
+        update_user.transaction do
+          update_user.by_id(piotr[:id]).call(peter)
           raise ROM::SQL::Rollback
         end
 
-        expect(relation.first[:name]).to eql('Piotr')
+        expect(users.first[:name]).to eql('Piotr')
       end
     end
 
     describe '#call' do
       it 'updates relation tuples' do
-        result = users.try do
-          users.update.by_id(piotr[:id]).call(peter)
+        result = user_commands.try do
+          update_user.by_id(piotr[:id]).call(peter)
         end
 
         expect(result.value.to_a).to match_array([{ id: 1, name: 'Peter' }])
@@ -70,19 +67,19 @@ RSpec.describe 'Commands / Update', seeds: false do
 
       it 're-raises database errors' do |example|
         expect {
-          users.update.by_id(piotr[:id]).call(name: nil)
+          update_user.by_id(piotr[:id]).call(name: nil)
         }.to raise_error(ROM::SQL::NotNullConstraintError, /name/i)
       end
 
       it 'materializes single result' do
-        result = users.update.by_name('Piotr').call(name: 'Pete')
+        result = update_user.by_name('Piotr').call(name: 'Pete')
         expect(result).to eq([
           { id: 1, name: 'Pete' }
         ])
       end
 
       it 'materializes multiple results' do
-        result = users.update.by_name(%w(Piotr Jane)).call(name: 'Josie')
+        result = update_user.by_name(%w(Piotr Jane)).call(name: 'Josie')
         expect(result).to eq([
           { id: 1, name: 'Josie' },
           { id: 2, name: 'Josie' }

@@ -1,8 +1,6 @@
 RSpec.describe ROM::Relation, '#left_join' do
   subject(:relation) { relations[:users] }
 
-  let(:tasks) { relations[:tasks] }
-
   include_context 'users and tasks'
 
   with_adapters do

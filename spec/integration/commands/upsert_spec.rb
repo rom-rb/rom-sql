@@ -1,9 +1,7 @@
 RSpec.describe 'Commands / Postgres / Upsert', :postgres, seeds: false do
-  subject(:command) { commands[:tasks][:create_or_update] }
+  subject(:command) { task_commands[:create_or_update] }
 
   include_context 'relations'
-
-  let(:tasks) { commands[:tasks] }
 
   before do
     conn.execute "ALTER TABLE tasks add CONSTRAINT tasks_title_key UNIQUE (title)"

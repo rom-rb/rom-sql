@@ -1,7 +1,7 @@
 RSpec.describe 'Commands / Delete' do
   include_context 'users and tasks'
 
-  subject(:users) { container.commands.users }
+  let(:delete_user) { user_commands.delete }
 
   with_adapters do
     before do
@@ -17,45 +17,45 @@ RSpec.describe 'Commands / Delete' do
         end
       end
 
-      container.relations.users.insert(id: 3, name: 'Jade')
-      container.relations.users.insert(id: 4, name: 'John')
+      users.insert(id: 3, name: 'Jade')
+      users.insert(id: 4, name: 'John')
     end
 
     describe '#transaction' do
       it 'deletes in normal way if no error raised' do
         expect {
-          users.delete.transaction do
-            users.delete.by_name('Jade').call
+          delete_user.transaction do
+            delete_user.by_name('Jade').call
           end
-        }.to change { container.relations.users.count }.by(-1)
+        }.to change { users.count }.by(-1)
       end
 
       it 'deletes nothing if error was raised' do
         expect {
-          users.delete.transaction do
-            users.delete.by_name('Jade').call
+          delete_user.transaction do
+            delete_user.by_name('Jade').call
             raise ROM::SQL::Rollback
           end
-        }.to_not change { container.relations.users.count }
+        }.to_not change { users.count }
       end
     end
 
     describe '#call' do
       it 'deletes all tuples in a restricted relation' do
-        result = users.try { users.delete.by_name('Jade').call }
+        result = user_commands.try { delete_user.by_name('Jade').call }
 
         expect(result.value).to eql(id: 3, name: 'Jade')
       end
 
       it 're-raises database error' do
-        command = users.delete.by_name('Jade')
+        command = delete_user.by_name('Jade')
 
         expect(command.relation).to receive(:delete).and_raise(
           Sequel::DatabaseError, 'totally wrong'
         )
 
         expect {
-          users.try { command.call }
+          user_commands.try { command.call }
         }.to raise_error(ROM::SQL::DatabaseError, /totally wrong/)
       end
     end

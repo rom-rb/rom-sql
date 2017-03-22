@@ -7,7 +7,6 @@ RSpec.describe ROM::SQL::Association::ManyToMany do
         ROM::SQL::Association::ManyToMany.new(:tasks, :tags, through: :task_tags)
       }
 
-      let(:tasks) { container.relations[:tasks] }
       let(:tags) { container.relations[:tags] }
 
       before do

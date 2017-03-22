@@ -4,10 +4,6 @@ RSpec.describe 'Plugins / :auto_wrap' do
 
     describe '#for_wrap' do
       shared_context 'joined tuple' do
-        let(:name) do
-          users.name.relation
-        end
-
         it 'returns joined tuples' do
           task_with_user = tasks
             .for_wrap({ id: :user_id }, name)
@@ -31,36 +27,29 @@ RSpec.describe 'Plugins / :auto_wrap' do
       end
 
       context 'when parent relation is registered under dataset name' do
-        subject(:tasks) { relations[:tasks] }
-
-        let(:users) { relations[:users] }
-
         before do
           conf.relation(:tasks) { schema(infer: true) }
           conf.relation(:users) { schema(infer: true) }
         end
 
-        include_context 'joined tuple'
+        include_context 'joined tuple' do
+          let(:name) { :users }
+        end
       end
 
       context 'when parent relation is registered under a custom name' do
-        subject(:tasks) { relations[:tasks] }
-
-        let(:users) { relations[:authors] }
-
         before do
           conf.relation(:tasks) { schema(infer: true) }
           conf.relation(:authors) { schema(:users, infer: true) }
         end
 
-        include_context 'joined tuple'
+        include_context 'joined tuple' do
+          let(:users) { relations[:authors] }
+          let(:name) { :authors}
+        end
       end
 
       context 'using association' do
-        subject(:tasks) { relations[:tasks] }
-
-        let(:users) { relations[:users] }
-
         before do
           conf.relation(:tasks) {
             schema(infer: true) { associations { belongs_to :users, as: :assignee } }

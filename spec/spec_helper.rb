@@ -78,9 +78,23 @@ def with_adapters(*args, &block)
   end
 end
 
+warning_api_available = RUBY_VERSION >= '2.4.0'
+
+module SileneceWarnings
+  def warn(str)
+    if str['/sequel/'] || str['/rspec-core']
+      nil
+    else
+      super
+    end
+  end
+end
+
+Warning.singleton_class.prepend(SileneceWarnings) if warning_api_available
+
 RSpec.configure do |config|
   config.disable_monkey_patching!
-
+  config.warnings = warning_api_available
 
   config.before(:suite) do
     tmp_test_dir = TMP_PATH.join('test')

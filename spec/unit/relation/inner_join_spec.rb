@@ -1,8 +1,6 @@
 RSpec.describe ROM::Relation, '#inner_join' do
   subject(:relation) { relations[:users] }
 
-  let(:tasks) { relations[:tasks] }
-  let(:tags) { relations[:tags] }
   let(:puzzles) { relations[:puzzles] }
 
   include_context 'users and tasks'

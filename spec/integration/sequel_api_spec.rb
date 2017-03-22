@@ -3,8 +3,6 @@ require 'spec_helper'
 RSpec.describe 'Using legacy sequel api', :sqlite do
   include_context 'users'
 
-  let(:users) { relations[:users] }
-
   before do
     conf.relation(:users) do
       include ROM::SQL::Relation::SequelAPI

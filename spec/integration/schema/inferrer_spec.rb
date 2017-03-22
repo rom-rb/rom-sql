@@ -312,8 +312,6 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
 
     describe 'inferring indices', oracle: false do
       before do |ex|
-        ctx = self
-
         conn.create_table :test_inferrence do
           primary_key :id
           Integer :foo

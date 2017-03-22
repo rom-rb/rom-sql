@@ -1,8 +1,6 @@
 RSpec.describe ROM::Relation, '#qualified' do
   subject(:relation) { relations[:users] }
 
-  let(:tasks) { relations[:tasks] }
-
   include_context 'users and tasks'
 
   with_adapters do

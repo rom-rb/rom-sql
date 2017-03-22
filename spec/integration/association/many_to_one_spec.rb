@@ -1,7 +1,4 @@
 RSpec.describe ROM::SQL::Association::ManyToOne, helpers: true do
-  let(:users) { container.relations[:users] }
-  let(:tasks) { container.relations[:tasks] }
-
   with_adapters do
     context 'common name conventions' do
       include_context 'users and tasks'

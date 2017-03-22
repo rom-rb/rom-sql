@@ -22,8 +22,10 @@ module ROM
         debug "  #{name}  #{sql}  #{binds}"
       end
 
+      attr_reader :odd_or_even
+      private :odd_or_even
       def odd?
-        @odd_or_even = !@odd_or_even
+        @odd_or_even = !odd_or_even
       end
     end
   end

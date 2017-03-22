@@ -2,6 +2,10 @@ RSpec.shared_context 'users and tasks' do
   include_context 'users'
 
   let(:tasks) { container.relations[:tasks] }
+  let(:tags) { container.relations[:tags] }
+
+  let(:task_commands) { container.commands[:tasks] }
+  let(:tag_commands) { container.commands[:tags] }
 
   before do
     inferrable_relations.concat %i(tasks tags task_tags)

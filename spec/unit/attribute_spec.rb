@@ -3,7 +3,6 @@ require 'spec_helper'
 RSpec.describe ROM::SQL::Attribute, :postgres do
   include_context 'users and tasks'
 
-  let(:users) { relations[:users] }
   let(:ds) { users.dataset }
 
   describe '#is' do

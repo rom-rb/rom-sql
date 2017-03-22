@@ -1,8 +1,6 @@
 RSpec.describe ROM::Relation, '#right_join' do
   subject(:relation) { relations[:tasks] }
 
-  let(:users) { relations[:users] }
-
   include_context 'users and tasks'
 
   with_adapters :postgres, :mysql do

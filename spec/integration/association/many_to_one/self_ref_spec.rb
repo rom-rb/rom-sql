@@ -25,9 +25,9 @@ RSpec.describe ROM::SQL::Association::OneToMany, '#call' do
 
       p1_id = relations[:categories].insert(name: 'P1')
       p2_id = relations[:categories].insert(name: 'P2')
-      c1_id = relations[:categories].insert(name: 'C3', parent_id: p2_id)
-      c2_id = relations[:categories].insert(name: 'C4', parent_id: p1_id)
-      c3_id = relations[:categories].insert(name: 'C5', parent_id: p1_id)
+      relations[:categories].insert(name: 'C3', parent_id: p2_id)
+      relations[:categories].insert(name: 'C4', parent_id: p1_id)
+      relations[:categories].insert(name: 'C5', parent_id: p1_id)
     end
 
     after do

@@ -6,6 +6,7 @@ RSpec.shared_context 'users' do
   end
 
   let(:users) { container.relations[:users] }
+  let(:user_commands) { container.commands[:users] }
 
   let(:jane_id) { 1 }
   let(:joe_id) { 2 }

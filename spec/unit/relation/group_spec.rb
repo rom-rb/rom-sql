@@ -2,7 +2,6 @@ RSpec.describe ROM::Relation, '#group' do
   subject(:relation) { relations[:users] }
 
   let(:notes) { relations[:notes] }
-  let(:tasks) { relations[:tasks] }
 
   include_context 'users and tasks'
 
