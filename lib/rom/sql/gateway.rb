@@ -23,6 +23,8 @@ module ROM
         attr_accessor :instance
       end
 
+      adapter :sql
+
       CONNECTION_EXTENSIONS = {
         postgres: %i(pg_array pg_json pg_enum pg_hstore)
       }.freeze
