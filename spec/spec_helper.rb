@@ -90,7 +90,7 @@ module SileneceWarnings
   end
 end
 
-Warning.singleton_class.prepend(SileneceWarnings) if warning_api_available
+Warning.extend(SileneceWarnings) if warning_api_available
 
 RSpec.configure do |config|
   config.disable_monkey_patching!
