@@ -10,7 +10,6 @@ group :test do
   gem 'pry', platforms: %i(jruby rbx)
   gem 'dry-struct'
   gem 'activesupport', '~> 5.0'
-  gem 'rspec', '~> 3.1'
   gem 'codeclimate-test-reporter', require: false
   gem 'simplecov', require: false
 
