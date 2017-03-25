@@ -2,7 +2,9 @@
 
 ### Changed
 
-* Update `dry-initializer` (flash-gordon)
+* Updated `dry-initializer` (flash-gordon)
+
+[Compare v1.2.1...v1.2.2](https://github.com/rom-rb/rom-sql/compare/v1.2.1...v1.2.2)
 
 ## v1.2.1 2017-03-09
 
