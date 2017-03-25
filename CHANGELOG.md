@@ -1,3 +1,9 @@
+## v1.2.2 2017-03-25
+
+### Changed
+
+* Update `dry-initializer` (flash-gordon)
+
 ## v1.2.1 2017-03-09
 
 ### Fixed
