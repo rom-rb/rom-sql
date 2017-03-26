@@ -48,7 +48,7 @@ module ROM
       #   @example
       #     ROM.container(:sql, 'postgres://localhost/db_name')
       #
-      #   @param [Sequel::Database] connection a connection instance
+      #   @param [String,Symbol] uri connection URI
       #
       # @overload initialize(uri, options)
       #   Connects to a database via URI and options
