@@ -10,9 +10,11 @@ module ROM
           #
           # @api private
           def insert(tuples)
-            tuples.map do |tuple|
+            dataset = tuples.map do |tuple|
               relation.dataset.returning(*relation.columns).insert(tuple)
             end.flatten(1)
+
+            wrap_dataset(dataset)
           end
 
           # Executes multi_insert statement and returns inserted tuples
@@ -36,7 +38,8 @@ module ROM
           #
           # @api private
           def update(tuple)
-            relation.dataset.returning(*relation.columns).update(tuple)
+            dataset = relation.dataset.returning(*relation.columns).update(tuple)
+            wrap_dataset(dataset)
           end
         end
 
