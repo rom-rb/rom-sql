@@ -1,3 +1,9 @@
+## v1.2.3 to-be-released
+
+### Fixed
+
+* Fixed usage of PostgreSQL's commands with a composite relation (flash-gordon)
+
 ## v1.2.2 2017-03-25
 
 ### Changed
