@@ -31,5 +31,13 @@ RSpec.describe ROM::SQL::OrderDSL, :postgres, helpers: true do
       expect(dsl.call { nullif(id.qualified, `''`).desc }.first.sql_literal(conn[:users])).
         to eql(%(NULLIF("users"."id", '') DESC))
     end
+
+    it 'allows to set nulls first/last' do
+      expect(dsl.call { id.desc(nulls: :first) }.first.sql_literal(conn[:users])).
+        to eql(%("id" DESC NULLS FIRST))
+
+      expect(dsl.call { id.desc(nulls: :last) }.first.sql_literal(conn[:users])).
+        to eql(%("id" DESC NULLS LAST))
+    end
   end
 end
