@@ -17,7 +17,7 @@ RSpec.describe 'Commands / Update', seeds: false do
 
       conf.relation(:users) do
         def by_id(id)
-          where(id: id).limit(1)
+          where(id: id)
         end
 
         def by_name(name)
