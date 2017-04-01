@@ -11,18 +11,22 @@ before_script:
   - mysql -u root -e 'create database rom_sql;'
   - rvm get master
 after_success:
-  - '[ "${TRAVIS_JOB_NUMBER#*.}" = "1" ] && [ "$TRAVIS_BRANCH" = "master" ] && bundle exec codeclimate-test-reporter'
+  - '[ -d coverage ] && bundle exec codeclimate-test-reporter'
 script: "bundle exec rake ci"
 rvm:
-  - 2.4.0
-  - 2.3
-  - 2.2
+  - 2.2.7
+  - 2.3.4
+  - 2.4.1
   - rbx-3
-  - jruby-9.1.7.0
+  - jruby-9.1.8.0
+matrix:
+  allow_failures:
+    - rvm: rbx-3
 env:
   global:
     - CODECLIMATE_REPO_TOKEN=03d7f66589572702b12426d2bc71c4de6281a96139e33b335b894264b1f8f0b0
     - JRUBY_OPTS='--dev -J-Xmx1024M'
+    - COVERAGE='true'
 notifications:
   webhooks:
     urls:
