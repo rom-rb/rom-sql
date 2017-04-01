@@ -2,39 +2,69 @@ require 'rom/sql/migration/migrator'
 
 module ROM
   module SQL
-    # Trap for the migration runner. To create a migration
-    # on a specific gateway, use ROM::SQL::Gateway#migration
-    #
-    # @example
-    #   rom = ROM.container(
-    #     default: [:sql, 'sqlite::memory'],
-    #     other: [:sql, 'postgres://localhost/test']
-    #   )
-    #
-    #   # default gateway migrations
-    #   ROM::SQL.migration do
-    #     change do
-    #       create_table(:users) do
-    #         primary_key :id
-    #         String :name
-    #       end
-    #     end
-    #   end
-    #
-    #   # other gateway migrations
-    #   rom.gateways[:other].migration do
-    #     change do
-    #       create_table(:users) do
-    #         primary_key :id
-    #         String :name
-    #       end
-    #     end
-    #   end
-    #
-    # @api public
-    def self.migration(&block)
-      ROM::SQL::Gateway.instance.migration(&block)
+    class << self
+      # Trap for the migration runner. By default migrations are
+      # bound to the gateway you're using to run them.
+      # You also can explicitly pass a container and a gateway name
+      # but this normally won't be not required.
+      #
+      # @example
+      #   rom = ROM.container(
+      #     default: [:sql, 'sqlite::memory'],
+      #     other: [:sql, 'postgres://localhost/test']
+      #   )
+      #
+      #   # default gateway migrations
+      #   ROM::SQL.migration(rom) do
+      #     change do
+      #       create_table(:users) do
+      #         primary_key :id
+      #         String :name
+      #       end
+      #     end
+      #   end
+      #
+      #   # other gateway migrations
+      #   ROM::SQL.migration(rom, :other) do
+      #     change do
+      #       create_table(:users) do
+      #         primary_key :id
+      #         String :name
+      #       end
+      #     end
+      #   end
+      #
+      # @param [ROM::Container] container The container instance used for accessing gateways
+      # @param [Symbol] gateway The gateway name, :default by default
+      #
+      # @api public
+      def migration(*args, &block)
+        if args.any?
+          container, gateway, * = args
+          with_gateway(container.gateways[gateway || :default]) { migration(&block) }
+        else
+          current_gateway.migration(&block)
+        end
+      end
+
+      # @api private
+      attr_accessor :current_gateway
+
+      # This method is used on loading migrations.
+      # Temporally sets the global "current_gateway", you shouln't access it.
+      #
+      # @api private
+      def with_gateway(gateway)
+        current = @current_gateway
+        @current_gateway = gateway
+
+        yield
+      ensure
+        @current_gateway = current
+      end
     end
+
+    @current_gateway = nil
 
     module Migration
       Sequel.extension :migration
@@ -54,7 +84,9 @@ module ROM
       #
       # @api public
       def pending_migrations?
-        migrator.pending?
+        ROM::SQL.with_gateway(self) {
+          migrator.pending?
+        }
       end
 
       # Migration DSL
@@ -76,7 +108,9 @@ module ROM
       #
       # @api public
       def run_migrations(options = {})
-        migrator.run(options)
+        ROM::SQL.with_gateway(self) {
+          migrator.run(options)
+        }
       end
     end
   end

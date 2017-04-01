@@ -16,7 +16,7 @@ module ROM
         private
 
         def gateway
-          ROM::SQL::Gateway.instance
+          ROM::SQL::RakeSupport.env.gateways[:default]
         end
       end
     end

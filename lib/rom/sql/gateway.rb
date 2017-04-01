@@ -17,12 +17,6 @@ module ROM
       include Dry::Core::Constants
       include Migration
 
-      class << self
-        # FIXME: get rid of this and figure out a nicer way of handling migration DSL
-        # we want to have global access ONLY when running migration tasks
-        attr_accessor :instance
-      end
-
       adapter :sql
 
       CONNECTION_EXTENSIONS = {
@@ -96,8 +90,6 @@ module ROM
         @options = options
 
         super
-
-        self.class.instance = self
       end
 
       # Disconnect from the gateway's database
