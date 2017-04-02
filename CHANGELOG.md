@@ -1,5 +1,9 @@
 ## v1.2.3 to-be-released
 
+### Added
+
+* New `Relation#exist?` predicate checks if the relation has at least one tuple (flash-gordon)
+
 ### Fixed
 
 * Fixed usage of PostgreSQL's commands with a composite relation (flash-gordon)
