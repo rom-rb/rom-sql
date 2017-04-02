@@ -757,6 +757,35 @@ module ROM
           new(dataset.__send__(__method__, relation.dataset, options, &block))
         end
 
+        # Checks whether a relation has at least one tuple
+        #
+        # @overload exists?(filter = nil)
+        #   @example
+        #     users.where(name: 'John').exist? # => true
+        #
+        #     users.exist?(name: 'Klaus') # => false
+        #
+        #   @param [Hash] filter Optional restrictions to filter the relation
+        #
+        # @overload exists?
+        #   @example
+        #     users.exist? { name.is('klaus') } # => false
+        #
+        #   @yield The block filters the relation using `where DSL`
+        #
+        # @return [TrueClass, FalseClass]
+        #
+        # @api public
+        def exist?(filter = nil, &block)
+          if filter
+            where(filter).exist?
+          elsif block
+            where(&block).exist?
+          else
+            limit(1).count == 1
+          end
+        end
+
         # Return if a restricted relation has 0 tuples
         #
         # @example
@@ -766,13 +795,13 @@ module ROM
         #
         #   users.unique?(email: 'jane@doe.org') # false
         #
-        # @param [Hash] criteria The condition hash for  WHERE clause
+        # @param [Hash] criteria The condition hash for WHERE clause
         #
         # @return [TrueClass, FalseClass]
         #
         # @api public
         def unique?(criteria)
-          where(criteria).count.zero?
+          !exist?(criteria)
         end
 
         # Return a new relation from a raw SQL string
