@@ -759,31 +759,21 @@ module ROM
 
         # Checks whether a relation has at least one tuple
         #
-        # @overload exists?(filter = nil)
-        #   @example
-        #     users.where(name: 'John').exist? # => true
+        #  @example
+        #    users.where(name: 'John').exist? # => true
         #
-        #     users.exist?(name: 'Klaus') # => false
+        #    users.exist?(name: 'Klaus') # => false
         #
-        #   @param [Hash] filter Optional restrictions to filter the relation
+        #    users.exist? { name.is('klaus') } # => false
         #
-        # @overload exists?
-        #   @example
-        #     users.exist? { name.is('klaus') } # => false
-        #
-        #   @yield The block filters the relation using `where DSL`
+        #   @param [Array<Object>] args Optional restrictions to filter the relation
+        #   @yield An optional block filters the relation using `where DSL`
         #
         # @return [TrueClass, FalseClass]
         #
         # @api public
-        def exist?(filter = nil, &block)
-          if filter
-            where(filter).exist?
-          elsif block
-            where(&block).exist?
-          else
-            limit(1).count == 1
-          end
+        def exist?(*args, &block)
+          !where(*args, &block).limit(1).count.zero?
         end
 
         # Return if a restricted relation has 0 tuples
