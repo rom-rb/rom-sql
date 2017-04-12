@@ -47,7 +47,10 @@ module ROM
         # Return a schema
         #
         # @api private
-        def call
+        def call(&block)
+          instance_exec(&block) if block
+          instance_exec(&definition) if definition
+
           SQL::Schema.define(
             relation, opts.merge(attributes: attributes.values, attr_class: SQL::Attribute)
           )

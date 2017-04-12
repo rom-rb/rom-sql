@@ -3,7 +3,7 @@ RSpec.describe ROM::SQL::Schema, :postgres do
     it 'returns primary key attributes' do
       schema = Class.new(ROM::Relation[:sql]).schema do
         attribute :id, ROM::SQL::Types::Serial
-      end
+      end.call
 
       schema.finalize!
 
@@ -13,7 +13,7 @@ RSpec.describe ROM::SQL::Schema, :postgres do
     it 'returns empty array when there is no PK defined' do
       schema = Class.new(ROM::Relation[:sql]).schema do
         attribute :id, ROM::SQL::Types::Int
-      end
+      end.call
 
       schema.finalize!
 
