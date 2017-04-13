@@ -18,6 +18,7 @@ module ROM
       include SQL
 
       adapter :sql
+      schema_class SQL::Schema
 
       use :key_inference
       use :auto_combine

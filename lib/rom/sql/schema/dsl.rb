@@ -44,18 +44,6 @@ module ROM
           @associations_dsl = AssociationsDSL.new(relation, &block)
         end
 
-        # Return a schema
-        #
-        # @api private
-        def call(&block)
-          instance_exec(&block) if block
-          instance_exec(&definition) if definition
-
-          SQL::Schema.define(
-            relation, opts.merge(attributes: attributes.values, attr_class: SQL::Attribute)
-          )
-        end
-
         private
 
         # Return schema opts
@@ -64,7 +52,7 @@ module ROM
         #
         # @api private
         def opts
-          opts = { inferrer: inferrer }
+          opts = { **super, attr_class: SQL::Attribute }
 
           if associations_dsl
             { **opts, associations: associations_dsl.call }
