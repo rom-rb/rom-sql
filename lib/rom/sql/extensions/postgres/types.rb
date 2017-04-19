@@ -40,6 +40,12 @@ module ROM
 
         JSONB = JSONBArray | JSONBHash | JSONBOp
 
+        Attribute.register_type(JSONB) do
+          def contains(type, keys)
+            Sequel::Postgres::JSONBOp.new(type.meta[:name]).contains(keys)
+          end
+        end
+
         # HStore
 
         HStoreR = Types.Constructor(Hash, &:to_hash)
