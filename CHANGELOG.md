@@ -10,13 +10,13 @@
 
 ### Changed
 
-* Global private interface `SQL::Gateway.instance` has been removed. Now if you run migrations
-  with ROM you need to set up a ROM container in the `db:setup` task with something similar to
+* Global private interface `SQL::Gateway.instance` has been deprecated. Now if you run migrations
+  with ROM you should set up a ROM config in the `db:setup` task with something similar to
 
   ```ruby
     namespace :db
       task :setup do
-        ROM::SQL::RakeSupport.env = ROM.container(:sql, '...')
+        ROM::SQL::RakeSupport.env = ROM::Configuration.new(:sql, ENV['DATABASE_URL'])
       end
     end
   ```
