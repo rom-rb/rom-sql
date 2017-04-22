@@ -52,6 +52,14 @@ RSpec.describe 'MigrationTasks', :postgres, skip_tables: true do
         }.to output("<= db:migrate executed\n").to_stdout
       end
     end
+
+    it 'raises an error on missing env' do
+      ROM::SQL::RakeSupport.env = nil
+
+      expect {
+        Rake::Task["db:migrate"].execute
+      }.to raise_error(ROM::SQL::RakeSupport::MissingEnv)
+    end
   end
 
   context 'db:clean' do
