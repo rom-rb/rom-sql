@@ -11,8 +11,14 @@ RSpec.describe 'MigrationTasks', :postgres, skip_tables: true do
 
   let(:migrator) { container.gateways[:default].migrator }
 
-  before do
-    allow(ROM::SQL::RakeSupport).to receive(:env) { conf }
+  around do |ex|
+    ROM::SQL::RakeSupport.env = conf
+
+    begin
+      ex.run
+    ensure
+      ROM::SQL::RakeSupport.env = nil
+    end
   end
 
   context 'db:reset' do
