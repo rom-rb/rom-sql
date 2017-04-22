@@ -1,4 +1,4 @@
-## v1.2.3 to-be-released
+## v1.3.0 to-be-released
 
 ### Added
 
@@ -7,6 +7,19 @@
 ### Fixed
 
 * Fixed usage of PostgreSQL's commands with a composite relation (flash-gordon)
+
+### Changed
+
+* Global private interface `SQL::Gateway.instance` has been removed. Now if you run migrations
+  with ROM you need to set up a ROM container in the `db:setup` task with something similar to
+
+  ```ruby
+    namespace :db
+      task :setup do
+        ROM::SQL::RakeSupport.env = ROM.container(:sql, '...')
+      end
+    end
+  ```
 
 ## v1.2.2 2017-03-25
 
