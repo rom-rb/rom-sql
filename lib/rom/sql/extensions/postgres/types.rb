@@ -40,7 +40,7 @@ module ROM
 
         JSONB = JSONBArray | JSONBHash | JSONBOp
 
-        Attribute.register_type(JSONB) do
+        Attribute::TypeExtensions.register(JSONB) do
           def contains(type, keys)
             Sequel::Postgres::JSONBOp.new(type.meta[:name]).contains(keys)
           end

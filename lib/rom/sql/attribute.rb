@@ -14,27 +14,60 @@ module ROM
       # Error raised when an attribute cannot be qualified
       QualifyError = Class.new(StandardError)
 
-      TypeExtensions = {}
-
-      # Registers a set of operations supported for a specific type
-      #
-      # @example
-      #   ROM::SQL::Attribute.register_type(ROM::SQL::Types::PG::JSONB) do
-      #     def contains(type, keys)
-      #       Sequel::Postgres::JSONBOp.new(type.meta[:name]).contains(keys)
-      #     end
-      #   end
-      #
-      # @param [Dry::Types::Type] type Type
+      # Type-specific methods
       #
       # @api public
-      def self.register_type(type, &block)
-        raise ArgumentError, "Type #{ type } already registered" if TypeExtensions.key?(type)
-        mod = Module.new(&block)
-        ctx = Object.new.extend(mod)
-        functions = mod.instance_methods.each_with_object({}) { |m, ms| ms[m] = ctx.method(m) }
-        TypeExtensions[type] = functions
+      module TypeExtensions
+        class << self
+          # Gets extensions for a type
+          #
+          # @param [Dry::Types::Type] type
+          #
+          # @return [Hash]
+          #
+          # @api public
+          def [](type)
+            @types[unwrap_type(type)] || EMPTY_HASH
+          end
+
+          # Unwraps an optional type
+          #
+          # TODO: add Type#optional? method to dry-types and clean this up
+          #
+          # @api private
+          def unwrap_type(type)
+            if type.respond_to?(:left) && type.left == Types::Strict::Nil
+              type.right
+            else
+              type
+            end
+          end
+
+          # Registers a set of operations supported for a specific type
+          #
+          # @example
+          #   ROM::SQL::Attribute::TypeExtensions.register(ROM::SQL::Types::PG::JSONB) do
+          #     def contains(type, keys)
+          #       Sequel::Postgres::JSONBOp.new(type.meta[:name]).contains(keys)
+          #     end
+          #   end
+          #
+          # @param [Dry::Types::Type] type Type
+          #
+          # @api public
+          def register(type, &block)
+            raise ArgumentError, "Type #{ type } already registered" if @types.key?(type)
+            mod = Module.new(&block)
+            ctx = Object.new.extend(mod)
+            functions = mod.instance_methods.each_with_object({}) { |m, ms| ms[m] = ctx.method(m) }
+            @types[type] = functions
+          end
+        end
+
+        @types = {}
       end
+
+      option :extensions, type: Dry::Types['hash'], default: -> { TypeExtensions[type] }
 
       # Return a new attribute with an alias
       #
@@ -257,11 +290,6 @@ module ROM
         @sql_expr ||= (meta[:sql_expr] || Sequel[to_sym])
       end
 
-      # @api private
-      def type_extensions
-        @type_extensions ||= TypeExtensions[unwrap_type(type)] || EMPTY_HASH
-      end
-
       # Delegate to sql expression if it responds to a given method
       #
       # @api private
@@ -270,8 +298,8 @@ module ROM
           __cmp__(meth, args[0])
         elsif sql_expr.respond_to?(meth)
           meta(sql_expr: sql_expr.__send__(meth, *args, &block))
-        elsif type_extensions.key?(meth)
-          type_extensions[meth].(type, *args, &block)
+        elsif extensions.key?(meth)
+          extensions[meth].(type, *args, &block)
         else
           super
         end
@@ -291,17 +319,6 @@ module ROM
           end
 
         Sequel::SQL::BooleanExpression.new(op, self, value)
-      end
-
-      # Unwraps an optional type
-      #
-      # @api private
-      def unwrap_type(type)
-        if type.respond_to?(:left) && type.left == Types::Strict::Nil
-          type.right
-        else
-          type
-        end
       end
     end
   end

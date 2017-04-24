@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'rom', git: 'https://github.com/rom-rb/rom.git', branch: 'master'
+gem 'rom', git: 'https://github.com/rom-rb/rom.git', branch: 'use-initializer-in-attribute'
 gem 'rom-mapper', git: 'https://github.com/rom-rb/rom-mapper.git', branch: 'master'
 gem 'dry-types', git: 'https://github.com/dry-rb/dry-types.git', branch: 'master'
 
