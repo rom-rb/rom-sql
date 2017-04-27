@@ -10,8 +10,18 @@ RSpec.describe ROM::SQL::Attribute, :postgres do
       expect(users[:id].is(1).sql_literal(ds)).to eql('("id" = 1)')
     end
 
-    it 'returns a boolean expression for qualified attribute' do
+    it 'returns a boolean equality expression for qualified attribute' do
       expect((users[:id].qualified.is(1)).sql_literal(ds)).to eql('("users"."id" = 1)')
+    end
+  end
+
+  describe '#not' do
+    it 'returns a negated boolean equality expression' do
+      expect(users[:id].not(1).sql_literal(ds)).to eql('("id" != 1)')
+    end
+
+    it 'returns a negated boolean equality expression for qualified attribute' do
+      expect((users[:id].qualified.not(1)).sql_literal(ds)).to eql('("users"."id" != 1)')
     end
   end
 

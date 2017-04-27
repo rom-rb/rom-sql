@@ -205,6 +205,20 @@ module ROM
         __cmp__(:'=', other)
       end
 
+      # Return a boolean expression with `!=` operator
+      #
+      # @example
+      #   users.where { id.not(1) }
+      #
+      #   users.where(users[:id].not(1))
+      #
+      # @param [Object] other Any SQL-compatible object type
+      #
+      # @api public
+      def not(other)
+        __cmp__(:'!=', other)
+      end
+
       # Return a boolean expression with an inclusion test
       #
       # If the single argument passed to the method is a Range object
