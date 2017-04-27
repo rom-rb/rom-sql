@@ -11,6 +11,7 @@ module ROM
     # @api public
     class Attribute < ROM::Schema::Attribute
       OPERATORS = %i[>= <= > <].freeze
+      NONSTANDARD_EQUALITY_VALUES = [true, false, nil].freeze
 
       # Error raised when an attribute cannot be qualified
       QualifyError = Class.new(StandardError)
@@ -191,7 +192,7 @@ module ROM
           end
       end
 
-      # Return a boolean expression with `=` operator
+      # Return a boolean expression with an equality operator
       #
       # @example
       #   users.where { id.is(1) }
@@ -202,10 +203,14 @@ module ROM
       #
       # @api public
       def is(other)
-        __cmp__(:'=', other)
+        if NONSTANDARD_EQUALITY_VALUES.include?(other)
+          __cmp__(:IS, other)
+        else
+          __cmp__(:'=', other)
+        end
       end
 
-      # Return a boolean expression with `!=` operator
+      # Return a boolean expression with a negated equality operator
       #
       # @example
       #   users.where { id.not(1) }
@@ -216,7 +221,7 @@ module ROM
       #
       # @api public
       def not(other)
-        __cmp__(:'!=', other)
+        ~is(other)
       end
 
       # Return a boolean expression with an inclusion test
