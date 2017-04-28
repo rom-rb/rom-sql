@@ -27,20 +27,8 @@ module ROM
           #
           # @api public
           def [](type)
-            @types[unwrap_type(type)] || EMPTY_HASH
-          end
-
-          # Unwraps an optional type
-          #
-          # TODO: add Type#optional? method to dry-types and clean this up
-          #
-          # @api private
-          def unwrap_type(type)
-            if type.respond_to?(:left) && type.left == Types::Strict::Nil
-              type.right
-            else
-              type
-            end
+            unwrapped = type.optional? ? type.right : type
+            @types[unwrapped.pristine] || EMPTY_HASH
           end
 
           # Registers a set of operations supported for a specific type
