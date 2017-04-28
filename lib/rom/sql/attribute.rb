@@ -55,7 +55,7 @@ module ROM
         @types = {}
       end
 
-      option :extensions, type: Dry::Types['hash'], default: -> { TypeExtensions[type] }
+      option :extensions, type: Types::Hash, default: -> { TypeExtensions[type] }
 
       # Return a new attribute with an alias
       #
