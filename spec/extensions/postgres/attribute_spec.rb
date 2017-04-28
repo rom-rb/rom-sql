@@ -1,6 +1,9 @@
 RSpec.describe 'ROM::SQL::Attribute', :postgres do
   include_context 'database setup'
 
+  jsonb_hash = -> v { Sequel::Postgres::JSONBHash.new(v) }
+  jsonb_array = -> v { Sequel::Postgres::JSONBArray.new(v) }
+
   before do
     conn.drop_table?(:pg_people)
     conn.drop_table?(:people)
@@ -8,7 +11,6 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
     conf.relation(:people) do
       schema(:pg_people, infer: true)
     end
-
   end
 
   let(:people) { relations[:people] }
@@ -27,13 +29,94 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
         define(:update)
       end
 
-      create_person.(name: 'John Doe', fields: [{ name: 'age', value: '30' }])
+      create_person.(name: 'John Doe', fields: [{ name: 'age', value: '30' },
+                                                { name: 'height', value: 180 }])
       create_person.(name: 'Jade Doe', fields: [{ name: 'age', value: '25' }])
     end
 
     it 'allows to query jsonb by inclusion' do
-      expect(people.select(:name).where { fields.contains([value: '30']) }.to_a).
-        to eql([name: 'John Doe'])
+      expect(people.select(:name).where { fields.contain([value: '30']) }.one).
+        to eql(name: 'John Doe')
+    end
+
+    it 'cat project result of contains' do
+      expect(people.select { fields.contain([value: '30']).as(:contains) }.to_a).
+        to eql([{ contains: true }, { contains: false }])
+    end
+
+    it 'fetches data from jsonb array by index' do
+      expect(people.select { [fields.get(1).as(:field)] }.where(name: 'John Doe').one).
+        to eql(field: jsonb_hash['name' => 'height', 'value' => 180])
+    end
+
+    it 'fetches data from jsonb array' do
+      expect(people.select { fields.get(1).get_text('value').as(:height) }.where(name: 'John Doe').one).
+        to eql(height: '180')
+    end
+
+    it 'fetches data with path' do
+      expect(people.select(people[:fields].get_text('1', 'value').as(:height)).to_a).
+        to eql([{ height: '180' }, { height: nil }])
+    end
+
+    it 'deletes key from result' do
+      expect(people.select { fields.delete(0).as(:result) }.limit(1).one).
+        to eq(result: jsonb_array[['name' => 'height', 'value' => 180]])
+    end
+
+    it 'deletes by path' do
+      expect(people.select { fields.delete('0', 'name').delete('1', 'name').as(:result) }.limit(1).one).
+        to eq(result: jsonb_array[[{ 'value' => '30' }, { 'value' => 180 }]])
+    end
+  end
+
+  describe 'using map' do
+    before do
+      conn.create_table :pg_people do
+        primary_key :id
+        String :name
+        column :data, :jsonb
+      end
+
+      conf.commands(:people) do
+        define(:create)
+        define(:update)
+      end
+
+      create_person.(name: 'John Doe', data: { age: 30, height: 180 })
+      create_person.(name: 'Jade Doe', data: { age: 25 })
+    end
+
+    it 'queries data by inclusion' do
+      expect(people.select(:name).where { data.contain(age: 30) }.one).
+        to eql(name: 'John Doe')
+    end
+
+    it 'queries data by left inclusion' do
+      expect(people.select(:name).where { data.contained_by(age: 25, foo: 'bar') }.one).
+        to eql(name: 'Jade Doe')
+    end
+
+    it 'checks for key presence' do
+      expect(people.select { data.has_key('height').as(:there) }.to_a).
+        to eql([{ there: true }, { there: false }])
+
+      expect(people.select(:name).where { data.has_any_key('height', 'width') }.one).
+        to eql(name: 'John Doe')
+
+      expect(people.select(:name).where { data.has_all_keys('height', 'age') }.one).
+        to eql(name: 'John Doe')
+    end
+
+    it 'concatenates JSON values' do
+      expect(people.select { [id, data.merge(height: 165).as(:result)] }.by_pk(2).one).
+        to eql(id: 2, result: jsonb_hash['age' => 25, 'height' => 165])
+    end
+
+    it 'deletes key from result' do
+      expect(people.select { data.delete('height').as(:result) }.to_a).
+        to eql([{ result: jsonb_hash['age' => 30] },
+                { result: jsonb_hash['age' => 25] }])
     end
   end
 end

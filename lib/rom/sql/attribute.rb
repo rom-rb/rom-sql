@@ -47,7 +47,7 @@ module ROM
             raise ArgumentError, "Type #{ type } already registered" if @types.key?(type)
             mod = Module.new(&block)
             ctx = Object.new.extend(mod)
-            functions = mod.instance_methods.each_with_object({}) { |m, ms| ms[m] = ctx.method(m) }
+            functions = mod.public_instance_methods.each_with_object({}) { |m, ms| ms[m] = ctx.method(m) }
             @types[type] = functions
           end
         end
@@ -287,7 +287,7 @@ module ROM
         elsif sql_expr.respond_to?(meth)
           meta(sql_expr: sql_expr.__send__(meth, *args, &block))
         elsif extensions.key?(meth)
-          extensions[meth].(type, *args, &block)
+          extensions[meth].(type, sql_expr, *args, &block)
         else
           super
         end
