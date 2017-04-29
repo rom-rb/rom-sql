@@ -92,12 +92,12 @@ module ROM
           #   @api public
           class_eval <<-RUBY, __FILE__, __LINE__ + 1
             def by_pk(pk)
-              if pk.nil?
+              if primary_key.nil?
                 raise MissingPrimaryKeyError.new(
-                  "Missing primary key for: \#{schema.name}"
+                  "Missing primary key for :\#{schema.name}"
                 )
               end
-              where(self.class.schema[:#{schema.primary_key_name}] => pk)
+              where(self.class.schema[self.class.schema.primary_key_name].qualified => pk)
             end
           RUBY
         end

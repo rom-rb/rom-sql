@@ -105,7 +105,7 @@ module ROM
       end
 
       # @api private
-      def finalize!(*)
+      def finalize!(*args)
         super do
           initialize_primary_key_names
         end
