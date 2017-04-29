@@ -42,40 +42,40 @@ module ROM
 
         Attribute::TypeExtensions.register(JSONB) do
           def contain(type, expr, value)
-            Attribute.new(Types::Bool).meta(sql_expr: expr.pg_jsonb.contains(value))
+            Attribute[Types::Bool].meta(sql_expr: expr.pg_jsonb.contains(value))
           end
 
           def contained_by(type, expr, value)
-            Attribute.new(Types::Bool).meta(sql_expr: expr.pg_jsonb.contained_by(value))
+            Attribute[Types::Bool].meta(sql_expr: expr.pg_jsonb.contained_by(value))
           end
 
           def get(type, expr, *path)
-            Attribute.new(JSONB).meta(sql_expr: expr.pg_jsonb[path_args(path)])
+            Attribute[JSONB].meta(sql_expr: expr.pg_jsonb[path_args(path)])
           end
 
           def get_text(type, expr, *path)
-            Attribute.new(Types::String).meta(sql_expr: expr.pg_jsonb.get_text(path_args(path)))
+            Attribute[Types::String].meta(sql_expr: expr.pg_jsonb.get_text(path_args(path)))
           end
 
           def has_key(type, expr, key)
-            Attribute.new(Types::Bool).meta(sql_expr: expr.pg_jsonb.has_key?(key))
+            Attribute[Types::Bool].meta(sql_expr: expr.pg_jsonb.has_key?(key))
           end
 
           def has_any_key(type, expr, *keys)
-            Attribute.new(Types::Bool).meta(sql_expr: expr.pg_jsonb.contain_any(keys))
+            Attribute[Types::Bool].meta(sql_expr: expr.pg_jsonb.contain_any(keys))
           end
 
           def has_all_keys(type, expr, *keys)
-            Attribute.new(Types::Bool).meta(sql_expr: expr.pg_jsonb.contain_all(keys))
+            Attribute[Types::Bool].meta(sql_expr: expr.pg_jsonb.contain_all(keys))
           end
 
           def merge(type, expr, value)
-            Attribute.new(JSONB).meta(sql_expr: expr.pg_jsonb.concat(value))
+            Attribute[JSONB].meta(sql_expr: expr.pg_jsonb.concat(value))
           end
 
           def delete(type, expr, *path)
             sql_expr = path.size == 1 ? expr.pg_jsonb - path : expr.pg_jsonb.delete_path(path)
-            Attribute.new(JSONB).meta(sql_expr: sql_expr)
+            Attribute[JSONB].meta(sql_expr: sql_expr)
           end
 
           private

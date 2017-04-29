@@ -1,4 +1,5 @@
 require 'sequel/core'
+require 'dry/core/cache'
 
 require 'rom/schema/attribute'
 require 'rom/sql/projection_dsl'
@@ -53,6 +54,13 @@ module ROM
         end
 
         @types = {}
+      end
+
+      extend Dry::Core::Cache
+
+      # @api private
+      def self.[](*args)
+        fetch_or_store(args) { new(*args) }
       end
 
       option :extensions, type: Types::Hash, default: -> { TypeExtensions[type] }
