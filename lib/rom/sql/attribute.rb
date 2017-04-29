@@ -292,10 +292,10 @@ module ROM
       def method_missing(meth, *args, &block)
         if OPERATORS.include?(meth)
           __cmp__(meth, args[0])
-        elsif sql_expr.respond_to?(meth)
-          meta(sql_expr: sql_expr.__send__(meth, *args, &block))
         elsif extensions.key?(meth)
           extensions[meth].(type, sql_expr, *args, &block)
+        elsif sql_expr.respond_to?(meth)
+          meta(sql_expr: sql_expr.__send__(meth, *args, &block))
         else
           super
         end

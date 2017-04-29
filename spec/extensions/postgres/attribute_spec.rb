@@ -68,6 +68,12 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
       expect(people.select { fields.delete('0', 'name').delete('1', 'name').as(:result) }.limit(1).one).
         to eq(result: jsonb_array[[{ 'value' => '30' }, { 'value' => 180 }]])
     end
+
+    it 'concatenates JSON values' do
+      expect(people.select { (fields + [name: 'height', value: 165]).as(:result) }.by_pk(2).one).
+        to eq(result: jsonb_array[[{ 'name' => 'age', 'value' => '25' },
+                                   { 'name' => 'height', 'value' => 165 }]])
+    end
   end
 
   describe 'using map' do
@@ -109,8 +115,8 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
     end
 
     it 'concatenates JSON values' do
-      expect(people.select { [id, data.merge(height: 165).as(:result)] }.by_pk(2).one).
-        to eql(id: 2, result: jsonb_hash['age' => 25, 'height' => 165])
+      expect(people.select { data.merge(height: 165).as(:result) }.by_pk(2).one).
+        to eql(result: jsonb_hash['age' => 25, 'height' => 165])
     end
 
     it 'deletes key from result' do
