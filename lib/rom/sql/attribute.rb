@@ -11,6 +11,7 @@ module ROM
     # @api public
     class Attribute < ROM::Schema::Attribute
       OPERATORS = %i[>= <= > <].freeze
+      NONSTANDARD_EQUALITY_VALUES = [true, false, nil].freeze
 
       # Error raised when an attribute cannot be qualified
       QualifyError = Class.new(StandardError)
@@ -191,7 +192,7 @@ module ROM
           end
       end
 
-      # Return a boolean expression with `=` operator
+      # Return a boolean expression with an equality operator
       #
       # @example
       #   users.where { id.is(1) }
@@ -202,7 +203,38 @@ module ROM
       #
       # @api public
       def is(other)
-        __cmp__(:'=', other)
+        self =~ other
+      end
+
+      # @api public
+      def =~(other)
+        meta(sql_expr: sql_expr =~ binary_operation_arg(other))
+      end
+
+      # Return a boolean expression with a negated equality operator
+      #
+      # @example
+      #   users.where { id.not(1) }
+      #
+      #   users.where(users[:id].not(1))
+      #
+      # @param [Object] other Any SQL-compatible object type
+      #
+      # @api public
+      def not(other)
+        !is(other)
+      end
+
+      # Negate the attribute's sql expression
+      #
+      # @example
+      #   users.where(!users[:id].is(1))
+      #
+      # @return [Attribute]
+      #
+      # @api public
+      def !
+        ~self
       end
 
       # Return a boolean expression with an inclusion test
@@ -306,15 +338,19 @@ module ROM
       #
       # @api private
       def __cmp__(op, other)
-        value =
-          case other
-          when Sequel::SQL::Expression
-            value
-          else
-            type[other]
-          end
+        Sequel::SQL::BooleanExpression.new(op, self, binary_operation_arg(other))
+      end
 
-        Sequel::SQL::BooleanExpression.new(op, self, value)
+      # Preprocess input value for binary operations
+      #
+      # @api private
+      def binary_operation_arg(value)
+        case value
+        when Sequel::SQL::Expression
+          value
+        else
+          type[value]
+        end
       end
     end
   end

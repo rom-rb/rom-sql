@@ -4,10 +4,13 @@
 
 * New `Relation#exist?` predicate checks if the relation has at least one tuple (flash-gordon)
 * Support for JSONB transformations and queries using native DSL (flash-gordon)
+* Add `ROM::SQL::Attribute#not` for negated boolean equality expressions (AMHOL)
+* Add `ROM::SQL::Attribute#!` for negated attribute's sql expressions (solnic)
 
 ### Fixed
 
 * Fixed usage of PostgreSQL's commands with a composite relation (flash-gordon)
+* Translation of `true/false/nil` equality checks to `is/is not` SQL statements in `ROM::SQL::Attribute#is` (AMHOL)
 
 ### Changed
 
