@@ -89,6 +89,12 @@ RSpec.describe ROM::SQL::Attribute, :postgres do
     end
   end
 
+  describe '#!' do
+    it 'returns a new attribute with negated sql expr' do
+      expect((!users[:id].is(1)).sql_literal(ds)).to eql('("id" != 1)')
+    end
+  end
+
   describe '#concat' do
     it 'returns a concat function attribute' do
       expect(users[:id].concat(users[:name]).as(:uid).sql_literal(ds)).

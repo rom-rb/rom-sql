@@ -203,11 +203,12 @@ module ROM
       #
       # @api public
       def is(other)
-        if NONSTANDARD_EQUALITY_VALUES.include?(other)
-          __cmp__(:IS, other)
-        else
-          __cmp__(:'=', other)
-        end
+        self =~ other
+      end
+
+      # @api public
+      def =~(other)
+        meta(sql_expr: sql_expr =~ binary_operation_arg(other))
       end
 
       # Return a boolean expression with a negated equality operator
@@ -221,7 +222,19 @@ module ROM
       #
       # @api public
       def not(other)
-        ~is(other)
+        !is(other)
+      end
+
+      # Negate the attribute's sql expression
+      #
+      # @example
+      #   users.where(!users[:id].is(1))
+      #
+      # @return [Attribute]
+      #
+      # @api public
+      def !
+        ~self
       end
 
       # Return a boolean expression with an inclusion test
@@ -325,15 +338,19 @@ module ROM
       #
       # @api private
       def __cmp__(op, other)
-        value =
-          case other
-          when Sequel::SQL::Expression
-            value
-          else
-            type[other]
-          end
+        Sequel::SQL::BooleanExpression.new(op, self, binary_operation_arg(other))
+      end
 
-        Sequel::SQL::BooleanExpression.new(op, self, value)
+      # Preprocess input value for binary operations
+      #
+      # @api private
+      def binary_operation_arg(value)
+        case value
+        when Sequel::SQL::Expression
+          value
+        else
+          type[value]
+        end
       end
     end
   end
