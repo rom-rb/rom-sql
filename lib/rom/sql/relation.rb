@@ -78,7 +78,7 @@ module ROM
           #   @api public
           class_eval <<-RUBY, __FILE__, __LINE__ + 1
             def by_pk(#{schema.primary_key.map(&:name).join(', ')})
-              where(#{schema.primary_key.map { |attr| "schema[:#{attr.name}] => #{attr.name}" }.join(', ')})
+              where(#{schema.primary_key.map { |attr| "self.class.schema[:#{attr.name}] => #{attr.name}" }.join(', ')})
             end
           RUBY
         else
@@ -90,14 +90,16 @@ module ROM
           #   @return [SQL::Relation]
           #
           #   @api public
-          define_method(:by_pk) do |pk|
-            if primary_key.nil?
-              raise MissingPrimaryKeyError.new("Missing primary key for "\
-                                               ":#{ schema.name }")
-            else
-              where(schema[primary_key] => pk)
+          class_eval <<-RUBY, __FILE__, __LINE__ + 1
+            def by_pk(pk)
+              if pk.nil?
+                raise MissingPrimaryKeyError.new(
+                  "Missing primary key for: \#{schema.name}"
+                )
+              end
+              where(self.class.schema[:#{schema.primary_key_name}] => pk)
             end
-          end
+          RUBY
         end
       end
 
