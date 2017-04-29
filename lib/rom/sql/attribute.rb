@@ -1,4 +1,5 @@
 require 'sequel/core'
+require 'dry/core/cache'
 
 require 'rom/schema/attribute'
 require 'rom/sql/projection_dsl'
@@ -13,6 +14,56 @@ module ROM
 
       # Error raised when an attribute cannot be qualified
       QualifyError = Class.new(StandardError)
+
+      # Type-specific methods
+      #
+      # @api public
+      module TypeExtensions
+        class << self
+          # Gets extensions for a type
+          #
+          # @param [Dry::Types::Type] type
+          #
+          # @return [Hash]
+          #
+          # @api public
+          def [](type)
+            unwrapped = type.optional? ? type.right : type
+            @types[unwrapped.pristine] || EMPTY_HASH
+          end
+
+          # Registers a set of operations supported for a specific type
+          #
+          # @example
+          #   ROM::SQL::Attribute::TypeExtensions.register(ROM::SQL::Types::PG::JSONB) do
+          #     def contains(type, keys)
+          #       Sequel::Postgres::JSONBOp.new(type.meta[:name]).contains(keys)
+          #     end
+          #   end
+          #
+          # @param [Dry::Types::Type] type Type
+          #
+          # @api public
+          def register(type, &block)
+            raise ArgumentError, "Type #{ type } already registered" if @types.key?(type)
+            mod = Module.new(&block)
+            ctx = Object.new.extend(mod)
+            functions = mod.public_instance_methods.each_with_object({}) { |m, ms| ms[m] = ctx.method(m) }
+            @types[type] = functions
+          end
+        end
+
+        @types = {}
+      end
+
+      extend Dry::Core::Cache
+
+      # @api private
+      def self.[](*args)
+        fetch_or_store(args) { new(*args) }
+      end
+
+      option :extensions, type: Types::Hash, default: -> { TypeExtensions[type] }
 
       # Return a new attribute with an alias
       #
@@ -241,6 +292,8 @@ module ROM
       def method_missing(meth, *args, &block)
         if OPERATORS.include?(meth)
           __cmp__(meth, args[0])
+        elsif extensions.key?(meth)
+          extensions[meth].(type, sql_expr, *args, &block)
         elsif sql_expr.respond_to?(meth)
           meta(sql_expr: sql_expr.__send__(meth, *args, &block))
         else

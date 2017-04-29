@@ -40,6 +40,166 @@ module ROM
 
         JSONB = JSONBArray | JSONBHash | JSONBOp
 
+        Attribute::TypeExtensions.register(JSONB) do
+          # Checks whether the JSON value includes a json value
+          # Translates to the @> operator
+          #
+          # @example
+          #   people.where { fields.contain(gender: 'Female') }
+          #   people.where(people[:fields].contain([name: 'age']))
+          #   people.select { fields.contain(gender: 'Female').as(:is_female) }
+          #
+          # @param [Hash,Array,Object] value
+          #
+          # @return [SQL::Attribute<Types::Bool>]
+          #
+          # @api public
+          def contain(type, expr, value)
+            Attribute[Types::Bool].meta(sql_expr: expr.pg_jsonb.contains(value))
+          end
+
+          # Checks whether the JSON value is contained by other value
+          # Translates to the <@ operator
+          #
+          # @example
+          #   people.where { custom_values.contained_by(age: 25, foo: 'bar') }
+          #
+          # @param [Hash,Array] value
+          #
+          # @return [SQL::Attribute<Types::Bool>]
+          #
+          # @api public
+          def contained_by(type, expr, value)
+            Attribute[Types::Bool].meta(sql_expr: expr.pg_jsonb.contained_by(value))
+          end
+
+          # Extracts the JSON value using at the specified path
+          # Translates to -> or #> depending on the number of arguments
+          #
+          # @example
+          #   people.select { data.get('age').as(:person_age) }
+          #   people.select { fields.get(0).as(:first_field) }
+          #   people.select { fields.get('0', 'value').as(:first_field_value) }
+          #
+          # @param [Array<Integer>,Array<String>] path Path to extract
+          #
+          # @return [SQL::Attribute<Types::PG::JSONB>]
+          #
+          # @api public
+          def get(type, expr, *path)
+            Attribute[JSONB].meta(sql_expr: expr.pg_jsonb[path_args(path)])
+          end
+
+          # Extracts the JSON value as text using at the specified path
+          # Translates to ->> or #>> depending on the number of arguments
+          #
+          # @example
+          #   people.select { data.get('age').as(:person_age) }
+          #   people.select { fields.get(0).as(:first_field) }
+          #   people.select { fields.get('0', 'value').as(:first_field_value) }
+          #
+          # @param [Array<Integer>,Array<String>] path Path to extract
+          #
+          # @return [SQL::Attribute<Types::String>]
+          #
+          # @api public
+          def get_text(type, expr, *path)
+            Attribute[Types::String].meta(sql_expr: expr.pg_jsonb.get_text(path_args(path)))
+          end
+
+          # Does the JSON value has the specified top-level key
+          # Translates to ?
+          #
+          # @example
+          #   people.where { data.has_key('age') }
+          #
+          # @param [String] key
+          #
+          # @return [SQL::Attribute<Types::Bool>]
+          #
+          # @api public
+          def has_key(type, expr, key)
+            Attribute[Types::Bool].meta(sql_expr: expr.pg_jsonb.has_key?(key))
+          end
+
+          # Does the JSON value has any of the specified top-level keys
+          # Translates to ?|
+          #
+          # @example
+          #   people.where { data.has_any_key('age', 'height') }
+          #
+          # @param [Array<String>] keys
+          #
+          # @return [SQL::Attribute<Types::Bool>]
+          #
+          # @api public
+          def has_any_key(type, expr, *keys)
+            Attribute[Types::Bool].meta(sql_expr: expr.pg_jsonb.contain_any(keys))
+          end
+
+          # Does the JSON value has all the specified top-level keys
+          # Translates to ?&
+          #
+          # @example
+          #   people.where { data.has_all_keys('age', 'height') }
+          #
+          # @param [Array<String>] keys
+          #
+          # @return [SQL::Attribute<Types::Bool>]
+          #
+          # @api public
+          def has_all_keys(type, expr, *keys)
+            Attribute[Types::Bool].meta(sql_expr: expr.pg_jsonb.contain_all(keys))
+          end
+
+          # Concatenates two JSON values
+          # Translates to ||
+          #
+          # @example
+          #   people.select { data.merge(fetched_at: Time.now).as(:data) }
+          #   people.select { (fields + [name: 'height', value: 165]).as(:fields) }
+          #
+          # @param [Hash,Array] value
+          #
+          # @return [SQL::Attribute<Types::PG::JSONB>]
+          #
+          # @api public
+          def merge(type, expr, value)
+            Attribute[JSONB].meta(sql_expr: expr.pg_jsonb.concat(value))
+          end
+          alias_method :+, :merge
+
+          # Deletes the specified value by key, index, or path
+          # Translates to - or #- depending on the number of arguments
+          #
+          # @example
+          #   people.select { data.delete('age').as(:data_without_age) }
+          #   people.select { fields.delete(0).as(:fields_without_first) }
+          #   people.select { fields.delete(-1).as(:fields_without_last) }
+          #   people.select { data.delete('deeply', 'nested', 'value').as(:data) }
+          #   people.select { fields.delete('0', 'name').as(:data) }
+          #
+          # @param [Array<String>] path
+          #
+          # @return [SQL::Attribute<Types::PG::JSONB>]
+          #
+          # @api public
+          def delete(type, expr, *path)
+            sql_expr = path.size == 1 ? expr.pg_jsonb - path : expr.pg_jsonb.delete_path(path)
+            Attribute[JSONB].meta(sql_expr: sql_expr)
+          end
+
+          private
+
+          def path_args(path)
+            case path.size
+            when 0 then raise ArgumentError, "wrong number of arguments (given 0, expected 1+)"
+            when 1 then path[0]
+            else path
+            end
+          end
+        end
+
         # HStore
 
         HStoreR = Types.Constructor(Hash, &:to_hash)
