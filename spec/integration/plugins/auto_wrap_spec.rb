@@ -88,6 +88,27 @@ RSpec.describe 'Plugins / :auto_wrap' do
           let(:name) { :assignee }
         end
       end
+
+      context 'using association with an aliased relation' do
+        before do
+          conf.relation(:tasks) do
+            schema(infer: true) do
+              associations do
+                belongs_to :users, as: :assignee, relation: :people
+              end
+            end
+          end
+
+          conf.relation(:people) do
+            schema(:users, infer: true)
+          end
+        end
+
+        include_context 'joined tuple' do
+          let(:users) { relations[:people] }
+          let(:name) { :assignee }
+        end
+      end
     end
   end
 end

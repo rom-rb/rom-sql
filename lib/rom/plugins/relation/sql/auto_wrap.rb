@@ -35,9 +35,9 @@ module ROM
               rel, other =
                 if associations.key?(name)
                   assoc = associations[name]
-                  other = __registry__[assoc.target.to_sym]
+                  other = __registry__[assoc.target.relation]
 
-                  [assoc.join(__registry__, :inner_join, self), other]
+                  [assoc.join(__registry__, :inner_join, self, other), other]
                 else
                   # TODO: deprecate this before 2.0
                   other = __registry__[name]
