@@ -153,14 +153,14 @@ module ROM
                 case parent
                 when Array
                   parent.map do |p|
-                    tuples.map { |tuple| tuple.merge(fk => p[pk]) }
+                    tuples.map { |tuple| Hash(tuple).merge(fk => p[pk]) }
                   end.flatten(1)
                 else
                   tuples.map { |tuple| Hash(tuple).update(fk => parent[pk]) }
                 end
               when Association
                 with_input_tuples(tuples).map { |tuple|
-                  assoc.associate(relation.__registry__, tuple, parent)
+                  assoc.associate(__registry__, tuple, parent)
                 }
               end
 
