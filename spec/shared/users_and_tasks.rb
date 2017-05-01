@@ -17,7 +17,7 @@ RSpec.shared_context 'users and tasks' do
     conn.create_table :tasks do
       primary_key :id
       foreign_key :user_id, :users
-      String :title
+      String :title, text: false
       constraint(:title_length) { char_length(title) > 1 } if ctx.postgres?(example)
       constraint(:title_length) { length(title) > 1 }      if ctx.sqlite?(example)
     end
