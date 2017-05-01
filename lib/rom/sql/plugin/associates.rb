@@ -160,7 +160,7 @@ module ROM
                 end
               when Association
                 with_input_tuples(tuples).map { |tuple|
-                  assoc.associate(relation.__registry__, tuple, parent)
+                  assoc.associate(__registry__, tuple, parent)
                 }
               end
 
