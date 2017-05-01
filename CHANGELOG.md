@@ -6,6 +6,7 @@
 * Support for JSONB transformations and queries using native DSL (flash-gordon)
 * Add `ROM::SQL::Attribute#not` for negated boolean equality expressions (AMHOL)
 * Add `ROM::SQL::Attribute#!` for negated attribute's sql expressions (solnic)
+* Inferrer gets limit constraints for string data types and stores them in type's meta (v-kolesnikov)
 
 ### Fixed
 
