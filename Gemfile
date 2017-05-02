@@ -4,6 +4,7 @@ gemspec
 
 gem 'rom', git: 'https://github.com/rom-rb/rom.git', branch: 'master'
 gem 'rom-mapper', git: 'https://github.com/rom-rb/rom-mapper.git', branch: 'master'
+gem 'dry-core', git: 'https://github.com/dry-rb/dry-core.git'
 
 group :test do
   gem 'byebug', platforms: :mri
