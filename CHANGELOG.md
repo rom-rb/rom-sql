@@ -12,6 +12,8 @@
 
 * Fixed usage of PostgreSQL's commands with a composite relation (flash-gordon)
 * Translation of `true/false/nil` equality checks to `is/is not` SQL statements in `ROM::SQL::Attribute#is` (AMHOL)
+* `associates` command plugin coerces parent collections to hashes correctly (aarek+solnic)
+* `by_pk` works correctly even when PK is not projected (solnic)
 
 ### Changed
 
