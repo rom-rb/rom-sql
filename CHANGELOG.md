@@ -26,6 +26,8 @@
     end
   ```
 
+[Compare v1.2.2...v1.3.0](https://github.com/rom-rb/rom-sql/compare/v1.2.2...v1.3.0)
+
 ## v1.2.2 2017-03-25
 
 ### Changed
