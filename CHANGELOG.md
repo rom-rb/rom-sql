@@ -3,7 +3,7 @@
 ### Added
 
 * New `Relation#exist?` predicate checks if the relation has at least one tuple (flash-gordon)
-* Support for JSONB transformations and queries using native DSL (flash-gordon)
+* Support for [JSONB transformations and queries](https://github.com/rom-rb/rom-sql/blob/master/lib/rom/sql/extensions/postgres/types.rb#L43-L190) using native DSL (flash-gordon)
 * Add `ROM::SQL::Attribute#not` for negated boolean equality expressions (AMHOL)
 * Add `ROM::SQL::Attribute#!` for negated attribute's sql expressions (solnic)
 * Inferrer gets limit constraints for string data types and stores them in type's meta (v-kolesnikov)
