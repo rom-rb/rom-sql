@@ -46,6 +46,18 @@ module ROM
           end
         end
 
+        # @api private
+        def persist(relations, children, parents)
+          join_tuples = associate(relations, children, parents)
+          join_relation = join_relation(relations)
+          join_relation.multi_insert(join_tuples)
+        end
+
+        # @api private
+        def parent_combine_keys(relations)
+          relations[target].associations[source].combine_keys(relations).to_a.flatten(1)
+        end
+
         # @api public
         def join(relations, type, source = relations[self.source], target = relations[self.target])
           through_assoc = source.associations[through]

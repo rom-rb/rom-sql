@@ -142,13 +142,9 @@ module ROM
               when Association::ManyToMany
                 result_type = tuples.is_a?(Array) ? :many : :one
 
-                join_tuples = assoc.associate(__registry__, tuples, parent)
-                join_relation = assoc.join_relation(__registry__)
-                join_relation.multi_insert(join_tuples)
+                assoc.persist(__registry__, tuples, parent)
 
-                pk, fk = __registry__[assoc.target]
-                  .associations[assoc.source]
-                  .combine_keys(__registry__).to_a.flatten
+                pk, fk = assoc.parent_combine_keys(__registry__)
 
                 case parent
                 when Array

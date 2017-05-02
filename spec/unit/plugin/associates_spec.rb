@@ -48,17 +48,8 @@ RSpec.describe ROM::SQL::Plugin::Associates do
 
   shared_context 'associates result' do
     it 'inserts join tuples and returns child tuples with combine keys' do
-      join_tuples = [
-        { post_id: 1, tag_id: 1 }, { post_id: 1, tag_id: 2 },
-        { post_id: 2, tag_id: 1 }, { post_id: 2, tag_id: 2 }
-      ]
-
-      expect(tags_assoc).
-        to receive(:associate).with(registry, post_tuples, tag_tuples).and_return(join_tuples)
-
-      expect(tags_assoc).to receive(:join_relation).and_return(join_relation)
-      expect(join_relation).to receive(:multi_insert).with(join_tuples)
-      expect(posts_assoc).to receive(:combine_keys).and_return(name: :tag)
+      expect(tags_assoc).to receive(:persist).with(registry, post_tuples, tag_tuples)
+      expect(tags_assoc).to receive(:parent_combine_keys).with(registry).and_return(%i[name tag])
 
       result = command.associate(post_tuples, tag_tuples, assoc: tags_assoc, keys: {})
 
