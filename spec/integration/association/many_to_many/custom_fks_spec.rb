@@ -9,6 +9,9 @@ RSpec.describe ROM::SQL::Association::ManyToMany, '#call' do
     relations[:users].associations[:puzzles]
   end
 
+  let(:puzzles) { relations[:puzzles] }
+  let(:puzzle_solvers) { relations[:puzzle_solvers] }
+
   with_adapters do
     before do
       conn.create_table(:puzzles) do
@@ -52,10 +55,12 @@ RSpec.describe ROM::SQL::Association::ManyToMany, '#call' do
     end
 
     it 'prepares joined relations using custom FK' do
-      relation = assoc.call(relations).order(:puzzles__text, :puzzle_solvers__solver_id)
+      relation = assoc.call(relations).order(puzzles[:text].qualified, puzzle_solvers[:solver_id].qualified)
 
-      expect(relation.schema.map(&:to_sym)).
-        to eql(%i[puzzles__id puzzles__text puzzle_solvers__solver_id])
+      expect(relation.schema.map(&:to_sql_name)).
+        to eql([Sequel.qualify(:puzzles, :id),
+                Sequel.qualify(:puzzles, :text),
+                Sequel.qualify(:puzzle_solvers, :solver_id)])
 
       expect(relation.to_a).
         to eql([

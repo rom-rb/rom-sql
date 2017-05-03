@@ -70,7 +70,7 @@ module ROM
         end
 
         def sql_literal(ds)
-          Sequel.expr(aliased? ? :"#{dataset}___#{key}" : dataset).sql_literal(ds)
+          ds.literal(aliased? ? Sequel[dataset] : Sequel.as(dataset, key))
         end
       end
     end

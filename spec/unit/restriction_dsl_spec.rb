@@ -17,7 +17,7 @@ RSpec.describe ROM::SQL::RestrictionDSL, :sqlite, helpers: true do
 
   describe '#call' do
     it 'evaluates the block and returns an SQL expression' do
-      expect(dsl.call { count(id) >= 3 }.sql_literal(conn[:users])).to eql('(count(`id`) >= 3)')
+      expect(conn[:users].literal(dsl.call { count(id) >= 3 })).to eql('(count(`id`) >= 3)')
     end
   end
 
@@ -28,7 +28,7 @@ RSpec.describe ROM::SQL::RestrictionDSL, :sqlite, helpers: true do
     end
 
     it 'delegates to sequel virtual row' do
-      expect(dsl.count(dsl.id).sql_literal(conn[:users])).to eql('count(`id`)')
+      expect(conn[:users].literal(dsl.count(dsl.id))).to eql('count(`id`)')
     end
   end
 end

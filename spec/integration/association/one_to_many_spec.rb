@@ -26,7 +26,7 @@ RSpec.describe ROM::SQL::Association::OneToMany do
 
         expect(relation.schema.map(&:name)).to eql(%i[id user_id title])
 
-        expect(relation.order(:tasks__id).to_a).to eql([
+        expect(relation.order(tasks[:id].qualified).to_a).to eql([
           { id: 1, user_id: 2, title: "Joe's task" },
           { id: 2, user_id: 1, title: "Jane's task" }
         ])

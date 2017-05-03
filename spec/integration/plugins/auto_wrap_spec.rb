@@ -7,7 +7,7 @@ RSpec.describe 'Plugins / :auto_wrap' do
         it 'returns joined tuples' do
           task_with_user = tasks
             .for_wrap({ id: :user_id }, name)
-            .where(tasks__id: 2)
+            .where { id.qualified.is(2) }
             .one
 
           expect(task_with_user).to eql(

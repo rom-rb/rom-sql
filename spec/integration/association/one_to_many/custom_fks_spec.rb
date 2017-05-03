@@ -40,8 +40,11 @@ RSpec.describe ROM::SQL::Association::OneToMany, '#call' do
     it 'prepares joined relations using custom FK' do
       relation = assoc.call(relations)
 
-      expect(relation.schema.map(&:to_sym)).
-        to eql(%i[puzzles__id puzzles__author_id puzzles__solver_id puzzles__text])
+      expect(relation.schema.map(&:to_sql_name)).
+        to eql([Sequel.qualify(:puzzles, :id),
+                Sequel.qualify(:puzzles, :author_id),
+                Sequel.qualify(:puzzles, :solver_id),
+                Sequel.qualify(:puzzles, :text)])
 
       expect(relation.first).to eql(id: 2, author_id: 2, solver_id: 1, text: 'P2')
     end

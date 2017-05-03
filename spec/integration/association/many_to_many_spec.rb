@@ -46,7 +46,10 @@ RSpec.describe ROM::SQL::Association::ManyToMany do
         it 'prepares joined relations' do
           relation = assoc.call(container.relations)
 
-          expect(relation.schema.map(&:to_sym)).to eql(%i[tags__id tags__name task_tags__task_id])
+          expect(relation.schema.map(&:to_sql_name)).
+            to eql([Sequel.qualify(:tags, :id),
+                    Sequel.qualify(:tags, :name),
+                    Sequel.qualify(:task_tags, :task_id)])
           expect(relation.to_a).to eql([id: 1, name: 'important', task_id: 1])
         end
       end
@@ -59,7 +62,10 @@ RSpec.describe ROM::SQL::Association::ManyToMany do
         it 'prepares joined relations through other association' do
           relation = assoc.call(container.relations)
 
-          expect(relation.schema.map(&:to_sym)).to eql(%i[tags__id tags__name tasks__user_id])
+          expect(relation.schema.map(&:to_sql_name)).
+            to eql([Sequel.qualify(:tags, :id),
+                    Sequel.qualify(:tags, :name),
+                    Sequel.qualify(:tasks, :user_id)])
           expect(relation.to_a).to eql([id: 1, name: 'important', user_id: 2])
         end
       end
