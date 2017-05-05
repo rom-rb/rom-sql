@@ -26,6 +26,8 @@ module ROM
       include Writing
       include Reading
 
+      schema_dsl SQL::Schema::DSL
+
       # Set default dataset for a relation sub-class
       #
       # @api private
@@ -33,8 +35,6 @@ module ROM
         super
 
         klass.class_eval do
-          schema_dsl SQL::Schema::DSL
-
           schema_inferrer -> (name, gateway) do
             inferrer_for_db = ROM::SQL::Schema::Inferrer.get(gateway.connection.database_type.to_sym)
             begin
