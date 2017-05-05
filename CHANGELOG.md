@@ -1,3 +1,11 @@
+## v1.3.1 2017-05-05
+
+## Changed
+
+* [internal] Compatibility with `dry-core` v0.3.0 (flash-gordon)
+
+[Compare v1.3.0...v1.3.1](https://github.com/rom-rb/rom-sql/compare/v1.3.0...v1.3.1)
+
 ## v1.3.0 2017-05-02
 
 ### Added
