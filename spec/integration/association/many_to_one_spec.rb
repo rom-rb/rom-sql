@@ -41,8 +41,10 @@ RSpec.describe ROM::SQL::Association::ManyToOne, helpers: true do
         it 'prepares joined relations' do
           relation = assoc.call(container.relations)
 
-          expect(relation.schema.map(&:to_sym))
-            .to eql(%i[users__id users__name tasks__id___task_id])
+          expect(relation.schema.map(&:to_sql_name)).
+            to eql([Sequel.qualify(:users, :id),
+                    Sequel.qualify(:users, :name),
+                    Sequel.qualify(:tasks, :id).as(:task_id)])
 
           expect(relation.where(user_id: 1).one).to eql(id: 1, task_id: 2, name: 'Jane')
 
@@ -109,8 +111,10 @@ RSpec.describe ROM::SQL::Association::ManyToOne, helpers: true do
         it 'prepares joined relations' do
           relation = assoc.call(container.relations)
 
-          expect(relation.schema.map(&:to_sym))
-            .to eql(%i[users__id users__name posts__post_id])
+          expect(relation.schema.map(&:to_sql_name)).
+            to eql([Sequel.qualify(:users, :id),
+                    Sequel.qualify(:users, :name),
+                    Sequel.qualify(:posts, :post_id)])
 
           expect(relation.order(:id).to_a).to eql([
             { id: 1, name: 'Jane', post_id: 2 },

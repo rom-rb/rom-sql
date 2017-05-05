@@ -44,8 +44,11 @@ RSpec.describe ROM::SQL::Association::OneToMany, '#call' do
     it 'prepares joined relations using custom view' do
       relation = assoc.call(relations)
 
-      expect(relation.schema.map(&:to_sym)).
-        to eql(%i[puzzles__id puzzles__user_id puzzles__text puzzles__solved])
+      expect(relation.schema.map(&:to_sql_name)).
+        to eql([Sequel.qualify(:puzzles, :id),
+                Sequel.qualify(:puzzles, :user_id),
+                Sequel.qualify(:puzzles, :text),
+                Sequel.qualify(:puzzles, :solved)])
 
       expect(relation.count).to be(1)
       expect(relation.first).to eql(id: 2, user_id: 2, solved: db_true, text: 'P2')

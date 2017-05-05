@@ -105,7 +105,7 @@ module ROM
         #
         # @api public
         def qualified_columns
-          schema.qualified.map(&:to_sym)
+          schema.qualified.map(&:to_sql_name)
         end
 
         # Map tuples from the relation
@@ -341,8 +341,10 @@ module ROM
             where(*args).where(self.class.schema.restriction(&block))
           elsif args.size == 1 && args[0].is_a?(Hash)
             new(dataset.where(coerce_conditions(args[0])))
-          else
+          elsif !args.empty?
             new(dataset.where(*args))
+          else
+            self
           end
         end
 
@@ -395,9 +397,9 @@ module ROM
         # @api public
         def having(*args, &block)
           if block
-            new(dataset.having(*args).having(self.class.schema.restriction(&block)))
+            new(dataset.having(*args, *self.class.schema.restriction(&block)))
           else
-            new(dataset.__send__(__method__, *args, &block))
+            new(dataset.__send__(__method__, *args))
           end
         end
 
@@ -835,6 +837,8 @@ module ROM
             else
               new(dataset.__send__(type, other.to_sym, join_cond, opts, &block))
             end
+          elsif other.is_a?(Sequel::SQL::AliasedExpression)
+            new(dataset.__send__(type, other, join_cond, opts, &block))
           elsif other.respond_to?(:name) && other.name.is_a?(Relation::Name)
             associations[other.name.dataset].join(__registry__, type, self, other)
           else

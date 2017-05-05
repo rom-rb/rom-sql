@@ -24,7 +24,7 @@ RSpec.describe ROM::SQL::Function, :postgres do
 
   describe '#is' do
     it 'returns an sql boolean expression' do
-      expect((func.count(:id).is(1)).sql_literal(ds)).to eql(%((COUNT("id") = 1)))
+      expect(ds.literal(func.count(:id).is(1))).to eql(%((COUNT("id") = 1)))
     end
   end
 

@@ -42,15 +42,19 @@ RSpec.describe ROM::SQL::Association::ManyToOne, '#call' do
     it 'prepares joined relations using correct FKs based on association aliases' do
       relation = assoc_from.call(relations)
 
-      expect(relation.schema.map(&:to_sym)).
-        to eql(%i(destinations__id destinations__name flights__id___flight_id))
+      expect(relation.schema.map(&:to_sql_name)).
+        to eql([Sequel.qualify(:destinations, :id),
+                Sequel.qualify(:destinations, :name),
+                Sequel.qualify(:flights, :id).as(:flight_id)])
 
       expect(relation.first).to eql(id: 1, name: 'FROM', flight_id: 1)
 
       relation = assoc_to.call(relations)
 
-      expect(relation.schema.map(&:to_sym)).
-        to eql(%i(destinations__id destinations__name flights__id___flight_id))
+      expect(relation.schema.map(&:to_sql_name)).
+        to eql([Sequel.qualify(:destinations, :id),
+                Sequel.qualify(:destinations, :name),
+                Sequel.qualify(:flights, :id).as(:flight_id)])
 
       expect(relation.first).to eql(id: 2, name: 'TO', flight_id: 1)
     end

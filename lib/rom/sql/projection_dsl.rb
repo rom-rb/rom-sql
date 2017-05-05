@@ -7,7 +7,7 @@ module ROM
     class ProjectionDSL < DSL
       # @api public
       def `(value)
-        expr = ::Sequel::VIRTUAL_ROW.instance_eval { `#{value}` }
+        expr = ::Sequel.lit(value)
         ::ROM::SQL::Attribute.new(type(:string)).meta(sql_expr: expr)
       end
 

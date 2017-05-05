@@ -6,9 +6,9 @@ module ROM
     class Function < ROM::Schema::Attribute
       def sql_literal(ds)
         if name
-          func.as(name).sql_literal(ds)
+          ds.literal(func.as(name))
         else
-          func.sql_literal(ds)
+          ds.literal(func)
         end
       end
 

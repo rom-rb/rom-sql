@@ -39,7 +39,7 @@ module ROM
 
         # @api private
         def source_table
-          self_ref? ? :"#{source.dataset}___#{source_alias}" : source
+          self_ref? ? Sequel.as(source.dataset, source_alias) : source
         end
 
         # @api private

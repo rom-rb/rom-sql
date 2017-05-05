@@ -49,6 +49,16 @@ RSpec.describe ROM::Relation, '#where' do
         expect(relation.where(relation[:id].in(2, 3)).to_a).
           to eql([{ id: 2, title: "Jane's task" }])
       end
+
+      context 'using underscored symbols for qualifying' do
+        before { Sequel.split_symbols = true }
+        after { Sequel.split_symbols = false }
+
+        it 'queries with a qualified name' do
+          expect(relation.where(tasks__id: 1).to_a).
+            to eql([{ id: 1, title: "Joe's task" }])
+        end
+      end
     end
 
     context 'with :read types' do

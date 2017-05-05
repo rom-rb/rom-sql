@@ -104,7 +104,7 @@ module ROM
         case sql_expr
         when Sequel::SQL::AliasedExpression, Sequel::SQL::Identifier
           type = meta(qualified: true)
-          type.meta(qualified: true, sql_expr: Sequel[type.to_sym])
+          type.meta(sql_expr: type.to_sql_name)
         else
           raise QualifyError, "can't qualify #{name.inspect} (#{sql_expr.inspect})"
         end
@@ -302,11 +302,25 @@ module ROM
       #
       # @api private
       def sql_literal(ds)
-        if sql_expr
-          sql_expr.sql_literal(ds)
-        else
-          Sequel[to_sym].sql_literal(ds)
-        end
+        ds.literal(sql_expr)
+      end
+
+      # Sequel column representation
+      #
+      # @return [Sequel::SQL::AliasedExpression,Sequel::SQL::Identifier]
+      #
+      # @api private
+      def to_sql_name
+        @_to_sql_name ||=
+          if qualified? && aliased?
+            Sequel.qualify(source.dataset, name).as(meta[:alias])
+          elsif qualified?
+            Sequel.qualify(source.dataset, name)
+          elsif aliased?
+            Sequel.as(name, meta[:alias])
+          else
+            Sequel[name]
+          end
       end
 
       private
@@ -315,7 +329,7 @@ module ROM
       #
       # @api private
       def sql_expr
-        @sql_expr ||= (meta[:sql_expr] || Sequel[to_sym])
+        @sql_expr ||= (meta[:sql_expr] || to_sql_name)
       end
 
       # Delegate to sql expression if it responds to a given method

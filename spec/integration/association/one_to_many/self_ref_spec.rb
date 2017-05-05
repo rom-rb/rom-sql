@@ -38,8 +38,10 @@ RSpec.describe ROM::SQL::Association::OneToMany, '#call' do
     it 'prepares joined relations using custom FK for a self-ref association' do
       relation = assoc.call(relations)
 
-      expect(relation.schema.map(&:to_sym)).
-        to eql(%i[categories__id categories__parent_id categories__name])
+      expect(relation.schema.map(&:to_sql_name)).
+        to eql([Sequel.qualify(:categories, :id),
+                Sequel.qualify(:categories, :parent_id),
+                Sequel.qualify(:categories, :name)])
 
       expect(relation.to_a).
         to eql([
