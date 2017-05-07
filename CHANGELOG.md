@@ -3,6 +3,7 @@
 ## Added
 
 * Support for filtering with a SQL function in the `WHERE` clause. Be sure you're using it wisely and don't call it on large datasets ;) (flash-gordon)
+* `Void` type for calling functions without returning value (flash-gordon)
 
 ## Fixed
 

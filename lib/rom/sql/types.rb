@@ -16,6 +16,8 @@ module ROM
       Serial = Int.meta(primary_key: true)
 
       Blob = Constructor(Sequel::SQL::Blob, &Sequel::SQL::Blob.method(:new))
+
+      Void = Nil
     end
   end
 end
