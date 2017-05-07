@@ -16,7 +16,13 @@ module ROM
         if schema.key?(meth)
           schema[meth]
         else
-          ::Sequel::VIRTUAL_ROW.__send__(meth, *args, &block)
+          type = type(meth)
+
+          if type
+            ::ROM::SQL::Function.new(type)
+          else
+            ::Sequel::VIRTUAL_ROW.__send__(meth, *args, &block)
+          end
         end
       end
     end

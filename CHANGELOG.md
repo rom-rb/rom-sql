@@ -1,3 +1,13 @@
+## v1.3.2 to-be-released
+
+## Added
+
+* Support for filtering with a SQL function in the `WHERE` clause. Be sure you're using it wisely and don't call it on large datasets ;) (flash-gordon)
+
+## Fixed
+
+* A bunch of warnings from Sequel 4.46
+
 ## v1.3.1 2017-05-05
 
 ## Changed

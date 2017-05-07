@@ -19,17 +19,6 @@ module ROM
       private
 
       # @api private
-      def type(identifier)
-        type_name = ::Dry::Core::Inflector.classify(identifier)
-        types.const_get(type_name) if types.const_defined?(type_name)
-      end
-
-      # @api private
-      def types
-        ::ROM::SQL::Types
-      end
-
-      # @api private
       def method_missing(meth, *args, &block)
         if schema.key?(meth)
           schema[meth]

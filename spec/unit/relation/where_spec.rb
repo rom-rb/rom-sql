@@ -59,6 +59,16 @@ RSpec.describe ROM::Relation, '#where' do
             to eql([{ id: 1, title: "Joe's task" }])
         end
       end
+
+      it 'restricts with a function' do
+        expect(relation.where { string::lower(title).is("joe's task") }.to_a).
+          to eql([{ id: 1, title: "Joe's task" }])
+      end
+
+      it 'restricts with a function using LIKE' do
+        expect(relation.where { string::lower(title).like("joe%") }.to_a).
+          to eql([{ id: 1, title: "Joe's task" }])
+      end
     end
 
     context 'with :read types' do
