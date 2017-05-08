@@ -37,8 +37,8 @@ module ROM
           #
           # @example
           #   ROM::SQL::Attribute::TypeExtensions.register(ROM::SQL::Types::PG::JSONB) do
-          #     def contains(type, keys)
-          #       Sequel::Postgres::JSONBOp.new(type.meta[:name]).contains(keys)
+          #     def contain(type, expr, keys)
+          #       Attribute[Types::Bool].meta(sql_expr: expr.pg_jsonb.contains(value))
           #     end
           #   end
           #
