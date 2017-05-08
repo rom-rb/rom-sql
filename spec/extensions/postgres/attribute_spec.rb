@@ -132,6 +132,7 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
         primary_key :id
         String :name
         column :emails, 'text[]'
+        column :bigids, 'bigint[]'
       end
 
       conf.commands(:people) do
@@ -139,12 +140,17 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
         define(:update)
       end
 
-      create_person.(name: 'John Doe', emails: %w(john@doe.com john@example.com))
-      create_person.(name: 'Jade Doe', emails: %w(jade@hotmail.com))
+      create_person.(name: 'John Doe', emails: %w(john@doe.com john@example.com), bigids: [84])
+      create_person.(name: 'Jade Doe', emails: %w(jade@hotmail.com), bigids: [42])
     end
 
     it 'filters by email inclusion' do
       expect(people.select(:name).where { emails.contain(['john@doe.com']) }.one).
+        to eql(name: 'John Doe')
+    end
+
+    it 'coerces values so that PG does not complain' do
+      expect(people.select(:name).where { bigids.contain([84]) }.one).
         to eql(name: 'John Doe')
     end
   end

@@ -22,7 +22,7 @@ module ROM
 
         Attribute::TypeExtensions.register(Array.constructor -> {  }) do
           def contain(type, expr, value)
-            Attribute[Types::Bool].meta(sql_expr: expr.pg_array.contains(value))
+            Attribute[Types::Bool].meta(sql_expr: expr.pg_array.contains(type[value]))
           end
         end
 
