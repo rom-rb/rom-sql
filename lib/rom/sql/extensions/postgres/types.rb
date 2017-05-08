@@ -20,6 +20,12 @@ module ROM
           Array.constructor(-> (v) { Sequel.pg_array(v, db_type) }).meta(type: db_type)
         end
 
+        Attribute::TypeExtensions.register(Array.constructor -> {  }) do
+          def contain(type, expr, value)
+            Attribute[Types::Bool].meta(sql_expr: expr.pg_array.contains(value))
+          end
+        end
+
         # JSON
 
         JSONArray = Types.Constructor(Sequel::Postgres::JSONArray, &Sequel.method(:pg_json))

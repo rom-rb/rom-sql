@@ -125,4 +125,27 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
                 { result: jsonb_hash['age' => 25] }])
     end
   end
+
+  describe 'using array types' do
+    before do
+      conn.create_table :pg_people do
+        primary_key :id
+        String :name
+        column :emails, 'text[]'
+      end
+
+      conf.commands(:people) do
+        define(:create)
+        define(:update)
+      end
+
+      create_person.(name: 'John Doe', emails: %w(john@doe.com john@example.com))
+      create_person.(name: 'Jade Doe', emails: %w(jade@hotmail.com))
+    end
+
+    it 'filters by email inclusion' do
+      expect(people.select(:name).where { emails.contain(['john@doe.com']) }.one).
+        to eql(name: 'John Doe')
+    end
+  end
 end
