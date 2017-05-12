@@ -153,5 +153,54 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
       expect(people.select(:name).where { bigids.contain([84]) }.one).
         to eql(name: 'John Doe')
     end
+
+    it 'fetches element by index' do
+      expect(people.select { [name, emails.get(2).as(:second_email)] }.to_a).
+        to eql([{ name: 'John Doe', second_email: 'john@example.com' },
+                { name: 'Jade Doe', second_email: nil }])
+    end
+
+    it 'restricts with ANY' do
+      expect(people.select(:name).where { bigids.any(84)}.one).
+        to eql(name: 'John Doe')
+    end
+
+    it 'restricts by <@' do
+      expect(people.select(:name).where { bigids.contained_by((30..50).to_a) }.one).
+        to eql(name: 'Jade Doe')
+    end
+
+    it 'returns array length' do
+      expect(people.select { [name, emails.length.as(:size)] }.to_a).
+        to eql([{ name: 'John Doe', size: 2 }, { name: 'Jade Doe', size: 1 }])
+    end
+
+    it 'restrict by overlapping with other array' do
+      expect(people.select(:name).where { emails.overlaps(%w(jade@hotmail.com)) }.one).
+        to eql(name: 'Jade Doe')
+
+      expect(people.select(:name).where { bigids.overlaps([42]) }.one).
+        to eql(name: 'Jade Doe')
+    end
+
+    it 'removes element by value' do
+      expect(people.select { emails.remove_value('john@example.com').as(:emails) }.to_a).
+        to eq([{ emails: %w(john@doe.com) }, { emails: %w(jade@hotmail.com) }])
+
+      pending "doesn't have auto-casting yet"
+      expect(people.select(:name).where { bigids.remove_value(100).contains([42]) }.one).
+        to eql(name: 'Jade Doe')
+    end
+
+    it 'joins values' do
+      expect(people.select { emails.join(',').as(:emails) }.to_a).
+        to eql([{ emails: 'john@doe.com,john@example.com' },
+                { emails: 'jade@hotmail.com' }])
+    end
+
+    it 'concatenates arrays' do
+      expect(people.select { (emails + %w(foo@bar.com)).as(:emails) }.where { name.is('Jade Doe') }.one).
+        to eq(emails: %w(jade@hotmail.com foo@bar.com))
+    end
   end
 end

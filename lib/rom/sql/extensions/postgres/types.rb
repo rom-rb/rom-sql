@@ -24,6 +24,38 @@ module ROM
           def contain(type, expr, value)
             Attribute[Types::Bool].meta(sql_expr: expr.pg_array.contains(type[value]))
           end
+
+          def get(type, expr, idx)
+            Attribute[type].meta(sql_expr: expr.pg_array[idx])
+          end
+
+          def any(type, expr, value)
+            Attribute[Types::Bool].meta(sql_expr: { value => expr.pg_array.any })
+          end
+
+          def contained_by(type, expr, value)
+            Attribute[Types::Bool].meta(sql_expr: expr.pg_array.contained_by(type[value]))
+          end
+
+          def length(type, expr)
+            Attribute[Types::Int].meta(sql_expr: expr.pg_array.length)
+          end
+
+          def overlaps(type, expr, other_array)
+            Attribute[Types::Bool].meta(sql_expr: expr.pg_array.overlaps(type[other_array]))
+          end
+
+          def remove_value(type, expr, value)
+            Attribute[type].meta(sql_expr: expr.pg_array.remove(value))
+          end
+
+          def join(type, expr, delimiter = '', null = nil)
+            Attribute[Types::String].meta(sql_expr: expr.pg_array.join(delimiter, null))
+          end
+
+          def +(type, expr, other)
+            Attribute[type].meta(sql_expr: expr.pg_array.concat(other))
+          end
         end
 
         # JSON
