@@ -1,10 +1,10 @@
-## v1.3.2 to-be-released
+## v1.3.2 2017-05-13
 
 ## Added
 
 * Support for filtering with a SQL function in the `WHERE` clause. Be sure you're using it wisely and don't call it on large datasets ;) (flash-gordon)
 * `Void` type for calling functions without returning value (flash-gordon)
-* Support for `PG::Array` transformations and queries (flash-gordon)
+* Support for [`PG::Array` transformations and queries](https://github.com/rom-rb/rom-sql/blob/15019a40e2cf2a224476184c4cddab4062a2cc01/lib/rom/sql/extensions/postgres/types.rb#L23-L148) (flash-gordon)
 
 ## Fixed
 
@@ -23,7 +23,7 @@
 ### Added
 
 * New `Relation#exist?` predicate checks if the relation has at least one tuple (flash-gordon)
-* Support for [JSONB transformations and queries](https://github.com/rom-rb/rom-sql/blob/master/lib/rom/sql/extensions/postgres/types.rb#L43-L190) using native DSL (flash-gordon)
+* Support for [JSONB transformations and queries](https://github.com/rom-rb/rom-sql/blob/15019a40e2cf2a224476184c4cddab4062a2cc01/lib/rom/sql/extensions/postgres/types.rb#L170-L353) using native DSL (flash-gordon)
 * Add `ROM::SQL::Attribute#not` for negated boolean equality expressions (AMHOL)
 * Add `ROM::SQL::Attribute#!` for negated attribute's sql expressions (solnic)
 * Inferrer gets limit constraints for string data types and stores them in type's meta (v-kolesnikov)
