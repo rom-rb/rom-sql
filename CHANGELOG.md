@@ -10,6 +10,8 @@
 
 * A bunch of warnings from Sequel 4.46
 
+[Compare v1.3.1...v1.3.2](https://github.com/rom-rb/rom-sql/compare/v1.3.1...v1.3.2)
+
 ## v1.3.1 2017-05-05
 
 ## Changed
