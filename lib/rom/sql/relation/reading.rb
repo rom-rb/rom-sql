@@ -834,6 +834,7 @@ module ROM
         #   @option options [Symbol] :mode Lock mode
         #   @option options [Boolean,Integer] :wait Controls the (NO)WAIT part
         #   @option options [Boolean] :skip_locked Skip locked rows
+        #   @option options [Array,Symbol,String] :of List of objects in the OF part
         #
         #   @return [SQL::Relation]
         #

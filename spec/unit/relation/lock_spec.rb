@@ -66,6 +66,7 @@ RSpec.describe ROM::Relation, '#lock' do
   with_adapters :postgres do
     it 'locks with UPDATE OF' do
       expect(lock_style(relation.lock(of: :users))).to eql('FOR UPDATE OF users')
+      expect(lock_style(relation.lock(of: :users, skip_locked: true))).to eql('FOR UPDATE OF users SKIP LOCKED')
     end
 
     it 'locks rows in different modes' do
