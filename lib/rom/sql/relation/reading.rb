@@ -864,9 +864,7 @@ module ROM
         #
         # @api private
         def lock_clause(mode: :update, skip_locked: false, of: nil, wait: nil)
-          locks = ROW_LOCK_MODES.fetch(dataset.db.database_type) { ROW_LOCK_MODES[:default] }
-
-          stmt = locks[mode].dup
+          stmt = ROW_LOCK_MODES[dataset.db.database_type].fetch(mode).dup
           stmt << ' OF ' << Array(of).join(', ') if of
 
           if skip_locked
