@@ -208,7 +208,7 @@ module ROM
         #     #
         #     #   @param [Array<Integer>,Array<String>] path Path to extract
         #     #
-        #     #   @return [SQL::Attribute<Types::PG::JSONB>]
+        #     #   @return [SQL::Attribute<Types::PG::JSON>,SQL::Attribute<Types::PG::JSONB>]
         #     #
         #     #   @api public
         #
@@ -228,7 +228,7 @@ module ROM
         #     #   @api public
         #
         #     # @!method has_key(key)
-        #     #   Does the JSON value has the specified top-level key
+        #     #   Does the JSON value have the specified top-level key
         #     #   Translates to ?
         #     #
         #     #   @example
@@ -241,7 +241,7 @@ module ROM
         #     #   @api public
         #
         #     # @!method has_any_key(*keys)
-        #     #   Does the JSON value has any of the specified top-level keys
+        #     #   Does the JSON value have any of the specified top-level keys
         #     #   Translates to ?|
         #     #
         #     #   @example
@@ -254,7 +254,7 @@ module ROM
         #     #   @api public
         #
         #     # @!method has_all_keys(*keys)
-        #     #   Does the JSON value has all the specified top-level keys
+        #     #   Does the JSON value have all the specified top-level keys
         #     #   Translates to ?&
         #     #
         #     #   @example
@@ -302,43 +302,22 @@ module ROM
         #     #
         #     #   @api public
         #   end
-        Attribute::TypeExtensions.register(JSONB) do
-          def contain(type, expr, value)
-            Attribute[Types::Bool].meta(sql_expr: expr.pg_jsonb.contains(value))
-          end
-
-          def contained_by(type, expr, value)
-            Attribute[Types::Bool].meta(sql_expr: expr.pg_jsonb.contained_by(value))
+        module JSONMethods
+          def self.[](type, wrap)
+            parent = self
+            Module.new do
+              include parent
+              define_method(:json_type) { type }
+              define_method(:wrap, wrap)
+            end
           end
 
           def get(type, expr, *path)
-            Attribute[JSONB].meta(sql_expr: expr.pg_jsonb[path_args(path)])
+            Attribute[json_type].meta(sql_expr: wrap(expr)[path_args(path)])
           end
 
           def get_text(type, expr, *path)
-            Attribute[Types::String].meta(sql_expr: expr.pg_jsonb.get_text(path_args(path)))
-          end
-
-          def has_key(type, expr, key)
-            Attribute[Types::Bool].meta(sql_expr: expr.pg_jsonb.has_key?(key))
-          end
-
-          def has_any_key(type, expr, *keys)
-            Attribute[Types::Bool].meta(sql_expr: expr.pg_jsonb.contain_any(keys))
-          end
-
-          def has_all_keys(type, expr, *keys)
-            Attribute[Types::Bool].meta(sql_expr: expr.pg_jsonb.contain_all(keys))
-          end
-
-          def merge(type, expr, value)
-            Attribute[JSONB].meta(sql_expr: expr.pg_jsonb.concat(value))
-          end
-          alias_method :+, :merge
-
-          def delete(type, expr, *path)
-            sql_expr = path.size == 1 ? expr.pg_jsonb - path : expr.pg_jsonb.delete_path(path)
-            Attribute[JSONB].meta(sql_expr: sql_expr)
+            Attribute[Types::String].meta(sql_expr: wrap(expr).get_text(path_args(path)))
           end
 
           private
@@ -349,6 +328,44 @@ module ROM
             when 1 then path[0]
             else path
             end
+          end
+        end
+
+        Attribute::TypeExtensions.register(JSON) do
+          include JSONMethods[JSON, :pg_json.to_proc]
+        end
+
+        Attribute::TypeExtensions.register(JSONB) do
+          include JSONMethods[JSONB, :pg_jsonb.to_proc]
+
+          def contain(type, expr, value)
+            Attribute[Types::Bool].meta(sql_expr: wrap(expr).contains(value))
+          end
+
+          def contained_by(type, expr, value)
+            Attribute[Types::Bool].meta(sql_expr: wrap(expr).contained_by(value))
+          end
+
+          def has_key(type, expr, key)
+            Attribute[Types::Bool].meta(sql_expr: wrap(expr).has_key?(key))
+          end
+
+          def has_any_key(type, expr, *keys)
+            Attribute[Types::Bool].meta(sql_expr: wrap(expr).contain_any(keys))
+          end
+
+          def has_all_keys(type, expr, *keys)
+            Attribute[Types::Bool].meta(sql_expr: wrap(expr).contain_all(keys))
+          end
+
+          def merge(type, expr, value)
+            Attribute[JSONB].meta(sql_expr: wrap(expr).concat(value))
+          end
+          alias_method :+, :merge
+
+          def delete(type, expr, *path)
+            sql_expr = path.size == 1 ? wrap(expr) - path : wrap(expr).delete_path(path)
+            Attribute[JSONB].meta(sql_expr: sql_expr)
           end
         end
 

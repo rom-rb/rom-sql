@@ -1,3 +1,9 @@
+## v1.3.3 to-be-released
+
+## Added
+
+* `get` and `get_text` methods for the `PG::JSON` type (flash-gordon)
+
 ## v1.3.2 2017-05-13
 
 ## Added
