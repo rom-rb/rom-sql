@@ -1,4 +1,4 @@
-require 'thread'
+require 'concurrent/atomic/count_down_latch'
 
 RSpec.describe ROM::Relation, '#lock' do
   include_context 'users and tasks'
@@ -10,8 +10,7 @@ RSpec.describe ROM::Relation, '#lock' do
   end
 
   context 'with hitting the database' do
-    let(:mutex) { Mutex.new }
-    let(:semaphore) { ConditionVariable.new }
+    let(:latch) { Concurrent::CountDownLatch.new }
 
     let(:timeout) { 0.2 }
 
@@ -24,22 +23,20 @@ RSpec.describe ROM::Relation, '#lock' do
     with_adapters :postgres, :mysql, :oracle do
       it 'locks rows for update' do
         Thread.new do
-          mutex.synchronize do
-            relation.lock do |rel|
-              sleep timeout
+          relation.lock do |rel|
+            latch.count_down
 
-              semaphore.signal
-            end
+            sleep timeout
           end
         end
 
-        mutex.synchronize do
-          semaphore.wait(mutex)
+        latch.wait
 
-          relation.lock
+        expect(elapsed_time).to be < timeout
 
-          expect(elapsed_time).to be > timeout
-        end
+        relation.lock.to_a
+
+        expect(elapsed_time).to be > timeout
       end
     end
   end
