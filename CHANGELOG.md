@@ -3,6 +3,11 @@
 ## Added
 
 * `get` and `get_text` methods for the `PG::JSON` type (flash-gordon)
+* Support for converting data type with `CAST` using the function DSL (flash-gordon)
+
+  ```ruby
+    users.select { string::cast(id, 'varchar').as(:id_str) }
+  ```
 
 ## v1.3.2 2017-05-13
 

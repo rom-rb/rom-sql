@@ -38,4 +38,11 @@ RSpec.describe ROM::SQL::Function, :postgres do
         to raise_error(NoMethodError, /upper/)
     end
   end
+
+  describe '#cast' do
+    it 'transforms data' do
+      expect(func.cast(:id, 'varchar').sql_literal(ds)).
+        to eql(%(CAST("id" AS varchar(255))))
+    end
+  end
 end
