@@ -31,7 +31,7 @@ module ROM
       # @example
       #   users.select { bool::cast(json_data.get_text('activated'), :boolean).as(:activated) }
       #
-      # @param [ROM::SQL::Attrbite] expr Expression to be cast
+      # @param [ROM::SQL::Attribute] expr Expression to be cast
       # @param [String] db_type Target database type
       #
       # @return [ROM::SQL::Attribute]
