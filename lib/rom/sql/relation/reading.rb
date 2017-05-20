@@ -7,6 +7,22 @@ module ROM
       #
       # @api public
       module Reading
+        # Row-level lock modes
+        ROW_LOCK_MODES = Hash.new(update: 'FOR UPDATE'.freeze).update(
+          # https://www.postgresql.org/docs/current/static/sql-select.html#SQL-FOR-UPDATE-SHARE
+          postgres: {
+            update: 'FOR UPDATE'.freeze,
+            no_key_update: 'FOR NO KEY UPDATE'.freeze,
+            share: 'FOR SHARE'.freeze,
+            key_share: 'FOR KEY SHARE'.freeze
+          },
+          # https://dev.mysql.com/doc/refman/5.7/en/innodb-locking-reads.html
+          mysql: {
+            update: 'FOR UPDATE'.freeze,
+            share: 'LOCK IN SHARE MODE'.freeze
+          }
+        ).freeze
+
         # Fetch a tuple identified by the pk
         #
         # @example
@@ -810,7 +826,63 @@ module ROM
           new(dataset.db[sql], schema: schema.empty)
         end
 
+        # Lock rows with in the specified mode. Check out ROW_LOCK_MODES for the
+        # list of supported modes, keep in mind available lock modes heavily depend on
+        # the database type+version you're running on.
+        #
+        # @overload lock(options)
+        #   @option options [Symbol] :mode Lock mode
+        #   @option options [Boolean,Integer] :wait Controls the (NO)WAIT part
+        #   @option options [Boolean] :skip_locked Skip locked rows
+        #   @option options [Array,Symbol,String] :of List of objects in the OF part
+        #
+        #   @return [SQL::Relation]
+        #
+        # @overload lock(options, &block)
+        #   Runs the block inside a transaction. The relation will be materialized
+        #   and passed inside the block so that the lock will be acquired right before
+        #   the block gets executed.
+        #
+        #   @param [Hash] options The same options as for the version without a block
+        #   @yieldparam relation [Array]
+        #
+        # @api public
+        def lock(options = EMPTY_HASH, &block)
+          clause = lock_clause(options)
+
+          if block
+            dataset.db.transaction do
+              block.call(dataset.lock_style(clause).to_a)
+            end
+          else
+            new(dataset.lock_style(clause))
+          end
+        end
+
         private
+
+        # Build a locking clause
+        #
+        # @api private
+        def lock_clause(mode: :update, skip_locked: false, of: nil, wait: nil)
+          stmt = ROW_LOCK_MODES[dataset.db.database_type].fetch(mode).dup
+          stmt << ' OF ' << Array(of).join(', ') if of
+
+          if skip_locked
+            raise ArgumentError, "SKIP LOCKED cannot be used with (NO)WAIT clause" if !wait.nil?
+
+            stmt << ' SKIP LOCKED'
+          else
+            case wait
+            when Integer
+              stmt << ' WAIT ' << wait.to_s
+            when false
+              stmt << ' NOWAIT'
+            else
+              stmt
+            end
+          end
+        end
 
         # Apply input types to condition values
         #

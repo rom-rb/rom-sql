@@ -77,7 +77,7 @@ end
 
 def with_adapters(*args, &block)
   reset_adapter = Hash[*ADAPTERS.flat_map { |a| [a, false] }]
-  adapters = args.empty? || args[0] == :all ? ADAPTERS : args
+  adapters = args.empty? || args[0] == :all ? ADAPTERS : (args & ADAPTERS)
 
   adapters.each do |adapter|
     context("with #{adapter}", **reset_adapter, adapter => true, &block)
