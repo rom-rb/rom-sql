@@ -2,6 +2,7 @@
 
 ## Added
 
+* `Relation#lock`, row-level locking using the `SELECT FOR UPDATE` clause (flash-gordon)
 * `get` and `get_text` methods for the `PG::JSON` type (flash-gordon)
 * Support for converting data type with `CAST` using the function DSL (flash-gordon)
 
