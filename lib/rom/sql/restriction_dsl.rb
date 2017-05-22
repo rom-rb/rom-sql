@@ -9,6 +9,14 @@ module ROM
         instance_exec(&block)
       end
 
+      # Returns a result of SQL EXISTS clause.
+      #
+      # @example
+      #   users.where { exists(users.where(name: 'John')) }
+      def exists(relation)
+        relation.dataset.exists
+      end
+
       private
 
       # @api private
