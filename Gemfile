@@ -26,6 +26,6 @@ group :test do
   gem 'ruby-oci8', platforms: :mri if ENV['ROM_USE_ORACLE']
 end
 
-group :tools do
+group :tools, :test do
   gem 'rom-repository', git: 'https://github.com/rom-rb/rom-repository.git', branch: 'master'
 end
