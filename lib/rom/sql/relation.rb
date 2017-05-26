@@ -54,7 +54,7 @@ module ROM
 
             if db.table_exists?(table)
               if schema
-                select(*schema).order(*schema.project(*schema.primary_key_names).qualified)
+                select(*schema.map(&:to_sql_name)).order(*schema.project(*schema.primary_key_names).qualified.map(&:to_sql_name))
               else
                 select(*columns).order(*klass.primary_key_columns(db, table))
               end
