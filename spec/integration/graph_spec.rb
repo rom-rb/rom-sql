@@ -23,12 +23,12 @@ RSpec.describe 'Eager loading' do
       end
     end
 
-    it 'issues 3 queries for 3 combined relations' do
+    it 'issues 3 queries for 3.graphd relations' do
       users = container.relation(:users).by_name('Piotr')
       tasks = container.relation(:tasks)
       tags = container.relation(:tags)
 
-      relation = users.combine(tasks.for_users.combine(tags.for_tasks))
+      relation = users.graph(tasks.for_users.graph(tags.for_tasks))
 
       # TODO: figure out a way to assert correct number of issued queries
       expect(relation.call).to be_instance_of(ROM::Relation::Loaded)
