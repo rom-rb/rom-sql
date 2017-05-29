@@ -1,6 +1,6 @@
-require 'dry-equalizer'
+require 'dry/equalizer'
 require 'sequel'
-require 'rom'
+require 'rom/core'
 
 require 'rom/sql/version'
 require 'rom/sql/errors'
