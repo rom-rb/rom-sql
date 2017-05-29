@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-git 'https://github.com/rom-rb/rom.git' do
+git 'https://github.com/rom-rb/rom.git', branch: 'master' do
   gem 'rom-core'
   gem 'rom-mapper'
   gem 'rom-repository', group: :tools
