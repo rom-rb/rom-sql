@@ -21,6 +21,8 @@
 
 * Fixed a regression introduced in v1.3.2 caused by doing way more work processing the default dataset (flash-gordon)
 
+[Compare v1.3.2...v1.3.3](https://github.com/rom-rb/rom-sql/compare/v1.3.2...v1.3.3)
+
 ## v1.3.2 2017-05-13
 
 ### Added
