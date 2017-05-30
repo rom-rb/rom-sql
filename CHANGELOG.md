@@ -1,6 +1,6 @@
 ## v1.3.3 to-be-released
 
-## Added
+### Added
 
 * `Relation#lock`, row-level locking using the `SELECT FOR UPDATE` clause (flash-gordon)
 * `get` and `get_text` methods for the `PG::JSON` type (flash-gordon)
@@ -10,15 +10,26 @@
     users.select { string::cast(id, 'varchar').as(:id_str) }
   ```
 
+* Support for`EXISTS` (v-kolesnikov)
+
+  ```ruby
+    subquery = tasks.where(tasks[:user_id].qualified => users[:id].qualified)
+    users.where { exists(subquery) }
+  ```
+
+### Fixed
+
+* Fixed a regression introduced in v1.3.2 caused by doing way more work processing the default dataset (flash-gordon)
+
 ## v1.3.2 2017-05-13
 
-## Added
+### Added
 
 * Support for filtering with a SQL function in the `WHERE` clause. Be sure you're using it wisely and don't call it on large datasets ;) (flash-gordon)
 * `Void` type for calling functions without returning value (flash-gordon)
 * Support for [`PG::Array` transformations and queries](https://github.com/rom-rb/rom-sql/blob/15019a40e2cf2a224476184c4cddab4062a2cc01/lib/rom/sql/extensions/postgres/types.rb#L23-L148) (flash-gordon)
 
-## Fixed
+### Fixed
 
 * A bunch of warnings from Sequel 4.46
 
@@ -26,7 +37,7 @@
 
 ## v1.3.1 2017-05-05
 
-## Changed
+### Changed
 
 * [internal] Compatibility with `dry-core` v0.3.0 (flash-gordon)
 
