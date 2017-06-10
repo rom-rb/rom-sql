@@ -1,5 +1,6 @@
 require 'rom/sql/types'
 require 'rom/sql/schema'
+require 'rom/sql/wrap'
 
 require 'rom/sql/relation/reading'
 require 'rom/sql/relation/writing'
@@ -7,7 +8,6 @@ require 'rom/sql/relation/sequel_api'
 
 require 'rom/plugins/relation/key_inference'
 require 'rom/plugins/relation/sql/auto_combine'
-require 'rom/plugins/relation/sql/auto_wrap'
 
 module ROM
   module SQL
@@ -21,12 +21,12 @@ module ROM
 
       use :key_inference
       use :auto_combine
-      use :auto_wrap
 
       include Writing
       include Reading
 
       schema_dsl SQL::Schema::DSL
+      wrap_class SQL::Wrap
 
       # Set default dataset for a relation sub-class
       #

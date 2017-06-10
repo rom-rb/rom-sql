@@ -1,12 +1,12 @@
-RSpec.describe 'Plugins / :auto_wrap' do
+RSpec.describe ROM::SQL::Wrap do
   with_adapters do
     include_context 'users and tasks'
 
-    describe '#for_wrap' do
+    describe '#wrap' do
       shared_context 'joined tuple' do
-        it 'returns joined tuples' do
+        it 'returns nested tuples' do
           task_with_user = tasks
-            .for_wrap({ id: :user_id }, name)
+            .wrap(name)
             .where { id.qualified.is(2) }
             .one
 
@@ -17,35 +17,12 @@ RSpec.describe 'Plugins / :auto_wrap' do
 
         it 'works with by_pk' do
           task_with_user = tasks
-                             .for_wrap({ id: :user_id }, users.name.relation)
+                             .wrap(name)
                              .by_pk(1)
                              .one
 
           expect(task_with_user).
             to eql(id: 1, user_id: 2, title: "Joe's task", users_name: "Joe", users_id: 2)
-        end
-      end
-
-      context 'when parent relation is registered under dataset name' do
-        before do
-          conf.relation(:tasks) { schema(infer: true) }
-          conf.relation(:users) { schema(infer: true) }
-        end
-
-        include_context 'joined tuple' do
-          let(:name) { :users }
-        end
-      end
-
-      context 'when parent relation is registered under a custom name' do
-        before do
-          conf.relation(:tasks) { schema(infer: true) }
-          conf.relation(:authors) { schema(:users, infer: true) }
-        end
-
-        include_context 'joined tuple' do
-          let(:users) { relations[:authors] }
-          let(:name) { :authors}
         end
       end
 
