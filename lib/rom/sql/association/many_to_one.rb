@@ -2,14 +2,12 @@ module ROM
   module SQL
     class Association
       class ManyToOne < Association
-        result :one
-
         # @api public
-        def call(relations, left = relations[target.relation])
-          right = relations[source.relation]
+        def call(left = self.target)
+          right = source
 
-          left_pk = left.primary_key
-          right_fk = left.foreign_key(source.relation)
+          left_pk = left.schema.primary_key_name
+          right_fk = left.foreign_key(source.name.relation)
 
           left_schema = left.schema
           right_schema = right.schema.project_pk
@@ -21,7 +19,7 @@ module ROM
               left_schema.merge(right_schema.project_fk(left_pk => right_fk))
             end.qualified
 
-          relation = left.inner_join(source_table, join_keys(relations))
+          relation = left.join(source_table, join_keys)
 
           if view
             apply_view(schema, relation)
@@ -31,20 +29,15 @@ module ROM
         end
 
         # @api public
-        def combine_keys(relations)
-          Hash[*with_keys(relations)]
-        end
-
-        # @api public
-        def join_keys(relations)
-          with_keys(relations) { |source_key, target_key|
-            { qualify(source_alias, source_key) => qualify(target, target_key) }
+        def join_keys
+          with_keys { |source_key, target_key|
+            { source[source_key].qualified(source_alias) => target[target_key].qualified }
           }
         end
 
         # @api private
-        def associate(relations, child, parent)
-          fk, pk = join_key_map(relations)
+        def associate(child, parent)
+          fk, pk = join_key_map
           child.merge(fk => parent.fetch(pk))
         end
 
@@ -52,18 +45,18 @@ module ROM
 
         # @api private
         def source_table
-          self_ref? ? Sequel.as(source.dataset, source_alias) : source
+          self_ref? ? Sequel.as(source.name.dataset, source_alias) : source.name.dataset
         end
 
         # @api private
         def source_alias
-          self_ref? ? :"#{source.dataset.to_s[0]}_0" : source
+          self_ref? ? :"#{source.name.dataset.to_s[0]}_0" : source.name.dataset
         end
 
         # @api private
-        def with_keys(relations, &block)
-          source_key = foreign_key || relations[source.relation].foreign_key(target.relation)
-          target_key = relations[target.relation].primary_key
+        def with_keys(&block)
+          source_key = foreign_key || source.foreign_key(target.name.dataset)
+          target_key = target.schema.primary_key_name
           return [source_key, target_key] unless block
           yield(source_key, target_key)
         end

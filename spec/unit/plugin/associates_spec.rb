@@ -33,11 +33,11 @@ RSpec.describe ROM::SQL::Plugin::Associates do
   end
 
   let(:tags_assoc) do
-    ROM::SQL::Association::ManyToMany.new(:posts, :tags, through: :posts_tags)
+    ROM::SQL::Association::ManyToMany.new(double(:definition).as_null_object, {})
   end
 
   let(:posts_assoc) do
-    ROM::SQL::Association::ManyToMany.new(:tags, :posts, through: :posts_tags)
+    ROM::SQL::Association::ManyToMany.new(double(:definition).as_null_object, {})
   end
 
   before do
@@ -48,8 +48,8 @@ RSpec.describe ROM::SQL::Plugin::Associates do
 
   shared_context 'associates result' do
     it 'inserts join tuples and returns child tuples with combine keys' do
-      expect(tags_assoc).to receive(:persist).with(registry, post_tuples, tag_tuples)
-      expect(tags_assoc).to receive(:parent_combine_keys).with(registry).and_return(%i[name tag])
+      expect(tags_assoc).to receive(:persist).with(post_tuples, tag_tuples)
+      expect(tags_assoc).to receive(:parent_combine_keys).and_return(%i[name tag])
 
       result = command.associate(post_tuples, tag_tuples, assoc: tags_assoc, keys: {})
 

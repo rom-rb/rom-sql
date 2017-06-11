@@ -35,7 +35,7 @@ module ROM
             def for_combine(spec)
               case spec
               when ROM::SQL::Association
-                spec.call(__registry__, self).preload(spec)
+                spec.(self).preload(spec)
               else
                 preload(spec)
               end
@@ -49,9 +49,11 @@ module ROM
 
                 where(pk => source.pluck(pk.name))
               when Hash, ROM::SQL::Association
-                source_key, target_key = spec.is_a?(Hash) ? spec.flatten(1) : spec.join_keys(__registry__).flatten(1)
+                source_key, target_key = spec.is_a?(Hash) ? spec.flatten(1) : spec.join_keys.flatten(1)
 
-                target_pks = source.pluck(source_key.to_sym)
+                # TODO: remove this check once ad-hoc combines are gone
+                key = source_key.is_a?(Symbol) ? source_key : source_key.key
+                target_pks = source.pluck(key)
                 target_pks.uniq!
 
                 where(target_key => target_pks)

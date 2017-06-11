@@ -1,10 +1,10 @@
-RSpec.describe ROM::SQL::Association::OneToOne do
+RSpec.describe ROM::SQL::Association::OneToOne, helpers: true do
   include_context 'users'
   include_context 'accounts'
 
-  subject(:assoc) {
-    ROM::SQL::Association::OneToOne.new(:users, :accounts)
-  }
+  subject(:assoc) do
+    build_assoc(:one_to_one, :users, :accounts)
+  end
 
   with_adapters do
     before do
@@ -21,16 +21,20 @@ RSpec.describe ROM::SQL::Association::OneToOne do
     end
 
     describe '#result' do
-      specify { expect(ROM::SQL::Association::OneToOne.result).to be(:one) }
+      specify { expect(assoc.result).to be(:one) }
+    end
+
+    describe '#combine_keys' do
+      specify { expect(assoc.combine_keys).to eql(id: :user_id) }
     end
 
     describe '#call' do
       it 'prepares joined relations' do |example|
-        relation = assoc.call(container.relations)
+        relation = assoc.()
 
         expect(relation.schema.map(&:name)).to eql(%i[id user_id number balance])
 
-        # TODO: this if caluse should be removed when (and if) https://github.com/xerial/sqlite-jdbc/issues/112
+        # TODO: this if clause should be removed when (and if) https://github.com/xerial/sqlite-jdbc/issues/112
         # will be resolved. See https://github.com/rom-rb/rom-sql/issues/49 for details
         if jruby? && sqlite?(example)
           expect(relation.to_a).

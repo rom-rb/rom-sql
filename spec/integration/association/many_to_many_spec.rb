@@ -1,13 +1,13 @@
-RSpec.describe ROM::SQL::Association::ManyToMany do
+RSpec.describe ROM::SQL::Association::ManyToMany, helpers: true do
   include_context 'users and tasks'
 
   with_adapters do
     context 'through a relation with a composite PK' do
-      subject(:assoc) {
-        ROM::SQL::Association::ManyToMany.new(:tasks, :tags, through: :task_tags)
-      }
+      subject(:assoc) do
+        build_assoc(:many_to_many, :tasks, :tags, through: :task_tags)
+      end
 
-      let(:tags) { container.relations[:tags] }
+      let(:tags) { relations[:tags] }
 
       before do
         conf.relation(:task_tags) do
@@ -39,12 +39,16 @@ RSpec.describe ROM::SQL::Association::ManyToMany do
       end
 
       describe '#result' do
-        specify { expect(ROM::SQL::Association::ManyToMany.result).to be(:many) }
+        specify { expect(assoc.result).to be(:many) }
+      end
+
+      describe '#combine_keys' do
+        specify { expect(assoc.combine_keys).to eql(id: :task_id) }
       end
 
       describe '#call' do
         it 'prepares joined relations' do
-          relation = assoc.call(container.relations)
+          relation = assoc.()
 
           expect(relation.schema.map(&:to_sql_name)).
             to eql([Sequel.qualify(:tags, :id),
@@ -56,11 +60,11 @@ RSpec.describe ROM::SQL::Association::ManyToMany do
 
       describe ':through another assoc' do
         subject(:assoc) do
-          ROM::SQL::Association::ManyToMany.new(:users, :tags, through: :tasks)
+          build_assoc(:many_to_many, :users, :tags, through: :tasks)
         end
 
         it 'prepares joined relations through other association' do
-          relation = assoc.call(container.relations)
+          relation = assoc.()
 
           expect(relation.schema.map(&:to_sql_name)).
             to eql([Sequel.qualify(:tags, :id),

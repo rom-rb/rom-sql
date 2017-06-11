@@ -18,4 +18,10 @@ module Helpers
   def define_type(name, id, **opts)
     ROM::SQL::Attribute.new(ROM::Types.const_get(id).meta(name: name, **opts))
   end
+
+  def build_assoc(type, *args)
+    klass = Dry::Core::Inflector.classify(type)
+    definition = ROM::Associations::Definitions.const_get(klass).new(*args)
+    ROM::SQL::Association.const_get(definition.type).new(definition, relations)
+  end
 end

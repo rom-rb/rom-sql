@@ -1,10 +1,10 @@
-RSpec.describe ROM::SQL::Association::OneToOneThrough do
+RSpec.describe ROM::SQL::Association::OneToOneThrough, helpers: true do
   include_context 'users'
   include_context 'accounts'
 
-  subject(:assoc) {
-    ROM::SQL::Association::OneToOneThrough.new(:users, :cards, through: :accounts)
-  }
+  subject(:assoc) do
+    build_assoc(:one_to_one_through, :users, :cards, through: :accounts)
+  end
 
   with_adapters do
     before do
@@ -48,12 +48,16 @@ RSpec.describe ROM::SQL::Association::OneToOneThrough do
     end
 
     describe '#result' do
-      specify { expect(ROM::SQL::Association::OneToOneThrough.result).to be(:one) }
+      specify { expect(assoc.result).to be(:one) }
+    end
+
+    describe '#combine_keys' do
+      specify { expect(assoc.combine_keys).to eql(id: :user_id) }
     end
 
     describe '#call' do
       it 'prepares joined relations' do
-        relation = assoc.call(container.relations)
+        relation = assoc.()
 
         expect(relation.schema.map(&:name)).to eql(%i[id account_id pan user_id])
         expect(relation.to_a).to eql([id: 1, account_id: 1, pan: '*6789', user_id: 1])
@@ -62,15 +66,15 @@ RSpec.describe ROM::SQL::Association::OneToOneThrough do
 
     describe ':through another assoc' do
       subject(:assoc) do
-        ROM::SQL::Association::OneToOneThrough.new(:users, :subscriptions, through: :accounts)
+        build_assoc(:one_to_one_through, :users, :subscriptions, through: :accounts)
       end
 
       let(:account_assoc) do
-        ROM::SQL::Association::OneToOneThrough.new(:accounts, :subscriptions, through: :cards)
+        build_assoc(:one_to_one_through, :accounts, :subscriptions, through: :cards)
       end
 
       it 'prepares joined relations through other association' do
-        relation = assoc.call(container.relations)
+        relation = assoc.()
 
         expect(relation.schema.map(&:name)).to eql(%i[id card_id service user_id])
         expect(relation.to_a).to eql([id: 1, card_id: 1, service: 'aws', user_id: 1])

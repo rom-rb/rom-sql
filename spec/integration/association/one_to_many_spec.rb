@@ -1,9 +1,9 @@
-RSpec.describe ROM::SQL::Association::OneToMany do
-  subject(:assoc) {
-    ROM::SQL::Association::OneToMany.new(:users, :tasks)
-  }
-
+RSpec.describe ROM::SQL::Association::OneToMany, helpers: true do
   include_context 'users and tasks'
+
+  subject(:assoc) do
+    build_assoc(:one_to_many, :users, :tasks)
+  end
 
   with_adapters do
     before do
@@ -17,12 +17,25 @@ RSpec.describe ROM::SQL::Association::OneToMany do
     end
 
     describe '#result' do
-      specify { expect(ROM::SQL::Association::OneToMany.result).to be(:many) }
+      specify { expect(assoc.result).to be(:many) }
+    end
+
+    describe '#combine_keys' do
+      specify { expect(assoc.combine_keys).to eql(id: :user_id) }
+    end
+
+    describe '#associate' do
+      it 'merges FKs into tuples' do
+        child = { name: 'Child' }
+        parent = { id: 312, name: 'Parent '}
+
+        expect(assoc.associate(child, parent)).to eql(user_id: 312, name: 'Child')
+      end
     end
 
     describe '#call' do
       it 'prepares joined relations' do
-        relation = assoc.call(container.relations)
+        relation = assoc.()
 
         expect(relation.schema.map(&:name)).to eql(%i[id user_id title])
 

@@ -4,9 +4,9 @@ RSpec.describe ROM::SQL::Association::ManyToOne, helpers: true do
       include_context 'users and tasks'
       include_context 'accounts'
 
-      subject(:assoc) {
-        ROM::SQL::Association::ManyToOne.new(:tasks, :users)
-      }
+      subject(:assoc) do
+        build_assoc(:many_to_one, :tasks, :users)
+      end
 
       before do
         conf.relation(:tasks) do
@@ -18,28 +18,23 @@ RSpec.describe ROM::SQL::Association::ManyToOne, helpers: true do
         end
       end
 
-      describe '#result' do
-        specify { expect(ROM::SQL::Association::ManyToOne.result).to be(:one) }
-      end
-
       describe '#name' do
         it 'uses target by default' do
           expect(assoc.name).to be(:users)
         end
       end
 
-      describe '#target' do
-        it 'builds full relation name' do
-          assoc = ROM::SQL::Association::ManyToOne.new(:users, :tasks, relation: :foo)
+      describe '#result' do
+        specify { expect(assoc.result).to be(:one) }
+      end
 
-          expect(assoc.name).to be(:tasks)
-          expect(assoc.target).to eql(ROM::SQL::Association::Name[:foo, :tasks])
-        end
+      describe '#combine_keys' do
+        specify { expect(assoc.combine_keys).to eql(user_id: :id) }
       end
 
       describe '#call' do
         it 'prepares joined relations' do
-          relation = assoc.call(container.relations)
+          relation = assoc.()
 
           expect(relation.schema.map(&:to_sql_name)).
             to eql([Sequel.qualify(:users, :id),
@@ -93,7 +88,7 @@ RSpec.describe ROM::SQL::Association::ManyToOne, helpers: true do
       let(:articles) { container.relations[:articles] }
 
       subject(:assoc) do
-        ROM::SQL::Association::ManyToOne.new(articles_name, :users)
+        build_assoc(:many_to_one, articles_name, :users)
       end
 
       before do
@@ -109,7 +104,7 @@ RSpec.describe ROM::SQL::Association::ManyToOne, helpers: true do
 
       describe '#call' do
         it 'prepares joined relations' do
-          relation = assoc.call(container.relations)
+          relation = assoc.()
 
           expect(relation.schema.map(&:to_sql_name)).
             to eql([Sequel.qualify(:users, :id),

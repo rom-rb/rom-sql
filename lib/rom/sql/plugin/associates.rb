@@ -29,7 +29,7 @@ module ROM
 
             relation.associations.try(name) do |assoc|
               @assoc = assoc
-              @opts.update(assoc: assoc, keys: assoc.join_keys(relation.__registry__))
+              @opts.update(assoc: assoc, keys: assoc.join_keys)
             end
 
             @opts.update(parent: opts[:parent]) if opts[:parent]
@@ -142,9 +142,9 @@ module ROM
               when Association::ManyToMany
                 result_type = tuples.is_a?(Array) ? :many : :one
 
-                assoc.persist(__registry__, tuples, parent)
+                assoc.persist(tuples, parent)
 
-                pk, fk = assoc.parent_combine_keys(__registry__)
+                pk, fk = assoc.parent_combine_keys
 
                 case parent
                 when Array
@@ -156,7 +156,7 @@ module ROM
                 end
               when Association
                 with_input_tuples(tuples).map { |tuple|
-                  assoc.associate(__registry__, tuple, parent)
+                  assoc.associate(tuple, parent)
                 }
               end
 

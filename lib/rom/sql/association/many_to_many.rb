@@ -4,40 +4,33 @@ module ROM
   module SQL
     class Association
       class ManyToMany < Association
-        result :many
-
-        option :through, type: Types::Strict::Symbol.optional
+        attr_reader :join_relation
 
         # @api private
         def initialize(*)
           super
-          @through = Relation::Name[
-            options[:through] || options[:through_relation], options[:through]
-          ]
+          @join_relation = relations[through]
         end
 
         # @api public
-        def call(relations, target_rel = nil)
-          join_rel = join_relation(relations)
-          assocs = join_rel.associations
+        def call(target_rel = nil)
+          assocs = join_relation.associations
 
-          left = target_rel ? assocs[target].(relations, target_rel) : assocs[target].(relations)
-          right = relations[target.relation]
-
-          left_fk = foreign_key || join_rel.foreign_key(source.relation)
+          left = target_rel ? assocs[target.name].(target_rel) : assocs[target.name].()
+          right = target
 
           schema =
-            if left.schema.key?(left_fk)
+            if left.schema.key?(foreign_key)
               if target_rel
-                target_rel.schema.merge(left.schema.project(left_fk))
+                target_rel.schema.merge(left.schema.project(foreign_key))
               else
-                left.schema.project(*(right.schema.map(&:name) + [left_fk]))
+                left.schema.project(*(right.schema.map(&:name) + [foreign_key]))
               end
             else
-              right.schema.merge(join_rel.schema.project(left_fk))
+              right.schema.merge(join_relation.schema.project(foreign_key))
             end.qualified
 
-          relation = left.inner_join(source, join_keys(relations))
+          relation = left.join(source.name.dataset, join_keys)
 
           if view
             apply_view(schema, relation)
@@ -46,44 +39,48 @@ module ROM
           end
         end
 
+        # @api public
+        def foreign_key
+          definition.foreign_key || join_relation.foreign_key(source.name)
+        end
+
+        # @api public
+        def through
+          definition.through
+        end
+
         # @api private
-        def persist(relations, children, parents)
-          join_tuples = associate(relations, children, parents)
-          join_relation = join_relation(relations)
+        def persist(children, parents)
+          join_tuples = associate(children, parents)
           join_relation.multi_insert(join_tuples)
         end
 
         # @api private
-        def parent_combine_keys(relations)
-          relations[target].associations[source].combine_keys(relations).to_a.flatten(1)
+        def parent_combine_keys
+          target.associations[source.name].combine_keys.to_a.flatten(1)
         end
 
         # @api public
-        def join(relations, type, source = relations[self.source], target = relations[self.target])
+        def join(type, source = self.source, target = self.target)
           through_assoc = source.associations[through]
-          joined = through_assoc.join(relations, type, source)
-          joined.__send__(type, target.name.dataset, join_keys(relations)).qualified
+          joined = through_assoc.join(type, source)
+          joined.__send__(type, target.name.dataset, join_keys).qualified
         end
 
         # @api public
-        def join_keys(relations)
-          with_keys(relations) { |source_key, target_key|
-            { qualify(source, source_key) => qualify(through, target_key) }
+        def join_keys
+          with_keys { |source_key, target_key|
+            { source[source_key].qualified => join_relation[target_key].qualified }
           }
         end
 
-        # @api public
-        def combine_keys(relations)
-          Hash[*with_keys(relations)]
-        end
-
         # @api private
-        def associate(relations, children, parent)
-          ((spk, sfk), (tfk, tpk)) = join_key_map(relations)
+        def associate(children, parent)
+          ((spk, sfk), (tfk, tpk)) = join_key_map
 
           case parent
           when Array
-            parent.map { |p| associate(relations, children, p) }.flatten(1)
+            parent.map { |p| associate(children, p) }.flatten(1)
           else
             children.map { |tuple|
               { sfk => tuple.fetch(spk), tfk => parent.fetch(tpk) }
@@ -91,25 +88,20 @@ module ROM
           end
         end
 
-        # @api private
-        def join_relation(relations)
-          relations[through.relation]
-        end
-
         protected
 
         # @api private
-        def with_keys(relations, &block)
-          source_key = relations[source.relation].primary_key
-          target_key = foreign_key || relations[through.relation].foreign_key(source.relation)
+        def with_keys(&block)
+          source_key = source.primary_key
+          target_key = foreign_key || join_relation.foreign_key(source.name)
           return [source_key, target_key] unless block
           yield(source_key, target_key)
         end
 
         # @api private
-        def join_key_map(relations)
+        def join_key_map
           left = super
-          right = join_relation(relations).associations[target].join_key_map(relations)
+          right = join_relation.associations[target.name].join_key_map
 
           [left, right]
         end

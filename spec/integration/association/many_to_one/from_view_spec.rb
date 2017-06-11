@@ -58,7 +58,7 @@ RSpec.describe ROM::SQL::Association::ManyToOne, '#call' do
     end
 
     it 'prepares joined relations using custom view in target relation' do
-      relation = assoc_inter.call(relations)
+      relation = assoc_inter.()
 
       expect(relation.schema.map(&:to_sql_name)).
         to eql([Sequel.qualify(:destinations, :id),
@@ -69,7 +69,7 @@ RSpec.describe ROM::SQL::Association::ManyToOne, '#call' do
       expect(relation.first).to eql(id: 2, intermediate: db_true, name: 'Intermediate', flight_id: 1)
       expect(relation.count).to be(1)
 
-      relation = assoc_final.call(relations)
+      relation = assoc_final.()
 
       expect(relation.schema.map(&:to_sql_name)).
         to eql([Sequel.qualify(:destinations, :id),
