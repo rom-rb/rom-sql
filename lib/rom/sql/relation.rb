@@ -130,7 +130,7 @@ module ROM
       #
       # @api public
       def assoc(name)
-        associations[name].(__registry__)
+        associations[name].()
       end
 
       # Return raw column names

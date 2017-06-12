@@ -98,12 +98,12 @@ module ROM
       # @return [SQL::Attribute]
       #
       # @api public
-      def qualified
+      def qualified(table_alias = nil)
         return self if qualified?
 
         case sql_expr
         when Sequel::SQL::AliasedExpression, Sequel::SQL::Identifier
-          type = meta(qualified: true)
+          type = meta(qualified: table_alias || true)
           type.meta(sql_expr: type.to_sql_name)
         else
           raise QualifyError, "can't qualify #{name.inspect} (#{sql_expr.inspect})"
@@ -149,7 +149,7 @@ module ROM
       #
       # @api public
       def qualified?
-        meta[:qualified].equal?(true)
+        meta[:qualified].equal?(true) || meta[:qualified].is_a?(Symbol)
       end
 
       # Return a new attribute marked as a FK
@@ -182,9 +182,9 @@ module ROM
       def to_sym
         @_to_sym ||=
           if qualified? && aliased?
-            :"#{source.dataset}__#{name}___#{meta[:alias]}"
+            :"#{table_name}__#{name}___#{meta[:alias]}"
           elsif qualified?
-            :"#{source.dataset}__#{name}"
+            :"#{table_name}__#{name}"
           elsif aliased?
             :"#{name}___#{meta[:alias]}"
           else
@@ -313,9 +313,9 @@ module ROM
       def to_sql_name
         @_to_sql_name ||=
           if qualified? && aliased?
-            Sequel.qualify(source.dataset, name).as(meta[:alias])
+            Sequel.qualify(table_name, name).as(meta[:alias])
           elsif qualified?
-            Sequel.qualify(source.dataset, name)
+            Sequel.qualify(table_name, name)
           elsif aliased?
             Sequel.as(name, meta[:alias])
           else
@@ -364,6 +364,17 @@ module ROM
           value
         else
           type[value]
+        end
+      end
+
+      # Return source table name or its alias
+      #
+      # @api private
+      def table_name
+        if qualified? && meta[:qualified].is_a?(Symbol)
+          meta[:qualified]
+        else
+          source.dataset
         end
       end
     end

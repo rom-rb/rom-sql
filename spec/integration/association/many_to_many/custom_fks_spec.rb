@@ -55,7 +55,7 @@ RSpec.describe ROM::SQL::Association::ManyToMany, '#call' do
     end
 
     it 'prepares joined relations using custom FK' do
-      relation = assoc.call(relations).order(puzzles[:text].qualified, puzzle_solvers[:solver_id].qualified)
+      relation = assoc.().order(puzzles[:text].qualified, puzzle_solvers[:solver_id].qualified)
 
       expect(relation.schema.map(&:to_sql_name)).
         to eql([Sequel.qualify(:puzzles, :id),

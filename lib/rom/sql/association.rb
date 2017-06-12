@@ -3,8 +3,6 @@ require 'dry/core/class_attributes'
 
 require 'rom/types'
 require 'rom/initializer'
-require 'rom/sql/qualified_attribute'
-require 'rom/sql/association/name'
 
 module ROM
   module SQL
@@ -12,70 +10,59 @@ module ROM
     #
     # @api public
     class Association
-      include Dry::Core::Constants
-      include Dry::Equalizer(:source, :target, :result)
       extend Initializer
-      extend Dry::Core::ClassAttributes
+      include Dry::Core::Constants
+      include Dry::Equalizer(:definition, :source, :target)
 
-      defines :result
+      # @!attribute [r] definition
+      #   @return [ROM::Associations::Definition] Association configuration object
+      param :definition
+
+      # @!attribute [r] relations
+      #   @return [ROM::RelationRegistry] Relation registry
+      option :relations, reader: true
 
       # @!attribute [r] source
-      #   @return [ROM::Relation::Name] the source relation name
-      param :source
+      #   @return [ROM::SQL::Relation] the source relation
+      option :source, reader: true
 
       # @!attribute [r] target
-      #   @return [ROM::Relation::Name] the target relation name
-      param :target
-
-      # @!attribute [r] relation
-      #   @return [Symbol] an optional relation identifier for the target
-      option :relation, Types::Strict::Symbol, optional: true
-
-      # @!attribute [r] result
-      #   @return [Symbol] either :one or :many
-      option :result, Types::Strict::Symbol, default: -> { self.class.result }
-
-      # @!attribute [r] as
-      #   @return [Symbol] an optional association alias name
-      option :as, Types::Strict::Symbol, default: -> { target.to_sym }
-
-      # @!attribute [r] foreign_key
-      #   @return [Symbol] an optional association alias name
-      option :foreign_key, Types::Optional::Strict::Symbol, optional: true
-
-      # @!attribute [r] view
-      #   @return [Symbol] An optional view that should be used to extend assoc relation
-      option :view, optional: true
-
-      alias_method :name, :as
+      #   @return [ROM::SQL::Relation::Name] the target relation
+      option :target, reader: true
 
       # @api public
-      def self.new(source, target, options = EMPTY_HASH)
+      def self.new(definition, relations)
         super(
-          Name[source],
-          Name[options[:relation] || target, target, options[:as] || target],
-          options
+          definition,
+          relations: relations,
+          source: relations[definition.source.relation],
+          target: relations[definition.target.relation]
         )
       end
 
       # @api public
-      def join(relations, type, source = relations[self.source], target = relations[self.target])
-        source.__send__(type, target.name.dataset, join_keys(relations)).qualified
+      def view
+        definition.view
       end
 
-      # Returns a qualified attribute name for a given dataset
-      #
-      # This is compatible with Sequel's SQL generator and can be used in query
-      # DSL methods
-      #
-      # @param name [ROM::Relation::Name]
-      # @param attribute [Symbol]
-      #
-      # @return [QualifiedAttribute]
-      #
       # @api public
-      def qualify(name, attribute)
-        QualifiedAttribute[name.to_sym, attribute]
+      def name
+        definition.name
+      end
+
+      # @api public
+      def foreign_key
+        definition.foreign_key
+      end
+
+      # @api public
+      def result
+        definition.result
+      end
+
+      # @api public
+      def join(type, source = self.source, target = self.target)
+        source.__send__(type, target.name.dataset, join_keys).qualified
       end
 
       # @api protected
@@ -84,13 +71,19 @@ module ROM
         schema.merge(view_rel.schema.qualified).uniq(&:to_sql_name).(view_rel)
       end
 
-      # @api private
-      def join_key_map(relations)
-        join_keys(relations).to_a.flatten.map(&:to_sym)
+      # @api public
+      def combine_keys
+        Hash[*with_keys]
       end
 
+      # @api private
+      def join_key_map
+        join_keys.to_a.flatten.map(&:key)
+      end
+
+      # @api private
       def self_ref?
-        source.dataset == target.dataset
+        source.name.dataset == target.name.dataset
       end
     end
   end

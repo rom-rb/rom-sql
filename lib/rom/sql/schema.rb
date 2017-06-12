@@ -1,4 +1,6 @@
 require 'rom/schema'
+
+require 'rom/sql/association'
 require 'rom/sql/order_dsl'
 require 'rom/sql/group_dsl'
 require 'rom/sql/projection_dsl'
@@ -105,9 +107,18 @@ module ROM
       end
 
       # @api private
-      def finalize!(*args)
+      def finalize_attributes!(options = EMPTY_HASH)
         super do
           initialize_primary_key_names
+        end
+      end
+
+      # @api private
+      def finalize_associations!(relations:)
+        super do
+          associations.map do |definition|
+            SQL::Association.const_get(definition.type).new(definition, relations)
+          end
         end
       end
 
