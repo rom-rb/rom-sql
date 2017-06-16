@@ -18,10 +18,6 @@ RSpec.describe ROM::SQL::Plugin::Associates do
     instance_double(ROM::SQL::Relation)
   end
 
-  let(:registry) do
-    Hash.new { |h, k| h.fetch(k.to_sym) }.update(posts: posts, tags: tags)
-  end
-
   let(:command_class) do
     Class.new(ROM::SQL::Commands::Create) do
       use :associates, tags: []
@@ -33,15 +29,14 @@ RSpec.describe ROM::SQL::Plugin::Associates do
   end
 
   let(:tags_assoc) do
-    ROM::SQL::Association::ManyToMany.new(double(:definition).as_null_object, {})
+    ROM::SQL::Associations::ManyToMany.new(double(:definition).as_null_object, {})
   end
 
   let(:posts_assoc) do
-    ROM::SQL::Association::ManyToMany.new(double(:definition).as_null_object, {})
+    ROM::SQL::Associations::ManyToMany.new(double(:definition).as_null_object, {})
   end
 
   before do
-    allow(posts).to receive(:__registry__).and_return(registry)
     allow(associations).to receive(:try).and_yield(tags_assoc)
     allow(tags_assoc).to receive(:join_keys).and_return({})
   end

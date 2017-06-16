@@ -34,7 +34,7 @@ module ROM
             # @api private
             def for_combine(spec)
               case spec
-              when ROM::SQL::Association
+              when ROM::Associations::Abstract
                 spec.(self).preload(spec)
               else
                 preload(spec)
@@ -44,11 +44,11 @@ module ROM
             # @api private
             def preload(spec, source)
               case spec
-              when ROM::SQL::Association::ManyToOne
+              when ROM::SQL::Associations::ManyToOne
                 pk = source.source[source.source.primary_key].qualified
 
                 where(pk => source.pluck(pk.name))
-              when Hash, ROM::SQL::Association
+              when Hash, ROM::Associations::Abstract
                 source_key, target_key = spec.is_a?(Hash) ? spec.flatten(1) : spec.join_keys.flatten(1)
 
                 # TODO: remove this check once ad-hoc combines are gone

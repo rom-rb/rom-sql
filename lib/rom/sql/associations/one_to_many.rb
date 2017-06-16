@@ -1,7 +1,9 @@
+require 'rom/associations/one_to_many'
+
 module ROM
   module SQL
-    class Association
-      class OneToMany < Association
+    module Associations
+      class OneToMany < ROM::Associations::OneToMany
         # @api public
         def call(right = self.target)
           schema = right.schema.qualified
@@ -21,12 +23,6 @@ module ROM
           }
         end
 
-        # @api private
-        def associate(child, parent)
-          pk, fk = join_key_map
-          child.merge(fk => parent.fetch(pk))
-        end
-
         protected
 
         # @api private
@@ -37,14 +33,6 @@ module ROM
         # @api private
         def source_alias
           self_ref? ? :"#{source.dataset.to_s[0]}_0" : source.name.dataset
-        end
-
-        # @api private
-        def with_keys(&block)
-          source_key = source.schema.primary_key_name
-          target_key = foreign_key || target.foreign_key(source.name)
-          return [source_key, target_key] unless block
-          yield(source_key, target_key)
         end
       end
     end

@@ -1,5 +1,6 @@
 require 'rom/sql/types'
 require 'rom/sql/schema'
+require 'rom/sql/attribute'
 require 'rom/sql/wrap'
 
 require 'rom/sql/relation/reading'
@@ -25,7 +26,8 @@ module ROM
       include Writing
       include Reading
 
-      schema_dsl SQL::Schema::DSL
+      schema_class SQL::Schema
+      schema_attr_class SQL::Attribute
       wrap_class SQL::Wrap
 
       # Set default dataset for a relation sub-class

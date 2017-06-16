@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe ROM::SQL::Association::OneToMany, '#call' do
+RSpec.describe ROM::SQL::Associations::OneToMany, '#call' do
   include_context 'users'
 
   before do

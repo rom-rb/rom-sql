@@ -1,6 +1,8 @@
+require 'rom/sql/associations/many_to_many'
+
 module ROM
   module SQL
-    class Association
+    module Associations
       class OneToOneThrough < ManyToMany
       end
     end

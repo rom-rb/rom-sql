@@ -1,3 +1,5 @@
+require 'rom/sql/associations'
+
 module ROM
   module SQL
     module Plugin
@@ -36,7 +38,7 @@ module ROM
           end
 
           def after?
-            assoc.is_a?(Association::ManyToMany)
+            assoc.is_a?(SQL::Associations::ManyToMany)
           end
 
           def ensure_valid(command)
@@ -139,7 +141,7 @@ module ROM
                 with_input_tuples(tuples).map { |tuple|
                   tuple.merge(fk => parent.fetch(pk))
                 }
-              when Association::ManyToMany
+              when SQL::Associations::ManyToMany
                 result_type = tuples.is_a?(Array) ? :many : :one
 
                 assoc.persist(tuples, parent)
@@ -154,7 +156,7 @@ module ROM
                 else
                   tuples.map { |tuple| Hash(tuple).update(fk => parent[pk]) }
                 end
-              when Association
+              when ROM::Associations::Abstract
                 with_input_tuples(tuples).map { |tuple|
                   assoc.associate(tuple, parent)
                 }
@@ -170,11 +172,6 @@ module ROM
               **options,
               associations: associations.merge(name => opts)
             )
-          end
-
-          # @api private
-          def __registry__
-            relation.__registry__
           end
         end
       end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe ROM::SQL::Association::ManyToOne, '#call' do
+RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
   include_context 'database setup'
 
   before do

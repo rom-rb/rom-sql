@@ -1,4 +1,4 @@
-RSpec.describe ROM::SQL::Association::ManyToMany, '#call' do
+RSpec.describe ROM::SQL::Associations::ManyToMany, '#call' do
   include_context 'users'
 
   before do
