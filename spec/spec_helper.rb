@@ -59,6 +59,8 @@ SPEC_ROOT = root = Pathname(__FILE__).dirname
 
 TMP_PATH = root.join('../tmp')
 
+require 'rom/sql/schema/inferrer'
+
 class ROM::SQL::Schema::Inferrer
   def self.on_error(*)
     # quiet in specs
