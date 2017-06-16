@@ -7,7 +7,6 @@ require 'rom/sql/relation/reading'
 require 'rom/sql/relation/writing'
 require 'rom/sql/relation/sequel_api'
 
-require 'rom/plugins/relation/key_inference'
 require 'rom/plugins/relation/sql/auto_combine'
 
 module ROM
@@ -20,7 +19,6 @@ module ROM
 
       adapter :sql
 
-      use :key_inference
       use :auto_combine
 
       include Writing

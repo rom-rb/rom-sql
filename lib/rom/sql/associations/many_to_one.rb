@@ -9,7 +9,7 @@ module ROM
           right = source
 
           left_pk = left.schema.primary_key_name
-          right_fk = left.foreign_key(source.name.relation)
+          right_fk = left.foreign_key(source.name)
 
           left_schema = left.schema
           right_schema = right.schema.project_pk
