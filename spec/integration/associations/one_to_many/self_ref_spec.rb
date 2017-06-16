@@ -1,11 +1,15 @@
 require 'spec_helper'
 
-RSpec.describe ROM::SQL::Association::ManyToOne, '#call' do
-  subject(:assoc) do
-    relations[:categories].associations[:parent]
+RSpec.describe ROM::SQL::Associations::OneToMany, '#call' do
+  include_context 'database setup'
+
+  before do
+    inferrable_relations.concat %i(categories)
   end
 
-  include_context 'database setup'
+  subject(:assoc) do
+    relations[:categories].associations[:children]
+  end
 
   with_adapters do
     before do
@@ -19,6 +23,7 @@ RSpec.describe ROM::SQL::Association::ManyToOne, '#call' do
         schema(infer: true) do
           associations do
             belongs_to :categories, as: :parent, foreign_key: :parent_id
+            has_many :categories, as: :children, foreign_key: :parent_id
           end
         end
       end
@@ -28,10 +33,6 @@ RSpec.describe ROM::SQL::Association::ManyToOne, '#call' do
       relations[:categories].insert(name: 'C3', parent_id: p2_id)
       relations[:categories].insert(name: 'C4', parent_id: p1_id)
       relations[:categories].insert(name: 'C5', parent_id: p1_id)
-    end
-
-    after do
-      conn.drop_table(:categories)
     end
 
     it 'prepares joined relations using custom FK for a self-ref association' do
@@ -44,9 +45,9 @@ RSpec.describe ROM::SQL::Association::ManyToOne, '#call' do
 
       expect(relation.to_a).
         to eql([
-                 { id: 1, parent_id: nil, name: 'P1' },
-                 { id: 1, parent_id: nil, name: 'P1' },
-                 { id: 2, parent_id: nil, name: 'P2' }
+                 { id: 3, parent_id: 2, name: 'C3' },
+                 { id: 4, parent_id: 1, name: 'C4' },
+                 { id: 5, parent_id: 1, name: 'C5' }
                ])
     end
   end

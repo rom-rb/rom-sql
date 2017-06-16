@@ -1,4 +1,4 @@
-RSpec.describe ROM::SQL::Association::OneToMany, helpers: true do
+RSpec.describe ROM::SQL::Associations::OneToMany, helpers: true do
   include_context 'users and tasks'
 
   subject(:assoc) do

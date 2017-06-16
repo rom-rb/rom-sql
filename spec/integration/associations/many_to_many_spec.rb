@@ -1,4 +1,4 @@
-RSpec.describe ROM::SQL::Association::ManyToMany, helpers: true do
+RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
   include_context 'users and tasks'
 
   with_adapters do

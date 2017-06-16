@@ -1,7 +1,9 @@
+require 'rom/associations/many_to_one'
+
 module ROM
   module SQL
-    class Association
-      class ManyToOne < Association
+    module Associations
+      class ManyToOne < ROM::Associations::ManyToOne
         # @api public
         def call(left = self.target)
           right = source
@@ -35,12 +37,6 @@ module ROM
           }
         end
 
-        # @api private
-        def associate(child, parent)
-          fk, pk = join_key_map
-          child.merge(fk => parent.fetch(pk))
-        end
-
         protected
 
         # @api private
@@ -51,14 +47,6 @@ module ROM
         # @api private
         def source_alias
           self_ref? ? :"#{source.name.dataset.to_s[0]}_0" : source.name.dataset
-        end
-
-        # @api private
-        def with_keys(&block)
-          source_key = foreign_key || source.foreign_key(target.name.dataset)
-          target_key = target.schema.primary_key_name
-          return [source_key, target_key] unless block
-          yield(source_key, target_key)
         end
       end
     end

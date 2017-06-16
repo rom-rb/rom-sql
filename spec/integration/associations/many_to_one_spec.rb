@@ -1,4 +1,4 @@
-RSpec.describe ROM::SQL::Association::ManyToOne, helpers: true do
+RSpec.describe ROM::SQL::Associations::ManyToOne, helpers: true do
   with_adapters do
     context 'common name conventions' do
       include_context 'users and tasks'

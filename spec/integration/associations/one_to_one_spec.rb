@@ -1,4 +1,4 @@
-RSpec.describe ROM::SQL::Association::OneToOne, helpers: true do
+RSpec.describe ROM::SQL::Associations::OneToOne, helpers: true do
   include_context 'users'
   include_context 'accounts'
 
