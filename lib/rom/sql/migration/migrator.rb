@@ -2,6 +2,7 @@ require 'pathname'
 
 require 'rom/types'
 require 'rom/initializer'
+require 'rom/sql/migration'
 
 module ROM
   module SQL
@@ -52,6 +53,22 @@ module ROM
         # @api private
         def migration_file_content
           File.read(Pathname(__FILE__).dirname.join('template.rb').realpath)
+        end
+
+        # @api private
+        def diff(container, gateway_name)
+          relations = container.relations.select { |_, r| r.gateway == gateway_name }
+          gateway = container.gateways[gateway_name]
+
+          relations.map do |_, relation|
+            target = relation.schema
+            current_atttributes, _ = target.inferrer.(relation.name.dataset, gateway)
+            current = target.with(
+              attributes: target.class.attributes(current_atttributes, target.options[:attr_class])
+            )
+
+            SchemaDiff.compare(current, target)
+          end
         end
       end
     end
