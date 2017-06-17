@@ -23,6 +23,11 @@ module ROM
           }
         end
 
+        # @api public
+        def join(type, source = self.source, target = self.target)
+          source.__send__(type, target.name.dataset, join_keys).qualified
+        end
+
         protected
 
         # @api private

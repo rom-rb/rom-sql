@@ -36,6 +36,11 @@ module ROM
         end
 
         # @api public
+        def join(type, source = self.source, target = self.target)
+          source.__send__(type, target.name.dataset, join_keys).qualified
+        end
+
+        # @api public
         def join_keys
           with_keys { |source_key, target_key|
             { source[source_key].qualified(source_alias) => target[target_key].qualified }
