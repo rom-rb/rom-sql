@@ -48,7 +48,7 @@ RSpec.describe ROM::SQL::Associations::OneToOne, helpers: true do
       end
     end
 
-    describe ROM::Plugins::Relation::SQL::AutoCombine, '#for_combine' do
+    describe '#for_combine' do
       it 'preloads relation based on association' do |example|
         relation = accounts.for_combine(assoc).call(users.call)
 

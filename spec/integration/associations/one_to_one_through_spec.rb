@@ -81,7 +81,7 @@ RSpec.describe ROM::SQL::Associations::OneToOneThrough, helpers: true do
       end
     end
 
-    describe ROM::Plugins::Relation::SQL::AutoCombine, '#for_combine' do
+    describe '#for_combine' do
       it 'preloads relation based on association' do
         relation = cards.for_combine(assoc).call(users.call)
 
