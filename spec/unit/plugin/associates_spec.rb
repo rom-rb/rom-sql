@@ -37,7 +37,7 @@ RSpec.describe ROM::SQL::Plugin::Associates do
   end
 
   before do
-    allow(associations).to receive(:try).and_yield(tags_assoc)
+    allow(associations).to receive(:[]).and_return(tags_assoc)
     allow(tags_assoc).to receive(:join_keys).and_return({})
   end
 

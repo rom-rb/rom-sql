@@ -8,6 +8,17 @@ RSpec.describe 'Plugins / :associates', seeds: false do
       let(:tags) { container.commands[:tags] }
 
       before do
+        conf.relation_classes[1].class_eval do
+          schema(infer: true) do
+            associations do
+              many_to_one :users, as: :user
+              many_to_one :users, as: :other
+              one_to_many :task_tags
+              one_to_many :tags, through: :task_tags
+            end
+          end
+        end
+
         conf.commands(:users) do
           define(:create) { result :one }
         end
@@ -82,35 +93,12 @@ RSpec.describe 'Plugins / :associates', seeds: false do
         end
       end
 
-      context 'without a schema' do
-        include_context 'automatic FK setting' do
-          before do
-            conf.commands(:tasks) do
-              define(:create) do
-                register_as :create_many
-                associates :user, key: [:user_id, :id]
-              end
-
-              define(:create) do
-                register_as :create_one
-                result :one
-                associates :user, key: [:user_id, :id]
-              end
-            end
-          end
-        end
-      end
-
       context 'with a schema' do
         include_context 'automatic FK setting'
 
         before do
           conf.relation_classes[1].class_eval do
-            schema do
-              attribute :id, ROM::SQL::Types::Serial
-              attribute :user_id, ROM::SQL::Types::ForeignKey(:users)
-              attribute :title, ROM::SQL::Types::String
-
+            schema(infer: true) do
               associations do
                 many_to_one :users, as: :user
                 one_to_many :task_tags
@@ -136,10 +124,7 @@ RSpec.describe 'Plugins / :associates', seeds: false do
         context 'with many-to-many association' do
           before do
             conf.relation(:tags) do
-              schema do
-                attribute :id, ROM::SQL::Types::Serial
-                attribute :name, ROM::SQL::Types::String
-
+              schema(infer: true) do
                 associations do
                   one_to_many :task_tags
                   one_to_many :tasks, through: :task_tags
@@ -259,30 +244,6 @@ RSpec.describe 'Plugins / :associates', seeds: false do
       it 'automatically sets FK prior execution' do
         expect(command.curry(title: 'Another John task').call(john)).
           to eql(id: jane_task[:id], user_id: john[:id], title: 'Another John task')
-      end
-    end
-  end
-
-  context 'misconfigured assocs', :sqlite do
-    subject(:command) do
-      container.commands[:users][:create]
-    end
-
-    context 'when keys are missing in class-level config' do
-      before do
-        conf.commands(:users) do
-          define(:create) do
-            associates :tasks
-          end
-        end
-      end
-
-      it 'raises error' do
-        expect { command }.
-          to raise_error(
-               ROM::SQL::Plugin::Associates::MissingJoinKeysError,
-               ':create command for :users relation is missing join keys configuration for :tasks association'
-             )
       end
     end
   end

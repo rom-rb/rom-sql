@@ -7,42 +7,18 @@ module ROM
       #
       # @api private
       module Associates
-        class MissingJoinKeysError < StandardError
-          ERROR_TEMPLATE = ':%{command} command for :%{relation} relation ' \
-                           'is missing join keys configuration for :%{name} association'
-
-          def initialize(command, assoc_name)
-            super(ERROR_TEMPLATE % tokens(command, assoc_name))
-          end
-
-          def tokens(command, assoc_name)
-            { command: command.register_as,
-              relation: command.relation,
-              name: assoc_name }
-          end
-        end
-
         class AssociateOptions
           attr_reader :name, :assoc, :opts
 
           def initialize(name, relation, opts)
             @name = name
-            @opts = { assoc: name, keys: opts[:key] }
-
-            relation.associations.try(name) do |assoc|
-              @assoc = assoc
-              @opts.update(assoc: assoc, keys: assoc.join_keys)
-            end
-
+            @assoc = relation.associations[name]
+            @opts = { assoc: assoc, keys: assoc.join_keys }
             @opts.update(parent: opts[:parent]) if opts[:parent]
           end
 
           def after?
             assoc.is_a?(SQL::Associations::ManyToMany)
-          end
-
-          def ensure_valid(command)
-            raise MissingJoinKeysError.new(command, name) unless opts[:keys]
           end
 
           def to_hash
@@ -55,6 +31,7 @@ module ROM
           klass.class_eval do
             extend ClassMethods
             include InstanceMethods
+
             defines :associations
 
             associations Hash.new
@@ -78,8 +55,6 @@ module ROM
               next if configured_assocs.include?(name)
               AssociateOptions.new(name, relation, opts)
             }.compact
-
-            associate_options.each { |opts| opts.ensure_valid(self) }
 
             before_hooks = associate_options.reject(&:after?).map(&:to_hash)
             after_hooks = associate_options.select(&:after?).map(&:to_hash)
@@ -135,12 +110,6 @@ module ROM
 
             output_tuples =
               case assoc
-              when Symbol
-                fk, pk = keys
-
-                with_input_tuples(tuples).map { |tuple|
-                  tuple.merge(fk => parent.fetch(pk))
-                }
               when SQL::Associations::ManyToMany
                 result_type = tuples.is_a?(Array) ? :many : :one
 
@@ -156,7 +125,7 @@ module ROM
                 else
                   tuples.map { |tuple| Hash(tuple).update(fk => parent[pk]) }
                 end
-              when ROM::Associations::Abstract
+              else
                 with_input_tuples(tuples).map { |tuple|
                   assoc.associate(tuple, parent)
                 }
