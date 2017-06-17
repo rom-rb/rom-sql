@@ -28,7 +28,8 @@ module ROM
                 if attribute.primary_key?
                   primary_key attribute.name
                 else
-                  column attribute.name, attribute.type.primitive, null: false
+                  unwrapped = attribute.optional? ? attribute.right : attribute
+                  column attribute.name, unwrapped.primitive, null: attribute.optional?
                 end
               end
             end
@@ -48,7 +49,8 @@ module ROM
 
             gateway.connection.alter_table(schema.name.dataset) do
               attributes.each do |attribute|
-                add_column attribute.name, attribute.type.primitive, null: false
+                unwrapped = attribute.optional? ? attribute.right : attribute
+                add_column attribute.name, unwrapped.primitive, null: attribute.optional?
               end
             end
           end

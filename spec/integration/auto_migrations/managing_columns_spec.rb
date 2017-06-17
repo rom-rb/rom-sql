@@ -24,6 +24,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
         schema do
           attribute :id,    ROM::SQL::Types::Serial
           attribute :name,  ROM::SQL::Types::String
+          attribute :email, ROM::SQL::Types::String.optional
         end
       end
 
@@ -37,8 +38,17 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
                   [:id,
                    [:definition, [Integer, {}]],
                    primary_key: true, source: :users]],
-                 [:attribute, [:name, [:definition, [String, {}]], source: :users]]]]]
-            )
+                 [:attribute, [:name, [:definition, [String, {}]], source: :users]],
+                 [:attribute,
+                  [:email,
+                   [:sum,
+                    [[:constrained,
+                      [[:definition, [NilClass, {}]],
+                       [:predicate, [:type?, [[:type, NilClass], [:input, ROM::Undefined]]]],
+                       {}]],
+                     [:definition, [String, {}]],
+                     {}]],
+                   source: :users]]]]])
     end
   end
 
@@ -54,6 +64,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
         schema do
           attribute :id,    ROM::SQL::Types::Serial
           attribute :name,  ROM::SQL::Types::String
+          attribute :email, ROM::SQL::Types::String.optional
         end
       end
 
@@ -62,6 +73,19 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
       expect(inferred_schema(:users)[:name].to_ast)
         .to eql(
               [:attribute, [:name, [:definition, [String, {}]], source: :users]]
+            )
+      expect(inferred_schema(:users)[:email].to_ast)
+        .to eql(
+              [:attribute,
+               [:email,
+                [:sum,
+                 [[:constrained,
+                   [[:definition, [NilClass, {}]],
+                    [:predicate, [:type?, [[:type, NilClass], [:input, ROM::Undefined]]]],
+                    {}]],
+                  [:definition, [String, {}]],
+                  {}]],
+                source: :users]]
             )
     end
   end
