@@ -6,9 +6,7 @@ module ROM
       class ManyToMany < ROM::Associations::ManyToMany
         # @api public
         def call(target: self.target)
-          assocs = join_relation.associations
-
-          left = assocs[target.name].(target: target)
+          left = join_assoc.(target: target)
 
           schema =
             if left.schema.key?(foreign_key)
@@ -28,6 +26,11 @@ module ROM
           else
             schema.(relation)
           end
+        end
+
+        # @api private
+        def join_assoc
+          join_relation.associations[target.name]
         end
 
         # @api private
