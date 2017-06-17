@@ -1,9 +1,12 @@
 require 'rom/associations/one_to_many'
+require 'rom/sql/associations/core'
 
 module ROM
   module SQL
     module Associations
       class OneToMany < ROM::Associations::OneToMany
+        include Associations::Core
+
         # @api public
         def call(target: self.target)
           schema = target.schema.qualified

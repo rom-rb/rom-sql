@@ -1,9 +1,12 @@
 require 'rom/associations/many_to_many'
+require 'rom/sql/associations/core'
 
 module ROM
   module SQL
     module Associations
       class ManyToMany < ROM::Associations::ManyToMany
+        include Associations::Core
+
         # @api public
         def call(target: self.target)
           left = join_assoc.(target: target)

@@ -65,9 +65,9 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
         end
       end
 
-      describe '#for_combine' do
+      describe '#eager_load' do
         it 'preloads relation based on association' do
-          relation = tags.for_combine(assoc).call(tasks.call)
+          relation = tags.eager_load(assoc).call(tasks.call)
 
           expect(relation.to_a).to eql([id: 1, name: 'important', task_id: 1])
         end
@@ -75,7 +75,7 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
         it 'maintains original relation' do
           relation = tags.
                        select_append(tags[:name].as(:tag)).
-                       for_combine(assoc).call(tasks.call)
+                       eager_load(assoc).call(tasks.call)
 
           expect(relation.to_a).to eql([id: 1, tag: 'important', name: 'important', task_id: 1])
         end
@@ -86,7 +86,7 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
 
           relation = tags.
                        order(tags[:name].qualified).
-                       for_combine(assoc).call(tasks.call)
+                       eager_load(assoc).call(tasks.call)
 
           expect(relation.to_a).
             to eql([
@@ -143,7 +143,7 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
         tasks = container.relations[:tasks]
         assoc = users.associations[:tasks]
 
-        relation = tasks.for_combine(assoc).call(users.call)
+        relation = tasks.eager_load(assoc).call(users.call)
 
         expect(relation.to_a).to be_empty
       end
@@ -153,7 +153,7 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
         tasks = container.relations[:tasks]
         assoc = users.associations[:priv_tasks]
 
-        relation = tasks.for_combine(assoc).call(users.where(id: 2).call)
+        relation = tasks.eager_load(assoc).call(users.where(id: 2).call)
 
         expect(relation.to_a).to eql([id: 1, user_id: 2, title: "Joe's task"])
       end

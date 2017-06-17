@@ -30,8 +30,6 @@ module ROM
       def self.inherited(klass)
         super
 
-        klass.auto_curry(:preload)
-
         klass.class_eval do
           schema_inferrer -> (name, gateway) do
             inferrer_for_db = ROM::SQL::Schema::Inferrer.get(gateway.connection.database_type.to_sym)
@@ -138,41 +136,6 @@ module ROM
       # @api private
       def columns
         @columns ||= dataset.columns
-      end
-
-      # Default methods for fetching combined relation
-      #
-      # This method is used by default by `combine`
-      #
-      # @return [SQL::Relation]
-      #
-      # @api private
-      def for_combine(assoc)
-        case assoc
-        when ROM::SQL::Associations::ManyToOne
-          assoc.(target: self, preload: true).preload(assoc)
-        when ROM::Associations::Abstract
-          assoc.(target: self).preload(assoc)
-        else
-          preload(assoc)
-        end
-      end
-
-      # @api public
-      def preload(assoc, source)
-        case assoc
-        when ROM::SQL::Associations::ManyToOne
-          by_pk(source.pluck(assoc.foreign_key))
-        when Hash, ROM::Associations::Abstract
-          source_key, target_key = assoc.is_a?(Hash) ? assoc.flatten(1) : assoc.join_keys.flatten(1)
-
-          # TODO: remove this check once ad-hoc combines are gone
-          key = source_key.is_a?(Symbol) ? source_key : source_key.key
-          target_pks = source.pluck(key)
-          target_pks.uniq!
-
-          where(target_key => target_pks)
-        end
       end
     end
   end

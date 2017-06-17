@@ -81,9 +81,9 @@ RSpec.describe ROM::SQL::Associations::OneToOneThrough, helpers: true do
       end
     end
 
-    describe '#for_combine' do
+    describe '#eager_load' do
       it 'preloads relation based on association' do
-        relation = cards.for_combine(assoc).call(users.call)
+        relation = cards.eager_load(assoc).call(users.call)
 
         expect(relation.to_a).to eql([id: 1, account_id: 1, pan: '*6789', user_id: 1])
       end

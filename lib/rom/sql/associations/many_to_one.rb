@@ -1,9 +1,12 @@
 require 'rom/associations/many_to_one'
+require 'rom/sql/associations/core'
 
 module ROM
   module SQL
     module Associations
       class ManyToOne < ROM::Associations::ManyToOne
+        include Associations::Core
+
         # @api public
         def call(target: self.target, preload: false)
           if preload
@@ -50,6 +53,11 @@ module ROM
         # @api public
         def foreign_key
           definition.options[:foreign_key] || source.foreign_key(target.name)
+        end
+
+        # @api private
+        def prepare(target)
+          call(target: target, preload: true)
         end
 
         protected

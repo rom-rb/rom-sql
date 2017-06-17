@@ -48,9 +48,9 @@ RSpec.describe ROM::SQL::Associations::OneToOne, helpers: true do
       end
     end
 
-    describe '#for_combine' do
+    describe '#eager_load' do
       it 'preloads relation based on association' do |example|
-        relation = accounts.for_combine(assoc).call(users.call)
+        relation = accounts.eager_load(assoc).call(users.call)
 
         # TODO: this if caluse should be removed when (and if) https://github.com/xerial/sqlite-jdbc/issues/112
         # will be resolved. See https://github.com/rom-rb/rom-sql/issues/49 for details

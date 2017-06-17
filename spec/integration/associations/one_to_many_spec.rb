@@ -54,9 +54,9 @@ RSpec.describe ROM::SQL::Associations::OneToMany, helpers: true do
       end
     end
 
-    describe '#for_combine' do
+    describe '#eager_load' do
       it 'preloads relation based on association' do
-        relation = tasks.for_combine(assoc).call(users.call)
+        relation = tasks.eager_load(assoc).call(users.call)
 
         expect(relation.to_a).to eql([
           { id: 1, user_id: 2, title: "Joe's task" },
@@ -68,7 +68,7 @@ RSpec.describe ROM::SQL::Associations::OneToMany, helpers: true do
         relation = tasks.
                      join(:task_tags, tag_id: :id).
                      select_append(tasks.task_tags[:tag_id].qualified).
-                     for_combine(assoc).call(users.call)
+                     eager_load(assoc).call(users.call)
 
         expect(relation.to_a).to eql([{ id: 1, user_id: 2, title: "Joe's task", tag_id: 1 }])
       end
@@ -76,7 +76,7 @@ RSpec.describe ROM::SQL::Associations::OneToMany, helpers: true do
       it 'respects custom order' do
         relation = tasks.
                      order(tasks[:title].qualified).
-                     for_combine(assoc).call(users.call)
+                     eager_load(assoc).call(users.call)
 
         expect(relation.to_a).
           to eql([{ id: 2, user_id: 1, title: "Jane's task" }, { id: 1, user_id: 2, title: "Joe's task" }])

@@ -49,9 +49,9 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, helpers: true do
         end
       end
 
-      describe '#for_combine' do
+      describe '#eager_load' do
         it 'preloads relation based on association' do
-          relation = users.for_combine(assoc).call(tasks.call)
+          relation = users.eager_load(assoc).call(tasks.call)
 
           expect(relation.to_a).to eql([{ id: 1, name: 'Jane' }, { id: 2, name: 'Joe' }])
         end
@@ -63,7 +63,7 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, helpers: true do
                        join(:accounts, user_id: :id).
                        select_append(users.accounts[:number].as(:account_num)).
                        order(:account_num).
-                       for_combine(assoc).call(tasks.call)
+                       eager_load(assoc).call(tasks.call)
 
           expect(relation.to_a).
             to eql([{ id: 2, name: 'Joe', account_num: '31' },
