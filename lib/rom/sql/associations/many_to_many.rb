@@ -5,21 +5,18 @@ module ROM
     module Associations
       class ManyToMany < ROM::Associations::ManyToMany
         # @api public
-        def call(target_rel = nil)
-          assocs = join_relation.associations
-
-          left = target_rel ? assocs[target.name].(target_rel) : assocs[target.name].()
-          right = target
+        def call(target: self.target)
+          left = join_assoc.(target: target)
 
           schema =
             if left.schema.key?(foreign_key)
-              if target_rel
-                target_rel.schema.merge(left.schema.project(foreign_key))
+              if target != self.target
+                target.schema.merge(join_schema)
               else
-                left.schema.project(*(right.schema.map(&:name) + [foreign_key]))
+                left.schema.project(*columns)
               end
             else
-              right.schema.merge(join_relation.schema.project(foreign_key))
+              target_schema
             end.qualified
 
           relation = left.join(source.name.dataset, join_keys)
@@ -29,6 +26,26 @@ module ROM
           else
             schema.(relation)
           end
+        end
+
+        # @api private
+        def join_assoc
+          join_relation.associations[target.name]
+        end
+
+        # @api private
+        def target_schema
+          target.schema.merge(join_schema)
+        end
+
+        # @api private
+        def join_schema
+          join_relation.schema.project(foreign_key)
+        end
+
+        # @api private
+        def columns
+          target_schema.map(&:name)
         end
 
         # @api public

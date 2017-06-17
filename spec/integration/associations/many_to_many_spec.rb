@@ -11,12 +11,7 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
 
       before do
         conf.relation(:task_tags) do
-          schema do
-            attribute :task_id, ROM::SQL::Types::ForeignKey(:tasks)
-            attribute :tag_id, ROM::SQL::Types::ForeignKey(:tags)
-
-            primary_key :task_id, :tag_id
-
+          schema(infer: true) do
             associations do
               many_to_one :tasks
               many_to_one :tags
@@ -25,11 +20,7 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
         end
 
         conf.relation(:tasks) do
-          schema do
-            attribute :id, ROM::SQL::Types::Serial
-            attribute :user_id, ROM::SQL::Types::ForeignKey(:users)
-            attribute :title, ROM::SQL::Types::String
-
+          schema(infer: true) do
             associations do
               one_to_many :task_tags
               one_to_many :tags, through: :task_tags
