@@ -5,23 +5,28 @@ module ROM
     module Associations
       class ManyToOne < ROM::Associations::ManyToOne
         # @api public
-        def call(target: self.target)
-          right = source
+        def call(target: self.target, preload: false)
+          if preload
+            schema = target.schema.qualified
+            relation = target
+          else
+            right = source
 
-          target_pk = target.schema.primary_key_name
-          right_fk = target.foreign_key(source.name)
+            target_pk = target.schema.primary_key_name
+            right_fk = target.foreign_key(source.name)
 
-          target_schema = target.schema
-          right_schema = right.schema.project_pk
+            target_schema = target.schema
+            right_schema = right.schema.project_pk
 
-          schema =
-            if target.schema.key?(right_fk)
-              target_schema
-            else
-              target_schema.merge(right_schema.project_fk(target_pk => right_fk))
-            end.qualified
+            schema =
+              if target.schema.key?(right_fk)
+                target_schema
+              else
+                target_schema.merge(right_schema.project_fk(target_pk => right_fk))
+              end.qualified
 
-          relation = target.join(source_table, join_keys)
+            relation = target.join(source_table, join_keys)
+          end
 
           if view
             apply_view(schema, relation)
@@ -35,6 +40,11 @@ module ROM
           with_keys { |source_key, target_key|
             { source[source_key].qualified(source_alias) => target[target_key].qualified }
           }
+        end
+
+        # @api public
+        def foreign_key
+          definition.options[:foreign_key] || source.foreign_key(target.name)
         end
 
         protected

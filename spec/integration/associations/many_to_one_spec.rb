@@ -10,11 +10,7 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, helpers: true do
 
       before do
         conf.relation(:tasks) do
-          schema do
-            attribute :id, ROM::SQL::Types::Serial
-            attribute :user_id, ROM::SQL::Types::ForeignKey(:users)
-            attribute :title, ROM::SQL::Types::String
-          end
+          schema(infer: true)
         end
       end
 
@@ -34,7 +30,7 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, helpers: true do
 
       describe '#call' do
         it 'prepares joined relations' do
-          relation = assoc.()
+          relation = assoc.(preload: false)
 
           expect(relation.schema.map(&:to_sql_name)).
             to eql([Sequel.qualify(:users, :id),
@@ -57,11 +53,7 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, helpers: true do
         it 'preloads relation based on association' do
           relation = users.for_combine(assoc).call(tasks.call)
 
-          expect(relation.to_a).
-            to eql([
-                     { id: 1, task_id: 2, name: 'Jane' },
-                     { id: 2, task_id: 1, name: 'Joe' }
-                   ])
+          expect(relation.to_a).to eql([{ id: 1, name: 'Jane' }, { id: 2, name: 'Joe' }])
         end
 
         it 'maintains original relation' do
@@ -74,8 +66,8 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, helpers: true do
                        for_combine(assoc).call(tasks.call)
 
           expect(relation.to_a).
-            to eql([{ id: 2, task_id: 1, name: 'Joe', account_num: '31' },
-                    { id: 1, task_id: 2, name: 'Jane', account_num: '42' }])
+            to eql([{ id: 2, name: 'Joe', account_num: '31' },
+                    { id: 1, name: 'Jane', account_num: '42' }])
         end
       end
     end
@@ -93,12 +85,7 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, helpers: true do
 
       before do
         conf.relation(:articles) do
-          schema(:posts) do
-            attribute :post_id, ROM::SQL::Types::Serial
-            attribute :author_id, ROM::SQL::Types::ForeignKey(:users)
-            attribute :title, ROM::SQL::Types::Strict::String
-            attribute :body, ROM::SQL::Types::Strict::String
-          end
+          schema(:posts, infer: true)
         end
       end
 

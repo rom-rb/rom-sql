@@ -34,6 +34,8 @@ module ROM
             # @api private
             def for_combine(spec)
               case spec
+              when ROM::SQL::Associations::ManyToOne
+                spec.(target: self, preload: true).preload(spec)
               when ROM::Associations::Abstract
                 spec.(target: self).preload(spec)
               else
@@ -45,9 +47,7 @@ module ROM
             def preload(spec, source)
               case spec
               when ROM::SQL::Associations::ManyToOne
-                pk = source.source[source.source.primary_key].qualified
-
-                where(pk => source.pluck(pk.name))
+                by_pk(source.pluck(spec.foreign_key))
               when Hash, ROM::Associations::Abstract
                 source_key, target_key = spec.is_a?(Hash) ? spec.flatten(1) : spec.join_keys.flatten(1)
 
