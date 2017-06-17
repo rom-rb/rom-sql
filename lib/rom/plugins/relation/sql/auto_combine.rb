@@ -35,7 +35,7 @@ module ROM
             def for_combine(spec)
               case spec
               when ROM::Associations::Abstract
-                spec.(self).preload(spec)
+                spec.(target: self).preload(spec)
               else
                 preload(spec)
               end

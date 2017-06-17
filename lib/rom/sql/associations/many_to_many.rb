@@ -5,16 +5,16 @@ module ROM
     module Associations
       class ManyToMany < ROM::Associations::ManyToMany
         # @api public
-        def call(target_rel = nil)
+        def call(target: self.target)
           assocs = join_relation.associations
 
-          left = target_rel ? assocs[target.name].(target_rel) : assocs[target.name].()
-          right = target
+          left = assocs[target.name].(target: target)
+          right = self.target
 
           schema =
             if left.schema.key?(foreign_key)
-              if target_rel
-                target_rel.schema.merge(left.schema.project(foreign_key))
+              if target != self.target
+                target.schema.merge(left.schema.project(foreign_key))
               else
                 left.schema.project(*(right.schema.map(&:name) + [foreign_key]))
               end

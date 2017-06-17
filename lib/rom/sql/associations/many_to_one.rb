@@ -5,23 +5,23 @@ module ROM
     module Associations
       class ManyToOne < ROM::Associations::ManyToOne
         # @api public
-        def call(left = self.target)
+        def call(target: self.target)
           right = source
 
-          left_pk = left.schema.primary_key_name
-          right_fk = left.foreign_key(source.name)
+          target_pk = target.schema.primary_key_name
+          right_fk = target.foreign_key(source.name)
 
-          left_schema = left.schema
+          target_schema = target.schema
           right_schema = right.schema.project_pk
 
           schema =
-            if left.schema.key?(right_fk)
-              left_schema
+            if target.schema.key?(right_fk)
+              target_schema
             else
-              left_schema.merge(right_schema.project_fk(left_pk => right_fk))
+              target_schema.merge(right_schema.project_fk(target_pk => right_fk))
             end.qualified
 
-          relation = left.join(source_table, join_keys)
+          relation = target.join(source_table, join_keys)
 
           if view
             apply_view(schema, relation)

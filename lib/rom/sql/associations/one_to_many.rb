@@ -5,9 +5,9 @@ module ROM
     module Associations
       class OneToMany < ROM::Associations::OneToMany
         # @api public
-        def call(right = self.target)
-          schema = right.schema.qualified
-          relation = right.join(source_table, join_keys)
+        def call(target: self.target)
+          schema = target.schema.qualified
+          relation = target.join(source_table, join_keys)
 
           if view
             apply_view(schema, relation)
