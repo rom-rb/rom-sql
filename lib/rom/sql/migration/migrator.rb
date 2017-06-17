@@ -62,7 +62,7 @@ module ROM
 
           relations.map do |_, relation|
             target = relation.schema
-            current_atttributes, _ = target.inferrer.(relation.name.dataset, gateway)
+            current_atttributes, _ = relation.class.schema_inferrer.(relation.name, gateway)
             current = target.with(
               attributes: target.class.attributes(current_atttributes, target.options[:attr_class])
             )

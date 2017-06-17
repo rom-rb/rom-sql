@@ -7,13 +7,13 @@ module ROM
           new_attributes = target_attrs - current_attrs
 
           if current_attrs.empty?
-            TableAdded.new(target)
-          else
-            raise NotImplementedError, 'Only create_table available'
+            TableCreated.new(target)
+          elsif !new_attributes.empty?
+            TableAltered.new(target, new_attributes: new_attributes)
           end
         end
 
-        class TableAdded
+        class TableCreated
           attr_reader :schema
 
           def initialize(schema)
@@ -30,6 +30,25 @@ module ROM
                 else
                   column attribute.name, attribute.type.primitive, null: false
                 end
+              end
+            end
+          end
+        end
+
+        class TableAltered
+          attr_reader :schema, :new_attributes
+
+          def initialize(schema, new_attributes: [])
+            @schema = schema
+            @new_attributes = new_attributes
+          end
+
+          def apply(gateway)
+            attributes = new_attributes
+
+            gateway.connection.alter_table(schema.name.dataset) do
+              attributes.each do |attribute|
+                add_column attribute.name, attribute.type.primitive, null: false
               end
             end
           end

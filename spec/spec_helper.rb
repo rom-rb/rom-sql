@@ -21,7 +21,7 @@ require 'logger'
 require 'tempfile'
 
 begin
-  require 'byebug'
+  require ENV['DEBUGGER'] || 'byebug'
 rescue LoadError
   require 'pry'
 end
