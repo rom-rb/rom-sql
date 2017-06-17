@@ -16,7 +16,7 @@ module ROM
               if target != self.target
                 target.schema.merge(left.schema.project(foreign_key))
               else
-                left.schema.project(*(right.schema.map(&:name) + [foreign_key]))
+                left.schema.project(*columns)
               end
             else
               right.schema.merge(join_relation.schema.project(foreign_key))
@@ -29,6 +29,11 @@ module ROM
           else
             schema.(relation)
           end
+        end
+
+        # @api private
+        def columns
+          target.schema.map(&:name) + [foreign_key]
         end
 
         # @api public
