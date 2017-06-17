@@ -31,26 +31,6 @@ module ROM
           end
         end
 
-        # @api private
-        def join_assoc
-          join_relation.associations[target.name]
-        end
-
-        # @api private
-        def target_schema
-          target.schema.merge(join_schema)
-        end
-
-        # @api private
-        def join_schema
-          join_relation.schema.project(foreign_key)
-        end
-
-        # @api private
-        def columns
-          target_schema.map(&:name)
-        end
-
         # @api public
         def join(type, source = self.source, target = self.target)
           through_assoc = source.associations[through]
@@ -69,6 +49,28 @@ module ROM
         def persist(children, parents)
           join_tuples = associate(children, parents)
           join_relation.multi_insert(join_tuples)
+        end
+
+        private
+
+        # @api private
+        def join_assoc
+          join_relation.associations[target.name]
+        end
+
+        # @api private
+        def target_schema
+          target.schema.merge(join_schema)
+        end
+
+        # @api private
+        def join_schema
+          join_relation.schema.project(foreign_key)
+        end
+
+        # @api private
+        def columns
+          target_schema.map(&:name)
         end
       end
     end
