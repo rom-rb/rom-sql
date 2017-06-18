@@ -15,16 +15,34 @@ module ROM
               new_attributes: new_attributes,
               removed_attributes: removed_attributes
             )
+          else
+            Empty.new(target)
           end
         end
 
-        class TableCreated
+        class Diff
           attr_reader :schema
 
           def initialize(schema)
             @schema = schema
           end
 
+          def empty?
+            false
+          end
+
+          def apply(gateway)
+            raise NotImplementedError
+          end
+        end
+
+        class Empty < Diff
+          def empty?
+            true
+          end
+        end
+
+        class TableCreated < Diff
           def apply(gateway)
             attributes = schema.to_a
 
@@ -41,11 +59,12 @@ module ROM
           end
         end
 
-        class TableAltered
-          attr_reader :schema, :new_attributes, :removed_attributes
+        class TableAltered < Diff
+          attr_reader :new_attributes, :removed_attributes
 
           def initialize(schema, new_attributes: EMPTY_ARRAY, removed_attributes: EMPTY_ARRAY)
-            @schema = schema
+            super(schema)
+
             @new_attributes = new_attributes
             @removed_attributes = removed_attributes
           end

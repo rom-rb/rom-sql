@@ -100,4 +100,22 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
       expect(inferred_schema(:users).map(&:name)).to eql(%i(id name email))
     end
   end
+
+  describe 'empty diff' do
+    before do
+      conn.create_table :users do
+        primary_key :id
+        column :name, String, null: false
+        column :email, String
+      end
+    end
+
+    it 'leaves existing schema' do
+      current = container.relation(:users).schema
+
+      gateway.auto_migrate!(container)
+
+      expect(inferred_schema(:users)).to eql(current)
+    end
+  end
 end
