@@ -5,11 +5,16 @@ module ROM
         def self.compare(current, target)
           current_attrs, target_attrs = current.to_a, target.to_a
           new_attributes = target_attrs - current_attrs
+          removed_attributes = current_attrs - target_attrs
 
           if current_attrs.empty?
             TableCreated.new(target)
-          elsif !new_attributes.empty?
-            TableAltered.new(target, new_attributes: new_attributes)
+          elsif !new_attributes.empty? || !removed_attributes.empty?
+            TableAltered.new(
+              target,
+              new_attributes: new_attributes,
+              removed_attributes: removed_attributes
+            )
           end
         end
 
@@ -37,20 +42,26 @@ module ROM
         end
 
         class TableAltered
-          attr_reader :schema, :new_attributes
+          attr_reader :schema, :new_attributes, :removed_attributes
 
-          def initialize(schema, new_attributes: [])
+          def initialize(schema, new_attributes: EMPTY_ARRAY, removed_attributes: EMPTY_ARRAY)
             @schema = schema
             @new_attributes = new_attributes
+            @removed_attributes = removed_attributes
           end
 
           def apply(gateway)
-            attributes = new_attributes
+            new_attributes = self.new_attributes
+            removed_attributes = self.removed_attributes
 
             gateway.connection.alter_table(schema.name.dataset) do
-              attributes.each do |attribute|
+              new_attributes.each do |attribute|
                 unwrapped = attribute.optional? ? attribute.right : attribute
                 add_column attribute.name, unwrapped.primitive, null: attribute.optional?
+              end
+
+              removed_attributes.each do |attribute|
+                drop_column attribute.name
               end
             end
           end

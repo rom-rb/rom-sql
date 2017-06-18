@@ -5,6 +5,16 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
     conn.drop_table?(:users)
   end
 
+  before do
+    conf.relation(:users) do
+      schema do
+        attribute :id,    ROM::SQL::Types::Serial
+        attribute :name,  ROM::SQL::Types::String
+        attribute :email, ROM::SQL::Types::String.optional
+      end
+    end
+  end
+
   subject(:gateway) { container.gateways[:default] }
 
   def inferred_schema(rel_name)
@@ -20,14 +30,6 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
 
   describe 'create a table' do
     it 'creates a table from a relation' do
-      conf.relation(:users) do
-        schema do
-          attribute :id,    ROM::SQL::Types::Serial
-          attribute :name,  ROM::SQL::Types::String
-          attribute :email, ROM::SQL::Types::String.optional
-        end
-      end
-
       gateway.auto_migrate!(container)
 
       expect(inferred_schema(:users).to_ast)
@@ -60,14 +62,6 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
     end
 
     it 'adds columns to an existing table' do
-      conf.relation(:users) do
-        schema do
-          attribute :id,    ROM::SQL::Types::Serial
-          attribute :name,  ROM::SQL::Types::String
-          attribute :email, ROM::SQL::Types::String.optional
-        end
-      end
-
       gateway.auto_migrate!(container)
 
       expect(inferred_schema(:users)[:name].to_ast)
@@ -87,6 +81,23 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
                   {}]],
                 source: :users]]
             )
+    end
+  end
+
+  describe 'removing columns' do
+    before do
+      conn.create_table :users do
+        primary_key :id
+        column :name, String, null: false
+        column :email, String
+        column :age, Integer, null: false
+      end
+    end
+
+    it 'removes columns from a table' do
+      gateway.auto_migrate!(container)
+
+      expect(inferred_schema(:users).map(&:name)).to eql(%i(id name email))
     end
   end
 end
