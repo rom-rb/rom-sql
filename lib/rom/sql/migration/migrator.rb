@@ -9,6 +9,57 @@ module ROM
     module Migration
       # @api private
       class Migrator
+        class InlineRunner
+          attr_reader :gateway
+
+          def initialize(gateway)
+            @gateway = gateway
+          end
+
+          def call(changes)
+            changes.each do |diff|
+              apply(diff)
+            end
+          end
+
+          def apply(diff)
+            case diff
+            when SchemaDiff::TableCreated
+              create_table(diff)
+            when SchemaDiff::TableAltered
+              alter_table(diff)
+            else
+              raise NotImplementedError
+            end
+          end
+
+          def create_table(diff)
+            gateway.create_table(diff.table_name) do
+              diff.schema.to_a.each do |attribute|
+                if attribute.primary_key?
+                  primary_key attribute.name
+                else
+                  unwrapped = attribute.optional? ? attribute.right : attribute
+                  column attribute.name, unwrapped.primitive, null: attribute.optional?
+                end
+              end
+            end
+          end
+
+          def alter_table(diff)
+            gateway.connection.alter_table(diff.table_name) do
+              diff.new_attributes.each do |attribute|
+                unwrapped = attribute.optional? ? attribute.right : attribute
+                add_column attribute.name, unwrapped.primitive, null: attribute.optional?
+              end
+
+              diff.removed_attributes.each do |attribute|
+                drop_column attribute.name
+              end
+            end
+          end
+        end
+
         extend Initializer
 
         DEFAULT_PATH = 'db/migrate'.freeze
@@ -69,6 +120,12 @@ module ROM
 
             SchemaDiff.compare(current, target)
           end
+        end
+
+        def auto_migrate!(container, gateway)
+          runner = InlineRunner.new(container.gateways[gateway])
+          changes = diff(container, gateway).reject(&:empty?)
+          runner.call(changes)
         end
       end
     end

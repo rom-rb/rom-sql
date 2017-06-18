@@ -31,8 +31,8 @@ module ROM
             false
           end
 
-          def apply(gateway)
-            raise NotImplementedError
+          def table_name
+            schema.name.dataset
           end
         end
 
@@ -43,20 +43,6 @@ module ROM
         end
 
         class TableCreated < Diff
-          def apply(gateway)
-            attributes = schema.to_a
-
-            gateway.create_table(schema.name.dataset) do
-              attributes.each do |attribute|
-                if attribute.primary_key?
-                  primary_key attribute.name
-                else
-                  unwrapped = attribute.optional? ? attribute.right : attribute
-                  column attribute.name, unwrapped.primitive, null: attribute.optional?
-                end
-              end
-            end
-          end
         end
 
         class TableAltered < Diff
@@ -67,22 +53,6 @@ module ROM
 
             @new_attributes = new_attributes
             @removed_attributes = removed_attributes
-          end
-
-          def apply(gateway)
-            new_attributes = self.new_attributes
-            removed_attributes = self.removed_attributes
-
-            gateway.connection.alter_table(schema.name.dataset) do
-              new_attributes.each do |attribute|
-                unwrapped = attribute.optional? ? attribute.right : attribute
-                add_column attribute.name, unwrapped.primitive, null: attribute.optional?
-              end
-
-              removed_attributes.each do |attribute|
-                drop_column attribute.name
-              end
-            end
           end
         end
       end

@@ -140,7 +140,7 @@ module ROM
       # @api public
       def auto_migrate!(container)
         name = container.gateways.find { |_, gw| gw.equal?(self) }[0]
-        migrator.diff(container, name).reject(&:empty?).each { |diff| diff.apply(self) }
+        migrator.auto_migrate!(container, name)
       end
     end
   end
