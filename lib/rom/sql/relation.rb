@@ -1,13 +1,11 @@
 require 'rom/sql/types'
 require 'rom/sql/schema'
+require 'rom/sql/attribute'
+require 'rom/sql/wrap'
 
 require 'rom/sql/relation/reading'
 require 'rom/sql/relation/writing'
 require 'rom/sql/relation/sequel_api'
-
-require 'rom/plugins/relation/key_inference'
-require 'rom/plugins/relation/sql/auto_combine'
-require 'rom/plugins/relation/sql/auto_wrap'
 
 module ROM
   module SQL
@@ -20,12 +18,12 @@ module ROM
       adapter :sql
       schema_class SQL::Schema
 
-      use :key_inference
-      use :auto_combine
-      use :auto_wrap
-
       include Writing
       include Reading
+
+      schema_class SQL::Schema
+      schema_attr_class SQL::Attribute
+      wrap_class SQL::Wrap
 
       # Set default dataset for a relation sub-class
       #
@@ -34,8 +32,6 @@ module ROM
         super
 
         klass.class_eval do
-          schema_dsl SQL::Schema::DSL
-
           schema_inferrer -> (name, gateway) do
             inferrer_for_db = ROM::SQL::Schema::Inferrer.get(gateway.connection.database_type.to_sym)
             begin
@@ -55,7 +51,7 @@ module ROM
 
             if db.table_exists?(table)
               if schema
-                select(*schema.map(&:to_sym)).order(*schema.project(*schema.primary_key_names).qualified.map(&:to_sym))
+                select(*schema.map(&:to_sql_name)).order(*schema.project(*schema.primary_key_names).qualified.map(&:to_sql_name))
               else
                 select(*columns).order(*klass.primary_key_columns(db, table))
               end
@@ -79,7 +75,7 @@ module ROM
           #   @api public
           class_eval <<-RUBY, __FILE__, __LINE__ + 1
             def by_pk(#{schema.primary_key.map(&:name).join(', ')})
-              where(#{schema.primary_key.map { |attr| "schema[:#{attr.name}] => #{attr.name}" }.join(', ')})
+              where(#{schema.primary_key.map { |attr| "self.class.schema[:#{attr.name}] => #{attr.name}" }.join(', ')})
             end
           RUBY
         else
@@ -91,14 +87,16 @@ module ROM
           #   @return [SQL::Relation]
           #
           #   @api public
-          define_method(:by_pk) do |pk|
-            if primary_key.nil?
-              raise MissingPrimaryKeyError.new("Missing primary key for "\
-                                               ":#{ schema.name }")
-            else
-              where(schema[primary_key] => pk)
+          class_eval <<-RUBY, __FILE__, __LINE__ + 1
+            def by_pk(pk)
+              if primary_key.nil?
+                raise MissingPrimaryKeyError.new(
+                  "Missing primary key for :\#{schema.name}"
+                )
+              end
+              where(self.class.schema[self.class.schema.primary_key_name].qualified => pk)
             end
-          end
+          RUBY
         end
       end
 
@@ -129,7 +127,7 @@ module ROM
       #
       # @api public
       def assoc(name)
-        associations[name].(__registry__)
+        associations[name].()
       end
 
       # Return raw column names

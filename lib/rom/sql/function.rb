@@ -6,9 +6,9 @@ module ROM
     class Function < ROM::Schema::Attribute
       def sql_literal(ds)
         if name
-          func.as(name).sql_literal(ds)
+          ds.literal(func.as(name))
         else
-          func.sql_literal(ds)
+          ds.literal(func)
         end
       end
 
@@ -24,6 +24,21 @@ module ROM
 
       def is(other)
         ::Sequel::SQL::BooleanExpression.new(:'=', func, other)
+      end
+
+      # Convert an expression result to another data type
+      #
+      # @example
+      #   users.select { bool::cast(json_data.get_text('activated'), :boolean).as(:activated) }
+      #
+      # @param [ROM::SQL::Attribute] expr Expression to be cast
+      # @param [String] db_type Target database type
+      #
+      # @return [ROM::SQL::Attribute]
+      #
+      # @api private
+      def cast(expr, db_type)
+        Attribute[type].meta(sql_expr: ::Sequel.cast(expr, db_type))
       end
 
       private

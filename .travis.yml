@@ -17,11 +17,7 @@ rvm:
   - 2.2.7
   - 2.3.4
   - 2.4.1
-  - rbx-3
   - jruby-9.1.8.0
-matrix:
-  allow_failures:
-    - rvm: rbx-3
 env:
   global:
     - CODECLIMATE_REPO_TOKEN=03d7f66589572702b12426d2bc71c4de6281a96139e33b335b894264b1f8f0b0

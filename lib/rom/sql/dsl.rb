@@ -25,6 +25,19 @@ module ROM
       def respond_to_missing?(name, include_private = false)
         super || schema.key?(name)
       end
+
+      private
+
+      # @api private
+      def type(identifier)
+        type_name = ::Dry::Core::Inflector.classify(identifier)
+        types.const_get(type_name) if types.const_defined?(type_name)
+      end
+
+      # @api private
+      def types
+        ::ROM::SQL::Types
+      end
     end
   end
 end

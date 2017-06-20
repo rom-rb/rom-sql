@@ -1,12 +1,81 @@
-## v1.2.3 to-be-released
+## v1.3.3 2017-05-30
+
+### Added
+
+* `Relation#lock`, row-level locking using the `SELECT FOR UPDATE` clause (flash-gordon)
+* `get` and `get_text` methods for the `PG::JSON` type (flash-gordon)
+* Support for converting data type with `CAST` using the function DSL (flash-gordon)
+
+  ```ruby
+    users.select { string::cast(id, 'varchar').as(:id_str) }
+  ```
+
+* Support for`EXISTS` (v-kolesnikov)
+
+  ```ruby
+    subquery = tasks.where(tasks[:user_id].qualified => users[:id].qualified)
+    users.where { exists(subquery) }
+  ```
+
+### Fixed
+
+* Fixed a regression introduced in v1.3.2 caused by doing way more work processing the default dataset (flash-gordon)
+
+[Compare v1.3.2...v1.3.3](https://github.com/rom-rb/rom-sql/compare/v1.3.2...v1.3.3)
+
+## v1.3.2 2017-05-13
+
+### Added
+
+* Support for filtering with a SQL function in the `WHERE` clause. Be sure you're using it wisely and don't call it on large datasets ;) (flash-gordon)
+* `Void` type for calling functions without returning value (flash-gordon)
+* Support for [`PG::Array` transformations and queries](https://github.com/rom-rb/rom-sql/blob/15019a40e2cf2a224476184c4cddab4062a2cc01/lib/rom/sql/extensions/postgres/types.rb#L23-L148) (flash-gordon)
+
+### Fixed
+
+* A bunch of warnings from Sequel 4.46
+
+[Compare v1.3.1...v1.3.2](https://github.com/rom-rb/rom-sql/compare/v1.3.1...v1.3.2)
+
+## v1.3.1 2017-05-05
+
+### Changed
+
+* [internal] Compatibility with `dry-core` v0.3.0 (flash-gordon)
+
+[Compare v1.3.0...v1.3.1](https://github.com/rom-rb/rom-sql/compare/v1.3.0...v1.3.1)
+
+## v1.3.0 2017-05-02
 
 ### Added
 
 * New `Relation#exist?` predicate checks if the relation has at least one tuple (flash-gordon)
+* Support for [JSONB transformations and queries](https://github.com/rom-rb/rom-sql/blob/15019a40e2cf2a224476184c4cddab4062a2cc01/lib/rom/sql/extensions/postgres/types.rb#L170-L353) using native DSL (flash-gordon)
+* Add `ROM::SQL::Attribute#not` for negated boolean equality expressions (AMHOL)
+* Add `ROM::SQL::Attribute#!` for negated attribute's sql expressions (solnic)
+* Inferrer gets limit constraints for string data types and stores them in type's meta (v-kolesnikov)
 
 ### Fixed
 
 * Fixed usage of PostgreSQL's commands with a composite relation (flash-gordon)
+* Translation of `true/false/nil` equality checks to `is/is not` SQL statements in `ROM::SQL::Attribute#is` (AMHOL)
+* `associates` command plugin coerces parent collections to hashes correctly (aarek+solnic)
+* `by_pk` works correctly even when PK is not projected (solnic)
+
+### Changed
+
+* Global private interface `SQL::Gateway.instance` has been deprecated. Now if you run migrations
+  with ROM you should set up a ROM config in the `db:setup` task with something similar to
+
+  ```ruby
+    namespace :db
+      task :setup do
+        ROM::SQL::RakeSupport.env = ROM::Configuration.new(:sql, ENV['DATABASE_URL'])
+      end
+    end
+  ```
+
+[Compare v1.2.2...v1.3.0](https://github.com/rom-rb/rom-sql/compare/v1.2.2...v1.3.0)
 
 ## v1.2.2 2017-03-25
 

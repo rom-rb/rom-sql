@@ -7,7 +7,7 @@ module ROM
     class ProjectionDSL < DSL
       # @api public
       def `(value)
-        expr = ::Sequel::VIRTUAL_ROW.instance_eval { `#{value}` }
+        expr = ::Sequel.lit(value)
         ::ROM::SQL::Attribute.new(type(:string)).meta(sql_expr: expr)
       end
 
@@ -17,17 +17,6 @@ module ROM
       end
 
       private
-
-      # @api private
-      def type(identifier)
-        type_name = ::Dry::Core::Inflector.classify(identifier)
-        types.const_get(type_name) if types.const_defined?(type_name)
-      end
-
-      # @api private
-      def types
-        ::ROM::SQL::Types
-      end
 
       # @api private
       def method_missing(meth, *args, &block)

@@ -17,7 +17,7 @@ RSpec.describe ROM::Relation, '#project' do
     it 'projects the dataset using new column names' do
       projected = relation.sorted.project(:name)
 
-      expect(projected.schema.map(&:to_sym)).to match_array([:name])
+      expect(projected.schema.map(&:to_sql_name)).to match_array(Sequel[:name])
       expect(projected.first).to eql(name: 'Jane')
     end
   end

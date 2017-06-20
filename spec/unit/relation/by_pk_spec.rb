@@ -16,6 +16,10 @@ RSpec.describe ROM::Relation, '#by_pk' do
       it 'qualifies pk attr' do
         expect(relation.qualified.by_pk(1).select(:id).join(:tasks, user_id: :id).one).to eql(id: 1)
       end
+
+      it 'works even when PK is not projected' do
+        expect(relation.select(:name).by_pk(1).to_a).to eql([name: 'Jane'])
+      end
     end
 
     context 'with a composite PK' do
@@ -23,6 +27,10 @@ RSpec.describe ROM::Relation, '#by_pk' do
 
       it 'restricts a relation by is PK' do
         expect(relation.by_pk(1, 1).to_a).to eql([{ tag_id: 1, task_id: 1 }])
+      end
+
+      it 'works even when PK is not projected' do
+        expect(relation.by_pk(1, 1).select { `1`.as(:num) }.to_a).to eql([num: 1])
       end
     end
 

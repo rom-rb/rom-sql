@@ -1,3 +1,5 @@
+require 'rom/sql/associations'
+
 module ROM
   module SQL
     module Plugin
@@ -5,42 +7,18 @@ module ROM
       #
       # @api private
       module Associates
-        class MissingJoinKeysError < StandardError
-          ERROR_TEMPLATE = ':%{command} command for :%{relation} relation ' \
-                           'is missing join keys configuration for :%{name} association'
-
-          def initialize(command, assoc_name)
-            super(ERROR_TEMPLATE % tokens(command, assoc_name))
-          end
-
-          def tokens(command, assoc_name)
-            { command: command.register_as,
-              relation: command.relation,
-              name: assoc_name }
-          end
-        end
-
         class AssociateOptions
           attr_reader :name, :assoc, :opts
 
           def initialize(name, relation, opts)
             @name = name
-            @opts = { assoc: name, keys: opts[:key] }
-
-            relation.associations.try(name) do |assoc|
-              @assoc = assoc
-              @opts.update(assoc: assoc, keys: assoc.join_keys(relation.__registry__))
-            end
-
+            @assoc = relation.associations[name]
+            @opts = { assoc: assoc, keys: assoc.join_keys }
             @opts.update(parent: opts[:parent]) if opts[:parent]
           end
 
           def after?
-            assoc.is_a?(Association::ManyToMany)
-          end
-
-          def ensure_valid(command)
-            raise MissingJoinKeysError.new(command, name) unless opts[:keys]
+            assoc.is_a?(SQL::Associations::ManyToMany)
           end
 
           def to_hash
@@ -53,6 +31,7 @@ module ROM
           klass.class_eval do
             extend ClassMethods
             include InstanceMethods
+
             defines :associations
 
             associations Hash.new
@@ -76,8 +55,6 @@ module ROM
               next if configured_assocs.include?(name)
               AssociateOptions.new(name, relation, opts)
             }.compact
-
-            associate_options.each { |opts| opts.ensure_valid(self) }
 
             before_hooks = associate_options.reject(&:after?).map(&:to_hash)
             after_hooks = associate_options.select(&:after?).map(&:to_hash)
@@ -133,34 +110,24 @@ module ROM
 
             output_tuples =
               case assoc
-              when Symbol
-                fk, pk = keys
-
-                with_input_tuples(tuples).map { |tuple|
-                  tuple.merge(fk => parent.fetch(pk))
-                }
-              when Association::ManyToMany
+              when SQL::Associations::ManyToMany
                 result_type = tuples.is_a?(Array) ? :many : :one
 
-                join_tuples = assoc.associate(__registry__, tuples, parent)
-                join_relation = assoc.join_relation(__registry__)
-                join_relation.multi_insert(join_tuples)
+                assoc.persist(tuples, parent)
 
-                pk, fk = __registry__[assoc.target]
-                  .associations[assoc.source]
-                  .combine_keys(__registry__).to_a.flatten
+                pk, fk = assoc.parent_combine_keys
 
                 case parent
                 when Array
                   parent.map do |p|
-                    tuples.map { |tuple| tuple.merge(fk => p[pk]) }
+                    tuples.map { |tuple| Hash(tuple).merge(fk => p[pk]) }
                   end.flatten(1)
                 else
                   tuples.map { |tuple| Hash(tuple).update(fk => parent[pk]) }
                 end
-              when Association
+              else
                 with_input_tuples(tuples).map { |tuple|
-                  assoc.associate(relation.__registry__, tuple, parent)
+                  assoc.associate(tuple, parent)
                 }
               end
 
@@ -174,11 +141,6 @@ module ROM
               **options,
               associations: associations.merge(name => opts)
             )
-          end
-
-          # @api private
-          def __registry__
-            relation.__registry__
           end
         end
       end

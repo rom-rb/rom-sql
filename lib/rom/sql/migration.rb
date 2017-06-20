@@ -5,11 +5,23 @@ module ROM
     class << self
       # Trap for the migration runner. By default migrations are
       # bound to the gateway you're using to run them.
-      # You also can explicitly pass a container and a gateway name
+      # You also can explicitly pass a configuration object and a gateway name
       # but this normally won't be not required.
       #
       # @example
-      #   rom = ROM.container(
+      #   # Ordinary migration
+      #   ROM::SQL.migration do
+      #     change do
+      #       create_table(:users) do
+      #         primary_key :id
+      #         String :name
+      #       end
+      #     end
+      #   end
+      #
+      # @example
+      #   # Providing a config
+      #   rom = ROM::Configuration.new(
       #     default: [:sql, 'sqlite::memory'],
       #     other: [:sql, 'postgres://localhost/test']
       #   )
@@ -67,6 +79,15 @@ module ROM
     @current_gateway = nil
 
     module Migration
+      # FIXME: remove in 2.0
+      #
+      # @api private
+      def self.included(base)
+        super
+
+        base.singleton_class.send(:attr_accessor, :instance)
+      end
+
       Sequel.extension :migration
 
       # @!attribute [r] migrator
@@ -76,6 +97,8 @@ module ROM
       # @api private
       def initialize(uri, options = EMPTY_HASH)
         @migrator = options.fetch(:migrator) { Migrator.new(connection) }
+
+        self.class.instance ||= self
       end
 
       # Check if there are any pending migrations

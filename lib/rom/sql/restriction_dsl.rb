@@ -9,6 +9,14 @@ module ROM
         instance_exec(&block)
       end
 
+      # Returns a result of SQL EXISTS clause.
+      #
+      # @example
+      #   users.where { exists(users.where(name: 'John')) }
+      def exists(relation)
+        relation.dataset.exists
+      end
+
       private
 
       # @api private
@@ -16,7 +24,13 @@ module ROM
         if schema.key?(meth)
           schema[meth]
         else
-          ::Sequel::VIRTUAL_ROW.__send__(meth, *args, &block)
+          type = type(meth)
+
+          if type
+            ::ROM::SQL::Function.new(type)
+          else
+            ::Sequel::VIRTUAL_ROW.__send__(meth, *args, &block)
+          end
         end
       end
     end

@@ -13,7 +13,8 @@ RSpec.describe 'Using legacy sequel api', :sqlite do
 
   describe '#select' do
     it 'selects columns' do
-      expect(users.select(:users__id, :users__name).first).to eql(id: 1, name: 'Jane')
+      expect(users.select(Sequel.qualify(:users, :id), Sequel.qualify(:users, :name)).first).
+        to eql(id: 1, name: 'Jane')
     end
 
     it 'supports legacy blocks' do
@@ -29,7 +30,7 @@ RSpec.describe 'Using legacy sequel api', :sqlite do
 
   describe '#order' do
     it 'orders relation' do
-      expect(users.order(:users__name).first).to eql(id: 1, name: 'Jane')
+      expect(users.order(Sequel.qualify(:users, :name)).first).to eql(id: 1, name: 'Jane')
     end
   end
 end

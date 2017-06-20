@@ -24,7 +24,7 @@ RSpec.describe ROM::SQL::Function, :postgres do
 
   describe '#is' do
     it 'returns an sql boolean expression' do
-      expect((func.count(:id).is(1)).sql_literal(ds)).to eql(%((COUNT("id") = 1)))
+      expect(ds.literal(func.count(:id).is(1))).to eql(%((COUNT("id") = 1)))
     end
   end
 
@@ -36,6 +36,13 @@ RSpec.describe ROM::SQL::Function, :postgres do
     it 'raises error when is set already' do
       expect { func.count(:id).upper.sql_literal(ds) }.
         to raise_error(NoMethodError, /upper/)
+    end
+  end
+
+  describe '#cast' do
+    it 'transforms data' do
+      expect(func.cast(:id, 'varchar').sql_literal(ds)).
+        to eql(%(CAST("id" AS varchar(255))))
     end
   end
 end

@@ -5,7 +5,7 @@ RSpec.describe ROM::SQL::Schema, :postgres do
         attribute :id, ROM::SQL::Types::Serial
       end.call
 
-      schema.finalize!
+      schema.finalize_attributes!.finalize!
 
       expect(schema.primary_key).to eql([schema[:id]])
     end
@@ -15,7 +15,7 @@ RSpec.describe ROM::SQL::Schema, :postgres do
         attribute :id, ROM::SQL::Types::Int
       end.call
 
-      schema.finalize!
+      schema.finalize_attributes!.finalize!
 
       expect(schema.primary_key).to eql([])
     end

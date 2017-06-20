@@ -43,7 +43,7 @@ RSpec.describe 'Inferring schema from database' do
           end
         end
 
-        assoc = ROM::SQL::Association::OneToMany.new(:posts, :tags)
+        assoc = ROM::Associations::Definitions::OneToMany.new(:posts, :tags)
 
         expect(post_associations[:tags]).to eql(assoc)
       end
@@ -57,7 +57,7 @@ RSpec.describe 'Inferring schema from database' do
           end
         end
 
-        assoc = ROM::SQL::Association::OneToMany.new(:posts, :tags)
+        assoc = ROM::Associations::Definitions::OneToMany.new(:posts, :tags)
 
         expect(post_associations[:tags]).to eql(assoc)
       end
@@ -71,7 +71,7 @@ RSpec.describe 'Inferring schema from database' do
           end
         end
 
-        assoc = ROM::SQL::Association::OneToOne.new(:users, :accounts)
+        assoc = ROM::Associations::Definitions::OneToOne.new(:users, :accounts)
 
         expect(user_associations[:accounts]).to eql(assoc)
       end
@@ -85,7 +85,7 @@ RSpec.describe 'Inferring schema from database' do
           end
         end
 
-        assoc = ROM::SQL::Association::OneToOne.new(:users, :accounts, as: :account)
+        assoc = ROM::Associations::Definitions::OneToOne.new(:users, :accounts, as: :account)
 
         expect(user_associations[:account]).to eql(assoc)
         expect(user_associations[:account].target).to be_aliased
@@ -100,7 +100,7 @@ RSpec.describe 'Inferring schema from database' do
           end
         end
 
-        assoc = ROM::SQL::Association::OneToOne.new(:users, :accounts, as: :user_account)
+        assoc = ROM::Associations::Definitions::OneToOne.new(:users, :accounts, as: :user_account)
 
         expect(user_associations[:user_account]).to eql(assoc)
         expect(user_associations[:user_account].target).to be_aliased
@@ -115,7 +115,7 @@ RSpec.describe 'Inferring schema from database' do
           end
         end
 
-        assoc = ROM::SQL::Association::OneToOneThrough.new(:users, :cards, through: :accounts)
+        assoc = ROM::Associations::Definitions::OneToOneThrough.new(:users, :cards, through: :accounts)
 
         expect(user_associations[:cards]).to eql(assoc)
       end
@@ -129,7 +129,7 @@ RSpec.describe 'Inferring schema from database' do
           end
         end
 
-        assoc = ROM::SQL::Association::ManyToOne.new(:tags, :posts)
+        assoc = ROM::Associations::Definitions::ManyToOne.new(:tags, :posts)
 
         expect(tag_associations[:posts]).to eql(assoc)
       end
@@ -143,7 +143,7 @@ RSpec.describe 'Inferring schema from database' do
           end
         end
 
-        assoc = ROM::SQL::Association::ManyToOne.new(:tags, :posts, as: :post)
+        assoc = ROM::Associations::Definitions::ManyToOne.new(:tags, :posts, as: :post)
 
         expect(tag_associations[:post]).to eql(assoc)
       end
@@ -157,7 +157,7 @@ RSpec.describe 'Inferring schema from database' do
           end
         end
 
-        assoc = ROM::SQL::Association::ManyToOne.new(:tags, :posts, as: :post_tag)
+        assoc = ROM::Associations::Definitions::ManyToOne.new(:tags, :posts, as: :post_tag)
 
         expect(tag_associations[:post_tag]).to eql(assoc)
       end
@@ -171,7 +171,7 @@ RSpec.describe 'Inferring schema from database' do
           end
         end
 
-        assoc = ROM::SQL::Association::ManyToMany.new(:posts, :tags, through: :posts_tags)
+        assoc = ROM::Associations::Definitions::ManyToMany.new(:posts, :tags, through: :posts_tags)
 
         expect(post_associations[:tags]).to eql(assoc)
       end
@@ -185,7 +185,7 @@ RSpec.describe 'Inferring schema from database' do
           end
         end
 
-        assoc = ROM::SQL::Association::ManyToOne.new(:tags, :published_posts, relation: :posts)
+        assoc = ROM::Associations::Definitions::ManyToOne.new(:tags, :published_posts, relation: :posts)
 
         expect(tag_associations[:published_posts]).to eql(assoc)
       end

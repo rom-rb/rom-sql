@@ -23,25 +23,29 @@ module ROM
         #
         # @api public
         module AutoRestrictions
+          def self.apply(klass)
+            schema = klass.schema
+            raise EmptySchemaError, klass if schema.empty?
+
+            methods, mod = restriction_methods(schema)
+            klass.include(mod)
+            methods.each { |meth| klass.auto_curry(meth) }
+          end
+
           module FinalizationHook
-            def finalize(*)
-              super
-
-              @auto_restrictions_applied ||= false
-              return if @auto_restrictions_applied
-
-              methods, mod = AutoRestrictions.restriction_methods(schema)
-              include(mod)
-              methods.each { |meth| auto_curry(meth) }
-
-              @auto_restrictions_applied = true
+            def set_schema!(*)
+              super.tap { AutoRestrictions.apply(self) }
             end
           end
 
           def self.included(klass)
             super
 
-            klass.extend(FinalizationHook)
+            if klass.schema
+              AutoRestrictions.apply(klass)
+            else
+              klass.extend(FinalizationHook)
+            end
           end
 
           def self.restriction_methods(schema)

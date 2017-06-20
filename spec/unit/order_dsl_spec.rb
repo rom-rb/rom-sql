@@ -17,7 +17,7 @@ RSpec.describe ROM::SQL::OrderDSL, :postgres, helpers: true do
 
   describe '#call' do
     it 'returns an array with ordered expressions' do
-      expect(dsl.call { id }.first.sql_literal(conn[:users])).to eql('"id"')
+      expect(ds.literal(dsl.call { id }.first)).to eql('"id"')
     end
   end
 
@@ -28,15 +28,15 @@ RSpec.describe ROM::SQL::OrderDSL, :postgres, helpers: true do
     end
 
     it 'delegates to sequel virtual row' do
-      expect(dsl.call { nullif(id.qualified, `''`).desc }.first.sql_literal(conn[:users])).
+      expect(ds.literal(dsl.call { nullif(id.qualified, Sequel.lit("''")).desc }.first)).
         to eql(%(NULLIF("users"."id", '') DESC))
     end
 
     it 'allows to set nulls first/last' do
-      expect(dsl.call { id.desc(nulls: :first) }.first.sql_literal(conn[:users])).
+      expect(ds.literal(dsl.call { id.desc(nulls: :first) }.first)).
         to eql(%("id" DESC NULLS FIRST))
 
-      expect(dsl.call { id.desc(nulls: :last) }.first.sql_literal(conn[:users])).
+      expect(ds.literal(dsl.call { id.desc(nulls: :last) }.first)).
         to eql(%("id" DESC NULLS LAST))
     end
   end

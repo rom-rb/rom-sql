@@ -4,6 +4,8 @@ require "fileutils"
 module ROM
   module SQL
     module RakeSupport
+      MissingEnv = Class.new(StandardError)
+
       class << self
         def run_migrations(options = {})
           gateway.run_migrations(options)
@@ -13,12 +15,26 @@ module ROM
           gateway.migrator.create_file(*args)
         end
 
+        # Global environment used for running migrations. You normally
+        # set in the `db:setup` task with `ROM::SQL::RakeSupport.env = ROM.container(...)`
+        # or something similar.
+        #
+        # @api public
+        attr_accessor :env
+
         private
 
         def gateway
-          ROM::SQL::RakeSupport.env.gateways[:default]
+          if env.nil?
+            Gateway.instance ||
+              raise(MissingEnv, "Set up a configutation with ROM::SQL::RakeSupport.env= in the db:setup task")
+          else
+            env.gateways[:default]
+          end
         end
       end
+
+      @env = nil
     end
   end
 end

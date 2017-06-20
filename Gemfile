@@ -2,8 +2,13 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'rom', git: 'https://github.com/rom-rb/rom.git', branch: 'feature/schema-plugins'
-gem 'rom-mapper', git: 'https://github.com/rom-rb/rom-mapper.git', branch: 'master'
+gem 'dry-types', git: 'https://github.com/dry-rb/dry-types', branch: 'master'
+
+gem 'rom', git: 'https://github.com/rom-rb/rom', branch: 'master' do
+  gem 'rom-core'
+  gem 'rom-mapper'
+  gem 'rom-repository', group: :tools
+end
 
 group :test do
   gem 'byebug', platforms: :mri
@@ -25,8 +30,4 @@ group :test do
   gem 'sqlite3', platforms: [:mri, :rbx]
   gem 'jdbc-sqlite3', platforms: :jruby
   gem 'ruby-oci8', platforms: :mri if ENV['ROM_USE_ORACLE']
-end
-
-group :tools do
-  gem 'rom-repository', git: 'https://github.com/rom-rb/rom-repository.git', branch: 'master'
 end

@@ -1,4 +1,5 @@
 require 'sequel/core'
+require 'dry/core/cache'
 
 require 'rom/schema/attribute'
 require 'rom/sql/projection_dsl'
@@ -10,9 +11,60 @@ module ROM
     # @api public
     class Attribute < ROM::Schema::Attribute
       OPERATORS = %i[>= <= > <].freeze
+      NONSTANDARD_EQUALITY_VALUES = [true, false, nil].freeze
 
       # Error raised when an attribute cannot be qualified
       QualifyError = Class.new(StandardError)
+
+      # Type-specific methods
+      #
+      # @api public
+      module TypeExtensions
+        class << self
+          # Gets extensions for a type
+          #
+          # @param [Dry::Types::Type] type
+          #
+          # @return [Hash]
+          #
+          # @api public
+          def [](type)
+            unwrapped = type.optional? ? type.right : type
+            @types[unwrapped.pristine] || EMPTY_HASH
+          end
+
+          # Registers a set of operations supported for a specific type
+          #
+          # @example
+          #   ROM::SQL::Attribute::TypeExtensions.register(ROM::SQL::Types::PG::JSONB) do
+          #     def contain(type, expr, keys)
+          #       Attribute[Types::Bool].meta(sql_expr: expr.pg_jsonb.contains(value))
+          #     end
+          #   end
+          #
+          # @param [Dry::Types::Type] type Type
+          #
+          # @api public
+          def register(type, &block)
+            raise ArgumentError, "Type #{ type } already registered" if @types.key?(type)
+            mod = Module.new(&block)
+            ctx = Object.new.extend(mod)
+            functions = mod.public_instance_methods.each_with_object({}) { |m, ms| ms[m] = ctx.method(m) }
+            @types[type] = functions
+          end
+        end
+
+        @types = {}
+      end
+
+      extend Dry::Core::Cache
+
+      # @api private
+      def self.[](*args)
+        fetch_or_store(args) { new(*args) }
+      end
+
+      option :extensions, type: Types::Hash, default: -> { TypeExtensions[type] }
 
       # Return a new attribute with an alias
       #
@@ -46,13 +98,13 @@ module ROM
       # @return [SQL::Attribute]
       #
       # @api public
-      def qualified
+      def qualified(table_alias = nil)
         return self if qualified?
 
         case sql_expr
         when Sequel::SQL::AliasedExpression, Sequel::SQL::Identifier
-          type = meta(qualified: true)
-          type.meta(qualified: true, sql_expr: Sequel[type.to_sym])
+          type = meta(qualified: table_alias || true)
+          type.meta(sql_expr: type.to_sql_name)
         else
           raise QualifyError, "can't qualify #{name.inspect} (#{sql_expr.inspect})"
         end
@@ -97,7 +149,7 @@ module ROM
       #
       # @api public
       def qualified?
-        meta[:qualified].equal?(true)
+        meta[:qualified].equal?(true) || meta[:qualified].is_a?(Symbol)
       end
 
       # Return a new attribute marked as a FK
@@ -130,9 +182,9 @@ module ROM
       def to_sym
         @_to_sym ||=
           if qualified? && aliased?
-            :"#{source.dataset}__#{name}___#{meta[:alias]}"
+            :"#{table_name}__#{name}___#{meta[:alias]}"
           elsif qualified?
-            :"#{source.dataset}__#{name}"
+            :"#{table_name}__#{name}"
           elsif aliased?
             :"#{name}___#{meta[:alias]}"
           else
@@ -140,7 +192,7 @@ module ROM
           end
       end
 
-      # Return a boolean expression with `=` operator
+      # Return a boolean expression with an equality operator
       #
       # @example
       #   users.where { id.is(1) }
@@ -151,7 +203,38 @@ module ROM
       #
       # @api public
       def is(other)
-        __cmp__(:'=', other)
+        self =~ other
+      end
+
+      # @api public
+      def =~(other)
+        meta(sql_expr: sql_expr =~ binary_operation_arg(other))
+      end
+
+      # Return a boolean expression with a negated equality operator
+      #
+      # @example
+      #   users.where { id.not(1) }
+      #
+      #   users.where(users[:id].not(1))
+      #
+      # @param [Object] other Any SQL-compatible object type
+      #
+      # @api public
+      def not(other)
+        !is(other)
+      end
+
+      # Negate the attribute's sql expression
+      #
+      # @example
+      #   users.where(!users[:id].is(1))
+      #
+      # @return [Attribute]
+      #
+      # @api public
+      def !
+        ~self
       end
 
       # Return a boolean expression with an inclusion test
@@ -219,11 +302,25 @@ module ROM
       #
       # @api private
       def sql_literal(ds)
-        if sql_expr
-          sql_expr.sql_literal(ds)
-        else
-          Sequel[to_sym].sql_literal(ds)
-        end
+        ds.literal(sql_expr)
+      end
+
+      # Sequel column representation
+      #
+      # @return [Sequel::SQL::AliasedExpression,Sequel::SQL::Identifier]
+      #
+      # @api private
+      def to_sql_name
+        @_to_sql_name ||=
+          if qualified? && aliased?
+            Sequel.qualify(table_name, name).as(meta[:alias])
+          elsif qualified?
+            Sequel.qualify(table_name, name)
+          elsif aliased?
+            Sequel.as(name, meta[:alias])
+          else
+            Sequel[name]
+          end
       end
 
       private
@@ -232,7 +329,7 @@ module ROM
       #
       # @api private
       def sql_expr
-        @sql_expr ||= (meta[:sql_expr] || Sequel[to_sym])
+        @sql_expr ||= (meta[:sql_expr] || to_sql_name)
       end
 
       # Delegate to sql expression if it responds to a given method
@@ -241,6 +338,8 @@ module ROM
       def method_missing(meth, *args, &block)
         if OPERATORS.include?(meth)
           __cmp__(meth, args[0])
+        elsif extensions.key?(meth)
+          extensions[meth].(type, sql_expr, *args, &block)
         elsif sql_expr.respond_to?(meth)
           meta(sql_expr: sql_expr.__send__(meth, *args, &block))
         else
@@ -253,15 +352,30 @@ module ROM
       #
       # @api private
       def __cmp__(op, other)
-        value =
-          case other
-          when Sequel::SQL::Expression
-            value
-          else
-            type[other]
-          end
+        Sequel::SQL::BooleanExpression.new(op, self, binary_operation_arg(other))
+      end
 
-        Sequel::SQL::BooleanExpression.new(op, self, value)
+      # Preprocess input value for binary operations
+      #
+      # @api private
+      def binary_operation_arg(value)
+        case value
+        when Sequel::SQL::Expression
+          value
+        else
+          type[value]
+        end
+      end
+
+      # Return source table name or its alias
+      #
+      # @api private
+      def table_name
+        if qualified? && meta[:qualified].is_a?(Symbol)
+          meta[:qualified]
+        else
+          source.dataset
+        end
       end
     end
   end

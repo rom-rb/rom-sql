@@ -29,13 +29,14 @@ RSpec.shared_context 'database setup' do
   let(:conn) { Sequel.connect(uri) }
   let(:database_type) { conn.database_type }
   let(:inferrable_relations) { [] }
-  let(:conf) { ROM::Configuration.new(:sql, conn, inferrable_relations: inferrable_relations) }
+  let(:conf) { TestConfiguration.new(:sql, conn) }
   let(:container) { ROM.container(conf) }
   let(:relations) { container.relations }
   let(:commands) { container.commands }
 
   before do
     conn.loggers << LOGGER
+    inferrable_relations.each { |name| conf.relation(name) { schema(infer: true) } }
   end
 
   after do

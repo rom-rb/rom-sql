@@ -16,6 +16,8 @@ RSpec.describe 'Commands / Update', seeds: false do
       }
 
       conf.relation(:users) do
+        schema(infer: true)
+
         def by_id(id)
           where(id: id)
         end

@@ -56,7 +56,7 @@ RSpec.describe 'Commands / Postgres / Upsert', :postgres, seeds: false do
         let(:command_config) do
           -> do
             constraint :tasks_title_key
-            update_statement user_id: :excluded__user_id
+            update_statement user_id: Sequel.qualify(:excluded, :user_id)
           end
         end
 
@@ -70,7 +70,7 @@ RSpec.describe 'Commands / Postgres / Upsert', :postgres, seeds: false do
           -> do
             conflict_target :title
             update_statement user_id: nil
-            update_where tasks__id: 2
+            update_where Sequel.qualify(:tasks, :id) => 2
           end
         end
 

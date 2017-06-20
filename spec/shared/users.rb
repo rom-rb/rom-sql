@@ -16,9 +16,11 @@ RSpec.shared_context 'users' do
 
     conn.create_table :users do
       primary_key :id
-      String :name, null: false
+      String :name, text: false, null: false
       check { char_length(name) > 2 } if ctx.postgres?(example)
     end
+
+    conf.relation(:users) { schema(infer: true) }
   end
 
   before do |example|

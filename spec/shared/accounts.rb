@@ -32,6 +32,10 @@ RSpec.shared_context 'accounts' do
       Integer :card_id
       String :service
     end
+
+    conf.relation(:accounts) { schema(infer: true) }
+    conf.relation(:cards) { schema(infer: true) }
+    conf.relation(:subscriptions) { schema(infer: true) }
   end
 
   before do |example|

@@ -71,6 +71,14 @@ RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
 
       expect(literals).to eql([%('event' AS "type")])
     end
+
+    it 'supports functions without return value' do
+      literals = dsl
+                   .call { void::pg_advisory_lock(1).as(:lock) }
+                   .map { |attr| attr.sql_literal(ds) }
+
+      expect(literals).to eql([%(PG_ADVISORY_LOCK(1) AS "lock")])
+    end
   end
 
   describe '#method_missing' do

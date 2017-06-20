@@ -2,7 +2,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
   include_context 'users and tasks'
 
   before do
-    inferrable_relations.concat %i(test_inferrence test_numeric)
+    inferrable_relations.concat %i(test_characters test_inferrence test_numeric)
   end
 
   let(:schema) { container.relations[dataset].schema }
@@ -29,7 +29,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
           expect(schema.to_h).
             to eql(
                  id: ROM::SQL::Types::Serial.meta(name: :id, source: source),
-                 name: ROM::SQL::Types::String.meta(name: :name, source: source)
+                 name: ROM::SQL::Types::String.meta(name: :name, limit: 255, source: source)
                )
         end
       end
@@ -48,7 +48,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
           expect(schema.to_h).
             to eql(
                  id: ROM::SQL::Types::Serial.meta(name: :id, source: source),
-                 title: ROM::SQL::Types::String.optional.meta(name: :title, source: source),
+                 title: ROM::SQL::Types::String.meta(limit: 255).optional.meta(name: :title, source: source),
                  user_id: ROM::SQL::Types::Int.optional.meta(
                    name: :user_id,
                    foreign_key: true,
@@ -66,7 +66,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
 
           conn.create_table :test_inferrence do
             primary_key :id
-            String :text, null: false
+            String :text, text: false, null: false
             Time :time
             Date :date
 
@@ -97,12 +97,43 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
           expect(schema.to_h).
             to eql(
                  id: ROM::SQL::Types::Serial.meta(name: :id, source: source),
-                 text: ROM::SQL::Types::String.meta(name: :text, source: source),
+                 text: ROM::SQL::Types::String.meta(name: :text, limit: 255, source: source),
                  time: ROM::SQL::Types::Time.optional.meta(name: :time, source: source),
                  date: date_type.optional.meta(name: :date, source: source),
                  datetime: ROM::SQL::Types::Time.meta(name: :datetime, source: source),
                  data: ROM::SQL::Types::Blob.optional.meta(name: :data, source: source),
                )
+        end
+      end
+
+      context 'character datatypes' do
+        before do
+          conn.create_table :test_characters do
+            String :text1, text: false, null: false
+            String :text2, size: 100, null: false
+            column :text3, 'char(100)', null: false
+            column :text4, 'varchar', null: false
+            column :text5, 'varchar(100)', null: false
+            String :text6, size: 100
+          end
+        end
+
+        let(:dataset) { :test_characters }
+        let(:source) { ROM::Relation::Name[dataset] }
+
+        let(:char_t) { ROM::SQL::Types::String.meta(source: source) }
+
+        it 'infers attributes with limit' do
+          expect(schema.to_h).to eql(
+            text1: char_t.meta(name: :text1, limit: 255),
+            text2: char_t.meta(name: :text2, limit: 100),
+            text3: char_t.meta(name: :text3, limit: 100),
+            text4: char_t.meta(name: :text4, limit: 255),
+            text5: char_t.meta(name: :text5, limit: 100),
+            text6: ROM::SQL::Types::String.meta(limit: 100).optional.meta(
+              name: :text6, source: source
+            )
+          )
         end
       end
 
@@ -162,7 +193,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
 
       before do
         conf.relation(:people) do
-          schema(dataset, infer: true)
+          schema(infer: true)
         end
 
         conf.commands(:people) do
@@ -325,6 +356,8 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
 
           index %i(bar baz), name: :composite_idx
         end
+
+        conf.relation(:test_inferrence) { schema(infer: true) }
       end
 
       let(:dataset) { :test_inferrence }

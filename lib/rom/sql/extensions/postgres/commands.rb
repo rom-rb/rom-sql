@@ -11,7 +11,7 @@ module ROM
           # @api private
           def insert(tuples)
             dataset = tuples.map do |tuple|
-              relation.dataset.returning(*relation.columns).insert(tuple)
+              relation.dataset.returning.insert(tuple)
             end.flatten(1)
 
             wrap_dataset(dataset)
@@ -21,7 +21,7 @@ module ROM
           #
           # @api private
           def multi_insert(tuples)
-            relation.dataset.returning(*relation.columns).multi_insert(tuples)
+            relation.dataset.returning.multi_insert(tuples)
           end
 
           # Executes upsert statement (INSERT with ON CONFLICT clause)
@@ -29,7 +29,7 @@ module ROM
           #
           # @api private
           def upsert(tuple, opts = EMPTY_HASH)
-            relation.dataset.returning(*relation.columns).insert_conflict(opts).insert(tuple)
+            relation.dataset.returning.insert_conflict(opts).insert(tuple)
           end
         end
 
@@ -38,7 +38,7 @@ module ROM
           #
           # @api private
           def update(tuple)
-            dataset = relation.dataset.returning(*relation.columns).update(tuple)
+            dataset = relation.dataset.returning.update(tuple)
             wrap_dataset(dataset)
           end
         end

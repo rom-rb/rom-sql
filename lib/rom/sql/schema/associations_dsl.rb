@@ -1,5 +1,6 @@
 require 'dry/core/inflector'
-require 'rom/sql/association'
+
+require 'rom/associations/definitions'
 
 module ROM
   module SQL
@@ -52,7 +53,7 @@ module ROM
           if options[:through]
             many_to_many(target, options)
           else
-            add(Association::OneToMany.new(source, target, options))
+            add(::ROM::Associations::Definitions::OneToMany.new(source, target, options))
           end
         end
         alias_method :has_many, :one_to_many
@@ -77,7 +78,7 @@ module ROM
           if options[:through]
             one_to_one_through(target, options)
           else
-            add(Association::OneToOne.new(source, target, options))
+            add(::ROM::Associations::Definitions::OneToOne.new(source, target, options))
           end
         end
 
@@ -90,7 +91,7 @@ module ROM
         #
         # @api public
         def one_to_one_through(target, options = {})
-          add(Association::OneToOneThrough.new(source, target, options))
+          add(::ROM::Associations::Definitions::OneToOneThrough.new(source, target, options))
         end
 
         # Establish a many-to-many association
@@ -107,7 +108,7 @@ module ROM
         #
         # @api public
         def many_to_many(target, options = {})
-          add(Association::ManyToMany.new(source, target, options))
+          add(::ROM::Associations::Definitions::ManyToMany.new(source, target, options))
         end
 
         # Establish a many-to-one association
@@ -124,7 +125,7 @@ module ROM
         #
         # @api public
         def many_to_one(target, options = {})
-          add(Association::ManyToOne.new(source, target, options))
+          add(::ROM::Associations::Definitions::ManyToOne.new(source, target, options))
         end
 
         # Shortcut for many_to_one which sets alias automatically

@@ -17,7 +17,7 @@ RSpec.shared_context 'users and tasks' do
     conn.create_table :tasks do
       primary_key :id
       foreign_key :user_id, :users
-      String :title
+      String :title, text: false
       constraint(:title_length) { char_length(title) > 1 } if ctx.postgres?(example)
       constraint(:title_length) { length(title) > 1 }      if ctx.sqlite?(example)
     end
@@ -32,6 +32,10 @@ RSpec.shared_context 'users and tasks' do
       Integer :tag_id
       Integer :task_id
     end
+
+    conf.relation(:tasks) { schema(infer: true) }
+    conf.relation(:task_tags) { schema(infer: true) }
+    conf.relation(:tags) { schema(infer: true) }
   end
 
   before do |example|

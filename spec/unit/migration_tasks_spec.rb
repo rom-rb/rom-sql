@@ -12,7 +12,9 @@ RSpec.describe 'MigrationTasks', :postgres, skip_tables: true do
   let(:migrator) { container.gateways[:default].migrator }
 
   before do
-    allow(ROM::SQL::RakeSupport).to receive(:env) { conf }
+    ROM::SQL::Gateway.instance = nil
+    ROM::SQL::RakeSupport.env = nil
+    conf
   end
 
   context 'db:reset' do
@@ -45,6 +47,15 @@ RSpec.describe 'MigrationTasks', :postgres, skip_tables: true do
           Rake::Task["db:migrate"].execute
         }.to output("<= db:migrate executed\n").to_stdout
       end
+    end
+
+    it 'raises an error on missing both env and Gateway.instance' do
+      ROM::SQL::RakeSupport.env = nil
+      ROM::SQL::Gateway.instance = nil
+
+      expect {
+        Rake::Task["db:migrate"].execute
+      }.to raise_error(ROM::SQL::RakeSupport::MissingEnv)
     end
   end
 
