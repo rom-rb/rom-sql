@@ -1,10 +1,6 @@
 module Helpers
-  def qualified_attribute(*args)
-    ROM::SQL::QualifiedAttribute[*args]
-  end
-
   def assoc_name(*args)
-    ROM::SQL::Associations::Name[*args]
+    ROM::Relation::Name[*args]
   end
 
   def define_schema(name, attrs)
