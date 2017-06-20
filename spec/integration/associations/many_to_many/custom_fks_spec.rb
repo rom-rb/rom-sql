@@ -25,6 +25,8 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, '#call' do
         primary_key [:solver_id, :puzzle_id]
       end
 
+      conf.relation(:puzzles) { schema(infer: true) }
+
       conf.relation(:puzzle_solvers) do
         schema(infer: true) do
           associations do

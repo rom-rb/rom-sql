@@ -9,5 +9,7 @@ RSpec.shared_context 'puppies' do
       String :name, null: false
       boolean :cute, null: false, default: true
     end
+
+    conf.relation(:puppies) { schema(infer: true) }
   end
 end

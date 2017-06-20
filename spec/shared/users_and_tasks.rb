@@ -32,6 +32,10 @@ RSpec.shared_context 'users and tasks' do
       Integer :tag_id
       Integer :task_id
     end
+
+    conf.relation(:tasks) { schema(infer: true) }
+    conf.relation(:task_tags) { schema(infer: true) }
+    conf.relation(:tags) { schema(infer: true) }
   end
 
   before do |example|

@@ -19,6 +19,8 @@ RSpec.shared_context 'users' do
       String :name, text: false, null: false
       check { char_length(name) > 2 } if ctx.postgres?(example)
     end
+
+    conf.relation(:users) { schema(infer: true) }
   end
 
   before do |example|

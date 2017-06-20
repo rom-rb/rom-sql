@@ -36,7 +36,7 @@ module ROM
           def self.included(klass)
             super
             schema = klass.schema
-            raise EmptySchemaError, klass if schema.nil?
+            raise EmptySchemaError, klass if schema.empty?
             methods, mod = restriction_methods(schema)
             klass.include(mod)
             methods.each { |meth| klass.auto_curry(meth) }

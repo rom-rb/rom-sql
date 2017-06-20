@@ -17,5 +17,7 @@ RSpec.shared_context 'notes' do
       DateTime :completed_at
       Date :written
     end
+
+    conf.relation(:notes) { schema(infer: true) }
   end
 end

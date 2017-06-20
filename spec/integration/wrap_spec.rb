@@ -35,10 +35,6 @@ RSpec.describe ROM::SQL::Wrap do
               end
             end
           end
-
-          conf.relation(:users) do
-            schema(infer: true)
-          end
         end
 
         include_context 'joined tuple' do
@@ -54,10 +50,6 @@ RSpec.describe ROM::SQL::Wrap do
                 belongs_to :users, as: :assignee
               end
             end
-          end
-
-          conf.relation(:users) do
-            schema(infer: true)
           end
         end
 
