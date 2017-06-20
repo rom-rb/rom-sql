@@ -189,12 +189,12 @@ RSpec.describe 'Inferring schema from database' do
         class Test::Tags < ROM::Relation[:sql]
           schema(:tags) do
             associations do
-              many_to_one :published_posts, relation: :posts
+              many_to_one :posts, as: :published_posts
             end
           end
         end
 
-        assoc = ROM::Associations::Definitions::ManyToOne.new(:tags, :published_posts, relation: :posts)
+        assoc = ROM::Associations::Definitions::ManyToOne.new(:tags, :posts, as: :published_posts)
 
         expect(tag_associations[:published_posts].definition).to eql(assoc)
       end
