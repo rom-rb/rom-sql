@@ -19,18 +19,27 @@ RSpec.describe 'Inferring schema from database' do
     end
 
     context 'defining associations', seeds: false do
+      let(:config) { TestConfiguration.new(:sql, conn) }
+      let(:container) { ROM.container(config) }
+
       let(:user_associations) do
-        conf.register_relation(Test::Users)
+        config.relation(:accounts) { schema(infer: true) }
+        config.relation(:cards) { schema(infer: true) }
+        config.register_relation(Test::Users)
         container.relation(:users).associations
       end
 
       let(:post_associations) do
-        conf.register_relation(Test::Posts)
+        config.relation(:tags) { schema(infer: true) }
+        config.relation(:posts_tags) { schema(infer: true) }
+        config.register_relation(Test::Posts)
         container.relation(:posts).associations
       end
 
       let(:tag_associations) do
-        conf.register_relation(Test::Tags)
+        config.relation(:posts) { schema(infer: true) }
+        config.relation(:posts_tags) { schema(infer: true) }
+        config.register_relation(Test::Tags)
         container.relation(:tags).associations
       end
 
@@ -45,7 +54,7 @@ RSpec.describe 'Inferring schema from database' do
 
         assoc = ROM::Associations::Definitions::OneToMany.new(:posts, :tags)
 
-        expect(post_associations[:tags]).to eql(assoc)
+        expect(post_associations[:tags].definition).to eql(assoc)
       end
 
       it "allows defining a one-to-many using has_many shortcut" do
@@ -59,7 +68,7 @@ RSpec.describe 'Inferring schema from database' do
 
         assoc = ROM::Associations::Definitions::OneToMany.new(:posts, :tags)
 
-        expect(post_associations[:tags]).to eql(assoc)
+        expect(post_associations[:tags].definition).to eql(assoc)
       end
 
       it "allows defining a one-to-one" do
@@ -73,7 +82,7 @@ RSpec.describe 'Inferring schema from database' do
 
         assoc = ROM::Associations::Definitions::OneToOne.new(:users, :accounts)
 
-        expect(user_associations[:accounts]).to eql(assoc)
+        expect(user_associations[:accounts].definition).to eql(assoc)
       end
 
       it "allows defining a one-to-one using has_one shortcut" do
@@ -87,8 +96,8 @@ RSpec.describe 'Inferring schema from database' do
 
         assoc = ROM::Associations::Definitions::OneToOne.new(:users, :accounts, as: :account)
 
-        expect(user_associations[:account]).to eql(assoc)
-        expect(user_associations[:account].target).to be_aliased
+        expect(user_associations[:account].definition).to eql(assoc)
+        expect(user_associations[:account].definition.target).to be_aliased
       end
 
       it "allows defining a one-to-one using has_one shortcut with an alias" do
@@ -102,8 +111,8 @@ RSpec.describe 'Inferring schema from database' do
 
         assoc = ROM::Associations::Definitions::OneToOne.new(:users, :accounts, as: :user_account)
 
-        expect(user_associations[:user_account]).to eql(assoc)
-        expect(user_associations[:user_account].target).to be_aliased
+        expect(user_associations[:user_account].definition).to eql(assoc)
+        expect(user_associations[:user_account].definition.target).to be_aliased
       end
 
       it "allows defining a one-to-one-through" do
@@ -117,7 +126,7 @@ RSpec.describe 'Inferring schema from database' do
 
         assoc = ROM::Associations::Definitions::OneToOneThrough.new(:users, :cards, through: :accounts)
 
-        expect(user_associations[:cards]).to eql(assoc)
+        expect(user_associations[:cards].definition).to eql(assoc)
       end
 
       it "allows defining a many-to-one" do
@@ -131,7 +140,7 @@ RSpec.describe 'Inferring schema from database' do
 
         assoc = ROM::Associations::Definitions::ManyToOne.new(:tags, :posts)
 
-        expect(tag_associations[:posts]).to eql(assoc)
+        expect(tag_associations[:posts].definition).to eql(assoc)
       end
 
       it "allows defining a many-to-one using belongs_to shortcut" do
@@ -145,7 +154,7 @@ RSpec.describe 'Inferring schema from database' do
 
         assoc = ROM::Associations::Definitions::ManyToOne.new(:tags, :posts, as: :post)
 
-        expect(tag_associations[:post]).to eql(assoc)
+        expect(tag_associations[:post].definition).to eql(assoc)
       end
 
       it "allows defining a many-to-one using belongs_to shortcut" do
@@ -159,7 +168,7 @@ RSpec.describe 'Inferring schema from database' do
 
         assoc = ROM::Associations::Definitions::ManyToOne.new(:tags, :posts, as: :post_tag)
 
-        expect(tag_associations[:post_tag]).to eql(assoc)
+        expect(tag_associations[:post_tag].definition).to eql(assoc)
       end
 
       it "allows defining a many-to-many" do
@@ -173,7 +182,7 @@ RSpec.describe 'Inferring schema from database' do
 
         assoc = ROM::Associations::Definitions::ManyToMany.new(:posts, :tags, through: :posts_tags)
 
-        expect(post_associations[:tags]).to eql(assoc)
+        expect(post_associations[:tags].definition).to eql(assoc)
       end
 
       it "allows defining a many-to-one with a custom name" do
@@ -187,7 +196,7 @@ RSpec.describe 'Inferring schema from database' do
 
         assoc = ROM::Associations::Definitions::ManyToOne.new(:tags, :published_posts, relation: :posts)
 
-        expect(tag_associations[:published_posts]).to eql(assoc)
+        expect(tag_associations[:published_posts].definition).to eql(assoc)
       end
     end
   end
