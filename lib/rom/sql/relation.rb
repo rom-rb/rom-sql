@@ -27,6 +27,21 @@ module ROM
       schema_attr_class SQL::Attribute
       wrap_class SQL::Wrap
 
+      subscribe('configuration.relations.schema.set', adapter: :sql) do |event|
+        schema = event[:schema]
+        relation = event[:relation]
+
+        relation.dataset do
+          table = opts[:from].first
+
+          if db.table_exists?(table)
+            select(*schema).order(*schema.project(*schema.primary_key_names).qualified)
+          else
+            self
+          end
+        end
+      end
+
       subscribe('configuration.relations.dataset.allocated', adapter: :sql) do |event|
         event[:relation].define_default_views!
       end
@@ -42,22 +57,6 @@ module ROM
           rescue Sequel::Error => e
             inferrer_for_db.on_error(klass, e)
             ROM::Schema::DEFAULT_INFERRER.()
-          end
-        end
-
-        klass.dataset do |klass|
-          schema = klass.schema
-
-          table = opts[:from].first
-
-          if db.table_exists?(table)
-            if schema
-              select(*schema.map(&:to_sql_name)).order(*schema.project(*schema.primary_key_names).qualified.map(&:to_sql_name))
-            else
-              select(*columns).order(*klass.primary_key_columns(db, table))
-            end
-          else
-            self
           end
         end
       end
