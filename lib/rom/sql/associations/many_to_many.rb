@@ -54,11 +54,6 @@ module ROM
         private
 
         # @api private
-        def join_assoc
-          join_relation.associations[target.name]
-        end
-
-        # @api private
         def target_schema
           target.schema.merge(join_schema)
         end

@@ -13,8 +13,8 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
         conf.relation(:task_tags) do
           schema(infer: true) do
             associations do
-              many_to_one :tasks
-              many_to_one :tags
+              belongs_to :task
+              belongs_to :tag
             end
           end
         end
@@ -22,8 +22,8 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
         conf.relation(:tasks) do
           schema(infer: true) do
             associations do
-              one_to_many :task_tags
-              one_to_many :tags, through: :task_tags
+              has_many :task_tags
+              has_many :tags, through: :task_tags
             end
           end
         end
