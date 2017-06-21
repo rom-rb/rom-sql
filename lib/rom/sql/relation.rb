@@ -13,18 +13,25 @@ module ROM
     #
     # @api public
     class Relation < ROM::Relation
-      extend Notifications::Listener
+      adapter :sql
 
       include SQL
-
-      adapter :sql
-      schema_class SQL::Schema
-
       include Writing
       include Reading
 
+      extend Notifications::Listener
+
       schema_class SQL::Schema
       schema_attr_class SQL::Attribute
+      schema_inferrer -> (name, gateway) do
+        inferrer_for_db = ROM::SQL::Schema::Inferrer.get(gateway.connection.database_type.to_sym)
+        begin
+          inferrer_for_db.new.call(name, gateway)
+        rescue Sequel::Error => e
+          inferrer_for_db.on_error(name, e)
+          ROM::Schema::DEFAULT_INFERRER.()
+        end
+      end
       wrap_class SQL::Wrap
 
       subscribe('configuration.relations.schema.set', adapter: :sql) do |event|
@@ -44,21 +51,6 @@ module ROM
 
       subscribe('configuration.relations.dataset.allocated', adapter: :sql) do |event|
         event[:relation].define_default_views!
-      end
-
-      # @api private
-      def self.inherited(klass)
-        super
-
-        klass.schema_inferrer -> (name, gateway) do
-          inferrer_for_db = ROM::SQL::Schema::Inferrer.get(gateway.connection.database_type.to_sym)
-          begin
-            inferrer_for_db.new.call(name, gateway)
-          rescue Sequel::Error => e
-            inferrer_for_db.on_error(klass, e)
-            ROM::Schema::DEFAULT_INFERRER.()
-          end
-        end
       end
 
       # @api private
