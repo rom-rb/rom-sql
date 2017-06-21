@@ -36,10 +36,6 @@ module ROM
             methods.each { |meth| relation.auto_curry(meth) }
           end
 
-          def self.apply(klass)
-            # no-op
-          end
-
           def self.restriction_methods(schema)
             mod = Module.new
 
