@@ -13,53 +13,44 @@ module ROM
     #
     # @api public
     class Relation < ROM::Relation
-      include SQL
-
       adapter :sql
-      schema_class SQL::Schema
 
+      include SQL
       include Writing
       include Reading
 
+      extend Notifications::Listener
+
       schema_class SQL::Schema
       schema_attr_class SQL::Attribute
+      schema_inferrer -> (name, gateway) do
+        inferrer_for_db = ROM::SQL::Schema::Inferrer.get(gateway.connection.database_type.to_sym)
+        begin
+          inferrer_for_db.new.call(name, gateway)
+        rescue Sequel::Error => e
+          inferrer_for_db.on_error(name, e)
+          ROM::Schema::DEFAULT_INFERRER.()
+        end
+      end
       wrap_class SQL::Wrap
 
-      # Set default dataset for a relation sub-class
-      #
-      # @api private
-      def self.inherited(klass)
-        super
+      subscribe('configuration.relations.schema.set', adapter: :sql) do |event|
+        schema = event[:schema]
+        relation = event[:relation]
 
-        klass.class_eval do
-          schema_inferrer -> (name, gateway) do
-            inferrer_for_db = ROM::SQL::Schema::Inferrer.get(gateway.connection.database_type.to_sym)
-            begin
-              inferrer_for_db.new.call(name, gateway)
-            rescue Sequel::Error => e
-              inferrer_for_db.on_error(klass, e)
-              ROM::Schema::DEFAULT_INFERRER.()
-            end
-          end
+        relation.dataset do
+          table = opts[:from].first
 
-          dataset do
-            # TODO: feels strange to do it here - we need a new hook for this during finalization
-            klass.define_default_views!
-            schema = klass.schema
-
-            table = opts[:from].first
-
-            if db.table_exists?(table)
-              if schema
-                select(*schema.map(&:to_sql_name)).order(*schema.project(*schema.primary_key_names).qualified.map(&:to_sql_name))
-              else
-                select(*columns).order(*klass.primary_key_columns(db, table))
-              end
-            else
-              self
-            end
+          if db.table_exists?(table)
+            select(*schema).order(*schema.project(*schema.primary_key_names).qualified)
+          else
+            self
           end
         end
+      end
+
+      subscribe('configuration.relations.dataset.allocated', adapter: :sql) do |event|
+        event[:relation].define_default_views!
       end
 
       # @api private
