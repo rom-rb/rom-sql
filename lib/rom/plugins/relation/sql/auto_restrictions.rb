@@ -1,3 +1,5 @@
+require 'rom/support/notifications'
+
 module ROM
   module Plugins
     module Relation
@@ -23,29 +25,19 @@ module ROM
         #
         # @api public
         module AutoRestrictions
+          extend Notifications::Listener
+
+          subscribe('configuration.relations.schema.set', adapter: :sql) do |event|
+            schema = event[:schema]
+            relation = event[:relation]
+
+            methods, mod = AutoRestrictions.restriction_methods(schema)
+            relation.include(mod)
+            methods.each { |meth| relation.auto_curry(meth) }
+          end
+
           def self.apply(klass)
-            schema = klass.schema
-            raise EmptySchemaError, klass if schema.empty?
-
-            methods, mod = restriction_methods(schema)
-            klass.include(mod)
-            methods.each { |meth| klass.auto_curry(meth) }
-          end
-
-          module FinalizationHook
-            def set_schema!(*)
-              super.tap { AutoRestrictions.apply(self) }
-            end
-          end
-
-          def self.included(klass)
-            super
-
-            if klass.schema
-              AutoRestrictions.apply(klass)
-            else
-              klass.extend(FinalizationHook)
-            end
+            # no-op
           end
 
           def self.restriction_methods(schema)

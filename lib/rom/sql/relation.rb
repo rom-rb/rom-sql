@@ -13,6 +13,8 @@ module ROM
     #
     # @api public
     class Relation < ROM::Relation
+      extend Notifications::Listener
+
       include SQL
 
       adapter :sql
@@ -25,39 +27,37 @@ module ROM
       schema_attr_class SQL::Attribute
       wrap_class SQL::Wrap
 
-      # Set default dataset for a relation sub-class
-      #
+      subscribe('configuration.relations.dataset.allocated', adapter: :sql) do |event|
+        event[:relation].define_default_views!
+      end
+
       # @api private
       def self.inherited(klass)
         super
 
-        klass.class_eval do
-          schema_inferrer -> (name, gateway) do
-            inferrer_for_db = ROM::SQL::Schema::Inferrer.get(gateway.connection.database_type.to_sym)
-            begin
-              inferrer_for_db.new.call(name, gateway)
-            rescue Sequel::Error => e
-              inferrer_for_db.on_error(klass, e)
-              ROM::Schema::DEFAULT_INFERRER.()
-            end
+        klass.schema_inferrer -> (name, gateway) do
+          inferrer_for_db = ROM::SQL::Schema::Inferrer.get(gateway.connection.database_type.to_sym)
+          begin
+            inferrer_for_db.new.call(name, gateway)
+          rescue Sequel::Error => e
+            inferrer_for_db.on_error(klass, e)
+            ROM::Schema::DEFAULT_INFERRER.()
           end
+        end
 
-          dataset do
-            # TODO: feels strange to do it here - we need a new hook for this during finalization
-            klass.define_default_views!
-            schema = klass.schema
+        klass.dataset do |klass|
+          schema = klass.schema
 
-            table = opts[:from].first
+          table = opts[:from].first
 
-            if db.table_exists?(table)
-              if schema
-                select(*schema.map(&:to_sql_name)).order(*schema.project(*schema.primary_key_names).qualified.map(&:to_sql_name))
-              else
-                select(*columns).order(*klass.primary_key_columns(db, table))
-              end
+          if db.table_exists?(table)
+            if schema
+              select(*schema.map(&:to_sql_name)).order(*schema.project(*schema.primary_key_names).qualified.map(&:to_sql_name))
             else
-              self
+              select(*columns).order(*klass.primary_key_columns(db, table))
             end
+          else
+            self
           end
         end
       end
