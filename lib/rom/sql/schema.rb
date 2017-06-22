@@ -105,6 +105,8 @@ module ROM
           end
         end
       end
+
+      memoize :qualified, :canonical, :joined, :project_pk
     end
   end
 end
