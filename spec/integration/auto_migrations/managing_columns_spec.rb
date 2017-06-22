@@ -30,7 +30,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
 
   describe 'create a table' do
     it 'creates a table from a relation' do
-      gateway.auto_migrate!(container)
+      gateway.auto_migrate!(conf)
 
       expect(inferred_schema(:users).to_ast)
         .to eql(
@@ -62,7 +62,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
     end
 
     it 'adds columns to an existing table' do
-      gateway.auto_migrate!(container)
+      gateway.auto_migrate!(conf)
 
       expect(inferred_schema(:users)[:name].to_ast)
         .to eql(
@@ -95,7 +95,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
     end
 
     it 'removes columns from a table' do
-      gateway.auto_migrate!(container)
+      gateway.auto_migrate!(conf)
 
       expect(inferred_schema(:users).map(&:name)).to eql(%i(id name email))
     end
@@ -113,7 +113,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
     it 'leaves existing schema' do
       current = container.relation(:users).schema
 
-      gateway.auto_migrate!(container)
+      gateway.auto_migrate!(conf)
 
       expect(inferred_schema(:users)).to eql(current)
     end

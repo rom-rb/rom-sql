@@ -13,7 +13,6 @@ end
 group :test do
   gem 'pry-byebug', platforms: :mri
   gem 'pry', platforms: %i(jruby rbx)
-  gem 'dry-types', git: 'https://github.com/dry-rb/dry-types.git'
   gem 'dry-struct'
   gem 'activesupport', '~> 5.0'
   gem 'codeclimate-test-reporter', require: false

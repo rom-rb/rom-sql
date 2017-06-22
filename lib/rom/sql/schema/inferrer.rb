@@ -7,8 +7,13 @@ module ROM
       # @api private
       class Inferrer
         extend Dry::Core::ClassAttributes
+        extend Initializer
 
-        defines :ruby_type_mapping, :numeric_pk_type, :db_type, :db_registry
+        defines :ruby_type_mapping, :numeric_pk_type, :db_type, :db_registry, :silent
+        silent false
+
+        option :silent, default: -> { self.class.silent }
+        option :raise_on_error, default: -> { true }
 
         ruby_type_mapping(
           integer: Types::Int,
@@ -39,16 +44,14 @@ module ROM
           Class.new(self) { db_type(type) }
         end
 
+        # @api private
         def self.get(type)
           db_registry[type]
         end
 
-        def self.on_error(dataset, e)
-          warn "[#{dataset}] failed to infer schema. " \
-               "Make sure tables exist before ROM container is set up. " \
-               "This may also happen when your migration tasks load ROM container, " \
-               "which is not needed for migrations as only the connection is required " \
-               "(#{e.message})"
+        # @api private
+        def self.silent!
+          silent true
         end
 
         # @api private
@@ -69,6 +72,19 @@ module ROM
           end.compact
 
           [inferred, columns.map(&:first) - inferred.map { |attr| attr.meta[:name] }]
+        rescue Sequel::Error => error
+          on_error(source, error)
+          Schema::DEFAULT_INFERRER.()
+        end
+
+        # @api private
+        def suppress_errors
+          with(raise_on_error: false)
+        end
+
+        # @api private
+        def with(new_options)
+          self.class.new(options.merge(new_options))
         end
 
         private
@@ -165,6 +181,19 @@ module ROM
             )
           else
             self.class.ruby_type_mapping[:decimal]
+          end
+        end
+
+        # @api private
+        def on_error(dataset, e)
+          if raise_on_error
+            raise e
+          elsif !silent
+            warn "[#{dataset}] failed to infer schema. " \
+                 "Make sure tables exist before ROM container is set up. " \
+                 "This may also happen when your migration tasks load ROM container, " \
+                 "which is not needed for migrations as only the connection is required " \
+                 "(#{e.message})"
           end
         end
       end

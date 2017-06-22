@@ -4,15 +4,15 @@ module ROM
       class SchemaDiff
         def self.compare(current, target)
           current_attrs, target_attrs = current.to_a, target.to_a
-          new_attributes = target_attrs - current_attrs
+          added_attributes = target_attrs - current_attrs
           removed_attributes = current_attrs - target_attrs
 
           if current_attrs.empty?
             TableCreated.new(target)
-          elsif !new_attributes.empty? || !removed_attributes.empty?
+          elsif !added_attributes.empty? || !removed_attributes.empty?
             TableAltered.new(
               target,
-              new_attributes: new_attributes,
+              added_attributes: added_attributes,
               removed_attributes: removed_attributes
             )
           else
@@ -46,12 +46,12 @@ module ROM
         end
 
         class TableAltered < Diff
-          attr_reader :new_attributes, :removed_attributes
+          attr_reader :added_attributes, :removed_attributes
 
-          def initialize(schema, new_attributes: EMPTY_ARRAY, removed_attributes: EMPTY_ARRAY)
+          def initialize(schema, added_attributes: EMPTY_ARRAY, removed_attributes: EMPTY_ARRAY)
             super(schema)
 
-            @new_attributes = new_attributes
+            @added_attributes = added_attributes
             @removed_attributes = removed_attributes
           end
         end

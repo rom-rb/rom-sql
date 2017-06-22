@@ -138,9 +138,12 @@ module ROM
       end
 
       # @api public
-      def auto_migrate!(container)
-        name = container.gateways.find { |_, gw| gw.equal?(self) }[0]
-        migrator.auto_migrate!(container, name)
+      def auto_migrate!(conf)
+        schemas = conf.relation_classes(self).map do |klass|
+          klass.schema || klass.schema_proc.call.finalize_attributes!(gateway: self)
+        end
+
+        migrator.auto_migrate!(self, schemas)
       end
     end
   end

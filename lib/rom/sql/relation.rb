@@ -24,13 +24,8 @@ module ROM
       schema_class SQL::Schema
       schema_attr_class SQL::Attribute
       schema_inferrer -> (name, gateway) do
-        inferrer_for_db = ROM::SQL::Schema::Inferrer.get(gateway.connection.database_type.to_sym)
-        begin
-          inferrer_for_db.new.call(name, gateway)
-        rescue Sequel::Error => e
-          inferrer_for_db.on_error(name, e)
-          ROM::Schema::DEFAULT_INFERRER.()
-        end
+        inferrer_for_db = ROM::SQL::Schema::Inferrer.get(gateway.database_type).new
+        inferrer_for_db.(name, gateway)
       end
       wrap_class SQL::Wrap
 

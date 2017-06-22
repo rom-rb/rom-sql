@@ -48,7 +48,7 @@ module ROM
 
           def alter_table(diff)
             gateway.connection.alter_table(diff.table_name) do
-              diff.new_attributes.each do |attribute|
+              diff.added_attributes.each do |attribute|
                 unwrapped = attribute.optional? ? attribute.right : attribute
                 add_column attribute.name, unwrapped.primitive, null: attribute.optional?
               end
@@ -107,25 +107,24 @@ module ROM
         end
 
         # @api private
-        def diff(container, gateway_name)
-          relations = container.relations.select { |_, r| r.gateway == gateway_name }
-          gateway = container.gateways[gateway_name]
+        def diff(gateway, inferrer, target)
+          current_atttributes, _ = inferrer.(target.name, gateway)
+          current = target.with(
+            attributes: target.class.attributes(current_atttributes, target.options[:attr_class])
+          )
 
-          relations.map do |_, relation|
-            target = relation.schema
-            current_atttributes, _ = relation.class.schema_inferrer.(relation.name, gateway)
-            current = target.with(
-              attributes: target.class.attributes(current_atttributes, target.options[:attr_class])
-            )
-
-            SchemaDiff.compare(current, target)
-          end
+          SchemaDiff.compare(current, target)
         end
 
-        def auto_migrate!(container, gateway)
-          runner = InlineRunner.new(container.gateways[gateway])
-          changes = diff(container, gateway).reject(&:empty?)
-          runner.call(changes)
+        def auto_migrate!(gateway, schemas)
+          runner = InlineRunner.new(gateway)
+          inherrer = inferrer(gateway)
+          changes = schemas.map { |schema| diff(gateway, inherrer, schema) }.reject(&:empty?)
+          runner.(changes)
+        end
+
+        def inferrer(gateway)
+          ROM::SQL::Schema::Inferrer.get(gateway.database_type).new.suppress_errors
         end
       end
     end

@@ -61,11 +61,8 @@ TMP_PATH = root.join('../tmp')
 
 require 'rom/sql/schema/inferrer'
 
-class ROM::SQL::Schema::Inferrer
-  def self.on_error(*)
-    # quiet in specs
-  end
-end
+# quiet in specs
+ROM::SQL::Schema::Inferrer.silent!
 
 require 'dry/core/deprecations'
 Dry::Core::Deprecations.set_logger!(root.join('../log/deprecations.log'))
