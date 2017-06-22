@@ -20,6 +20,8 @@ RSpec.describe ROM::SQL::Associations::OneToMany, '#call' do
         column :text, String, null: false
       end
 
+      conf.relation(:puzzles) { schema(infer: true) }
+
       conf.relation(:users) do
         schema(infer: true) do
           associations do

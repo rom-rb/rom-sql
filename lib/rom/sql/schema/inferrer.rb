@@ -43,8 +43,8 @@ module ROM
           db_registry[type]
         end
 
-        def self.on_error(relation, e)
-          warn "[#{relation}] failed to infer schema. " \
+        def self.on_error(dataset, e)
+          warn "[#{dataset}] failed to infer schema. " \
                "Make sure tables exist before ROM container is set up. " \
                "This may also happen when your migration tasks load ROM container, " \
                "which is not needed for migrations as only the connection is required " \

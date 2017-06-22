@@ -31,6 +31,23 @@ module ROM
       #   @return [Hash] Options used for connection
       attr_reader :options
 
+      subscribe('configuration.commands.class.before_build') do |event|
+        klass = event[:command]
+        dataset = event[:dataset]
+        type = dataset.db.database_type
+
+        if type == :postgres
+          ext =
+            if klass < Commands::Create
+              Commands::Postgres::Create
+            elsif klass < Commands::Update
+              Commands::Postgres::Update
+            end
+
+          klass.send(:include, ext) if ext
+        end
+      end
+
       # Initialize an SQL gateway
       #
       # Gateways are typically initialized via ROM::Configuration object, gateway constructor
@@ -151,31 +168,6 @@ module ROM
       # @api public
       def dataset?(name)
         schema.include?(name)
-      end
-
-      # Extend the command class with database-specific behavior
-      #
-      # @param [Class] klass Command class
-      # @param [Sequel::Dataset] dataset A dataset that will be used
-      #
-      # Note: Currently, only postgres is supported.
-      #
-      # @api public
-      def extend_command_class(klass, dataset)
-        type = dataset.db.database_type
-
-        if type == :postgres
-          ext =
-            if klass < Commands::Create
-              Commands::Postgres::Create
-            elsif klass < Commands::Update
-              Commands::Postgres::Update
-            end
-
-          klass.send(:include, ext) if ext
-        end
-
-        klass
       end
 
       # Create a table using the configured connection

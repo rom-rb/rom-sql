@@ -24,6 +24,8 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
         column :code, String, null: false
       end
 
+      conf.relation(:destinations) { schema(infer: true) }
+
       conf.relation(:flights) do
         schema(infer: true) do
           associations do

@@ -902,7 +902,7 @@ module ROM
         #
         # @api private
         def __join__(type, other, join_cond = EMPTY_HASH, opts = EMPTY_HASH, &block)
-          if other.is_a?(Symbol) || other.is_a?(ROM::Associations::Name)
+          if other.is_a?(Symbol) || other.is_a?(ROM::Relation::Name)
             if join_cond.empty?
               assoc = associations[other]
               assoc.join(type, self)

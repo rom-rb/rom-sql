@@ -8,6 +8,10 @@ RSpec.describe 'ROM.container' do
           primary_key :id
           column :name, String
         end
+
+        conf.relation(:dragons) do
+          schema(infer: true)
+        end
       end
     end
 

@@ -137,10 +137,8 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
     end
 
     it 'uses relation schema for the default input handler' do
-      conf.relation(:users) do
-        register_as :users_with_schema
-
-        schema do
+      conf.relation(:users_with_schema) do
+        schema(:users) do
           attribute :id, ROM::SQL::Types::Serial
           attribute :name, ROM::SQL::Types::String
         end

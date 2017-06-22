@@ -8,7 +8,7 @@ RSpec.describe 'Plugins / :associates', seeds: false do
       let(:tags) { container.commands[:tags] }
 
       before do
-        conf.relation_classes[1].class_eval do
+        conf.relation(:tasks) do
           schema(infer: true) do
             associations do
               many_to_one :users, as: :user
@@ -97,7 +97,7 @@ RSpec.describe 'Plugins / :associates', seeds: false do
         include_context 'automatic FK setting'
 
         before do
-          conf.relation_classes[1].class_eval do
+          conf.relation(:tasks) do
             schema(infer: true) do
               associations do
                 many_to_one :users, as: :user
@@ -216,7 +216,7 @@ RSpec.describe 'Plugins / :associates', seeds: false do
       end
 
       before do
-        conf.relation_classes[1].class_eval do
+        conf.relation(:tasks) do
           schema(infer: true) do
             associations do
               belongs_to :user

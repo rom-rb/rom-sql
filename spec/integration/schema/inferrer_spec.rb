@@ -193,7 +193,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
 
       before do
         conf.relation(:people) do
-          schema(dataset, infer: true)
+          schema(infer: true)
         end
 
         conf.commands(:people) do
@@ -356,6 +356,8 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
 
           index %i(bar baz), name: :composite_idx
         end
+
+        conf.relation(:test_inferrence) { schema(infer: true) }
       end
 
       let(:dataset) { :test_inferrence }

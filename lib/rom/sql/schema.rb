@@ -8,21 +8,6 @@ require 'rom/sql/restriction_dsl'
 module ROM
   module SQL
     class Schema < ROM::Schema
-      # @!attribute [r] primary_key_name
-      #   @return [Symbol] The name of the primary key. This is set because in
-      #                    most of the cases relations don't have composite pks
-      attr_reader :primary_key_name
-
-      # @!attribute [r] primary_key_names
-      #   @return [Array<Symbol>] A list of all pk names
-      attr_reader :primary_key_names
-
-      # @api private
-      def initialize(*)
-        super
-        initialize_primary_key_names
-      end
-
       # @api public
       def restriction(&block)
         RestrictionDSL.new(self).call(&block)
@@ -121,13 +106,7 @@ module ROM
         end
       end
 
-      # @api private
-      def initialize_primary_key_names
-        if primary_key.size > 0
-          @primary_key_name = primary_key[0].meta[:name]
-          @primary_key_names = primary_key.map { |type| type.meta[:name] }
-        end
-      end
+      memoize :qualified, :canonical, :joined, :project_pk
     end
   end
 end

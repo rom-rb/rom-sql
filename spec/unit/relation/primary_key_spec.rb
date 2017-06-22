@@ -18,7 +18,7 @@ RSpec.describe ROM::Relation, '#primary_key' do
 
     context 'without schema' do
       it 'returns :id by default' do
-        conf.relation(:users)
+        conf.relation(:users) { schema(infer: true) }
 
         expect(relation.primary_key).to be(:id)
       end

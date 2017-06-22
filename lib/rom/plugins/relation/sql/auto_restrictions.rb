@@ -1,11 +1,10 @@
+require 'rom/support/notifications'
+
 module ROM
   module Plugins
     module Relation
       module SQL
         # Generates methods for restricting relations by their indexed attributes
-        #
-        # This plugin must be enabled for the whole adapter, `use` won't work as
-        # schema is not yet available, unless it was defined explicitly.
         #
         # @example
         #   rom = ROM.container(:sql, 'sqlite::memory') do |config|
@@ -26,20 +25,15 @@ module ROM
         #
         # @api public
         module AutoRestrictions
-          EmptySchemaError = Class.new(ArgumentError) do
-            def initialize(klass)
-              super("#{klass} relation has no schema. " \
-                    "Make sure :auto_restrictions is enabled after defining a schema")
-            end
-          end
+          extend Notifications::Listener
 
-          def self.included(klass)
-            super
-            schema = klass.schema
-            raise EmptySchemaError, klass if schema.nil?
-            methods, mod = restriction_methods(schema)
-            klass.include(mod)
-            methods.each { |meth| klass.auto_curry(meth) }
+          subscribe('configuration.relations.schema.set', adapter: :sql) do |event|
+            schema = event[:schema]
+            relation = event[:relation]
+
+            methods, mod = AutoRestrictions.restriction_methods(schema)
+            relation.include(mod)
+            methods.each { |meth| relation.auto_curry(meth) }
           end
 
           def self.restriction_methods(schema)

@@ -1,6 +1,8 @@
-require 'dry-types'
+require 'dry/types'
 require 'sequel'
 require 'ipaddr'
+
+require 'rom/sql/type_extensions'
 
 Sequel.extension(*%i(pg_array pg_array_ops pg_json pg_json_ops pg_hstore))
 
@@ -109,7 +111,7 @@ module ROM
         #     #
         #     #   @api public
         #   end
-        Attribute::TypeExtensions.register(Array.constructor -> {  }) do
+        TypeExtensions.register(Array.constructor -> {  }) do
           def contain(type, expr, other)
             Attribute[Types::Bool].meta(sql_expr: expr.pg_array.contains(type[other]))
           end
@@ -331,11 +333,11 @@ module ROM
           end
         end
 
-        Attribute::TypeExtensions.register(JSON) do
+        TypeExtensions.register(JSON) do
           include JSONMethods[JSON, :pg_json.to_proc]
         end
 
-        Attribute::TypeExtensions.register(JSONB) do
+        TypeExtensions.register(JSONB) do
           include JSONMethods[JSONB, :pg_jsonb.to_proc]
 
           def contain(type, expr, value)

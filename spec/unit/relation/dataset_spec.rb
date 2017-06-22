@@ -35,9 +35,9 @@ RSpec.describe ROM::Relation, '#dataset' do
       end
     end
 
-    context 'without schema' do
+    context 'with inferred schema' do
       before do
-        conf.relation(:users)
+        conf.relation(:users) { schema(infer: true) }
       end
 
       it 'selects all qualified columns and sorts by pk' do

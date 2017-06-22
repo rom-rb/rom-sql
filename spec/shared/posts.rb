@@ -10,6 +10,8 @@ RSpec.shared_context 'posts' do
       String :title
       String :body
     end
+
+    conf.relation(:posts) { schema(infer: true) }
   end
 
   before do |example|
