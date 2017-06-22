@@ -4,18 +4,24 @@ RSpec.describe 'Eager loading' do
   with_adapters do
     before do
       conf.relation(:users) do
+        auto_map false
+
         def by_name(name)
           where(name: name)
         end
       end
 
       conf.relation(:tasks) do
+        auto_map false
+
         def for_users(users)
           where(user_id: users.map { |tuple| tuple[:id] })
         end
       end
 
       conf.relation(:tags) do
+        auto_map false
+
         def for_tasks(tasks)
           inner_join(:task_tags, task_id: :id)
             .where(task_id: tasks.map { |tuple| tuple[:id] })

@@ -29,6 +29,8 @@ RSpec.describe ROM::SQL::Wrap do
       context 'using association with inferred relation name' do
         before do
           conf.relation(:tasks) do
+            auto_map false
+
             schema(infer: true) do
               associations do
                 belongs_to :user
@@ -45,6 +47,8 @@ RSpec.describe ROM::SQL::Wrap do
       context 'using association with an alias' do
         before do
           conf.relation(:tasks) do
+            auto_map false
+
             schema(infer: true) do
               associations do
                 belongs_to :users, as: :assignee
@@ -61,6 +65,8 @@ RSpec.describe ROM::SQL::Wrap do
       context 'using association with an aliased relation' do
         before do
           conf.relation(:tasks) do
+            auto_map false
+
             schema(infer: true) do
               associations do
                 belongs_to :users, as: :assignee, relation: :people
@@ -69,6 +75,8 @@ RSpec.describe ROM::SQL::Wrap do
           end
 
           conf.relation(:people) do
+            auto_map false
+
             schema(:users, infer: true)
           end
         end
