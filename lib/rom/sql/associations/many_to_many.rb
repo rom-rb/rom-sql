@@ -67,6 +67,8 @@ module ROM
         def columns
           target_schema.map(&:name)
         end
+
+        memoize :join_keys, :target_schema, :join_schema, :columns
       end
     end
   end

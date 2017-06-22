@@ -377,6 +377,8 @@ module ROM
           source.dataset
         end
       end
+
+      memoize :joined, :to_sql_name, :table_name, :canonical
     end
   end
 end

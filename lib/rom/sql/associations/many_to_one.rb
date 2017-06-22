@@ -45,11 +45,6 @@ module ROM
           source.__send__(type, target.name.dataset, join_keys).qualified
         end
 
-        # @api public
-        def foreign_key
-          definition.options[:foreign_key] || source.foreign_key(target.name)
-        end
-
         # @api private
         def prepare(target)
           call(target: target, preload: true)
