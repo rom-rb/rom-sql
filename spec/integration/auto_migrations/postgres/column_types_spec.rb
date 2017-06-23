@@ -5,6 +5,16 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
     conn.drop_table?(:test_pg_types)
   end
 
+  to_attr = ROM::SQL::Attribute.method(:new)
+
+  let(:table_name) { :test_pg_types }
+
+  subject(:gateway) { container.gateways[:default] }
+
+  let(:inferrer) { ROM::SQL::Schema::Inferrer.get(gateway.database_type).new }
+
+  let(:attributes) { inferrer.(ROM::Relation::Name[table_name], gateway)[0].map(&to_attr) }
+
   describe 'common types' do
     before do
       conf.relation(:test_pg_types) do
@@ -20,46 +30,32 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
       end
     end
 
-    subject(:gateway) { container.gateways[:default] }
-
-    def inferred_schema(rel_name)
-      conf = ROM::Configuration.new(:sql, conn) do |conf|
-        conf.relation(rel_name) do
-          schema(infer: true)
-        end
-      end
-
-      container = ROM.container(conf)
-      container.relation(rel_name).schema
-    end
 
     it 'has support for PG data types' do
       gateway.auto_migrate!(conf)
 
-      expect(inferred_schema(:test_pg_types).to_ast)
-        .to eql(
-              [:schema,
-               [ROM::Relation::Name[:test_pg_types],
-                [[:attribute,
-                  [:id,
-                   [:definition, [Integer, {}]],
-                   primary_key: true, source: :test_pg_types]],
-                 [:attribute, [:string, [:definition, [String, {}]], source: :test_pg_types]],
-                 [:attribute, [:int, [:definition, [Integer, {}]], source: :test_pg_types]],
-                 [:attribute, [:time, [:definition, [Time, {}]], source: :test_pg_types]],
-                 [:attribute, [:date, [:definition, [Date, {}]], source: :test_pg_types]],
-                 [:attribute, [:decimal, [:definition, [BigDecimal, {}]], source: :test_pg_types]],
-                 [:attribute,
-                  [:string_nullable,
-                   [:sum,
-                    [[:constrained,
-                      [[:definition, [NilClass, {}]],
-                       [:predicate, [:type?, [[:type, NilClass], [:input, ROM::Undefined]]]],
-                       {}]],
-                     [:definition, [String, {}]],
-                     {}]],
-                   source: :test_pg_types]]]]]
-            )
+      expect(attributes.map(&:to_ast))
+        .to eql([
+                  [:attribute,
+                   [:id,
+                    [:definition, [Integer, {}]],
+                    primary_key: true, source: :test_pg_types]],
+                  [:attribute, [:string, [:definition, [String, {}]], source: :test_pg_types]],
+                  [:attribute, [:int, [:definition, [Integer, {}]], source: :test_pg_types]],
+                  [:attribute, [:time, [:definition, [Time, {}]], source: :test_pg_types]],
+                  [:attribute, [:date, [:definition, [Date, {}]], source: :test_pg_types]],
+                  [:attribute, [:decimal, [:definition, [BigDecimal, {}]], source: :test_pg_types]],
+                  [:attribute,
+                   [:string_nullable,
+                    [:sum,
+                     [[:constrained,
+                       [[:definition, [NilClass, {}]],
+                        [:predicate, [:type?, [[:type, NilClass], [:input, ROM::Undefined]]]],
+                        {}]],
+                      [:definition, [String, {}]],
+                      {}]],
+                    source: :test_pg_types]]
+                ])
     end
   end
 end

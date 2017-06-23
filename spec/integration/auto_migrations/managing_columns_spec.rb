@@ -15,43 +15,38 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
     end
   end
 
+  to_attr = ROM::SQL::Attribute.method(:new)
+
+  let(:table_name) { :users }
+
   subject(:gateway) { container.gateways[:default] }
 
-  def inferred_schema(rel_name)
-    conf = ROM::Configuration.new(:sql, conn) do |conf|
-      conf.relation(rel_name) do
-        schema(infer: true)
-      end
-    end
+  let(:inferrer) { ROM::SQL::Schema::Inferrer.get(gateway.database_type).new }
 
-    container = ROM.container(conf)
-    container.relation(rel_name).schema
-  end
+  let(:attributes) { inferrer.(ROM::Relation::Name[table_name], gateway)[0].map(&to_attr) }
 
   describe 'create a table' do
     it 'creates a table from a relation' do
       gateway.auto_migrate!(conf)
 
-      expect(inferred_schema(:users).to_ast)
-        .to eql(
-              [:schema,
-               [ROM::Relation::Name[:users],
-                [[:attribute,
-                  [:id,
-                   [:definition, [Integer, {}]],
-                   primary_key: true, source: :users]],
-                 [:attribute, [:name, [:definition, [String, {}]], source: :users]],
-                 [:attribute,
-                  [:email,
-                   [:sum,
-                    [[:constrained,
-                      [[:definition, [NilClass, {}]],
-                       [:predicate, [:type?, [[:type, NilClass], [:input, ROM::Undefined]]]],
-                       {}]],
-                     [:definition, [String, {}]],
-                     {}]],
-                   source: :users]]]]]
-            )
+      expect(attributes.map(&:to_ast))
+        .to eql([
+                  [:attribute,
+                   [:id,
+                    [:definition, [Integer, {}]],
+                    primary_key: true, source: :users]],
+                  [:attribute, [:name, [:definition, [String, {}]], source: :users]],
+                  [:attribute,
+                   [:email,
+                    [:sum,
+                     [[:constrained,
+                       [[:definition, [NilClass, {}]],
+                        [:predicate, [:type?, [[:type, NilClass], [:input, ROM::Undefined]]]],
+                        {}]],
+                      [:definition, [String, {}]],
+                      {}]],
+                    source: :users]]
+                ])
     end
   end
 
@@ -65,11 +60,11 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
     it 'adds columns to an existing table' do
       gateway.auto_migrate!(conf)
 
-      expect(inferred_schema(:users)[:name].to_ast)
+      expect(attributes[1].to_ast)
         .to eql(
               [:attribute, [:name, [:definition, [String, {}]], source: :users]]
             )
-      expect(inferred_schema(:users)[:email].to_ast)
+      expect(attributes[2].to_ast)
         .to eql(
               [:attribute,
                [:email,
@@ -98,7 +93,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
     it 'removes columns from a table' do
       gateway.auto_migrate!(conf)
 
-      expect(inferred_schema(:users).map(&:name)).to eql(%i(id name email))
+      expect(attributes.map(&:name)).to eql(%i(id name email))
     end
   end
 
@@ -116,7 +111,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
 
       gateway.auto_migrate!(conf)
 
-      expect(inferred_schema(:users)).to eql(current)
+      expect(attributes).to eql(current.to_a)
     end
   end
 end
