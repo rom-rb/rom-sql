@@ -65,6 +65,18 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
         expect(attributes[1].name).to eql(:name)
         expect(attributes[1]).to be_indexed
       end
+
+      it 'adds index to existing column' do
+        conn.create_table :users do
+          primary_key :id
+          column :name, String
+        end
+
+        gateway.auto_migrate!(conf)
+
+        expect(attributes[1].name).to eql(:name)
+        expect(attributes[1]).to be_indexed
+      end
     end
   end
 end
