@@ -110,7 +110,7 @@ module ROM
         def diff(gateway, inferrer, target)
           current_atttributes, _ = inferrer.(target.name, gateway)
           current = target.with(
-            attributes: target.class.attributes(current_atttributes, target.options[:attr_class])
+            attributes: target.class.attributes(current_atttributes, target.attr_class)
           )
 
           SchemaDiff.compare(current, target)

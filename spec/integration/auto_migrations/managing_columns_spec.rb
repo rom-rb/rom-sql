@@ -50,7 +50,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
                        {}]],
                      [:definition, [String, {}]],
                      {}]],
-                   source: :users]]]]])
+                   source: :users]]]]]
+            )
     end
   end
 
