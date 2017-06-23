@@ -41,6 +41,8 @@ module ROM
                 else
                   unwrapped = attribute.optional? ? attribute.right : attribute
                   column attribute.name, unwrapped.primitive, null: attribute.optional?
+
+                  index attribute.name if attribute.indexed?
                 end
               end
             end
@@ -51,6 +53,7 @@ module ROM
               diff.added_attributes.each do |attribute|
                 unwrapped = attribute.optional? ? attribute.right : attribute
                 add_column attribute.name, unwrapped.primitive, null: attribute.optional?
+                add_index attribute.name if attribute.indexed?
               end
 
               diff.removed_attributes.each do |attribute|
