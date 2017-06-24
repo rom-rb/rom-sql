@@ -29,13 +29,11 @@ module ROM
 
           def create_table(diff)
             gateway.create_table(diff.table_name) do
-              diff.schema.to_a.each do |attribute|
+              diff.attributes.each do |attribute|
                 if attribute.primary_key?
                   primary_key attribute.name
                 else
-                  unwrapped = attribute.optional? ? attribute.right : attribute
-                  column attribute.name, unwrapped.primitive, null: attribute.optional?
-
+                  column attribute.name, attribute.type, null: attribute.null?
                   index attribute.name if attribute.indexed?
                 end
               end

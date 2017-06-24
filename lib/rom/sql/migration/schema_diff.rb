@@ -27,6 +27,13 @@ module ROM
 
         class TableCreated < TableDiff
           alias_method :schema, :target_schema
+          attr_reader :attributes
+
+          def initialize(attributes:, **rest)
+            super(rest)
+
+            @attributes = attributes
+          end
         end
 
         class TableAltered < TableDiff
@@ -64,6 +71,14 @@ module ROM
           def null?
             attr.optional?
           end
+
+          def indexed?
+            attr.indexed?
+          end
+
+          def primary_key?
+            attr.primary_key?
+          end
         end
 
         class AttributeRemoved < AttributeDiff
@@ -94,7 +109,7 @@ module ROM
 
         def call(current, target)
           if current.empty?
-            TableCreated.new(target_schema: target)
+            TableCreated.new(target_schema: target, attributes: target.map { |attr| AttributeAdded.new(attr) })
           else
             attribute_changes = compare_attributes(current.to_h, target.to_h)
 
