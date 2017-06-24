@@ -1,3 +1,25 @@
+## v2.0.0 to-be-released
+
+### Added
+
+* Support for schema plugins (flash-gordon)
+* Support for auto migrations (flash-gordon)
+
+### Changed
+
+* [BREAKING] based on rom 4.0 now
+* [BREAKING] `Associates` command plugin requires associations now (solnic)
+* `ManyToOne` no longer uses a join (solnic)
+* `AutoCombine` and `AutoWrap` plugins were removed as this functionality is provided by core API (solnic)
+
+### Fixed
+
+* Self-ref associations work correctly with custom FKs (solnic)
+* Aliased associations with custom FKs work correctly (solnic)
+* Defining a custom dataset block no longer prevents default views like `by_pk` to be defined (solnic)
+
+[Compare v1.3.3...master](https://github.com/rom-rb/rom-sql/compare/v1.3.2...v1.3.3)
+
 ## v1.3.3 2017-05-30
 
 ### Added
