@@ -137,8 +137,8 @@ module ROM
 
         # @api private
         def column_indexes(indexes, column)
-          indexes.each_with_object(Set.new) do |(name, idx), indexes|
-            indexes << name if idx[:columns][0] == column
+          indexes.each_with_object(Set.new) do |(name, idx), set|
+            set << name if idx[:columns][0] == column
           end
         end
 
