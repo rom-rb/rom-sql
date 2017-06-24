@@ -63,7 +63,7 @@ module ROM
             attributes: target.class.attributes(current_atttributes, target.attr_class)
           )
 
-          SchemaDiff.compare(current, target)
+          SchemaDiff.new.(current, target)
         end
 
         def auto_migrate!(gateway, schemas)

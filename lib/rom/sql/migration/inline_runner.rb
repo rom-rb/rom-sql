@@ -44,21 +44,16 @@ module ROM
 
           def alter_table(diff)
             gateway.connection.alter_table(diff.table_name) do
-              diff.added.each do |name, attribute|
-                unwrapped = attribute.optional? ? attribute.right : attribute
-                add_column name, unwrapped.primitive, null: attribute.optional?
-                add_index name if attribute.indexed?
-              end
-
-              diff.removed.each do |name, _|
-                drop_column name
-              end
-
-              diff.changed.each do |name, (from, to)|
-                if !from.indexed? && to.indexed?
-                  add_index name
-                elsif from.indexed? && !to.indexed?
-                  drop_index name
+              diff.attribute_changes.each do |attribute|
+                case attribute
+                when SchemaDiff::AttributeAdded
+                  add_column attribute.name, attribute.type, null: attribute.null?
+                  add_index attribute.name if attribute.indexed?
+                when SchemaDiff::AttributeRemoved
+                  drop_column attribute.name
+                when SchemaDiff::AttributeChanged
+                  add_index attribute.name if attribute.index_added?
+                  drop_index attribute.name if attribute.index_removed?
                 end
               end
             end

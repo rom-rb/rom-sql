@@ -2,35 +2,7 @@ module ROM
   module SQL
     module Migration
       class SchemaDiff
-        def self.compare(current, target)
-          if current.empty?
-            TableCreated.new(target_schema: target)
-          else
-            current_attrs, target_attrs = current.to_h, target.to_h
-
-            changed_attributes = target_attrs.select { |name, attr|
-              current_attrs.key?(name) && current_attrs[name] != attr
-            }.map { |name, target_attr|
-              [name, [current_attrs[name], target_attr]]
-            }.to_h
-            added_attributes = target_attrs.select { |name, _| !current_attrs.key?(name) }
-            removed_attributes = current_attrs.select { |name, _| !target_attrs.key?(name) }
-
-            if [changed_attributes, added_attributes, removed_attributes].all?(&:empty?)
-              Empty.new(current_schema: current, target_schema: target)
-            else
-              TableAltered.new(
-                current_schema: current,
-                target_schema: target,
-                added: added_attributes,
-                removed: removed_attributes,
-                changed: changed_attributes
-              )
-            end
-          end
-        end
-
-        class Diff
+        class TableDiff
           attr_reader :current_schema, :target_schema
 
           def initialize(current_schema: nil, target_schema: nil)
@@ -47,26 +19,109 @@ module ROM
           end
         end
 
-        class Empty < Diff
+        class Empty < TableDiff
           def empty?
             true
           end
         end
 
-        class TableCreated < Diff
+        class TableCreated < TableDiff
           alias_method :schema, :target_schema
         end
 
-        class TableAltered < Diff
-          attr_reader :added, :changed, :removed
+        class TableAltered < TableDiff
+          attr_reader :attribute_changes
 
-          def initialize(added: EMPTY_HASH, removed: EMPTY_HASH, changed: EMPTY_HASH, **rest)
+          def initialize(attribute_changes: EMPTY_ARRAY, **rest)
             super(rest)
 
-            @added = added
-            @removed = removed
-            @changed = changed
+            @attribute_changes = attribute_changes
           end
+        end
+
+        class AttributeDiff
+          attr_reader :attr
+
+          def initialize(attr)
+            @attr = attr
+          end
+
+          def name
+            attr.name
+          end
+        end
+
+        class AttributeAdded < AttributeDiff
+          def indexed?
+            attr.indexed?
+          end
+
+          def type
+            unwrapped = attr.optional? ? attr.right : attr
+            unwrapped.primitive
+          end
+
+          def null?
+            attr.optional?
+          end
+        end
+
+        class AttributeRemoved < AttributeDiff
+        end
+
+        class AttributeChanged < AttributeDiff
+          attr_reader :current
+          alias_method :target, :attr
+
+          def initialize(current, target)
+            super(target)
+
+            @current = current
+          end
+
+          def to_a
+            [current, target]
+          end
+
+          def index_added?
+            !current.indexed? && target.indexed?
+          end
+
+          def index_removed?
+            current.indexed? && !target.indexed?
+          end
+        end
+
+        def call(current, target)
+          if current.empty?
+            TableCreated.new(target_schema: target)
+          else
+            attribute_changes = compare_attributes(current.to_h, target.to_h)
+
+            if attribute_changes.empty?
+              Empty.new(current_schema: current, target_schema: target)
+            else
+              TableAltered.new(
+                current_schema: current,
+                target_schema: target,
+                attribute_changes: attribute_changes
+              )
+            end
+          end
+        end
+
+        def compare_attributes(current, target)
+          changed_attributes = target.select { |name, attr|
+            current.key?(name) && current[name] != attr
+          }.map { |name, target_attr|
+            [name, [current[name], target_attr]]
+          }.to_h
+          added_attributes = target.select { |name, _| !current.key?(name) }
+          removed_attributes = current.select { |name, _| !target.key?(name) }
+
+          removed_attributes.values.map { |attr| AttributeRemoved.new(attr) } +
+            added_attributes.values.map { |attr| AttributeAdded.new(attr) } +
+            changed_attributes.values.map { |attrs| AttributeChanged.new(*attrs) }
         end
       end
     end
