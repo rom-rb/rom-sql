@@ -50,6 +50,13 @@ module ROM
                 when SchemaDiff::AttributeRemoved
                   drop_column attribute.name
                 when SchemaDiff::AttributeChanged
+                  if attribute.type_changed?
+                    from, to = attribute.to_a.map(&attribute.method(:unwrap))
+                    raise UnsupportedConversion.new(
+                            "Don't know how to convert #{ from.inspect } to #{ to.inspect }"
+                          )
+                  end
+
                   if attribute.index_changed?
                     if attribute.indexed?
                       add_index attribute.name

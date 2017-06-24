@@ -68,12 +68,15 @@ module ROM
           def primary_key?
             attr.primary_key?
           end
+
+          def unwrap(type)
+            type.optional? ? SQL::Attribute[type.right].meta(type.meta) : type
+          end
         end
 
         class AttributeAdded < AttributeDiff
           def type
-            unwrapped = attr.optional? ? attr.right : attr
-            unwrapped.primitive
+            unwrap(attr).primitive
           end
         end
 
@@ -100,6 +103,10 @@ module ROM
 
           def nullability_changed?
             current.optional? ^ target.optional?
+          end
+
+          def type_changed?
+            unwrap(current).meta(index: Set.new) != unwrap(target).meta(index: Set.new)
           end
         end
 
