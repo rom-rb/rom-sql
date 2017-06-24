@@ -57,6 +57,8 @@ module ROM
               diff.changed.each do |name, (from, to)|
                 if !from.indexed? && to.indexed?
                   add_index name
+                elsif from.indexed? && !to.indexed?
+                  drop_index name
                 end
               end
             end

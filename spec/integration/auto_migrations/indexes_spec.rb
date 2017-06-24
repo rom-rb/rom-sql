@@ -46,36 +46,63 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
 
   describe 'alter table' do
     describe 'one-column indexes' do
-      before do
-        conf.relation(:users) do
-          schema do
-            attribute :id,    ROM::SQL::Types::Serial
-            attribute :name,  ROM::SQL::Types::String.meta(index: true)
+      context 'adding' do
+        before do
+          conf.relation(:users) do
+            schema do
+              attribute :id,    ROM::SQL::Types::Serial
+              attribute :name,  ROM::SQL::Types::String.meta(index: true)
+            end
           end
         end
-      end
 
-      it 'adds indexed column' do
-        conn.create_table :users do
-          primary_key :id
+        it 'adds indexed column' do
+          conn.create_table :users do
+            primary_key :id
+          end
+
+          gateway.auto_migrate!(conf)
+
+          expect(attributes[1].name).to eql(:name)
+          expect(attributes[1]).to be_indexed
         end
 
-        gateway.auto_migrate!(conf)
+        it 'adds index to existing column' do
+          conn.create_table :users do
+            primary_key :id
+            column :name, String
+          end
 
-        expect(attributes[1].name).to eql(:name)
-        expect(attributes[1]).to be_indexed
+          gateway.auto_migrate!(conf)
+
+          expect(attributes[1].name).to eql(:name)
+          expect(attributes[1]).to be_indexed
+        end
       end
 
-      it 'adds index to existing column' do
-        conn.create_table :users do
-          primary_key :id
-          column :name, String
+      context 'removing' do
+        before do
+          conf.relation(:users) do
+            schema do
+              attribute :id,    ROM::SQL::Types::Serial
+              attribute :name,  ROM::SQL::Types::String
+            end
+          end
+
+          conn.create_table :users do
+            primary_key :id
+            column :name, String
+
+            index :name
+          end
         end
 
-        gateway.auto_migrate!(conf)
+        it 'removes index' do
+          gateway.auto_migrate!(conf)
 
-        expect(attributes[1].name).to eql(:name)
-        expect(attributes[1]).to be_indexed
+          expect(attributes[1].name).to eql(:name)
+          expect(attributes[1]).not_to be_indexed
+        end
       end
     end
   end
