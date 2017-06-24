@@ -11,7 +11,7 @@ gem 'rom', git: 'https://github.com/rom-rb/rom', branch: 'master' do
 end
 
 group :test do
-  gem 'byebug', platforms: :mri
+  gem 'pry-byebug', platforms: :mri
   gem 'pry', platforms: %i(jruby rbx)
   gem 'dry-struct'
   gem 'activesupport', '~> 5.0'

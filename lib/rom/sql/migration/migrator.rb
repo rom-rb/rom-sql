@@ -2,6 +2,8 @@ require 'pathname'
 
 require 'rom/types'
 require 'rom/initializer'
+require 'rom/sql/migration'
+require 'rom/sql/migration/inline_runner'
 
 module ROM
   module SQL
@@ -52,6 +54,27 @@ module ROM
         # @api private
         def migration_file_content
           File.read(Pathname(__FILE__).dirname.join('template.rb').realpath)
+        end
+
+        # @api private
+        def diff(gateway, inferrer, target)
+          current_atttributes, _ = inferrer.(target.name, gateway)
+          current = target.with(
+            attributes: target.class.attributes(current_atttributes, target.attr_class)
+          )
+
+          SchemaDiff.new.(current, target)
+        end
+
+        def auto_migrate!(gateway, schemas)
+          runner = InlineRunner.new(gateway)
+          inherrer = inferrer(gateway)
+          changes = schemas.map { |schema| diff(gateway, inherrer, schema) }.reject(&:empty?)
+          runner.(changes)
+        end
+
+        def inferrer(gateway)
+          ROM::SQL::Schema::Inferrer.get(gateway.database_type).new.suppress_errors
         end
       end
     end

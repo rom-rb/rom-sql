@@ -193,6 +193,15 @@ module ROM
         @schema ||= connection.tables
       end
 
+      # Underlying database type
+      #
+      # @return [Symbol]
+      #
+      # @api public
+      def database_type
+        @database_type ||= connection.database_type.to_sym
+      end
+
       private
 
       # Connect to database or reuse established connection instance
@@ -213,13 +222,11 @@ module ROM
       #
       # @api private
       def load_extensions(exts)
-        db_type = connection.database_type.to_sym
-
-        if ROM::SQL.available_extension?(db_type)
-          ROM::SQL.load_extensions(db_type)
+        if ROM::SQL.available_extension?(database_type)
+          ROM::SQL.load_extensions(database_type)
         end
 
-        extensions = (CONNECTION_EXTENSIONS.fetch(db_type, EMPTY_ARRAY) + exts).uniq
+        extensions = (CONNECTION_EXTENSIONS.fetch(database_type, EMPTY_ARRAY) + exts).uniq
         connection.extension(*extensions)
 
         # this will be default in Sequel 5.0.0 and since we don't rely

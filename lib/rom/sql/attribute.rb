@@ -14,6 +14,7 @@ module ROM
     class Attribute < ROM::Schema::Attribute
       OPERATORS = %i[>= <= > <].freeze
       NONSTANDARD_EQUALITY_VALUES = [true, false, nil].freeze
+      INDEXED = Set.new([true]).freeze
 
       # Error raised when an attribute cannot be qualified
       QualifyError = Class.new(StandardError)
@@ -282,6 +283,27 @@ module ROM
           else
             Sequel[name]
           end
+      end
+
+      # @api public
+      def indexed?
+        !indexes.empty?
+      end
+
+      # @api public
+      def indexes
+        if meta[:index] == true
+          INDEXED
+        else
+          meta[:index] || EMPTY_SET
+        end
+      end
+
+      # @api private
+      def meta_ast
+        meta = super
+        meta[:index] = indexes if indexed?
+        meta
       end
 
       private

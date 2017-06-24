@@ -1,4 +1,5 @@
 require 'rom/sql/migration/migrator'
+require 'rom/sql/migration/schema_diff'
 
 module ROM
   module SQL
@@ -134,6 +135,15 @@ module ROM
         ROM::SQL.with_gateway(self) {
           migrator.run(options)
         }
+      end
+
+      # @api public
+      def auto_migrate!(conf)
+        schemas = conf.relation_classes(self).map do |klass|
+          klass.schema || klass.schema_proc.call.finalize_attributes!(gateway: self)
+        end
+
+        migrator.auto_migrate!(self, schemas)
       end
     end
   end
