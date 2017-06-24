@@ -56,17 +56,6 @@ module ROM
           def name
             attr.name
           end
-        end
-
-        class AttributeAdded < AttributeDiff
-          def indexed?
-            attr.indexed?
-          end
-
-          def type
-            unwrapped = attr.optional? ? attr.right : attr
-            unwrapped.primitive
-          end
 
           def null?
             attr.optional?
@@ -78,6 +67,13 @@ module ROM
 
           def primary_key?
             attr.primary_key?
+          end
+        end
+
+        class AttributeAdded < AttributeDiff
+          def type
+            unwrapped = attr.optional? ? attr.right : attr
+            unwrapped.primitive
           end
         end
 
@@ -98,12 +94,12 @@ module ROM
             [current, target]
           end
 
-          def index_added?
-            !current.indexed? && target.indexed?
+          def index_changed?
+            current.indexed? ^ target.indexed?
           end
 
-          def index_removed?
-            current.indexed? && !target.indexed?
+          def nullability_changed?
+            current.optional? ^ target.optional?
           end
         end
 

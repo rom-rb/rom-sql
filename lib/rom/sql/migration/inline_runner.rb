@@ -50,8 +50,21 @@ module ROM
                 when SchemaDiff::AttributeRemoved
                   drop_column attribute.name
                 when SchemaDiff::AttributeChanged
-                  add_index attribute.name if attribute.index_added?
-                  drop_index attribute.name if attribute.index_removed?
+                  if attribute.index_changed?
+                    if attribute.indexed?
+                      add_index attribute.name
+                    else
+                      drop_index attribute.name
+                    end
+                  end
+
+                  if attribute.nullability_changed?
+                    if attribute.null?
+                      set_column_allow_null attribute.name
+                    else
+                      set_column_not_null attribute.name
+                    end
+                  end
                 end
               end
             end

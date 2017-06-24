@@ -114,4 +114,40 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
       expect(attributes).to eql(current.to_a)
     end
   end
+
+  describe 'changing NOTNULL' do
+    describe 'adding' do
+      before do
+        conn.create_table :users do
+          primary_key :id
+          column :name, String
+          column :email, String
+        end
+      end
+
+      it 'adds the constraint' do
+        gateway.auto_migrate!(conf)
+
+        expect(attributes[1].name).to eql(:name)
+        expect(attributes[1]).not_to be_optional
+      end
+    end
+
+    describe 'removing' do
+      before do
+        conn.create_table :users do
+          primary_key :id
+          column :name, String, null: false
+          column :email, String, null: false
+        end
+      end
+
+      it 'removes the constraint' do
+        gateway.auto_migrate!(conf)
+
+        expect(attributes[2].name).to eql(:email)
+        expect(attributes[2]).to be_optional
+      end
+    end
+  end
 end
