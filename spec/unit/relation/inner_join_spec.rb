@@ -149,10 +149,9 @@ RSpec.describe ROM::Relation, '#inner_join' do
       end
 
       it 'joins by relation if association name differs from relation name' do
-        pending 'waits for support for joins by aliased relation'
-        result = puzzles.inner_join(users).select(:name, puzzles[:text])
+        result = puzzles.inner_join(users).select(users[:name], puzzles[:text]).qualified
 
-        expect(result.to_a).to eql([ name: 'Jane', title: "Jane's task" ])
+        expect(result.to_a).to eql([ name: 'Jane', text: "solved by Jane" ])
       end
     end
 
