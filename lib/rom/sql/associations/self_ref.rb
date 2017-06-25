@@ -4,14 +4,22 @@ module ROM
       module SelfRef
         def self.included(klass)
           super
-          klass.memoize :join_keys, :source_table, :source_alias
+          klass.memoize :join_keys, :source_table, :source_alias, :source_attr, :target_attr
         end
 
         # @api public
         def join_keys
-          with_keys { |source_key, target_key|
-            { source[source_key].qualified(source_alias) => target[target_key].qualified }
-          }
+          { source_attr => target_attr }
+        end
+
+        # @api public
+        def source_attr
+          source[source_key].qualified(source_alias)
+        end
+
+        # @api public
+        def target_attr
+          target[target_key].qualified
         end
 
         protected

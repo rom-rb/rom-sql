@@ -40,9 +40,17 @@ module ROM
 
         # @api public
         def join_keys
-          with_keys { |source_key, target_key|
-            { source[source_key].qualified => join_relation[target_key].qualified }
-          }
+          { source_attr => target_attr }
+        end
+
+        # @api public
+        def source_attr
+          source[source_key].qualified
+        end
+
+        # @api public
+        def target_attr
+          join_relation[target_key].qualified
         end
 
         # @api private
