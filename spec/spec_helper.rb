@@ -59,8 +59,6 @@ SPEC_ROOT = root = Pathname(__FILE__).dirname
 
 TMP_PATH = root.join('../tmp')
 
-require 'rom/sql/schema/inferrer'
-
 # quiet in specs
 ROM::SQL::Relation.tap { |r| r.schema_inferrer(r.schema_inferrer.suppress_errors) }
 
