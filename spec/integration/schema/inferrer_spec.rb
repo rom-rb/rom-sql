@@ -189,7 +189,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         inferrable_relations.concat %i(people)
       end
 
-      let(:relation) { container.relation(:people) }
+      let(:relation) { container.relations[:people] }
 
       before do
         conf.relation(:people) do

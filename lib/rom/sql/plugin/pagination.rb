@@ -59,9 +59,9 @@ module ROM
         # Paginate a relation
         #
         # @example
-        #   rom.relation(:users).class.per_page(10)
-        #   rom.relation(:users).page(1)
-        #   rom.relation(:users).pager # => info about pagination
+        #   rom.relations[:users].class.per_page(10)
+        #   rom.relations[:users].page(1)
+        #   rom.relations[:users].pager # => info about pagination
         #
         # @return [Relation]
         #
@@ -74,7 +74,7 @@ module ROM
         # Set limit for pagination
         #
         # @example
-        #   rom.relation(:users).page(2).per_page(10)
+        #   rom.relations[:users].page(2).per_page(10)
         #
         # @api public
         def per_page(num)

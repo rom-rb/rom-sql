@@ -30,9 +30,9 @@ RSpec.describe 'Eager loading' do
     end
 
     it 'issues 3 queries for 3.graphd relations' do
-      users = container.relation(:users).by_name('Piotr')
-      tasks = container.relation(:tasks)
-      tags = container.relation(:tags)
+      users = container.relations[:users].by_name('Piotr')
+      tasks = container.relations[:tasks]
+      tags = container.relations[:tags]
 
       relation = users.graph(tasks.for_users.graph(tags.for_tasks))
 

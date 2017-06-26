@@ -107,7 +107,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
     end
 
     it 'leaves existing schema' do
-      current = container.relation(:users).schema
+      current = container.relations[:users].schema
 
       gateway.auto_migrate!(conf)
 

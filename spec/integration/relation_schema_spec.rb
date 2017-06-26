@@ -26,21 +26,21 @@ RSpec.describe 'Inferring schema from database' do
         config.relation(:accounts) { schema(infer: true) }
         config.relation(:cards) { schema(infer: true) }
         config.register_relation(Test::Users)
-        container.relation(:users).associations
+        container.relations[:users].associations
       end
 
       let(:post_associations) do
         config.relation(:tags) { schema(infer: true) }
         config.relation(:posts_tags) { schema(infer: true) }
         config.register_relation(Test::Posts)
-        container.relation(:posts).associations
+        container.relations[:posts].associations
       end
 
       let(:tag_associations) do
         config.relation(:posts) { schema(infer: true) }
         config.relation(:posts_tags) { schema(infer: true) }
         config.register_relation(Test::Tags)
-        container.relation(:tags).associations
+        container.relations[:tags].associations
       end
 
       it "allows defining a one-to-many" do
