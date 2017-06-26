@@ -62,7 +62,7 @@ TMP_PATH = root.join('../tmp')
 require 'rom/sql/schema/inferrer'
 
 # quiet in specs
-ROM::SQL::Schema::Inferrer.silent!
+ROM::SQL::Relation.tap { |r| r.schema_inferrer(r.schema_inferrer.suppress_errors) }
 
 require 'dry/core/deprecations'
 Dry::Core::Deprecations.set_logger!(root.join('../log/deprecations.log'))

@@ -39,12 +39,6 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         let(:source) { ROM::Relation::Name[:tasks] }
 
         it 'can infer attributes for dataset' do |ex|
-          if mysql?(ex)
-            indexes = { index: %i(user_id).to_set }
-          else
-            indexes = {}
-          end
-
           expect(schema.to_h).
             to eql(
                  id: ROM::SQL::Types::Serial.meta(name: :id, source: source),
@@ -53,8 +47,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
                    name: :user_id,
                    foreign_key: true,
                    source: source,
-                   target: :users,
-                   **indexes
+                   target: :users
                  )
                )
         end
@@ -364,14 +357,8 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
       let(:source) { ROM::Relation::Name[dataset] }
 
       it 'infers types with indices' do
-        int = ROM::SQL::Types::Int
-        expect(schema.to_h).
-          to eql(
-               id: int.meta(name: :id, source: source, primary_key: true),
-               foo: int.optional.meta(name: :foo, source: source, index: %i(foo_idx).to_set),
-               bar: int.meta(name: :bar, source: source, index: %i(bar_idx composite_idx).to_set),
-               baz: int.meta(name: :baz, source: source, index: %i(baz1_idx baz2_idx).to_set)
-             )
+        expect(schema.indexes.map(&:name)).
+          to match_array(%i(foo_idx bar_idx baz1_idx baz2_idx composite_idx))
       end
     end
   end

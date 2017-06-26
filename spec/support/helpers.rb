@@ -3,10 +3,11 @@ module Helpers
     ROM::Relation::Name[*args]
   end
 
-  def define_schema(name, attrs)
+  def define_schema(name, attrs = [])
+    relation_name = ROM::Relation::Name.new(name)
     ROM::SQL::Schema.define(
-      name,
-      attributes: attrs.map { |key, value| value.meta(name: key, source: ROM::Relation::Name.new(name)) },
+      relation_name,
+      attributes: attrs.map { |key, value| value.meta(name: key, source: relation_name) },
       attr_class: ROM::SQL::Attribute
     )
   end

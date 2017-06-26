@@ -39,7 +39,7 @@ module ROM
           def self.restriction_methods(schema)
             mod = Module.new
 
-            indexed_attrs = schema.select(&:indexed?)
+            indexed_attrs = schema.indexes.map { |index| index.attributes[0] }.uniq
 
             methods = indexed_attrs.map do |attr|
               meth_name = :"by_#{attr.name}"

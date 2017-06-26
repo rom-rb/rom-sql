@@ -1,19 +1,22 @@
-RSpec.describe ROM::SQL::Gateway, :postgres do
+RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
   include_context 'database setup'
 
   before do
     conn.drop_table?(:users)
   end
 
-  to_attr = ROM::SQL::Attribute.method(:new)
-
   let(:table_name) { :users }
 
   subject(:gateway) { container.gateways[:default] }
 
-  let(:inferrer) { ROM::SQL::Schema::Inferrer.get(gateway.database_type).new }
+  let(:inferrer) { ROM::SQL::Schema::Inferrer.new }
 
-  let(:attributes) { inferrer.(ROM::Relation::Name[table_name], gateway)[0].map(&to_attr) }
+  let(:migrated_schema) do
+    empty = define_schema(table_name)
+    empty.with(inferrer.(empty, gateway))
+  end
+
+  let(:attributes) { migrated_schema.to_a }
 
   describe 'create table' do
     describe 'one-column indexes' do
@@ -38,7 +41,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
                     [:attribute,
                      [:name,
                       [:definition, [String, {}]],
-                      source: :users, index: %i(users_name_index).to_set]],
+                      source: :users]],
                   ])
       end
     end
@@ -63,8 +66,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
 
           gateway.auto_migrate!(conf)
 
-          expect(attributes[1].name).to eql(:name)
-          expect(attributes[1]).to be_indexed
+          expect(migrated_schema.attributes[1].name).to eql(:name)
+          expect(migrated_schema.indexes.map { |idx| idx.attributes.map(&:name) }).to eql([%i(name)])
         end
 
         it 'adds index to existing column' do
@@ -75,8 +78,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
 
           gateway.auto_migrate!(conf)
 
-          expect(attributes[1].name).to eql(:name)
-          expect(attributes[1]).to be_indexed
+          expect(migrated_schema.indexes.map { |idx| idx.attributes.map(&:name) }).to eql([%i(name)])
         end
       end
 
@@ -99,9 +101,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
 
         it 'removes index' do
           gateway.auto_migrate!(conf)
-
-          expect(attributes[1].name).to eql(:name)
-          expect(attributes[1]).not_to be_indexed
+          expect(migrated_schema.indexes).to be_empty
         end
       end
     end

@@ -4,10 +4,16 @@ require 'rom/sql/order_dsl'
 require 'rom/sql/group_dsl'
 require 'rom/sql/projection_dsl'
 require 'rom/sql/restriction_dsl'
+require 'rom/sql/index'
+require 'rom/sql/schema/inferrer'
 
 module ROM
   module SQL
     class Schema < ROM::Schema
+      # @!attribute [r] attributes
+      #   @return [Array<Index>] Array with schema indexes
+      option :indexes, default: -> { EMPTY_ARRAY }
+
       # @api public
       def restriction(&block)
         RestrictionDSL.new(self).call(&block)

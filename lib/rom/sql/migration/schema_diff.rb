@@ -27,22 +27,24 @@ module ROM
 
         class TableCreated < TableDiff
           alias_method :schema, :target_schema
-          attr_reader :attributes
+          attr_reader :attributes, :indexes
 
-          def initialize(attributes:, **rest)
+          def initialize(attributes:, indexes: EMPTY_ARRAY, **rest)
             super(rest)
 
             @attributes = attributes
+            @indexes = indexes
           end
         end
 
         class TableAltered < TableDiff
-          attr_reader :attribute_changes
+          attr_reader :attribute_changes, :index_changes
 
-          def initialize(attribute_changes: EMPTY_ARRAY, **rest)
+          def initialize(attribute_changes: EMPTY_ARRAY, index_changes: EMPTY_ARRAY, **rest)
             super(rest)
 
             @attribute_changes = attribute_changes
+            @index_changes = index_changes
           end
         end
 
@@ -59,10 +61,6 @@ module ROM
 
           def null?
             attr.optional?
-          end
-
-          def indexed?
-            attr.indexed?
           end
 
           def primary_key?
@@ -97,10 +95,6 @@ module ROM
             [current, target]
           end
 
-          def index_changed?
-            current.indexed? ^ target.indexed?
-          end
-
           def nullability_changed?
             current.optional? ^ target.optional?
           end
@@ -110,19 +104,43 @@ module ROM
           end
         end
 
+        class IndexDiff
+          attr_reader :index
+
+          def initialize(index)
+            @index = index
+          end
+
+          def attribute
+            index.attributes[0].name
+          end
+        end
+
+        class IndexAdded < IndexDiff
+        end
+
+        class IndexRemoved < IndexDiff
+        end
+
         def call(current, target)
           if current.empty?
-            TableCreated.new(target_schema: target, attributes: target.map { |attr| AttributeAdded.new(attr) })
+            TableCreated.new(
+              target_schema: target,
+              attributes: target.map { |attr| AttributeAdded.new(attr) },
+              indexes: target.indexes.map { |idx| IndexAdded.new(idx) }
+            )
           else
             attribute_changes = compare_attributes(current.to_h, target.to_h)
+            index_changes = compare_indexes(current, target)
 
-            if attribute_changes.empty?
+            if attribute_changes.empty? && index_changes.empty?
               Empty.new(current_schema: current, target_schema: target)
             else
               TableAltered.new(
                 current_schema: current,
                 target_schema: target,
-                attribute_changes: attribute_changes
+                attribute_changes: attribute_changes,
+                index_changes: index_changes
               )
             end
           end
@@ -140,6 +158,18 @@ module ROM
           removed_attributes.values.map { |attr| AttributeRemoved.new(attr) } +
             added_attributes.values.map { |attr| AttributeAdded.new(attr) } +
             changed_attributes.values.map { |attrs| AttributeChanged.new(*attrs) }
+        end
+
+        def compare_indexes(current, target)
+          added_indexes = target.indexes.reject { |idx|
+            current.indexes.any? { |curr_idx| curr_idx.attributes == idx.attributes }
+          }
+          removed_indexes = current.indexes.select { |idx|
+            target.indexes.none? { |tgt_idx| idx.attributes == tgt_idx  }
+          }
+
+          removed_indexes.map { |idx| IndexRemoved.new(idx) } +
+            added_indexes.map { |idx| IndexAdded.new(idx) }
         end
       end
     end

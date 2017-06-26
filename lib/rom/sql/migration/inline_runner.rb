@@ -34,8 +34,11 @@ module ROM
                   primary_key attribute.name
                 else
                   column attribute.name, attribute.type, null: attribute.null?
-                  index attribute.name if attribute.indexed?
                 end
+              end
+
+              diff.indexes.each do |idx|
+                index idx.attribute
               end
             end
           end
@@ -46,7 +49,6 @@ module ROM
                 case attribute
                 when SchemaDiff::AttributeAdded
                   add_column attribute.name, attribute.type, null: attribute.null?
-                  add_index attribute.name if attribute.indexed?
                 when SchemaDiff::AttributeRemoved
                   drop_column attribute.name
                 when SchemaDiff::AttributeChanged
@@ -57,14 +59,6 @@ module ROM
                           )
                   end
 
-                  if attribute.index_changed?
-                    if attribute.indexed?
-                      add_index attribute.name
-                    else
-                      drop_index attribute.name
-                    end
-                  end
-
                   if attribute.nullability_changed?
                     if attribute.null?
                       set_column_allow_null attribute.name
@@ -72,6 +66,15 @@ module ROM
                       set_column_not_null attribute.name
                     end
                   end
+                end
+              end
+
+              diff.index_changes.each do |index|
+                case index
+                when SchemaDiff::IndexAdded
+                  add_index index.attribute
+                when SchemaDiff::IndexRemoved
+                  drop_index index.attribute
                 end
               end
             end

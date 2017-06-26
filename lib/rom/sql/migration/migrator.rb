@@ -58,23 +58,21 @@ module ROM
 
         # @api private
         def diff(gateway, inferrer, target)
-          current_atttributes, _ = inferrer.(target.name, gateway)
-          current = target.with(
-            attributes: target.class.attributes(current_atttributes, target.attr_class)
-          )
+          empty = SQL::Schema.define(target.name)
+          current = target.with(inferrer.(empty, gateway))
 
           SchemaDiff.new.(current, target)
         end
 
         def auto_migrate!(gateway, schemas)
           runner = InlineRunner.new(gateway)
-          inherrer = inferrer(gateway)
-          changes = schemas.map { |schema| diff(gateway, inherrer, schema) }.reject(&:empty?)
+          inferrer = inferrer(gateway)
+          changes = schemas.map { |schema| diff(gateway, inferrer, schema) }.reject(&:empty?)
           runner.(changes)
         end
 
         def inferrer(gateway)
-          ROM::SQL::Schema::Inferrer.get(gateway.database_type).new.suppress_errors
+          ROM::SQL::Schema::Inferrer.new.suppress_errors
         end
       end
     end

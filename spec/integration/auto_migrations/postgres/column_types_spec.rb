@@ -1,4 +1,4 @@
-RSpec.describe ROM::SQL::Gateway, :postgres do
+RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
   include_context 'database setup'
 
   before do
@@ -11,9 +11,14 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
 
   subject(:gateway) { container.gateways[:default] }
 
-  let(:inferrer) { ROM::SQL::Schema::Inferrer.get(gateway.database_type).new }
+  let(:inferrer) { ROM::SQL::Schema::Inferrer.new }
 
-  let(:attributes) { inferrer.(ROM::Relation::Name[table_name], gateway)[0].map(&to_attr) }
+  let(:migrated_schema) do
+    empty = define_schema(table_name)
+    empty.with(inferrer.(empty, gateway))
+  end
+
+  let(:attributes) { migrated_schema.to_a }
 
   describe 'common types' do
     before do
@@ -29,7 +34,6 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
         end
       end
     end
-
 
     it 'has support for PG data types' do
       gateway.auto_migrate!(conf)

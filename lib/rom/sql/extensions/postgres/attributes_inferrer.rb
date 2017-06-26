@@ -1,11 +1,11 @@
 require 'set'
-require 'rom/sql/schema/inferrer'
+require 'rom/sql/schema/attributes_inferrer'
 require 'rom/sql/extensions/postgres/types'
 
 module ROM
   module SQL
     class Schema
-      class PostgresInferrer < Inferrer[:postgres]
+      class PostgresInferrer < AttributesInferrer[:postgres]
         defines :db_numeric_types, :db_type_mapping, :db_array_type_matcher
 
         db_numeric_types %w(
