@@ -5,8 +5,6 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
     conn.drop_table?(:test_pg_types)
   end
 
-  to_attr = ROM::SQL::Attribute.method(:new)
-
   let(:table_name) { :test_pg_types }
 
   subject(:gateway) { container.gateways[:default] }

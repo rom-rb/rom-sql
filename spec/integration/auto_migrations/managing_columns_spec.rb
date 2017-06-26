@@ -15,8 +15,6 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
     end
   end
 
-  to_attr = ROM::SQL::Attribute.method(:new)
-
   let(:table_name) { :users }
 
   subject(:gateway) { container.gateways[:default] }

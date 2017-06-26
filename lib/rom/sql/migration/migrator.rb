@@ -66,13 +66,9 @@ module ROM
 
         def auto_migrate!(gateway, schemas)
           runner = InlineRunner.new(gateway)
-          inferrer = inferrer(gateway)
+          inferrer = ROM::SQL::Schema::Inferrer.new.suppress_errors
           changes = schemas.map { |schema| diff(gateway, inferrer, schema) }.reject(&:empty?)
           runner.(changes)
-        end
-
-        def inferrer(gateway)
-          ROM::SQL::Schema::Inferrer.new.suppress_errors
         end
       end
     end
