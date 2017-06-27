@@ -199,5 +199,33 @@ RSpec.describe 'Inferring schema from database' do
         expect(tag_associations[:published_posts].definition).to eql(assoc)
       end
     end
+
+    context 'defining indexes', :helpers do
+      it 'allows defining indexes' do
+        class Test::Tags < ROM::Relation[:sql]
+          schema(:tags) do
+            attribute :id,         Types::Serial
+            attribute :name,       Types::String
+            attribute :created_at, Types::Time
+            attribute :updated_at, Types::Time
+
+            indexes do
+              index :name
+              index :created_at, :name
+            end
+          end
+        end
+
+        conf.register_relation(Test::Tags)
+        schema = container.relations[:tags].schema
+
+        expect(schema.indexes.to_a).
+          to contain_exactly(
+               ROM::SQL::Index.new([define_attribute(:name, :String, source: schema.name)]),
+               ROM::SQL::Index.new([define_attribute(:created_at, :Time, source: schema.name),
+                                    define_attribute(:name, :String, source: schema.name)])
+             )
+      end
+    end
   end
 end

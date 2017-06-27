@@ -12,7 +12,7 @@ RSpec.describe ROM::SQL::Types, :postgres do
   end
 
   describe '#sql_literal', helpers: true do
-    subject(:base) { define_type(:age, :Int, source: ROM::Relation::Name.new(:users)) }
+    subject(:base) { define_attribute(:age, :Int, source: ROM::Relation::Name.new(:users)) }
 
     include_context 'database setup'
 

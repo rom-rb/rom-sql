@@ -24,6 +24,7 @@ module ROM
       schema_class SQL::Schema
       schema_attr_class SQL::Attribute
       schema_inferrer ROM::SQL::Schema::Inferrer.new.freeze
+      schema_dsl SQL::Schema::DSL
       wrap_class SQL::Wrap
 
       subscribe('configuration.relations.schema.set', adapter: :sql) do |event|

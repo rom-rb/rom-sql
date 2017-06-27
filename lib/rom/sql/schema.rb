@@ -1,5 +1,6 @@
 require 'rom/schema'
 
+require 'rom/sql/schema/dsl'
 require 'rom/sql/order_dsl'
 require 'rom/sql/group_dsl'
 require 'rom/sql/projection_dsl'
@@ -12,7 +13,7 @@ module ROM
     class Schema < ROM::Schema
       # @!attribute [r] attributes
       #   @return [Array<Index>] Array with schema indexes
-      option :indexes, default: -> { EMPTY_ARRAY }
+      option :indexes, default: -> { EMPTY_SET }
 
       # @api public
       def restriction(&block)

@@ -12,7 +12,7 @@ module Helpers
     )
   end
 
-  def define_type(name, id, **opts)
+  def define_attribute(name, id, **opts)
     ROM::SQL::Attribute.new(ROM::Types.const_get(id).meta(name: name, **opts))
   end
 

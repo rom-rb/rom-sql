@@ -24,7 +24,7 @@ module ROM
         def call(schema, gateway)
           inferred = super
 
-          indexes = get_indexes(gateway, schema.name.dataset, inferred[:attributes])
+          indexes = get_indexes(gateway, schema, inferred[:attributes])
 
           { **inferred, indexes: indexes }
         rescue Sequel::Error => error
@@ -33,7 +33,9 @@ module ROM
         end
 
         # @api private
-        def get_indexes(gateway, dataset, attributes)
+        def get_indexes(gateway, schema, attributes)
+          dataset = schema.name.dataset
+
           if enabled? && gateway.connection.respond_to?(:indexes)
             gateway.connection.indexes(dataset).map { |name, body|
               columns = body[:columns].map { |name|
@@ -43,8 +45,12 @@ module ROM
               SQL::Index.new(columns, name: name)
             }.to_set
           else
-            attributes.select(&:indexed?).map { |attr| SQL::Index.new([attr]) }.to_set
+            schema.indexes | indexes_from_attributes(attributes)
           end
+        end
+
+        def indexes_from_attributes(attributes)
+          attributes.select(&:indexed?).map { |attr| SQL::Index.new([attr]) }.to_set
         end
 
         # @api private
