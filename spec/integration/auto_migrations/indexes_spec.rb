@@ -59,7 +59,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
               attribute :email,  ROM::SQL::Types::String
 
               indexes do
-                index :email, name: 'email_idx'
+                index :email, name: :email_idx
               end
             end
           end
@@ -110,19 +110,23 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
             schema do
               attribute :id,    ROM::SQL::Types::Serial
               attribute :name,  ROM::SQL::Types::String
+              attribute :email, ROM::SQL::Types::String
             end
           end
 
           conn.create_table :users do
             primary_key :id
             column :name, String
+            column :email, String
 
             index :name
+            index :email, name: :email_idx
           end
         end
 
         it 'removes index' do
           gateway.auto_migrate!(conf)
+
           expect(migrated_schema.indexes).to be_empty
         end
       end

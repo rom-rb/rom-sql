@@ -26,8 +26,8 @@ module ROM
         end
 
         # @api private
-        def call(types)
-          attributes = types.map { |type| attr_class.new(type) }
+        def call(schema_name, types)
+          attributes = types.map { |type| attr_class.new(type).meta(source: schema_name) }
 
           registry.map { |attr_names, options|
             build_index(attributes, attr_names, options)
@@ -39,7 +39,7 @@ module ROM
         # @api private
         def build_index(attributes, attr_names, options)
           index_attributes = attr_names.map do |name|
-            attributes.find { |a| a.name == name }
+            attributes.find { |a| a.name == name }.unwrap
           end
 
           Index.new(index_attributes, options)

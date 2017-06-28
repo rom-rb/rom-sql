@@ -169,7 +169,7 @@ module ROM
             current.indexes.any? { |curr_idx| curr_idx.attributes == idx.attributes }
           }
           removed_indexes = current.indexes.select { |idx|
-            target.indexes.none? { |tgt_idx| idx.attributes == tgt_idx  }
+            target.indexes.none? { |tgt_idx| idx.attributes == tgt_idx.attributes }
           }
 
           removed_indexes.map { |idx| IndexRemoved.new(idx) } +

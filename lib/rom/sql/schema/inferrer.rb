@@ -39,7 +39,7 @@ module ROM
           if enabled? && gateway.connection.respond_to?(:indexes)
             gateway.connection.indexes(dataset).map { |name, body|
               columns = body[:columns].map { |name|
-                attributes.find { |attr| attr.name == name }
+                attributes.find { |attr| attr.name == name }.unwrap
               }
 
               SQL::Index.new(columns, name: name)
@@ -50,7 +50,7 @@ module ROM
         end
 
         def indexes_from_attributes(attributes)
-          attributes.select(&:indexed?).map { |attr| SQL::Index.new([attr]) }.to_set
+          attributes.select(&:indexed?).map { |attr| SQL::Index.new([attr.unwrap]) }.to_set
         end
 
         # @api private

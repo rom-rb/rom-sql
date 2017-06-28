@@ -306,6 +306,15 @@ module ROM
         meta
       end
 
+      # @api private
+      def unwrap
+        if optional?
+          self.class.new(right, options).meta(meta)
+        else
+          self
+        end
+      end
+
       private
 
       # Return Sequel Expression object for an attribute

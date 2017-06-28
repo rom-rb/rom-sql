@@ -74,7 +74,7 @@ module ROM
                 when SchemaDiff::IndexAdded
                   add_index index.attribute, name: index.name
                 when SchemaDiff::IndexRemoved
-                  drop_index index.attribute
+                  drop_index index.attribute, name: index.name
                 end
               end
             end
