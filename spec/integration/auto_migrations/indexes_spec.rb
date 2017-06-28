@@ -6,6 +6,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
   end
 
   let(:table_name) { :users }
+  let(:relation_name) { ROM::Relation::Name.new(table_name) }
 
   subject(:gateway) { container.gateways[:default] }
 
@@ -55,6 +56,11 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
             schema do
               attribute :id,    ROM::SQL::Types::Serial
               attribute :name,  ROM::SQL::Types::String.meta(index: true)
+              attribute :email,  ROM::SQL::Types::String
+
+              indexes do
+                index :email, name: 'email_idx'
+              end
             end
           end
         end
@@ -67,7 +73,22 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
           gateway.auto_migrate!(conf)
 
           expect(migrated_schema.attributes[1].name).to eql(:name)
-          expect(migrated_schema.indexes.map { |idx| idx.attributes.map(&:name) }).to eql([%i(name)])
+          name_index = migrated_schema.indexes.find { |idx| idx.name == :users_name_index }
+
+          expect(name_index.attributes.map(&:name)).to eql(%i(name))
+        end
+
+        it 'supports custom names' do
+          conn.create_table :users do
+            primary_key :id
+            column :name, String
+            column :email, String
+          end
+
+          gateway.auto_migrate!(conf)
+
+          email_index = migrated_schema.indexes.find { |idx| idx.name == :email_idx }
+          expect(email_index.attributes).to eql([define_attribute(:email, :String, source: relation_name)])
         end
 
         it 'adds index to existing column' do
@@ -78,7 +99,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
           gateway.auto_migrate!(conf)
 
-          expect(migrated_schema.indexes.map { |idx| idx.attributes.map(&:name) }).to eql([%i(name)])
+          name_index = migrated_schema.indexes.find { |idx| idx.name == :users_name_index }
+          expect(name_index.attributes.map(&:name)).to eql(%i(name))
         end
       end
 

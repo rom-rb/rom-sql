@@ -37,12 +37,12 @@ module ROM
         private
 
         # @api private
-        def build_index(attributes, attr_names, _options)
+        def build_index(attributes, attr_names, options)
           index_attributes = attr_names.map do |name|
             attributes.find { |a| a.name == name }
           end
 
-          Index.new(index_attributes)
+          Index.new(index_attributes, options)
         end
       end
     end

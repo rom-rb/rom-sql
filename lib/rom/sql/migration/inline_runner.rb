@@ -72,7 +72,7 @@ module ROM
               diff.index_changes.each do |index|
                 case index
                 when SchemaDiff::IndexAdded
-                  add_index index.attribute
+                  add_index index.attribute, name: index.name
                 when SchemaDiff::IndexRemoved
                   drop_index index.attribute
                 end

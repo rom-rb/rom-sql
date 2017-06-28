@@ -212,6 +212,7 @@ RSpec.describe 'Inferring schema from database' do
             indexes do
               index :name
               index :created_at, :name
+              index :updated_at, name: 'recently_idx'
             end
           end
         end
@@ -222,8 +223,14 @@ RSpec.describe 'Inferring schema from database' do
         expect(schema.indexes.to_a).
           to contain_exactly(
                ROM::SQL::Index.new([define_attribute(:name, :String, source: schema.name)]),
-               ROM::SQL::Index.new([define_attribute(:created_at, :Time, source: schema.name),
-                                    define_attribute(:name, :String, source: schema.name)])
+               ROM::SQL::Index.new(
+                 [define_attribute(:created_at, :Time, source: schema.name),
+                  define_attribute(:name, :String, source: schema.name)]
+               ),
+               ROM::SQL::Index.new(
+                 [define_attribute(:updated_at, :Time, source: schema.name)],
+                 name: 'recently_idx'
+               )
              )
       end
     end

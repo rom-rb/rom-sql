@@ -114,6 +114,10 @@ module ROM
           def attribute
             index.attributes[0].name
           end
+
+          def name
+            index.name
+          end
         end
 
         class IndexAdded < IndexDiff
