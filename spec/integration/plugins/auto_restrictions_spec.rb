@@ -31,6 +31,10 @@ RSpec.describe 'Plugins / :auto_restrictions', seeds: true do
             attribute :id, ROM::SQL::Types::Serial
             attribute :user_id, ROM::SQL::Types::Int
             attribute :title, ROM::SQL::Types::String.meta(index: true)
+
+            indexes do
+              index :user_id, :title
+            end
           end
 
           use :auto_restrictions
@@ -38,6 +42,10 @@ RSpec.describe 'Plugins / :auto_restrictions', seeds: true do
       end
 
       include_context 'auto-generated restriction view'
+
+      it 'generates restrictrions by a composite index' do
+        expect(tasks.by_user_id_and_title(1, "Jane's task").first).to eql(id: 2, user_id: 1, title: "Jane's task")
+      end
     end
   end
 end

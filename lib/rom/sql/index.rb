@@ -8,6 +8,10 @@ module ROM
       param :attributes
 
       option :name, optional: true
+
+      def to_a
+        attributes
+      end
     end
   end
 end

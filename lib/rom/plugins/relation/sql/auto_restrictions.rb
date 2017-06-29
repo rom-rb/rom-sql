@@ -39,18 +39,29 @@ module ROM
           def self.restriction_methods(schema)
             mod = Module.new
 
-            indexed_attrs = schema.indexes.map { |index| index.attributes[0] }.uniq
+            methods = schema.indexes.each_with_object([]) do |index, generated|
+              attributes = index.to_a
+              meth_name = :"by_#{ attributes.map(&:name).join('_and_') }"
 
-            methods = indexed_attrs.map do |attr|
-              meth_name = :"by_#{attr.name}"
+              next if generated.include?(meth_name)
 
               mod.module_eval do
-                define_method(meth_name) do |value|
-                  where(attr.is(value))
+                if attributes.size == 1
+                  attr = attributes[0]
+
+                  define_method(meth_name) do |value|
+                    where(attr.is(value))
+                  end
+                else
+                  indexed_attributes = attributes.map.with_index.to_a
+
+                  define_method(meth_name) do |*values|
+                    where(indexed_attributes.map { |attr, idx| attr.is(values[idx]) }.reduce(:&))
+                  end
                 end
               end
 
-              meth_name
+              generated << meth_name
             end
 
             [methods, mod]
