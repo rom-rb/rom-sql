@@ -18,7 +18,7 @@
 * Aliased associations with custom FKs work correctly (solnic)
 * Defining a custom dataset block no longer prevents default views like `by_pk` to be defined (solnic)
 
-[Compare v1.3.3...master](https://github.com/rom-rb/rom-sql/compare/v1.3.2...v1.3.3)
+[Compare v1.3.3...master](https://github.com/rom-rb/rom-sql/compare/v1.3.3...master)
 
 ## v1.3.3 2017-05-30
 
