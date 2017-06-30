@@ -17,7 +17,8 @@ RSpec.describe ROM::Relation, '#dataset' do
       end
 
       it 'uses schema to infer default dataset' do
-        expect(relation.dataset.sql).to eql(dataset.select(:id, :name).order(Sequel.qualify(:users, :id)).sql)
+        expect(relation.dataset.sql).
+          to eql(dataset.select(Sequel.qualify(:users, :id), Sequel.qualify(:users, :name)).order(Sequel.qualify(:users, :id)).sql)
       end
     end
 
@@ -31,7 +32,8 @@ RSpec.describe ROM::Relation, '#dataset' do
       end
 
       it 'uses schema to infer default dataset' do
-        expect(relation.dataset.sql).to eql(dataset.select(:id).order(Sequel.qualify(:users, :id)).sql)
+        expect(relation.dataset.sql).
+          to eql(dataset.select(Sequel.qualify(:users, :id)).order(Sequel.qualify(:users, :id)).sql)
       end
     end
 
@@ -41,7 +43,7 @@ RSpec.describe ROM::Relation, '#dataset' do
       end
 
       it 'selects all qualified columns and sorts by pk' do
-        expect(relation.dataset.sql).to eql(dataset.select(*relation.columns).order(Sequel.qualify(:users, :id)).sql)
+        expect(relation.dataset.sql).to eql(dataset.select(*relation.schema.qualified).order(Sequel.qualify(:users, :id)).sql)
       end
     end
   end

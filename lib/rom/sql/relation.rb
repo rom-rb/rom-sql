@@ -34,7 +34,7 @@ module ROM
           table = opts[:from].first
 
           if db.table_exists?(table)
-            select(*schema).order(*schema.project(*schema.primary_key_names).qualified)
+            select(*schema.qualified).order(*schema.qualified.primary_key)
           else
             self
           end

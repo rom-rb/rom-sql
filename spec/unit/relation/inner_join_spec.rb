@@ -149,22 +149,10 @@ RSpec.describe ROM::Relation, '#inner_join' do
       end
 
       it 'joins by relation if association name differs from relation name' do
-        result = puzzles.inner_join(users).select(users[:name], puzzles[:text]).qualified
+        result = puzzles.inner_join(users).select(users[:name], puzzles[:text])
 
         expect(result.to_a).to eql([ name: 'Jane', text: "solved by Jane" ])
       end
-    end
-
-    it 'raises error when column names are ambiguous' do
-      expect {
-        relation.inner_join(:tasks, user_id: :id).to_a
-      }.to raise_error(Sequel::DatabaseError, /ambiguous/)
-    end
-
-    it 'raises error when join arg is unsupported' do
-      expect {
-        relation.inner_join(421)
-      }.to raise_error(ArgumentError, /other/)
     end
   end
 end
