@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'sequel', '~> 4.43'
   spec.add_runtime_dependency 'dry-equalizer', '~> 0.2'
-  spec.add_runtime_dependency 'dry-types', '~> 0.10', '>= 0.10.2'
+  spec.add_runtime_dependency 'dry-types', '~> 0.11'
   spec.add_runtime_dependency 'dry-core', '~> 0.3'
   spec.add_runtime_dependency 'rom-core', '~> 4.0.0.beta'
 
