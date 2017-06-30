@@ -26,6 +26,10 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
           schema do
             attribute :id,    ROM::SQL::Types::Serial
             attribute :name,  ROM::SQL::Types::String.meta(index: true)
+
+            indexes do
+              index :name, name: :unique_name, unique: true
+            end
           end
         end
       end
@@ -44,6 +48,13 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
                       [:definition, [String, {}]],
                       source: :users]],
                   ])
+
+        expect(migrated_schema.indexes.first).
+          to eql(ROM::SQL::Index.new(
+                   [define_attribute(:name, :String, source: relation_name)],
+                   name: :unique_name,
+                   unique: true
+                 ))
       end
     end
   end
@@ -52,17 +63,6 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
     describe 'one-column indexes' do
       context 'adding' do
         before do
-          conf.relation(:users) do
-            schema do
-              attribute :id,    ROM::SQL::Types::Serial
-              attribute :name,  ROM::SQL::Types::String.meta(index: true)
-              attribute :email,  ROM::SQL::Types::String
-
-              indexes do
-                index :email, name: :email_idx
-              end
-            end
-          end
         end
 
         it 'adds indexed column' do
@@ -70,25 +70,47 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
             primary_key :id
           end
 
+          conf.relation(:users) do
+            schema do
+              attribute :id,    ROM::SQL::Types::Serial
+              attribute :name,  ROM::SQL::Types::String.meta(index: true)
+            end
+          end
+
           gateway.auto_migrate!(conf)
 
-          expect(migrated_schema.attributes[1].name).to eql(:name)
-          name_index = migrated_schema.indexes.find { |idx| idx.name == :users_name_index }
+          name_index = migrated_schema.indexes.first
 
+          expect(migrated_schema.attributes[1].name).to eql(:name)
+          expect(migrated_schema.indexes.size).to eql(1)
+          expect(name_index.name).to eql(:users_name_index)
           expect(name_index.attributes.map(&:name)).to eql(%i(name))
         end
 
         it 'supports custom names' do
           conn.create_table :users do
             primary_key :id
-            column :name, String
-            column :email, String
+          end
+
+          conf.relation(:users) do
+            schema do
+              attribute :id,    ROM::SQL::Types::Serial
+              attribute :name,  ROM::SQL::Types::String
+
+              indexes do
+                index :name, name: :custom_idx
+              end
+            end
           end
 
           gateway.auto_migrate!(conf)
 
-          email_index = migrated_schema.indexes.find { |idx| idx.name == :email_idx }
-          expect(email_index.attributes).to eql([define_attribute(:email, :String, source: relation_name)])
+          name_index = migrated_schema.indexes.first
+
+          expect(migrated_schema.attributes[1].name).to eql(:name)
+          expect(migrated_schema.indexes.size).to eql(1)
+          expect(name_index.name).to eql(:custom_idx)
+          expect(name_index.attributes.map(&:name)).to eql(%i(name))
         end
 
         it 'adds index to existing column' do
@@ -97,10 +119,50 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
             column :name, String
           end
 
+          conf.relation(:users) do
+            schema do
+              attribute :id,    ROM::SQL::Types::Serial
+              attribute :name,  ROM::SQL::Types::String
+
+              indexes do
+                index :name
+              end
+            end
+          end
+
           gateway.auto_migrate!(conf)
 
-          name_index = migrated_schema.indexes.find { |idx| idx.name == :users_name_index }
+          name_index = migrated_schema.indexes.first
+
+          expect(name_index.name).to eql(:users_name_index)
           expect(name_index.attributes.map(&:name)).to eql(%i(name))
+          expect(name_index).not_to be_unique
+        end
+
+        it 'supports unique indexes' do
+          conn.create_table :users do
+            primary_key :id
+            column :name, String
+          end
+
+          conf.relation(:users) do
+            schema do
+              attribute :id,    ROM::SQL::Types::Serial
+              attribute :name,  ROM::SQL::Types::String
+
+              indexes do
+                index :name, unique: true
+              end
+            end
+          end
+
+          gateway.auto_migrate!(conf)
+
+          name_index = migrated_schema.indexes.first
+
+          expect(name_index.name).to eql(:users_name_index)
+          expect(name_index.attributes.map(&:name)).to eql(%i(name))
+          expect(name_index).to be_unique
         end
       end
 

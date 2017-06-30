@@ -12,6 +12,10 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
     Time.mktime(time.year, time.month, time.day, time.hour, time.min, time.sec, usec)
   end
 
+  def index_by_name(indexes, name)
+    indexes.find { |idx| idx.name == name }
+  end
+
   with_adapters do |adapter|
     describe 'inferring attributes' do
       before do
@@ -348,6 +352,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
           index :baz, name: :baz2_idx
 
           index %i(bar baz), name: :composite_idx
+          index %i(foo bar), name: :unique_idx, unique: true
         end
 
         conf.relation(:test_inferrence) { schema(infer: true) }
@@ -358,7 +363,11 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
 
       it 'infers types with indices' do
         expect(schema.indexes.map(&:name)).
-          to match_array(%i(foo_idx bar_idx baz1_idx baz2_idx composite_idx))
+          to match_array(%i(foo_idx bar_idx baz1_idx baz2_idx composite_idx unique_idx))
+
+        unique_idx = index_by_name(schema.indexes, :unique_idx)
+
+        expect(unique_idx).to be_unique
       end
     end
   end

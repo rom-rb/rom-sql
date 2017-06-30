@@ -37,8 +37,8 @@ module ROM
                 end
               end
 
-              diff.indexes.each do |idx|
-                index idx.attribute
+              diff.indexes.each do |index|
+                index index.attributes, name: index.name, unique: index.unique?
               end
             end
           end
@@ -72,9 +72,9 @@ module ROM
               diff.index_changes.each do |index|
                 case index
                 when SchemaDiff::IndexAdded
-                  add_index index.attribute, name: index.name
+                  add_index index.attributes, name: index.name, unique: index.unique?
                 when SchemaDiff::IndexRemoved
-                  drop_index index.attribute, name: index.name
+                  drop_index index.attributes, name: index.name
                 end
               end
             end

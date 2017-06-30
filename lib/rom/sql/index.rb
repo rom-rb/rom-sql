@@ -9,6 +9,10 @@ module ROM
 
       option :name, optional: true
 
+      option :unique, default: -> { false }
+
+      alias_method :unique?, :unique
+
       def to_a
         attributes
       end

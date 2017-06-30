@@ -212,7 +212,8 @@ RSpec.describe 'Inferring schema from database' do
             indexes do
               index :name
               index :created_at, :name
-              index :updated_at, name: 'recently_idx'
+              index :updated_at, name: :recently_idx
+              index :created_at, name: :unique_date, unique: true
             end
           end
         end
@@ -229,7 +230,12 @@ RSpec.describe 'Inferring schema from database' do
                ),
                ROM::SQL::Index.new(
                  [define_attribute(:updated_at, :Time, source: schema.name)],
-                 name: 'recently_idx'
+                 name: :recently_idx
+               ),
+               ROM::SQL::Index.new(
+                 [define_attribute(:created_at, :Time, source: schema.name)],
+                 name: :unique_date,
+                 unique: true
                )
              )
       end

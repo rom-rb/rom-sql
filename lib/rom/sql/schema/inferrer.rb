@@ -42,7 +42,7 @@ module ROM
                 attributes.find { |attr| attr.name == name }.unwrap
               }
 
-              SQL::Index.new(columns, name: name)
+              SQL::Index.new(columns, name: name, unique: body[:unique])
             }.to_set
           else
             schema.indexes | indexes_from_attributes(attributes)

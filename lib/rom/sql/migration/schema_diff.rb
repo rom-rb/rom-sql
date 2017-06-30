@@ -111,12 +111,16 @@ module ROM
             @index = index
           end
 
-          def attribute
-            index.attributes[0].name
+          def attributes
+            index.attributes.map(&:name)
           end
 
           def name
             index.name
+          end
+
+          def unique?
+            index.unique?
           end
         end
 
