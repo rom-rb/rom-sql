@@ -47,5 +47,28 @@ RSpec.describe 'Plugins / :auto_restrictions', seeds: true do
         expect(tasks.by_user_id_and_title(1, "Jane's task").first).to eql(id: 2, user_id: 1, title: "Jane's task")
       end
     end
+
+    if metadata[:postgres]
+      # An auto-generated restriction should include the prediate from the index definition
+      # but it seems to be too much from my POV, better leave it to the user
+      # Note that this can be enabled later
+      it 'skips partial indexes' do
+        conf.relation(:tasks) do
+          schema do
+            attribute :id, ROM::SQL::Types::Serial
+            attribute :user_id, ROM::SQL::Types::Int
+            attribute :title, ROM::SQL::Types::String
+
+            indexes do
+              index :title, predicate: 'title is not null'
+            end
+          end
+
+          use :auto_restrictions
+        end
+
+        expect(tasks).not_to respond_to(:by_title)
+      end
+    end
   end
 end

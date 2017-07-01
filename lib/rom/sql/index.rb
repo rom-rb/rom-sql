@@ -15,8 +15,14 @@ module ROM
 
       option :type, optional: true
 
+      option :predicate, optional: true
+
       def to_a
         attributes
+      end
+
+      def partial?
+        !predicate.nil?
       end
     end
   end

@@ -126,6 +126,14 @@ module ROM
           def type
             index.type
           end
+
+          def predicate
+            index.predicate
+          end
+
+          def partial?
+            !predicate.nil?
+          end
         end
 
         class IndexAdded < IndexDiff

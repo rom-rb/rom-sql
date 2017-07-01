@@ -40,6 +40,8 @@ module ROM
             mod = Module.new
 
             methods = schema.indexes.each_with_object([]) do |index, generated|
+              next if index.partial?
+
               attributes = index.to_a
               meth_name = :"by_#{ attributes.map(&:name).join('_and_') }"
 

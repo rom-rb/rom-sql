@@ -196,6 +196,29 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
             expect(indexdef('users_props_index')).
               to eql('CREATE INDEX users_props_index ON users USING gin (props)')
           end
+
+          it 'supports partial indexes' do
+            conn.create_table :users do
+              primary_key :id
+              column :name, String
+            end
+
+            conf.relation(:users) do
+              schema do
+                attribute :id,     ROM::SQL::Types::Serial
+                attribute :name,   ROM::SQL::Types::String
+
+                indexes do
+                  index :name, name: :long_names_only, predicate: 'length(name) > 10'
+                end
+              end
+            end
+
+            gateway.auto_migrate!(conf)
+
+            expect(indexdef('long_names_only')).
+              to eql('CREATE INDEX long_names_only ON users USING btree (name) WHERE (length(name) > 10)')
+          end
         end
       end
 
