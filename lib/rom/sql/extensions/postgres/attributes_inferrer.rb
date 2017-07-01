@@ -34,7 +34,7 @@ module ROM
           'path' => Types::PG::PathT
         ).freeze
 
-        db_array_type_matcher Sequel::Postgres::PGArray::EMPTY_BRACKET
+        db_array_type_matcher '[]'.freeze
 
         private
 
