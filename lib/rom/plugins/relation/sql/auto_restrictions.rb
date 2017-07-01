@@ -49,10 +49,10 @@ module ROM
 
               mod.module_eval do
                 if attributes.size == 1
-                  attr = attributes[0]
+                  attribute = attributes[0]
 
                   define_method(meth_name) do |value|
-                    where(attr.is(value))
+                    where(attribute.is(value))
                   end
                 else
                   indexed_attributes = attributes.map.with_index.to_a
