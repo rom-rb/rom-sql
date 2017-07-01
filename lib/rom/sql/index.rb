@@ -13,6 +13,8 @@ module ROM
 
       alias_method :unique?, :unique
 
+      option :type, optional: true
+
       def to_a
         attributes
       end

@@ -19,6 +19,14 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
   let(:attributes) { migrated_schema.to_a }
 
+  def indexdef(index)
+    gateway.connection[<<-SQL, index].first[:indexdef]
+      select indexdef
+      from   pg_indexes
+      where  indexname = ?
+    SQL
+  end
+
   describe 'create table' do
     describe 'one-column indexes' do
       before do
@@ -163,6 +171,31 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
           expect(name_index.name).to eql(:users_name_index)
           expect(name_index.attributes.map(&:name)).to eql(%i(name))
           expect(name_index).to be_unique
+        end
+
+        if metadata[:postgres]
+          it 'uses index method' do
+            conn.create_table :users do
+              primary_key :id
+              column :props, :jsonb, null: false
+            end
+
+            conf.relation(:users) do
+              schema do
+                attribute :id,     ROM::SQL::Types::Serial
+                attribute :props,  ROM::SQL::Types::PG::JSONB
+
+                indexes do
+                  index :props, type: :gin
+                end
+              end
+            end
+
+            gateway.auto_migrate!(conf)
+
+            expect(indexdef('users_props_index')).
+              to eql('CREATE INDEX users_props_index ON users USING gin (props)')
+          end
         end
       end
 

@@ -200,7 +200,7 @@ RSpec.describe 'Inferring schema from database' do
       end
     end
 
-    context 'defining indexes', :helpers do
+    context 'defining indexes', :helpers do |ctx|
       it 'allows defining indexes' do
         class Test::Tags < ROM::Relation[:sql]
           schema(:tags) do
@@ -238,6 +238,33 @@ RSpec.describe 'Inferring schema from database' do
                  unique: true
                )
              )
+      end
+
+      if metadata[:postgres]
+        it 'can provide index type' do
+          class Test::Tags < ROM::Relation[:sql]
+            schema(:tags) do
+              attribute :id,         Types::Serial
+              attribute :name,       Types::String
+
+              indexes do
+                index :name, type: :gist
+              end
+            end
+          end
+
+          conf.register_relation(Test::Tags)
+          schema = container.relations[:tags].schema
+          index = schema.indexes.first
+
+          expect(index).to eql(
+                             ROM::SQL::Index.new(
+                               [define_attribute(:name, :String, source: schema.name)],
+                               type: :gist)
+                           )
+
+          expect(index.type).to eql(:gist)
+        end
       end
     end
   end

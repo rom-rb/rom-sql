@@ -122,6 +122,10 @@ module ROM
           def unique?
             index.unique?
           end
+
+          def type
+            index.type
+          end
         end
 
         class IndexAdded < IndexDiff

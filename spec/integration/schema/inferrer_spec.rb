@@ -339,7 +339,10 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
     end
 
     describe 'inferring indices', oracle: false do
-      before do |ex|
+      let(:dataset) { :test_inferrence }
+      let(:source) { ROM::Relation::Name[dataset] }
+
+      it 'infers types with indices' do
         conn.create_table :test_inferrence do
           primary_key :id
           Integer :foo
@@ -356,18 +359,31 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         end
 
         conf.relation(:test_inferrence) { schema(infer: true) }
-      end
 
-      let(:dataset) { :test_inferrence }
-      let(:source) { ROM::Relation::Name[dataset] }
-
-      it 'infers types with indices' do
         expect(schema.indexes.map(&:name)).
           to match_array(%i(foo_idx bar_idx baz1_idx baz2_idx composite_idx unique_idx))
 
         unique_idx = index_by_name(schema.indexes, :unique_idx)
 
         expect(unique_idx).to be_unique
+      end
+
+      if metadata[:postgres]
+        it 'infers cutsom index types' do
+          pending 'Sequel not returning index type'
+          conn.create_table :test_inferrence do
+            primary_key :id
+            Integer :foo
+            index :foo, name: :foo_idx, type: :gist
+          end
+
+          conf.relation(:test_inferrence) { schema(infer: true) }
+
+          index = schema.indexes.first
+
+          expect(index.name).to eql(:foo_idx)
+          expect(index.type).to eql(:gist)
+        end
       end
     end
   end
