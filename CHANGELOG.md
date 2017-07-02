@@ -9,6 +9,7 @@
 
 * [BREAKING] based on rom 4.0 now
 * [BREAKING] `Associates` command plugin requires associations now (solnic)
+* [BREAKING] `Command#transaction` is gone in favor of `Relation#transaction` (solnic)
 * `ManyToOne` no longer uses a join (solnic)
 * `AutoCombine` and `AutoWrap` plugins were removed as this functionality is provided by core API (solnic)
 
