@@ -97,8 +97,8 @@ RSpec.describe 'Plugin / Timestamp' do
     end
 
     it "works with chained commands" do
-      create_user = container.commands[:users].create.with(name: "John Doe")
-      create_note = container.commands[:notes].create_with_user.with(text: "new note")
+      create_user = container.commands[:users].create.curry(name: "John Doe")
+      create_note = container.commands[:notes].create_with_user.curry(text: "new note")
 
       time   = DateTime.now
       command = create_user >> create_note

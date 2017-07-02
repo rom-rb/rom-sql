@@ -68,8 +68,8 @@ RSpec.describe 'Plugins / :associates', seeds: false do
 
       shared_context 'automatic FK setting' do
         it 'sets foreign key prior execution for many tuples' do
-          create_user = users[:create].with(name: 'Jade')
-          create_task = tasks[:create_many].with([{ title: 'Task one' }, { title: 'Task two' }])
+          create_user = users[:create].curry(name: 'Jade')
+          create_task = tasks[:create_many].curry([{ title: 'Task one' }, { title: 'Task two' }])
 
           command = create_user >> create_task
 
@@ -82,8 +82,8 @@ RSpec.describe 'Plugins / :associates', seeds: false do
         end
 
         it 'sets foreign key prior execution for one tuple' do
-          create_user = users[:create].with(name: 'Jade')
-          create_task = tasks[:create_one].with(title: 'Task one')
+          create_user = users[:create].curry(name: 'Jade')
+          create_task = tasks[:create_one].curry(title: 'Task one')
 
           command = create_user >> create_task
 
@@ -161,9 +161,9 @@ RSpec.describe 'Plugins / :associates', seeds: false do
           end
 
           it 'sets FKs for the join table' do
-            create_user = users[:create].with(name: 'Jade')
-            create_task = tasks[:create].with(title: "Jade's task")
-            create_tags = tags[:create].with([{ name: 'red' }, { name: 'blue' }])
+            create_user = users[:create].curry(name: 'Jade')
+            create_task = tasks[:create].curry(title: "Jade's task")
+            create_tags = tags[:create].curry([{ name: 'red' }, { name: 'blue' }])
 
             command = create_user >> create_task >> create_tags
 

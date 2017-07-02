@@ -60,7 +60,7 @@ module ROM
             after_hooks = associate_options.select(&:after?).map(&:to_hash)
 
             command.
-              with_opts(configured_associations: configured_assocs + associate_options.map(&:name)).
+              with(configured_associations: configured_assocs + associate_options.map(&:name)).
               before(*before_hooks).
               after(*after_hooks)
           end
@@ -73,10 +73,10 @@ module ROM
           #     associates :user, key: [:user_id, :id]
           #   end
           #
-          #   create_user = rom.command(:user).create.with(name: 'Jane')
+          #   create_user = rom.command(:user).create.curry(name: 'Jane')
           #
           #   create_tasks = rom.command(:tasks).create
-          #     .with [{ title: 'One' }, { title: 'Two' } ]
+          #     .curry [{ title: 'One' }, { title: 'Two' } ]
           #
           #   command = create_user >> create_tasks
           #   command.call

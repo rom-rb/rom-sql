@@ -53,8 +53,8 @@ RSpec.describe 'Plugins / :associates / with many-to-many', :sqlite, seeds: fals
   end
 
   it 'associates a child with many parents' do
-    add_tags = create_tag.with([{ name: 'red' }, { name: 'blue' }])
-    add_task = create_task.with(user_id: jane[:id], title: "Jade's task")
+    add_tags = create_tag.curry([{ name: 'red' }, { name: 'blue' }])
+    add_task = create_task.curry(user_id: jane[:id], title: "Jade's task")
 
     command = add_tags >> add_task
 

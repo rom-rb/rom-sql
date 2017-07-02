@@ -33,7 +33,7 @@ module ROM
           #     timestamps :created_at, :updated_at
           #   end
           #
-          #   create_user = rom.command(:user).create.with(name: 'Jane')
+          #   create_user = rom.command(:user).create.curry(name: 'Jane')
           #
           #   result = create_user.call
           #   result[:created_at]  #=> Time.now.utc
@@ -57,7 +57,7 @@ module ROM
           #     datestamps :created_on, :updated_on
           #   end
           #
-          #   create_user = rom.command(:user).create.with(name: 'Jane')
+          #   create_user = rom.command(:user).create.curry(name: 'Jane')
           #
           #   result = create_user.call
           #   result[:created_at]  #=> Date.today
