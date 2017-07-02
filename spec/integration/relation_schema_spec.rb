@@ -38,6 +38,7 @@ RSpec.describe 'Inferring schema from database' do
 
       let(:tag_associations) do
         config.relation(:posts) { schema(infer: true) }
+        config.relation(:users) { schema(infer: true) }
         config.relation(:posts_tags) { schema(infer: true) }
         config.register_relation(Test::Tags)
         container.relations[:tags].associations
@@ -132,6 +133,8 @@ RSpec.describe 'Inferring schema from database' do
       it "allows defining a many-to-one" do
         class Test::Tags < ROM::Relation[:sql]
           schema(:tags) do
+            attribute :post_id, Types::Int
+
             associations do
               many_to_one :posts
             end
@@ -146,6 +149,8 @@ RSpec.describe 'Inferring schema from database' do
       it "allows defining a many-to-one using belongs_to shortcut" do
         class Test::Tags < ROM::Relation[:sql]
           schema(:tags) do
+            attribute :post_id, Types::Int
+
             associations do
               belongs_to :post
             end
@@ -160,6 +165,8 @@ RSpec.describe 'Inferring schema from database' do
       it "allows defining a many-to-one using belongs_to shortcut" do
         class Test::Tags < ROM::Relation[:sql]
           schema(:tags) do
+            attribute :post_id, Types::Int
+
             associations do
               belongs_to :post, as: :post_tag
             end
@@ -188,6 +195,8 @@ RSpec.describe 'Inferring schema from database' do
       it "allows defining a many-to-one with a custom name" do
         class Test::Tags < ROM::Relation[:sql]
           schema(:tags) do
+            attribute :post_id, Types::Int
+
             associations do
               many_to_one :posts, as: :published_posts
             end
@@ -197,6 +206,28 @@ RSpec.describe 'Inferring schema from database' do
         assoc = ROM::Associations::Definitions::ManyToOne.new(:tags, :posts, as: :published_posts)
 
         expect(tag_associations[:published_posts].definition).to eql(assoc)
+      end
+
+      it "adds foreign keys to the schema" do
+        class Test::Tags < ROM::Relation[:sql]
+          schema(:tags) do
+            attribute :id,      Types::Serial
+            attribute :post_id, Types::Int.meta(index: true)
+            attribute :user_id, Types::ForeignKey(:users)
+
+            associations do
+              belongs_to :post
+            end
+          end
+        end
+
+        config.relation(:posts) { schema(infer: true) }
+        config.relation(:users) { schema(infer: true) }
+        config.register_relation(Test::Tags)
+
+        schema = container.relations[:tags].schema
+
+        expect(schema.foreign_keys.size).to eql(2)
       end
     end
 

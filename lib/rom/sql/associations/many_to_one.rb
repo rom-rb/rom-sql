@@ -49,6 +49,11 @@ module ROM
         def prepare(target)
           call(target: target, preload: true)
         end
+
+        # @api private
+        def outgoing_reference?
+          true
+        end
       end
     end
   end

@@ -14,6 +14,11 @@ module ROM
 
           target.where(target_key => target_pks)
         end
+
+        # @api private
+        def outgoing_reference?
+          false
+        end
       end
     end
   end

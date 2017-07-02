@@ -6,14 +6,19 @@ require 'rom/sql/group_dsl'
 require 'rom/sql/projection_dsl'
 require 'rom/sql/restriction_dsl'
 require 'rom/sql/index'
+require 'rom/sql/foreign_key'
 require 'rom/sql/schema/inferrer'
 
 module ROM
   module SQL
     class Schema < ROM::Schema
-      # @!attribute [r] attributes
+      # @!attribute [r] indexes
       #   @return [Array<Index>] Array with schema indexes
       option :indexes, default: -> { EMPTY_SET }
+
+      # @!attribute [r] foreign_keys
+      #   @return [Array<ForeignKey>] Array with foreign keys
+      option :foreign_keys, default: -> { EMPTY_SET }
 
       # @api public
       def restriction(&block)
@@ -111,9 +116,32 @@ module ROM
             SQL::Associations.const_get(definition.type).new(definition, relations)
           end
         end
+
+        set_foreign_keys!(relations)
+        self
       end
 
       memoize :qualified, :canonical, :joined, :project_pk
+
+      private
+
+      # @api private
+      def set_foreign_keys!(relations)
+        assoc_fks = associations.select { |_, assoc| assoc.outgoing_reference? }.map { |_, assoc|
+          source_attr = self[assoc.foreign_key]
+          target_attr = assoc.target.primary_key
+
+          ForeignKey.new([source_attr], [target_attr])
+        }
+
+        attribute_fks = select(&:foreign_key?).map { |source_attr|
+          target_attrs = relations[source_attr.target].primary_key
+
+          ForeignKey.new([source_attr], target_attrs)
+        }
+
+        set!(:foreign_keys, (assoc_fks + attribute_fks).to_set)
+      end
     end
   end
 end
