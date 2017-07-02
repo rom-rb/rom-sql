@@ -851,7 +851,7 @@ module ROM
           clause = lock_clause(options)
 
           if block
-            dataset.db.transaction do
+            transaction do
               block.call(dataset.lock_style(clause).to_a)
             end
           else

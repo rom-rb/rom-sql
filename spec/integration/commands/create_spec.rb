@@ -46,37 +46,37 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
   with_adapters do
     describe '#transaction' do
       it 'creates record if nothing was raised' do
-        result = create_user.transaction {
+        result = users.transaction {
           create_user.call(name: 'Jane')
         }
 
-        expect(result.value).to eql(id: 1, name: 'Jane')
+        expect(result).to eql(id: 1, name: 'Jane')
       end
 
       it 'creates multiple records if nothing was raised' do
-        result = create_user.transaction {
+        result = users.transaction {
           create_users.call([{ name: 'Jane' }, { name: 'Jack' }])
         }
 
-        expect(result.value).to match_array([
+        expect(result).to match_array([
           { id: 1, name: 'Jane' }, { id: 2, name: 'Jack' }
         ])
       end
 
       it 'allows for nested transactions' do
-        result = create_user.transaction {
-          create_user.transaction {
+        result = users.transaction {
+          users.transaction {
             create_user.call(name: 'Jane')
           }
         }
 
-        expect(result.value).to eql(id: 1, name: 'Jane')
+        expect(result).to eql(id: 1, name: 'Jane')
       end
 
       it 'creates nothing if command error was raised' do
         expect {
           begin
-            create_user.transaction {
+            users.transaction {
               create_user.call(name: 'Jane')
               create_user.call(name: nil)
             }
@@ -87,19 +87,13 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
 
       it 'creates nothing if rollback was raised' do
         expect {
-          passed = false
-
-          result = create_user.transaction {
+          result = users.transaction { |t|
             create_user.call(name: 'Jane')
             create_user.call(name: 'John')
-            raise ROM::SQL::Rollback
-          } >-> _value {
-            passed = true
+            t.rollback!
           }
 
-          expect(result.value).to be(nil)
-          expect(result.error).to be(nil)
-          expect(passed).to be(false)
+          expect(result).to be(nil)
         }.to_not change { container.relations.users.count }
       end
 
@@ -108,10 +102,9 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
           begin
             passed = false
 
-            create_user.transaction {
+            users.transaction {
               create_user.call(name: 'Jane')
               create_user.call(name: 'Jane')
-            } >-> _value {
               passed = true
             }
           rescue => error
@@ -124,9 +117,10 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
       it 'creates nothing if anything was raised in any nested transaction' do
         expect {
           expect {
-            create_user.transaction {
+            users.transaction {
               create_user.call(name: 'John')
-              create_user.transaction {
+
+              users.transaction {
                 create_user.call(name: 'Jane')
                 raise Exception
               }
@@ -158,24 +152,22 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
     end
 
     it 'returns a single tuple when result is set to :one' do
-      result = user_commands.try { create_user.call(name: 'Jane') }
+      result = create_user.call(name: 'Jane')
 
-      expect(result.value).to eql(id: 1, name: 'Jane')
+      expect(result).to eql(id: 1, name: 'Jane')
     end
 
     it 'returns tuples when result is set to :many' do
-      result = user_commands.try do
-        create_users.call([{ name: 'Jane' }, { name: 'Jack' }])
-      end
+      result = create_users.call([{ name: 'Jane' }, { name: 'Jack' }])
 
-      expect(result.value.to_a).to match_array([
+      expect(result.to_a).to match_array([
         { id: 1, name: 'Jane' }, { id: 2, name: 'Jack' }
       ])
     end
 
     it 're-raises not-null constraint violation error' do
       expect {
-        user_commands.try { create_user.call(name: nil) }
+        create_user.call(name: nil)
       }.to raise_error(ROM::SQL::NotNullConstraintError)
     end
 
@@ -198,34 +190,27 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
         it 're-raises not-null constraint violation error with nil boolean' do
           puppies = commands[:puppies]
 
-          expect {
-            puppies.try { puppies.create.call(name: 'Charlie', cute: nil) }
-          }.to raise_error(ROM::SQL::NotNullConstraintError)
+          expect { puppies.create.call(name: 'Charlie', cute: nil) }.
+            to raise_error(ROM::SQL::NotNullConstraintError)
         end
       end
     end
 
-    it 're-raises uniqueness constraint violation error' do
+    it 'raises uniqueness constraint violation error' do
       expect {
-        user_commands.try {
-          create_user.call(name: 'Jane')
-        } >-> user {
-          user_commands.try { create_user.call(name: user[:name]) }
-        }
+        user = create_user.call(name: 'Jane')
+        create_user.call(name: user[:name])
       }.to raise_error(ROM::SQL::UniqueConstraintError)
     end
 
     it 're-raises fk constraint violation error' do |ex|
-      expect {
-        task_commands.try {
-          create_task.call(user_id: 918_273_645)
-        }
-      }.to raise_error(ROM::SQL::ForeignKeyConstraintError)
+      expect { create_task.call(user_id: 918_273_645) }.
+        to raise_error(ROM::SQL::ForeignKeyConstraintError)
     end
 
     it 're-raises database errors' do
       expect {
-        user_commands.try { create_user.call(name: nil) }
+        create_user.call(name: nil)
       }.to raise_error(ROM::SQL::NotNullConstraintError)
     end
 
@@ -233,9 +218,8 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
       context 'with a single record' do
         it 'materializes the result' do
           result = create_user.execute(name: 'Jane')
-          expect(result).to eq([
-            { id: 1, name: 'Jane' }
-          ])
+
+          expect(result).to eq([{ id: 1, name: 'Jane' }])
         end
       end
 
@@ -245,10 +229,8 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
             { name: 'Jane' },
             { name: 'John' }
           ])
-          expect(result).to eq([
-            { id: 1, name: 'Jane' },
-            { id: 2, name: 'John' }
-          ])
+
+          expect(result).to eql([{ id: 1, name: 'Jane' }, { id: 2, name: 'John' }])
         end
       end
 
@@ -288,20 +270,13 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
   end
 
   describe '#call' do
-    it 're-raises check constraint violation error' do
-      expect {
-        user_commands.try {
-          create_user.call(name: 'J')
-        }
-      }.to raise_error(ROM::SQL::CheckConstraintError, /name/)
+    it 'raises check constraint violation error' do
+      expect { create_user.call(name: 'J') }.
+        to raise_error(ROM::SQL::CheckConstraintError, /name/)
     end
 
-    it 're-raises constraint violation error' do
-      expect {
-        user_commands.try {
-          create_task.call(title: '')
-        }
-      }.to raise_error(ROM::SQL::ConstraintError, /title/)
+    it 'raises constraint violation error' do
+      expect { create_task.call(title: '') }.to raise_error(ROM::SQL::ConstraintError, /title/)
     end
   end
 
