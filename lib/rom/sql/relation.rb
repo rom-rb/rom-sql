@@ -2,6 +2,7 @@ require 'rom/sql/types'
 require 'rom/sql/schema'
 require 'rom/sql/attribute'
 require 'rom/sql/wrap'
+require 'rom/sql/transaction'
 
 require 'rom/sql/relation/reading'
 require 'rom/sql/relation/writing'
@@ -112,6 +113,11 @@ module ROM
       # @api public
       def assoc(name)
         associations[name].()
+      end
+
+      # @api public
+      def transaction(opts = EMPTY_HASH, &block)
+        Transaction.new(dataset.db).run(opts, &block)
       end
 
       # Return raw column names

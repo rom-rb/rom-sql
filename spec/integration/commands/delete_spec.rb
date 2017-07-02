@@ -24,7 +24,7 @@ RSpec.describe 'Commands / Delete' do
     describe '#transaction' do
       it 'deletes in normal way if no error raised' do
         expect {
-          delete_user.transaction do
+          users.transaction do
             delete_user.by_name('Jade').call
           end
         }.to change { users.count }.by(-1)
@@ -32,9 +32,9 @@ RSpec.describe 'Commands / Delete' do
 
       it 'deletes nothing if error was raised' do
         expect {
-          delete_user.transaction do
+          users.transaction do |t|
             delete_user.by_name('Jade').call
-            raise ROM::SQL::Rollback
+            t.rollback!
           end
         }.to_not change { users.count }
       end
@@ -42,9 +42,9 @@ RSpec.describe 'Commands / Delete' do
 
     describe '#call' do
       it 'deletes all tuples in a restricted relation' do
-        result = user_commands.try { delete_user.by_name('Jade').call }
+        result = delete_user.by_name('Jade').call
 
-        expect(result.value).to eql(id: 3, name: 'Jade')
+        expect(result).to eql(id: 3, name: 'Jade')
       end
 
       it 're-raises database error' do
@@ -55,7 +55,7 @@ RSpec.describe 'Commands / Delete' do
         )
 
         expect {
-          user_commands.try { command.call }
+          command.call
         }.to raise_error(ROM::SQL::DatabaseError, /totally wrong/)
       end
     end

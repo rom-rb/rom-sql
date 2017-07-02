@@ -1,5 +1,4 @@
 require 'rom/sql/commands/error_wrapper'
-require 'rom/sql/commands/transaction'
 
 module ROM
   module SQL
@@ -10,7 +9,6 @@ module ROM
       class Create < ROM::Commands::Create
         adapter :sql
 
-        include Transaction
         include ErrorWrapper
 
         use :associates

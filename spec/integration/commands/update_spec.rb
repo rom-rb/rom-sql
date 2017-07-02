@@ -41,17 +41,17 @@ RSpec.describe 'Commands / Update', seeds: false do
 
     context '#transaction' do
       it 'update record if there was no errors' do
-        result = update_user.transaction do
+        result = users.transaction do
           update_user.by_id(piotr[:id]).call(peter)
         end
 
-        expect(result.value).to eq([{ id: 1, name: 'Peter' }])
+        expect(result).to eq([{ id: 1, name: 'Peter' }])
       end
 
       it 'updates nothing if error was raised' do
-        update_user.transaction do
+        users.transaction do |t|
           update_user.by_id(piotr[:id]).call(peter)
-          raise ROM::SQL::Rollback
+          t.rollback!
         end
 
         expect(users.first[:name]).to eql('Piotr')
@@ -60,11 +60,9 @@ RSpec.describe 'Commands / Update', seeds: false do
 
     describe '#call' do
       it 'updates relation tuples' do
-        result = user_commands.try do
-          update_user.by_id(piotr[:id]).call(peter)
-        end
+        result = update_user.by_id(piotr[:id]).call(peter)
 
-        expect(result.value.to_a).to match_array([{ id: 1, name: 'Peter' }])
+        expect(result.to_a).to match_array([{ id: 1, name: 'Peter' }])
       end
 
       it 're-raises database errors' do |example|
