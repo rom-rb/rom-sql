@@ -7,7 +7,7 @@
 
 ### Changed
 
-* [BREAKING] based on rom 4.0 now
+* [BREAKING] based on rom 4.0 now (flash-gordon + solnic)
 * [BREAKING] `Associates` command plugin requires associations now (solnic)
 * [BREAKING] `Command#transaction` is gone in favor of `Relation#transaction` (solnic)
 * `ManyToOne` no longer uses a join (solnic)
