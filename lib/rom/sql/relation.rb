@@ -49,6 +49,8 @@ module ROM
 
       # @api private
       def self.define_default_views!
+        undef_method :by_pk if method_defined?(:by_pk)
+
         if schema.primary_key.size > 1
           # @!method by_pk(val1, val2)
           #   Return a relation restricted by its composite primary key

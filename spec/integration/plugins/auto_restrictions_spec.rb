@@ -24,6 +24,35 @@ RSpec.describe 'Plugins / :auto_restrictions', seeds: true do
       include_context 'auto-generated restriction view'
     end
 
+    context 'with two containers' do
+      let(:confs) do
+        { one: ROM::Configuration.new(:sql, conn),
+          two: ROM::Configuration.new(:sql, conn) }
+      end
+
+      let(:containers) do
+        { one: ROM.container(confs[:one]),
+          two: ROM.container(confs[:two]) }
+      end
+
+      before do
+        class Test::Tasks < ROM::Relation[:sql]
+          schema(:tasks, infer: true)
+        end
+
+        confs[:one].plugin(:sql, relations: :auto_restrictions)
+        confs[:two].plugin(:sql, relations: :auto_restrictions)
+
+        confs[:one].register_relation(Test::Tasks)
+        confs[:two].register_relation(Test::Tasks)
+      end
+
+      it 'works fine' do
+        expect(containers[:one].relations[:tasks].select(:id).by_title("Jane's task").one).to eql(id: 2)
+        expect(containers[:two].relations[:tasks].select(:id).by_title("Jane's task").one).to eql(id: 2)
+      end
+    end
+
     context 'with explicit schema' do
       before do
         conf.relation(:tasks) do
