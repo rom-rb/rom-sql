@@ -103,9 +103,9 @@ module ROM
               foreign_key_changes.map do |fk|
                 case fk
                 when SchemaDiff::ForeignKeyAdded
-                  add_foreign_key fk.constrained_columns, fk.references
+                  add_foreign_key fk.child_keys, fk.parent
                 when SchemaDiff::ForeignKeyRemoved
-                  drop_foreign_key fk.constrained_columns
+                  drop_foreign_key fk.child_keys
                 end
               end
             end

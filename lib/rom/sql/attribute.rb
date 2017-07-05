@@ -14,7 +14,7 @@ module ROM
     class Attribute < ROM::Schema::Attribute
       OPERATORS = %i[>= <= > <].freeze
       NONSTANDARD_EQUALITY_VALUES = [true, false, nil].freeze
-      INDEXED = Set.new([true]).freeze
+      META_KEYS = %i(index foreign_key target).freeze
 
       # Error raised when an attribute cannot be qualified
       QualifyError = Class.new(StandardError)
@@ -304,13 +304,14 @@ module ROM
         meta
       end
 
+      # Removes metadata from the type
+      #
       # @api private
       def unwrap
-        if optional?
-          self.class.new(right, options).meta(meta)
-        else
-          self
-        end
+        cleaned_meta = meta.reject { |k, _| META_KEYS.include?(k) }
+        type = optional? ? right : self.type
+
+        self.class.new(type.with(meta: cleaned_meta), options)
       end
 
       private

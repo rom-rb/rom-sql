@@ -21,10 +21,4 @@ module Helpers
     definition = ROM::Associations::Definitions.const_get(klass).new(*args)
     ROM::SQL::Associations.const_get(definition.type).new(definition, relations)
   end
-
-  def infer_schema(table_name, schemas)
-    empty = define_schema(table_name)
-    schema = empty.with(inferrer.(empty, gateway))
-    schema.set_foreign_keys!(schemas)
-  end
 end

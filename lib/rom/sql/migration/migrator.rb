@@ -65,10 +65,9 @@ module ROM
         def auto_migrate!(gateway, schemas)
           diff_finder = SchemaDiff.new
 
-          changes = schemas.map { |_, target|
+          changes = schemas.map { |target|
             empty = SQL::Schema.define(target.name)
             current = target.with(inferrer.(empty, gateway))
-            current.set_foreign_keys!(schemas)
 
             diff_finder.(current, target)
           }.reject(&:empty?)

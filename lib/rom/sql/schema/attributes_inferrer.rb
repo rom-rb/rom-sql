@@ -52,10 +52,9 @@ module ROM
           dataset = schema.name.dataset
 
           columns = filter_columns(gateway.connection.schema(dataset))
-          fks = fks_for(gateway, dataset)
 
           inferred = columns.map do |(name, definition)|
-            type = build_type(**definition, foreign_key: fks[name])
+            type = build_type(definition)
 
             attr_class.new(type.meta(name: name, source: schema.name)) if type
           end.compact
@@ -77,7 +76,7 @@ module ROM
         end
 
         # @api private
-        def build_type(primary_key:, db_type:, type:, allow_null:, foreign_key:, **rest)
+        def build_type(primary_key:, db_type:, type:, allow_null:, **rest)
           if primary_key
             map_pk_type(type, db_type)
           else
@@ -86,7 +85,6 @@ module ROM
             if mapped_type
               read_type = mapped_type.meta[:read]
               mapped_type = mapped_type.optional if allow_null
-              mapped_type = mapped_type.meta(foreign_key: true, target: foreign_key) if foreign_key
 
               if read_type && allow_null
                 mapped_type.meta(read: read_type.optional)
@@ -114,32 +112,6 @@ module ROM
             type.meta(limit: kw[:max_length])
           else
             type
-          end
-        end
-
-        # @api private
-        def fks_for(gateway, dataset)
-          gateway.connection.foreign_key_list(dataset).each_with_object({}) do |definition, fks|
-            column, fk = build_fk(definition)
-
-            fks[column] = fk if fk
-          end
-        end
-
-        # @api private
-        def column_indexes(indexes, column)
-          indexes.each_with_object(Set.new) do |(name, idx), set|
-            set << name if idx[:columns][0] == column
-          end
-        end
-
-        # @api private
-        def build_fk(columns: , table: , **rest)
-          if columns.size == 1
-            [columns[0], table]
-          else
-            # We don't have support for multicolumn foreign keys
-            columns[0]
           end
         end
 

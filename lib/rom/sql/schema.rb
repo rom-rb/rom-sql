@@ -116,25 +116,9 @@ module ROM
             SQL::Associations.const_get(definition.type).new(definition, relations)
           end
         end
-
-        schemas = Hash.new { |h, k| h[k] = relations[k].schema }
-
-        set_foreign_keys!(schemas)
       end
 
       memoize :qualified, :canonical, :joined, :project_pk
-
-      # @api private
-      def set_foreign_keys!(schemas)
-        fks = select(&:foreign_key?).map { |source_attr|
-          target_attrs = schemas[source_attr.target].primary_key
-
-          ForeignKey.new([source_attr], target_attrs)
-        }
-
-        set!(:foreign_keys, fks.to_set)
-        self
-      end
     end
   end
 end

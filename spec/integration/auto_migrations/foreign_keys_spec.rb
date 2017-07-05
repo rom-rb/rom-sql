@@ -15,15 +15,9 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
   let(:inferrer) { ROM::SQL::Schema::Inferrer.new }
 
-  let(:gateway_schemas) do
-    conf.relation_classes(gateway).each_with_object({}) do |klass, schemas|
-      schema = klass.schema_proc.call.finalize_attributes!(gateway: gateway)
-      schemas[schema.name.relation] = schema
-    end
-  end
-
   let(:migrated_schema) do
-    infer_schema(table_name, gateway_schemas)
+    empty = define_schema(table_name)
+    empty.with(inferrer.(empty, gateway))
   end
 
   let(:attributes) { migrated_schema.to_a }
@@ -56,7 +50,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
       expect(migrated_schema.foreign_keys.size).to eql(1)
       expect(migrated_schema.foreign_keys.first).
         to eql(
-             ROM::SQL::ForeignKey.new([posts[:user_id]], [users[:id]])
+             ROM::SQL::ForeignKey.new([posts[:user_id].unwrap], :users)
            )
     end
   end
@@ -95,7 +89,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
         expect(migrated_schema.foreign_keys.size).to eql(1)
         expect(migrated_schema.foreign_keys.first).
           to eql(
-               ROM::SQL::ForeignKey.new([posts[:user_id]], [users[:id]])
+               ROM::SQL::ForeignKey.new([posts[:user_id].unwrap], :users)
              )
       end
     end

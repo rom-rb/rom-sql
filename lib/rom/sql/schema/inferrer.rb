@@ -18,40 +18,87 @@ module ROM
 
         option :raise_on_error, default: -> { true }
 
-        FALLBACK_SCHEMA = { attributes: EMPTY_ARRAY, indexes: EMPTY_SET }.freeze
+        FALLBACK_SCHEMA = {
+          attributes: EMPTY_ARRAY,
+          indexes: EMPTY_SET,
+          foreign_keys: EMPTY_SET
+        }.freeze
 
         # @api private
         def call(schema, gateway)
-          inferred = super
-
-          indexes = get_indexes(gateway, schema, inferred[:attributes])
-          indexed_attributes = index_attrbutes(inferred[:attributes], indexes)
-
-          { **inferred, indexes: indexes, attributes: indexed_attributes }
+          if enabled?
+            infer_from_database(gateway, schema, super)
+          else
+            infer_from_attributes(gateway, schema, super)
+          end
         rescue Sequel::Error => error
           on_error(schema.name, error)
-          FALLBACK_SCHEMA
+          { **FALLBACK_SCHEMA, indexes: schema.indexes }
         end
 
         # @api private
-        def get_indexes(gateway, schema, attributes)
-          dataset = schema.name.dataset
+        def infer_from_database(gateway, schema, attributes:, **rest)
+          idx = attributes_index(attributes)
+          indexes = indexes_from_database(gateway, schema, idx)
+          foreign_keys = foreign_keys_from_database(gateway, schema, idx)
 
-          if enabled? && gateway.connection.respond_to?(:indexes)
-            gateway.connection.indexes(dataset).map { |name, body|
-              columns = body[:columns].map { |name|
-                attributes.find { |attr| attr.name == name }.unwrap
-              }
+          { **rest,
+            attributes: attributes.map { |attr| mark_fk(mark_indexed(attr, indexes), foreign_keys) },
+            foreign_keys: foreign_keys,
+            indexes: indexes }
+        end
 
-              SQL::Index.new(columns, name: name, unique: body[:unique])
+        # @api private
+        def infer_from_attributes(gateway, schema, attributes:, **rest)
+          indexes = schema.indexes | indexes_from_attributes(attributes)
+          foreign_keys = foreign_keys_from_attributes(attributes)
+
+          { **rest,
+            attributes: attributes.map { |attr| mark_indexed(attr, indexes) },
+            foreign_keys: foreign_keys,
+            indexes: indexes }
+        end
+
+        # @api private
+        def indexes_from_database(gateway, schema, attributes)
+          if gateway.connection.respond_to?(:indexes)
+            dataset = schema.name.dataset
+
+            gateway.connection.indexes(dataset).map { |index_name, columns:, unique:, **rest|
+              attrs = columns.map { |name| attributes[name] }
+
+              SQL::Index.new(attrs, name: index_name, unique: unique)
             }.to_set
           else
-            schema.indexes | indexes_from_attributes(attributes)
+            EMPTY_SET
           end
         end
 
+        # @api private
+        def foreign_keys_from_database(gateway, schema, attributes)
+          dataset = schema.name.dataset
+
+          gateway.connection.foreign_key_list(dataset).map { |columns:, table:, key:, **rest|
+            attrs = columns.map { |name| attributes[name] }
+
+            SQL::ForeignKey.new(attrs, table, parent_keys: key)
+          }.to_set
+        end
+
+        # @api private
         def indexes_from_attributes(attributes)
-          attributes.select(&:indexed?).map { |attr| SQL::Index.new([attr.unwrap]) }.to_set
+          attributes.
+            select(&:indexed?).
+            map { |attr| SQL::Index.new([attr.unwrap]) }.
+            to_set
+        end
+
+        # @api private
+        def foreign_keys_from_attributes(attributes)
+          attributes.
+            select(&:foreign_key?).
+            map { |attr| SQL::ForeignKey.new([attr.unwrap], attr.target) }.
+            to_set
         end
 
         # @api private
@@ -61,12 +108,30 @@ module ROM
 
         private
 
-        def index_attrbutes(attributes, indexes)
-          attributes.map do |attribute|
-            if !attribute.indexed? && indexes.any? { |index| index.can_access?(attribute) }
-              attribute.indexed
-            else
+        def attributes_index(attributes)
+          Hash.new { |idx, name| idx[name] = attributes.find { |attr| attr.name == name }.unwrap }
+        end
+
+        # @private
+        def mark_indexed(attribute, indexes)
+          if !attribute.indexed? && indexes.any? { |index| index.can_access?(attribute) }
+            attribute.indexed
+          else
+            attribute
+          end
+        end
+
+        # @private
+        def mark_fk(attribute, foreign_keys)
+          if attribute.foreign_key?
+            attribute
+          else
+            foreign_key = foreign_keys.find { |fk| fk.attributes.map(&:name) == [attribute.name] }
+
+            if foreign_key.nil?
               attribute
+            else
+              attribute.meta(foreign_key: true, target: foreign_key.parent_table)
             end
           end
         end

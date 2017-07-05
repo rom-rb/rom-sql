@@ -92,13 +92,13 @@ module ROM
           end
 
           def type_changed?
-            erase_meta(current) != erase_meta(target)
+            clean(current) != clean(target)
           end
 
           private
 
-          def erase_meta(type)
-            unwrap(type).meta(index: Set.new, foreign_key: nil, target: nil)
+          def clean(type)
+            unwrap(type).meta(index: nil, foreign_key: nil, target: nil)
           end
         end
 
@@ -147,16 +147,16 @@ module ROM
             @foreign_key = foreign_key
           end
 
-          def references
-            foreign_key.target.dataset
+          def parent
+            foreign_key.parent_table
           end
 
-          def reference_keys
-            foreign_key.target_attributes.map(&:name)
+          def parent_keys
+            foreign_key.parent_keys
           end
 
-          def constrained_columns
-            foreign_key.source_attributes.map(&:name)
+          def child_keys
+            foreign_key.attributes.map(&:name)
           end
         end
 

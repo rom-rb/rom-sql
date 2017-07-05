@@ -3,21 +3,15 @@ module ROM
     # @api private
     class ForeignKey
       extend Initializer
-      include Dry::Equalizer(:source_attributes, :target_attributes)
+      include Dry::Equalizer(:attributes, :parent_table, :options)
 
-      param :source_attributes
+      DEFAULT_PARENT_KEYS = %i(id).freeze
 
-      param :target_attributes
+      param :attributes
 
-      option :name, optional: true
+      param :parent_table, type: Dry::Types['strict.symbol']
 
-      def source
-        source_attributes[0].source
-      end
-
-      def target
-        target_attributes[0].source
-      end
+      option :parent_keys, default: -> { DEFAULT_PARENT_KEYS }
     end
   end
 end
