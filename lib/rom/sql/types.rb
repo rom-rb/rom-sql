@@ -13,6 +13,10 @@ module ROM
         ROM::Types.Definition(*args, &block)
       end
 
+      def self.ForeignKey(relation, type = Types::Int.meta(index: true))
+        type.meta(foreign_key: true, target: relation)
+      end
+
       Serial = Int.meta(primary_key: true)
 
       Blob = Constructor(Sequel::SQL::Blob, &Sequel::SQL::Blob.method(:new))

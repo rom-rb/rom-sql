@@ -24,6 +24,10 @@ module ROM
       def partial?
         !predicate.nil?
       end
+
+      def can_access?(attribute)
+        !partial? && attributes[0].name == attribute.name
+      end
     end
   end
 end

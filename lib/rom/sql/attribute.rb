@@ -299,6 +299,13 @@ module ROM
         end
       end
 
+      # Returns a new attribute marked as indexed
+      #
+      # @api public
+      def indexed
+        meta(index: true)
+      end
+
       # @api private
       def meta_ast
         meta = super

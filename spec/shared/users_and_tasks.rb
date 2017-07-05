@@ -20,6 +20,7 @@ RSpec.shared_context 'users and tasks' do
       String :title, text: false
       constraint(:title_length) { char_length(title) > 1 } if ctx.postgres?(example)
       constraint(:title_length) { length(title) > 1 }      if ctx.sqlite?(example)
+      index :user_id
     end
 
     conn.create_table :tags do

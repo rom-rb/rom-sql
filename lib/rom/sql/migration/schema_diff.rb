@@ -87,16 +87,18 @@ module ROM
             @current = current
           end
 
-          def to_a
-            [current, target]
-          end
-
           def nullability_changed?
             current.optional? ^ target.optional?
           end
 
           def type_changed?
-            unwrap(current).meta(index: Set.new) != unwrap(target).meta(index: Set.new)
+            erase_meta(current) != erase_meta(target)
+          end
+
+          private
+
+          def erase_meta(type)
+            unwrap(type).meta(index: Set.new, foreign_key: nil, target: nil)
           end
         end
 

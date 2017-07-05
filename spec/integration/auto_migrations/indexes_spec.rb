@@ -54,6 +54,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
                     [:attribute,
                      [:name,
                       [:definition, [String, {}]],
+                      index: Set.new([true]),
                       source: :users]],
                   ])
 

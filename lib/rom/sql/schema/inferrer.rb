@@ -25,8 +25,9 @@ module ROM
           inferred = super
 
           indexes = get_indexes(gateway, schema, inferred[:attributes])
+          indexed_attributes = index_attrbutes(inferred[:attributes], indexes)
 
-          { **inferred, indexes: indexes }
+          { **inferred, indexes: indexes, attributes: indexed_attributes }
         rescue Sequel::Error => error
           on_error(schema.name, error)
           FALLBACK_SCHEMA
@@ -59,6 +60,16 @@ module ROM
         end
 
         private
+
+        def index_attrbutes(attributes, indexes)
+          attributes.map do |attribute|
+            if !attribute.indexed? && indexes.any? { |index| index.can_access?(attribute) }
+              attribute.indexed
+            else
+              attribute
+            end
+          end
+        end
 
         # @api private
         def on_error(dataset, e)

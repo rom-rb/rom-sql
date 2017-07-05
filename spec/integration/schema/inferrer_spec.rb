@@ -51,7 +51,8 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
                    name: :user_id,
                    foreign_key: true,
                    source: source,
-                   target: :users
+                   target: :users,
+                   index: true
                  )
                )
         end

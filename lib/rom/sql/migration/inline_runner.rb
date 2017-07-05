@@ -65,7 +65,7 @@ module ROM
                   drop_column attribute.name
                 when SchemaDiff::AttributeChanged
                   if attribute.type_changed?
-                    from, to = attribute.to_a.map(&attribute.method(:unwrap))
+                    from, to = attribute.current.unwrap, attribute.target.unwrap
                     raise UnsupportedConversion.new(
                             "Don't know how to convert #{ from.inspect } to #{ to.inspect }"
                           )
@@ -105,6 +105,7 @@ module ROM
                 when SchemaDiff::ForeignKeyAdded
                   add_foreign_key fk.constrained_columns, fk.references
                 when SchemaDiff::ForeignKeyRemoved
+                  drop_foreign_key fk.constrained_columns
                 end
               end
             end
