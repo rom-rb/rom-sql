@@ -212,12 +212,7 @@ RSpec.describe 'Inferring schema from database' do
         class Test::Tags < ROM::Relation[:sql]
           schema(:tags) do
             attribute :id,      Types::Serial
-            attribute :post_id, Types::Int.meta(index: true)
-            attribute :user_id, Types::ForeignKey(:users)
-
-            associations do
-              belongs_to :post
-            end
+            attribute :post_id, Types::ForeignKey(:posts).meta(index: true)
           end
         end
 
@@ -225,9 +220,14 @@ RSpec.describe 'Inferring schema from database' do
         config.relation(:users) { schema(infer: true) }
         config.register_relation(Test::Tags)
 
-        schema = container.relations[:tags].schema
+        tags = container.relations[:tags].schema
+        posts = container.relations[:posts].schema
 
-        expect(schema.foreign_keys.size).to eql(2)
+        expect(tags.foreign_keys.size).to eql(1)
+        expect(tags.foreign_keys.first).
+          to eql(
+               ROM::SQL::ForeignKey.new([tags[:post_id]], [posts[:post_id]])
+             )
       end
     end
 

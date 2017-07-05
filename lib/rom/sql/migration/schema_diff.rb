@@ -1,14 +1,14 @@
 module ROM
   module SQL
     module Migration
+      # @api private
       class SchemaDiff
         class TableDiff
-          attr_reader :current_schema, :target_schema
+          extend Initializer
 
-          def initialize(current_schema: nil, target_schema: nil)
-            @current_schema = current_schema
-            @target_schema = target_schema
-          end
+          option :current_schema, optional: true
+
+          option :target_schema, optional: true
 
           def empty?
             false
@@ -27,25 +27,21 @@ module ROM
 
         class TableCreated < TableDiff
           alias_method :schema, :target_schema
-          attr_reader :attributes, :indexes
 
-          def initialize(attributes:, indexes: EMPTY_ARRAY, **rest)
-            super(rest)
+          option :attributes
 
-            @attributes = attributes
-            @indexes = indexes
-          end
+          option :indexes, default: -> { EMPTY_ARRAY }
+
+          option :foreign_keys, default: -> { EMPTY_ARRAY }
         end
 
         class TableAltered < TableDiff
-          attr_reader :attribute_changes, :index_changes
 
-          def initialize(attribute_changes: EMPTY_ARRAY, index_changes: EMPTY_ARRAY, **rest)
-            super(rest)
+          option :attribute_changes, default: -> { EMPTY_ARRAY }
 
-            @attribute_changes = attribute_changes
-            @index_changes = index_changes
-          end
+          option :index_changes, default: -> { EMPTY_ARRAY }
+
+          option :foreign_key_changes, default: -> { EMPTY_ARRAY }
         end
 
         class AttributeDiff
@@ -142,25 +138,54 @@ module ROM
         class IndexRemoved < IndexDiff
         end
 
+        class ForeignKeyDiff
+          attr_reader :foreign_key
+
+          def initialize(foreign_key)
+            @foreign_key = foreign_key
+          end
+
+          def references
+            foreign_key.target.dataset
+          end
+
+          def reference_keys
+            foreign_key.target_attributes.map(&:name)
+          end
+
+          def constrained_columns
+            foreign_key.source_attributes.map(&:name)
+          end
+        end
+
+        class ForeignKeyAdded < ForeignKeyDiff
+        end
+
+        class ForeignKeyRemoved < ForeignKeyDiff
+        end
+
         def call(current, target)
           if current.empty?
             TableCreated.new(
               target_schema: target,
               attributes: target.map { |attr| AttributeAdded.new(attr) },
-              indexes: target.indexes.map { |idx| IndexAdded.new(idx) }
+              indexes: target.indexes.map { |idx| IndexAdded.new(idx) },
+              foreign_keys: target.foreign_keys.map { |fk| ForeignKeyAdded.new(fk) }
             )
           else
             attribute_changes = compare_attributes(current.to_h, target.to_h)
             index_changes = compare_indexes(current, target)
+            fk_changes = compare_foreign_key_constraints(current, target)
 
-            if attribute_changes.empty? && index_changes.empty?
+            if attribute_changes.empty? && index_changes.empty? && fk_changes.empty?
               Empty.new(current_schema: current, target_schema: target)
             else
               TableAltered.new(
                 current_schema: current,
                 target_schema: target,
                 attribute_changes: attribute_changes,
-                index_changes: index_changes
+                index_changes: index_changes,
+                foreign_key_changes: fk_changes
               )
             end
           end
@@ -190,6 +215,17 @@ module ROM
 
           removed_indexes.map { |idx| IndexRemoved.new(idx) } +
             added_indexes.map { |idx| IndexAdded.new(idx) }
+        end
+
+        def compare_foreign_key_constraints(current, target)
+          target_fks = target.foreign_keys
+          current_fks = current.foreign_keys
+
+          added_fks = target_fks - current_fks
+          removed_fks = current_fks - target_fks
+
+          removed_fks.map { |fk| ForeignKeyRemoved.new(fk) } +
+            added_fks.map { |fk| ForeignKeyAdded.new(fk) }
         end
       end
     end

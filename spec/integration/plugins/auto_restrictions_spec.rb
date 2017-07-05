@@ -43,6 +43,8 @@ RSpec.describe 'Plugins / :auto_restrictions', seeds: true do
         confs[:one].plugin(:sql, relations: :auto_restrictions)
         confs[:two].plugin(:sql, relations: :auto_restrictions)
 
+        confs[:one].relation(:users) { schema(infer: true) }
+        confs[:two].relation(:users) { schema(infer: true) }
         confs[:one].register_relation(Test::Tasks)
         confs[:two].register_relation(Test::Tasks)
       end

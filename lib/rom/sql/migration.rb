@@ -139,11 +139,21 @@ module ROM
 
       # @api public
       def auto_migrate!(conf)
-        schemas = conf.relation_classes(self).map do |klass|
-          klass.schema || klass.schema_proc.call.finalize_attributes!(gateway: self)
+        migrator.auto_migrate!(self, schemas(conf))
+      end
+
+      private
+
+      # @api private
+      def schemas(conf)
+        schemas = conf.relation_classes(self).each_with_object({}) do |klass, h|
+          schema = klass.schema || klass.schema_proc.call.finalize_attributes!(gateway: self)
+
+          h[schema.name.relation] = schema
         end
 
-        migrator.auto_migrate!(self, schemas)
+        schemas.each { |_, schema| schema.set_foreign_keys!(schemas) unless schema.frozen? }
+        schemas
       end
     end
   end

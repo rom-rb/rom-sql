@@ -14,10 +14,15 @@ module ROM
 
         DEFAULT_PATH = 'db/migrate'.freeze
         VERSION_FORMAT = '%Y%m%d%H%M%S'.freeze
+        DEFAULT_INFERRER = Schema::Inferrer.new.suppress_errors.freeze
 
         param :connection
 
         option :path, type: ROM::Types.Definition(Pathname), default: -> { DEFAULT_PATH }
+
+        option :inferrer, default: -> { DEFAULT_INFERRER }
+
+        option :runner, default: -> { InlineRunner.new(connection) }
 
         # @api private
         def run(options = {})
@@ -57,17 +62,17 @@ module ROM
         end
 
         # @api private
-        def diff(gateway, inferrer, target)
-          empty = SQL::Schema.define(target.name)
-          current = target.with(inferrer.(empty, gateway))
-
-          SchemaDiff.new.(current, target)
-        end
-
         def auto_migrate!(gateway, schemas)
-          runner = InlineRunner.new(gateway)
-          inferrer = ROM::SQL::Schema::Inferrer.new.suppress_errors
-          changes = schemas.map { |schema| diff(gateway, inferrer, schema) }.reject(&:empty?)
+          diff_finder = SchemaDiff.new
+
+          changes = schemas.map { |_, target|
+            empty = SQL::Schema.define(target.name)
+            current = target.with(inferrer.(empty, gateway))
+            current.set_foreign_keys!(schemas)
+
+            diff_finder.(current, target)
+          }.reject(&:empty?)
+
           runner.(changes)
         end
       end

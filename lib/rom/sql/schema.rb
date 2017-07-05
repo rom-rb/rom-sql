@@ -117,30 +117,23 @@ module ROM
           end
         end
 
-        set_foreign_keys!(relations)
-        self
+        schemas = Hash.new { |h, k| h[k] = relations[k].schema }
+
+        set_foreign_keys!(schemas)
       end
 
       memoize :qualified, :canonical, :joined, :project_pk
 
-      private
-
       # @api private
-      def set_foreign_keys!(relations)
-        assoc_fks = associations.select { |_, assoc| assoc.outgoing_reference? }.map { |_, assoc|
-          source_attr = self[assoc.foreign_key]
-          target_attr = assoc.target.primary_key
-
-          ForeignKey.new([source_attr], [target_attr])
-        }
-
-        attribute_fks = select(&:foreign_key?).map { |source_attr|
-          target_attrs = relations[source_attr.target].primary_key
+      def set_foreign_keys!(schemas)
+        fks = select(&:foreign_key?).map { |source_attr|
+          target_attrs = schemas[source_attr.target].primary_key
 
           ForeignKey.new([source_attr], target_attrs)
         }
 
-        set!(:foreign_keys, (assoc_fks + attribute_fks).to_set)
+        set!(:foreign_keys, fks.to_set)
+        self
       end
     end
   end

@@ -4,31 +4,37 @@ module ROM
       class Migrator
         # @api private
         class InlineRunner
-          attr_reader :gateway
+          attr_reader :connection
 
-          def initialize(gateway)
-            @gateway = gateway
+          def initialize(connection)
+            @connection = connection
           end
 
           def call(changes)
-            changes.each do |diff|
-              apply(diff)
-            end
+            changes.each { |diff| apply_schema(diff) }
+            changes.each { |diff| apply_constraints(diff) }
           end
 
-          def apply(diff)
+          def apply_schema(diff)
             case diff
             when SchemaDiff::TableCreated
               create_table(diff)
             when SchemaDiff::TableAltered
               alter_table(diff)
-            else
-              raise NotImplementedError
+            end
+          end
+
+          def apply_constraints(diff)
+            case diff
+            when SchemaDiff::TableCreated
+              alter_foreign_keys(diff, diff.foreign_keys)
+            when SchemaDiff::TableAltered
+              alter_foreign_keys(diff, diff.foreign_key_changes)
             end
           end
 
           def create_table(diff)
-            gateway.create_table(diff.table_name) do
+            connection.create_table(diff.table_name) do
               diff.attributes.each do |attribute|
                 if attribute.primary_key?
                   primary_key attribute.name
@@ -48,7 +54,9 @@ module ROM
           end
 
           def alter_table(diff)
-            gateway.connection.alter_table(diff.table_name) do
+            return if diff.attribute_changes.empty? && diff.index_changes.empty?
+
+            connection.alter_table(diff.table_name) do
               diff.attribute_changes.each do |attribute|
                 case attribute
                 when SchemaDiff::AttributeAdded
@@ -83,6 +91,20 @@ module ROM
                             where: index.predicate
                 when SchemaDiff::IndexRemoved
                   drop_index index.attributes, name: index.name
+                end
+              end
+            end
+          end
+
+          def alter_foreign_keys(diff, foreign_key_changes)
+            return if foreign_key_changes.empty?
+
+            connection.alter_table(diff.table_name) do
+              foreign_key_changes.map do |fk|
+                case fk
+                when SchemaDiff::ForeignKeyAdded
+                  add_foreign_key fk.constrained_columns, fk.references
+                when SchemaDiff::ForeignKeyRemoved
                 end
               end
             end
