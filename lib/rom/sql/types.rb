@@ -14,7 +14,7 @@ module ROM
       end
 
       def self.ForeignKey(relation, type = Types::Int.meta(index: true))
-        type.meta(foreign_key: true, target: relation)
+        super
       end
 
       Serial = Int.meta(primary_key: true)
