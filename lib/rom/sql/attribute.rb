@@ -287,16 +287,7 @@ module ROM
 
       # @api public
       def indexed?
-        !indexes.empty?
-      end
-
-      # @api public
-      def indexes
-        if meta[:index] == true
-          INDEXED
-        else
-          meta[:index] || EMPTY_SET
-        end
+        meta[:index].equal?(true)
       end
 
       # Returns a new attribute marked as indexed
@@ -309,7 +300,7 @@ module ROM
       # @api private
       def meta_ast
         meta = super
-        meta[:index] = indexes if indexed?
+        meta[:index] = true if indexed?
         meta
       end
 
