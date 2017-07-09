@@ -30,7 +30,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
   describe 'create a table' do
     it 'creates a table from a relation' do
-      gateway.auto_migrate!(conf)
+      gateway.auto_migrate!(conf, inline: true)
 
       expect(attributes.map(&:to_ast))
         .to eql([
@@ -61,7 +61,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
     end
 
     it 'adds columns to an existing table' do
-      gateway.auto_migrate!(conf)
+      gateway.auto_migrate!(conf, inline: true)
 
       expect(attributes[1].to_ast)
         .to eql(
@@ -94,7 +94,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
     end
 
     it 'removes columns from a table' do
-      gateway.auto_migrate!(conf)
+      gateway.auto_migrate!(conf, inline: true)
 
       expect(attributes.map(&:name)).to eql(%i(id name email))
     end
@@ -112,7 +112,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
     it 'leaves existing schema' do
       current = container.relations[:users].schema
 
-      gateway.auto_migrate!(conf)
+      gateway.auto_migrate!(conf, inline: true)
 
       expect(attributes).to eql(current.to_a)
     end
@@ -129,7 +129,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
       end
 
       it 'adds the constraint' do
-        gateway.auto_migrate!(conf)
+        gateway.auto_migrate!(conf, inline: true)
 
         expect(attributes[1].name).to eql(:name)
         expect(attributes[1]).not_to be_optional
@@ -146,7 +146,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
       end
 
       it 'removes the constraint' do
-        gateway.auto_migrate!(conf)
+        gateway.auto_migrate!(conf, inline: true)
 
         expect(attributes[2].name).to eql(:email)
         expect(attributes[2]).to be_optional

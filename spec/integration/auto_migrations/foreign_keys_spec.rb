@@ -45,7 +45,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
     end
 
     it 'creates foreign key constraints based on schema' do
-      gateway.auto_migrate!(conf)
+      gateway.auto_migrate!(conf, inline: true)
 
       expect(migrated_schema.foreign_keys.size).to eql(1)
       expect(migrated_schema.foreign_keys.first).
@@ -84,7 +84,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
       end
 
       it 'creates foreign key constraints based on schema' do
-        gateway.auto_migrate!(conf)
+        gateway.auto_migrate!(conf, inline: true)
 
         expect(migrated_schema.foreign_keys.size).to eql(1)
         expect(migrated_schema.foreign_keys.first).
@@ -123,7 +123,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
     end
 
     it 'removes a foreign key' do
-      gateway.auto_migrate!(conf)
+      gateway.auto_migrate!(conf, inline: true)
 
       expect(migrated_schema.foreign_keys.size).to eql(0)
     end

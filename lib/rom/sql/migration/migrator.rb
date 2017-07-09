@@ -3,7 +3,9 @@ require 'pathname'
 require 'rom/types'
 require 'rom/initializer'
 require 'rom/sql/migration'
+require 'rom/sql/migration/runner'
 require 'rom/sql/migration/inline_runner'
+require 'rom/sql/migration/writer'
 
 module ROM
   module SQL
@@ -13,7 +15,7 @@ module ROM
         extend Initializer
 
         DEFAULT_PATH = 'db/migrate'.freeze
-        VERSION_FORMAT = '%Y%m%d%H%M%S'.freeze
+        VERSION_FORMAT = '%Y%m%d%H%M%S%L'.freeze
         DEFAULT_INFERRER = Schema::Inferrer.new.suppress_errors.freeze
 
         param :connection
@@ -21,8 +23,6 @@ module ROM
         option :path, type: ROM::Types.Definition(Pathname), default: -> { DEFAULT_PATH }
 
         option :inferrer, default: -> { DEFAULT_INFERRER }
-
-        option :runner, default: -> { InlineRunner.new(connection) }
 
         # @api private
         def run(options = {})
@@ -40,13 +40,15 @@ module ROM
         end
 
         # @api private
-        def create_file(name, version = generate_version)
+        def create_file(name, version = generate_version, **options)
           filename = "#{version}_#{name}.rb"
+          content = options[:content] || migration_file_content
+          path = options[:path] || self.path
           dirname = Pathname(path)
           fullpath = dirname.join(filename)
 
           FileUtils.mkdir_p(dirname)
-          File.write(fullpath, migration_file_content)
+          File.write(fullpath, content)
 
           fullpath
         end
@@ -62,7 +64,7 @@ module ROM
         end
 
         # @api private
-        def auto_migrate!(gateway, schemas)
+        def auto_migrate!(gateway, schemas, options = EMPTY_HASH, &block)
           diff_finder = SchemaDiff.new
 
           changes = schemas.map { |target|
@@ -72,7 +74,21 @@ module ROM
             diff_finder.(current, target)
           }.reject(&:empty?)
 
+          runner = migration_runner(options)
           runner.(changes)
+        end
+
+        # @api private
+        def migration_runner(options)
+          if options[:inline]
+            Runner.new(InlineRunner.new(connection))
+          else
+            writer = Writer.new do |name, content|
+              create_file(name, **options, content: content)
+            end
+
+            Runner.new(writer)
+          end
         end
       end
     end

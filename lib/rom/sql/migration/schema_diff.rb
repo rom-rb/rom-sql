@@ -42,6 +42,10 @@ module ROM
           option :index_changes, default: -> { EMPTY_ARRAY }
 
           option :foreign_key_changes, default: -> { EMPTY_ARRAY }
+
+          def meta?
+            attribute_changes.empty? && index_changes.empty?
+          end
         end
 
         class AttributeDiff
@@ -110,34 +114,37 @@ module ROM
           end
 
           def attributes
-            index.attributes.map(&:name)
+            list = index.attributes.map(&:name)
+
+            if list.size == 1
+              list[0]
+            else
+              list
+            end
           end
 
           def name
             index.name
           end
-
-          def unique?
-            index.unique?
-          end
-
-          def type
-            index.type
-          end
-
-          def predicate
-            index.predicate
-          end
-
-          def partial?
-            !predicate.nil?
-          end
         end
 
         class IndexAdded < IndexDiff
+          def options
+            options = {}
+            options[:name] = index.name if !index.name.nil?
+            options[:unique] = true if index.unique?
+            options[:type] = index.type if !index.type.nil?
+            options[:where] = index.predicate if !index.predicate.nil?
+            options
+          end
         end
 
         class IndexRemoved < IndexDiff
+          def options
+            options = {}
+            options[:name] = index.name if !index.name.nil?
+            options
+          end
         end
 
         class ForeignKeyDiff

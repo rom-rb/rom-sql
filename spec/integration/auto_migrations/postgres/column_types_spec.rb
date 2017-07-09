@@ -34,7 +34,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
     end
 
     it 'has support for PG data types' do
-      gateway.auto_migrate!(conf)
+      gateway.auto_migrate!(conf, inline: true)
 
       expect(attributes.map(&:to_ast))
         .to eql([

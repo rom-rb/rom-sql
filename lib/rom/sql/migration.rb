@@ -138,12 +138,12 @@ module ROM
       end
 
       # @api public
-      def auto_migrate!(conf)
+      def auto_migrate!(conf, options = EMPTY_HASH, &block)
         schemas = conf.relation_classes(self).map do |klass|
           klass.schema_proc.call.finalize_attributes!(gateway: self)
         end
 
-        migrator.auto_migrate!(self, schemas)
+        migrator.auto_migrate!(self, schemas, options)
       end
     end
   end
