@@ -223,10 +223,11 @@ RSpec.describe 'Inferring schema from database' do
         tags = container.relations[:tags].schema
 
         expect(tags.foreign_keys.size).to eql(1)
-        expect(tags.foreign_keys.first).
-          to eql(
-               ROM::SQL::ForeignKey.new([tags[:post_id].unwrap], :posts)
-             )
+
+        fk = tags.foreign_keys.first
+
+        expect(fk.parent_table).to be(:posts)
+        expect(fk.attributes[0].name).to be(:post_id)
       end
     end
 
@@ -274,8 +275,8 @@ RSpec.describe 'Inferring schema from database' do
         it 'can provide index type' do
           class Test::Tags < ROM::Relation[:sql]
             schema(:tags) do
-              attribute :id,         Types::Serial
-              attribute :name,       Types::String
+              attribute :id, Types::Serial
+              attribute :name, Types::String
 
               indexes do
                 index :name, type: :gist

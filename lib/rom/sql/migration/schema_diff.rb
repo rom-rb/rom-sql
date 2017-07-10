@@ -96,7 +96,7 @@ module ROM
           end
 
           def type_changed?
-            clean(current) != clean(target)
+            clean(current.qualified) != clean(target.qualified)
           end
 
           private
@@ -202,7 +202,7 @@ module ROM
 
         def compare_attributes(current, target)
           changed_attributes = target.select { |name, attr|
-            current.key?(name) && current[name] != attr
+            current.key?(name) && !attributes_equal?(current[name], attr)
           }.map { |name, target_attr|
             [name, [current[name], target_attr]]
           }.to_h
@@ -235,6 +235,10 @@ module ROM
 
           removed_fks.map { |fk| ForeignKeyRemoved.new(fk) } +
             added_fks.map { |fk| ForeignKeyAdded.new(fk) }
+        end
+
+        def attributes_equal?(a, b)
+          a.qualified == b.qualified
         end
       end
     end

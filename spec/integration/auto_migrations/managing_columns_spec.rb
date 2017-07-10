@@ -114,7 +114,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
       gateway.auto_migrate!(conf, inline: true)
 
-      expect(attributes).to eql(current.to_a)
+      expect(attributes.map(&:qualified)).to eql(current.to_a)
     end
   end
 

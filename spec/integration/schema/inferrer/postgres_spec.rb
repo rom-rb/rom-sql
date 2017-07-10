@@ -47,6 +47,10 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
   let(:schema) { container.relations[:test_inferrence].schema }
   let(:source) { container.relations[:test_inferrence].name }
 
+  def qualified(schema)
+    schema.each_with_object({}) { |(key, attr), acc| acc[key] = ROM::SQL::Attribute.new(attr).qualified }
+  end
+
   context 'inferring db-specific attributes' do
     before do
       conf.relation(:test_inferrence) do
@@ -57,70 +61,72 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
     it 'can infer attributes for dataset' do
       expect(schema.to_h).
         to eql(
-             id: ROM::SQL::Types::PG::UUID.meta(name: :id, source: source, primary_key: true),
-             big: ROM::SQL::Types::Int.optional.meta(name: :big, source: source),
-             json_data: ROM::SQL::Types::PG::JSON.optional.meta(name: :json_data, source: source),
-             jsonb_data: ROM::SQL::Types::PG::JSONB.optional.meta(name: :jsonb_data, source: source),
-             money: ROM::SQL::Types::Decimal.meta(name: :money, source: source),
-             tags: ROM::SQL::Types::PG::Array('text').optional.meta(name: :tags, source: source),
-             tag_ids: ROM::SQL::Types::PG::Array('biging').optional.meta(name: :tag_ids, source: source),
-             color: ROM::SQL::Types::String.enum(*colors).optional.meta(name: :color, source: source),
-             ip: ROM::SQL::Types::PG::IPAddress.optional.meta(
-               name: :ip,
-               source: source,
-               read: ROM::SQL::Types::PG::IPAddressR.optional
-             ),
-             subnet: ROM::SQL::Types::PG::IPAddress.optional.meta(
-               name: :subnet,
-               source: source,
-               read: ROM::SQL::Types::PG::IPAddressR.optional
-             ),
-             hw_address: ROM::SQL::Types::String.optional.meta(name: :hw_address, source: source),
-             center: ROM::SQL::Types::PG::PointT.optional.meta(
-               name: :center,
-               source: source,
-               read: ROM::SQL::Types::PG::PointTR.optional
-             ),
-             page: ROM::SQL::Types::String.optional.meta(name: :page, source: source),
-             mapping: ROM::SQL::Types::PG::HStore.optional.meta(
-               name: :mapping,
-               source: source,
-               read: ROM::SQL::Types::PG::HStoreR.optional
-             ),
-             line: ROM::SQL::Types::PG::LineT.optional.meta(
-               name: :line,
-               source: source,
-               read: ROM::SQL::Types::PG::LineTR.optional
-             ),
-             circle: ROM::SQL::Types::PG::CircleT.optional.meta(
-               name: :circle,
-               source: source,
-               read: ROM::SQL::Types::PG::CircleTR.optional
-             ),
-             box: ROM::SQL::Types::PG::BoxT.optional.meta(
-               name: :box,
-               source: source,
-               read: ROM::SQL::Types::PG::BoxTR.optional
-             ),
-             lseg: ROM::SQL::Types::PG::LineSegmentT.optional.meta(
-               name: :lseg,
-               source: source,
-               read: ROM::SQL::Types::PG::LineSegmentTR.optional
-             ),
-             polygon: ROM::SQL::Types::PG::PolygonT.optional.meta(
-               name: :polygon,
-               source: source,
-               read: ROM::SQL::Types::PG::PolygonTR.optional
-             ),
-             path: ROM::SQL::Types::PG::PathT.optional.meta(
-               name: :path,
-               source: source,
-               read: ROM::SQL::Types::PG::PathTR.optional
-             ),
-             created_at: ROM::SQL::Types::Time.optional.meta(name: :created_at, source: source),
-             datetime: ROM::SQL::Types::Time.optional.meta(name: :datetime, source: source),
-             datetime_tz: ROM::SQL::Types::Time.optional.meta(name: :datetime_tz, source: source),
-             flag: ROM::SQL::Types::Bool.meta(name: :flag, source: source)
+             qualified(
+               id: ROM::SQL::Types::PG::UUID.meta(name: :id, source: source, primary_key: true),
+               big: ROM::SQL::Types::Int.optional.meta(name: :big, source: source),
+               json_data: ROM::SQL::Types::PG::JSON.optional.meta(name: :json_data, source: source),
+               jsonb_data: ROM::SQL::Types::PG::JSONB.optional.meta(name: :jsonb_data, source: source),
+               money: ROM::SQL::Types::Decimal.meta(name: :money, source: source),
+               tags: ROM::SQL::Types::PG::Array('text').optional.meta(name: :tags, source: source),
+               tag_ids: ROM::SQL::Types::PG::Array('biging').optional.meta(name: :tag_ids, source: source),
+               color: ROM::SQL::Types::String.enum(*colors).optional.meta(name: :color, source: source),
+               ip: ROM::SQL::Types::PG::IPAddress.optional.meta(
+                 name: :ip,
+                 source: source,
+                 read: ROM::SQL::Types::PG::IPAddressR.optional
+               ),
+               subnet: ROM::SQL::Types::PG::IPAddress.optional.meta(
+                 name: :subnet,
+                 source: source,
+                 read: ROM::SQL::Types::PG::IPAddressR.optional
+               ),
+               hw_address: ROM::SQL::Types::String.optional.meta(name: :hw_address, source: source),
+               center: ROM::SQL::Types::PG::PointT.optional.meta(
+                 name: :center,
+                 source: source,
+                 read: ROM::SQL::Types::PG::PointTR.optional
+               ),
+               page: ROM::SQL::Types::String.optional.meta(name: :page, source: source),
+               mapping: ROM::SQL::Types::PG::HStore.optional.meta(
+                 name: :mapping,
+                 source: source,
+                 read: ROM::SQL::Types::PG::HStoreR.optional
+               ),
+               line: ROM::SQL::Types::PG::LineT.optional.meta(
+                 name: :line,
+                 source: source,
+                 read: ROM::SQL::Types::PG::LineTR.optional
+               ),
+               circle: ROM::SQL::Types::PG::CircleT.optional.meta(
+                 name: :circle,
+                 source: source,
+                 read: ROM::SQL::Types::PG::CircleTR.optional
+               ),
+               box: ROM::SQL::Types::PG::BoxT.optional.meta(
+                 name: :box,
+                 source: source,
+                 read: ROM::SQL::Types::PG::BoxTR.optional
+               ),
+               lseg: ROM::SQL::Types::PG::LineSegmentT.optional.meta(
+                 name: :lseg,
+                 source: source,
+                 read: ROM::SQL::Types::PG::LineSegmentTR.optional
+               ),
+               polygon: ROM::SQL::Types::PG::PolygonT.optional.meta(
+                 name: :polygon,
+                 source: source,
+                 read: ROM::SQL::Types::PG::PolygonTR.optional
+               ),
+               path: ROM::SQL::Types::PG::PathT.optional.meta(
+                 name: :path,
+                 source: source,
+                 read: ROM::SQL::Types::PG::PathTR.optional
+               ),
+               created_at: ROM::SQL::Types::Time.optional.meta(name: :created_at, source: source),
+               datetime: ROM::SQL::Types::Time.optional.meta(name: :datetime, source: source),
+               datetime_tz: ROM::SQL::Types::Time.optional.meta(name: :datetime_tz, source: source),
+               flag: ROM::SQL::Types::Bool.meta(name: :flag, source: source)
+             )
            )
     end
   end

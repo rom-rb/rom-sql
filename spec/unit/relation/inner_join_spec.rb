@@ -26,7 +26,7 @@ RSpec.describe ROM::Relation, '#inner_join' do
 
       result = relation.
                  inner_join(:tasks, {user_id: :id}, table_alias: :t1).
-                 select(:name, tasks[:title])
+                 select(:name, tasks[:title].qualified(:t1))
 
       expect(result.schema.map(&:name)).to eql(%i[name title])
 

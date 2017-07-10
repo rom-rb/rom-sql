@@ -40,8 +40,8 @@ module ROM
       # @return [Schema]
       #
       # @api public
-      def qualified
-        new(map(&:qualified))
+      def qualified(table_alias = nil)
+        new(map { |attr| attr.qualified(table_alias) })
       end
 
       # Return a new schema with attributes restored to canonical form
@@ -105,6 +105,7 @@ module ROM
       # @api private
       def finalize_attributes!(options = EMPTY_HASH)
         super do
+          @attributes = map(&:qualified)
           initialize_primary_key_names
         end
       end

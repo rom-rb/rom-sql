@@ -105,8 +105,8 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def qualified
-          schema.qualified.(self)
+        def qualified(table_alias = nil)
+          schema.qualified(table_alias).(self)
         end
 
         # Return a list of qualified column names
@@ -768,7 +768,7 @@ module ROM
         # @option options [TrueClass, FalseClass] :all Set to true to use UNION ALL instead of UNION, so duplicate rows can occur
         # @option options [TrueClass, FalseClass] :from_self Set to false to not wrap the returned dataset in a #from_self, use with care.
         #
-        # @return [Relation]
+        # @returRelation]
         #
         # @api public
         def union(relation, options = EMPTY_HASH, &block)

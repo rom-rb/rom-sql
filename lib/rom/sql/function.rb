@@ -16,9 +16,9 @@ module ROM
         meta[:alias] || super
       end
 
-      def qualified
+      def qualified(table_alias = nil)
         meta(
-          func: ::Sequel::SQL::Function.new(func.name, *func.args.map { |arg| arg.respond_to?(:qualified) ? arg.qualified : arg })
+          func: ::Sequel::SQL::Function.new(func.name, *func.args.map { |arg| arg.respond_to?(:qualified) ? arg.qualified(table_alias) : arg })
         )
       end
 
