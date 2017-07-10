@@ -181,15 +181,6 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         let(:decimal) { ROM::SQL::Types::Decimal.meta(source: source) }
 
         it 'infers attributes with precision' do |example|
-          if mysql?(example)
-            default_precision = decimal.meta(name: :dec, precision: 10, scale: 0)
-          elsif oracle?(example)
-            # Oracle treats DECIMAL as NUMBER(38, 0)
-            default_precision = integer.meta(name: :dec)
-          else
-            default_precision = decimal.meta(name: :dec)
-          end
-
           pending 'Add precision inferrence for Oracle' if oracle?(example)
 
           expect(schema[:id].source).to eql(source)
