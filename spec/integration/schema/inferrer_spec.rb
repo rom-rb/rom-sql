@@ -30,11 +30,12 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         let(:source) { ROM::Relation::Name[dataset] }
 
         it 'can infer attributes for dataset' do
-          expect(schema.to_h).
-            to eql(
-                 id: ROM::SQL::Types::Serial.meta(name: :id, source: source),
-                 name: ROM::SQL::Types::String.meta(name: :name, limit: 255, source: source)
-               )
+          expect(schema[:id].source).to eql(source)
+          expect(schema[:id].type.primitive).to be(Integer)
+
+          expect(schema[:name].source).to eql(source)
+          expect(schema[:name].meta[:limit]).to be(255)
+          expect(schema[:name].type.primitive).to be(String)
         end
       end
 
@@ -43,18 +44,19 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         let(:source) { ROM::Relation::Name[:tasks] }
 
         it 'can infer attributes for dataset' do |ex|
-          expect(schema.to_h).
-            to eql(
-                 id: ROM::SQL::Types::Serial.meta(name: :id, source: source),
-                 title: ROM::SQL::Types::String.meta(limit: 255).optional.meta(name: :title, source: source),
-                 user_id: ROM::SQL::Types::Int.optional.meta(
-                   name: :user_id,
-                   foreign_key: true,
-                   source: source,
-                   target: :users,
-                   index: true
-                 )
-               )
+          expect(schema[:id].source).to eql(source)
+          expect(schema[:id].type.primitive).to be(Integer)
+
+          expect(schema[:title].source).to eql(source)
+          # TODO: is this supposed to store limit here?
+          # expect(schema[:title].meta[:limit]).to eql(255)
+          expect(schema[:title].unwrap.type.primitive).to be(String)
+
+          expect(schema[:user_id].source).to eql(source)
+          expect(schema[:user_id]).to be_foreign_key
+          expect(schema[:user_id].meta[:index]).to be(true)
+          expect(schema[:user_id].target).to eql(:users)
+          expect(schema[:user_id].unwrap.type.primitive).to be(Integer)
         end
       end
 
@@ -90,17 +92,26 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         let(:source) { ROM::Relation::Name[dataset] }
 
         it 'can infer attributes for dataset' do |ex|
-          date_type = oracle?(ex) ? ROM::SQL::Types::Time : ROM::SQL::Types::Date
+          date_primitive = oracle?(ex) ? Time : Date
 
-          expect(schema.to_h).
-            to eql(
-                 id: ROM::SQL::Types::Serial.meta(name: :id, source: source),
-                 text: ROM::SQL::Types::String.meta(name: :text, limit: 255, source: source),
-                 time: ROM::SQL::Types::Time.optional.meta(name: :time, source: source),
-                 date: date_type.optional.meta(name: :date, source: source),
-                 datetime: ROM::SQL::Types::Time.meta(name: :datetime, source: source),
-                 data: ROM::SQL::Types::Blob.optional.meta(name: :data, source: source),
-               )
+          expect(schema[:id].source).to eql(source)
+          expect(schema[:id].type.primitive).to be(Integer)
+
+          expect(schema[:text].source).to eql(source)
+          expect(schema[:text].type.primitive).to be(String)
+          expect(schema[:text].meta[:limit]).to be(255)
+
+          expect(schema[:time].source).to eql(source)
+          expect(schema[:time].unwrap.type.primitive).to be(Time)
+
+          expect(schema[:date].source).to eql(source)
+          expect(schema[:date].unwrap.type.primitive).to be(date_primitive)
+
+          expect(schema[:datetime].source).to eql(source)
+          expect(schema[:datetime].type.primitive).to be(Time)
+
+          expect(schema[:data].source).to eql(source)
+          expect(schema[:data].unwrap.type.primitive).to be(Sequel::SQL::Blob)
         end
       end
 
@@ -122,16 +133,30 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         let(:char_t) { ROM::SQL::Types::String.meta(source: source) }
 
         it 'infers attributes with limit' do
-          expect(schema.to_h).to eql(
-            text1: char_t.meta(name: :text1, limit: 255),
-            text2: char_t.meta(name: :text2, limit: 100),
-            text3: char_t.meta(name: :text3, limit: 100),
-            text4: char_t.meta(name: :text4, limit: 255),
-            text5: char_t.meta(name: :text5, limit: 100),
-            text6: ROM::SQL::Types::String.meta(limit: 100).optional.meta(
-              name: :text6, source: source
-            )
-          )
+          expect(schema[:text1].source).to eql(source)
+          expect(schema[:text1].meta[:limit]).to be(255)
+          expect(schema[:text1].unwrap.type.primitive).to be(String)
+
+          expect(schema[:text2].source).to eql(source)
+          expect(schema[:text2].meta[:limit]).to be(100)
+          expect(schema[:text2].unwrap.type.primitive).to be(String)
+
+          expect(schema[:text3].source).to eql(source)
+          expect(schema[:text3].meta[:limit]).to be(100)
+          expect(schema[:text3].unwrap.type.primitive).to be(String)
+
+          expect(schema[:text4].source).to eql(source)
+          expect(schema[:text4].meta[:limit]).to be(255)
+          expect(schema[:text4].unwrap.type.primitive).to be(String)
+
+          expect(schema[:text5].source).to eql(source)
+          expect(schema[:text5].meta[:limit]).to be(100)
+          expect(schema[:text5].unwrap.type.primitive).to be(String)
+
+          expect(schema[:text6].source).to eql(source)
+          # TODO: is this supposed to store the limit?
+          # expect(schema[:text6].meta[:limit]).to be(100)
+          expect(schema[:text6].unwrap.type.primitive).to be(String)
         end
       end
 
@@ -167,17 +192,31 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
 
           pending 'Add precision inferrence for Oracle' if oracle?(example)
 
-          expect(schema.to_h).
-            to eql(
-                 id: ROM::SQL::Types::Serial.meta(name: :id, source: source),
-                 dec: default_precision,
-                 dec_prec: decimal.meta(name: :dec_prec, precision: 12, scale: 0),
-                 num: decimal.meta(name: :num, precision: 5, scale: 2),
-                 small: ROM::SQL::Types::Int.optional.meta(name: :small, source: source),
-                 int: ROM::SQL::Types::Int.optional.meta(name: :int, source: source),
-                 floating: ROM::SQL::Types::Float.optional.meta(name: :floating, source: source),
-                 double_p: ROM::SQL::Types::Float.optional.meta(name: :double_p, source: source),
-               )
+          expect(schema[:id].source).to eql(source)
+          expect(schema[:id].type.primitive).to be(Integer)
+
+          expect(schema[:dec].source).to eql(source)
+          expect(schema[:dec].type.primitive).to be(BigDecimal)
+          # TODO: is this supposed to be stored here?
+          # expect(schema[:dec].meta[:precision]).to be(10)
+          # expect(schema[:dec].meta[:scale]).to be(0)
+
+          expect(schema[:dec_prec].source).to eql(source)
+          expect(schema[:dec_prec].type.primitive).to be(BigDecimal)
+          expect(schema[:dec_prec].meta[:precision]).to be(12)
+          expect(schema[:dec_prec].meta[:scale]).to be(0)
+
+          expect(schema[:small].source).to eql(source)
+          expect(schema[:small].unwrap.type.primitive).to be(Integer)
+
+          expect(schema[:int].source).to eql(source)
+          expect(schema[:int].unwrap.type.primitive).to be(Integer)
+
+          expect(schema[:floating].source).to eql(source)
+          expect(schema[:floating].unwrap.type.primitive).to be(Float)
+
+          expect(schema[:double_p].source).to eql(source)
+          expect(schema[:double_p].unwrap.type.primitive).to be(Float)
         end
       end
     end

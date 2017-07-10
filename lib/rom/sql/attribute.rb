@@ -61,10 +61,10 @@ module ROM
       #
       # @api public
       def qualified(table_alias = nil)
-        return self if qualified?
+        return self if qualified? && table_alias.nil?
 
         case sql_expr
-        when Sequel::SQL::AliasedExpression, Sequel::SQL::Identifier
+        when Sequel::SQL::AliasedExpression, Sequel::SQL::Identifier, Sequel::SQL::QualifiedIdentifier
           type = meta(qualified: table_alias || true)
           type.meta(sql_expr: type.to_sql_name)
         else

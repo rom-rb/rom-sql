@@ -29,17 +29,32 @@ RSpec.describe 'ROM::SQL::Schema::MysqlInferrer', :mysql do
   let(:source) { container.relations[:test_inferrence].name }
 
   it 'can infer attributes for dataset' do
-    expect(schema.to_h).
-      to eql(
-           tiny: ROM::SQL::Types::Int.optional.meta(name: :tiny, source: source),
-           medium: ROM::SQL::Types::Int.optional.meta(name: :medium, source: source),
-           big: ROM::SQL::Types::Int.optional.meta(name: :big, source: source),
-           created_at: ROM::SQL::Types::Time.optional.meta(name: :created_at, source: source),
-           date_and_time: ROM::SQL::Types::Time.optional.meta(name: :date_and_time, source: source),
-           time_with_ms: ROM::SQL::Types::Time.optional.meta(name: :time_with_ms, source: source),
-           unix_time_usec: ROM::SQL::Types::Time.meta(name: :unix_time_usec, source: source),
-           unix_time_sec: ROM::SQL::Types::Time.optional.meta(name: :unix_time_sec, source: source),
-           flag: ROM::SQL::Types::Bool.meta(name: :flag, source: source)
-         )
+    expect(schema[:tiny].source).to be(source)
+    expect(schema[:tiny].unwrap.type.primitive).to be(Integer)
+
+    expect(schema[:medium].source).to be(source)
+    expect(schema[:medium].unwrap.type.primitive).to be(Integer)
+
+    expect(schema[:big].source).to be(source)
+    expect(schema[:big].unwrap.type.primitive).to be(Integer)
+
+    expect(schema[:created_at].source).to be(source)
+    expect(schema[:created_at].unwrap.type.primitive).to be(Time)
+
+    expect(schema[:date_and_time].source).to be(source)
+    expect(schema[:date_and_time].unwrap.type.primitive).to be(Time)
+
+    expect(schema[:time_with_ms].source).to be(source)
+    expect(schema[:time_with_ms].unwrap.type.primitive).to be(Time)
+
+    expect(schema[:unix_time_usec].source).to be(source)
+    expect(schema[:unix_time_usec].unwrap.type.primitive).to be(Time)
+
+    expect(schema[:unix_time_sec].source).to be(source)
+    expect(schema[:unix_time_sec].unwrap.type.primitive).to be(Time)
+
+    expect(schema[:flag].source).to be(source)
+    expect(schema[:flag].unwrap.type.left.primitive).to be(TrueClass)
+    expect(schema[:flag].unwrap.type.right.primitive).to be(FalseClass)
   end
 end
