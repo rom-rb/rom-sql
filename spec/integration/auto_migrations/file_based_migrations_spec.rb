@@ -17,7 +17,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers, skip_tables: true do
   end
 
   def migrations
-    Dir["#{ path }/*.rb"].map do |path|
+    Dir["#{ path }/*.rb"].sort.map do |path|
       [File.basename(path), File.read(path)]
     end
   end
