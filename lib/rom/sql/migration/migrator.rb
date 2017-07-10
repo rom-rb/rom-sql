@@ -15,7 +15,7 @@ module ROM
         extend Initializer
 
         DEFAULT_PATH = 'db/migrate'.freeze
-        VERSION_FORMAT = '%Y%m%d%H%M%S%L'.freeze
+        VERSION_FORMAT = '%Y%m%d%H%M%S'.freeze
         DEFAULT_INFERRER = Schema::Inferrer.new.suppress_errors.freeze
 
         param :connection
@@ -41,7 +41,8 @@ module ROM
 
         # @api private
         def create_file(name, version = generate_version, **options)
-          filename = "#{version}_#{name}.rb"
+          sequence = options[:sequence] ? '%03d' % options[:sequence] : nil
+          filename = "#{ version }#{ sequence }_#{ name }.rb"
           content = options[:content] || migration_file_content
           path = options[:path] || self.path
           dirname = Pathname(path)
@@ -83,8 +84,10 @@ module ROM
           if options[:inline]
             Runner.new(InlineRunner.new(connection))
           else
+            counter = 0
             writer = Writer.new do |name, content|
-              create_file(name, **options, content: content)
+              create_file(name, **options, content: content, sequence: counter)
+              counter += 1
             end
 
             Runner.new(writer)
