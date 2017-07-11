@@ -67,4 +67,25 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
       gateway.disconnect
     end
   end
+
+  describe '#call' do
+    it 'calls DB functions' do
+      expect(gateway.(:upper, 'foo')).to eql('FOO')
+      expect(gateway.(:lpad, 'foo', 5, ' ')).to eql('  foo')
+      expect(gateway.(:mod, 12, 10)).to eql(2)
+    end
+  end
+
+  describe '#run' do
+    after do
+      gateway.run('set session IntervalStyle to default')
+    end
+
+    it 'runs a statement' do
+      expect(gateway["select (interval '2 days')::varchar as int"].first[:int]).to eql('2 days')
+      gateway.run('set session IntervalStyle=sql_standard')
+
+      expect(gateway["select (interval '2 days')::varchar as int"].first[:int]).to eql('2 0:00:00')
+    end
+  end
 end
