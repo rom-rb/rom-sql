@@ -202,6 +202,30 @@ module ROM
         @database_type ||= connection.database_type.to_sym
       end
 
+      # Call a SQL function
+      #
+      # @example
+      #   gateway.(:upper, 'John Doe') # => "JOHN DOE"
+      #
+      # @param [Symbol] function Function name
+      # @param [Array<Object>] args Function arguments
+      #
+      # @return [Object]
+      #
+      # @api public
+      def call(function, *args)
+        connection[Sequel.function(function, *args)].first.values.first
+      end
+
+      # Execute a statement
+      #
+      # @param [String] statement
+      #
+      # @api public
+      def run(statement)
+        connection.run(statement)
+      end
+
       private
 
       # Connect to database or reuse established connection instance
