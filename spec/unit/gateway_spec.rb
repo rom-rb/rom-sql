@@ -82,10 +82,10 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
     end
 
     it 'runs a statement' do
-      expect(gateway["select interval '2 days' as int"].first[:int]).to eql('2 days')
+      expect(gateway["select (interval '2 days')::varchar as int"].first[:int]).to eql('2 days')
       gateway.run('set session IntervalStyle=sql_standard')
 
-      expect(gateway["select interval '2 days' as int"].first[:int]).to eql('2 0:00:00')
+      expect(gateway["select (interval '2 days')::varchar as int"].first[:int]).to eql('2 0:00:00')
     end
   end
 end
