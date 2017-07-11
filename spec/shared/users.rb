@@ -20,7 +20,9 @@ RSpec.shared_context 'users' do
       check { char_length(name) > 2 } if ctx.postgres?(example)
     end
 
-    conf.relation(:users) { schema(infer: true) }
+    if example.metadata[:relations] != false
+      conf.relation(:users) { schema(infer: true) }
+    end
   end
 
   before do |example|
