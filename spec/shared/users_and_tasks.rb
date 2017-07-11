@@ -34,9 +34,11 @@ RSpec.shared_context 'users and tasks' do
       Integer :task_id
     end
 
-    conf.relation(:tasks) { schema(infer: true) }
-    conf.relation(:task_tags) { schema(infer: true) }
-    conf.relation(:tags) { schema(infer: true) }
+    if example.metadata[:relations] != false
+      conf.relation(:tasks) { schema(infer: true) }
+      conf.relation(:task_tags) { schema(infer: true) }
+      conf.relation(:tags) { schema(infer: true) }
+    end
   end
 
   before do |example|

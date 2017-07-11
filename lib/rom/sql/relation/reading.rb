@@ -859,6 +859,27 @@ module ROM
           end
         end
 
+        # Restrict with rows from another relation.
+        # Accepts only SQL relations and uses the EXISTS
+        # clause under the hood
+        #
+        # @example using associations
+        #   users.exists(tasks)
+        #
+        # @example using provided condition
+        #   users.exists(tasks, tasks[:user_id] => users[:id])
+        #
+        # @param [SQL::Relation] other The other relation
+        # @param [Hash,Object] condition An optional join condition
+        #
+        # @return [SQL::Relation]
+        #
+        # @api public
+        def exists(other, condition = nil)
+          join_condition = condition || associations[other.name].join_keys
+          where(other.where(join_condition).dataset.exists)
+        end
+
         private
 
         # Build a locking clause
