@@ -1,7 +1,7 @@
 require 'rom/configuration'
 
 class TestConfiguration < ROM::Configuration
-  def relation(name, &block)
+  def relation(name, *, &block)
     if registered_relation_names.include?(name)
       setup.relation_classes.delete_if do |klass|
         klass.relation_name.relation == name
