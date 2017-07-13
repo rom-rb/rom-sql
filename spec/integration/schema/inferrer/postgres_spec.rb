@@ -25,9 +25,9 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
       column :tags, "text[]"
       column :tag_ids, "bigint[]"
       column :ip, "inet"
+      rainbow :color
       column :subnet, "cidr"
       column :hw_address, "macaddr"
-      rainbow :color
       point :center
       xml :page
       hstore :mapping
@@ -48,7 +48,15 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
   let(:source) { container.relations[:test_inferrence].name }
 
   def qualified(schema)
-    schema.each_with_object({}) { |(key, attr), acc| acc[key] = ROM::SQL::Attribute.new(attr).qualified }
+    schema.each_with_object({}) do |(key, type), acc|
+      if type.optional?
+        attr = ROM::SQL::Attribute.new(type.right).optional
+      else
+        attr = ROM::SQL::Attribute.new(type)
+      end
+
+      acc[key] = attr.meta(name: type.meta[:name], source: source).qualified
+    end
   end
 
   context 'inferring db-specific attributes' do
@@ -62,70 +70,30 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
       expect(schema.to_h).
         to eql(
              qualified(
-               id: ROM::SQL::Types::PG::UUID.meta(name: :id, source: source, primary_key: true),
-               big: ROM::SQL::Types::Int.optional.meta(name: :big, source: source),
-               json_data: ROM::SQL::Types::PG::JSON.optional.meta(name: :json_data, source: source),
-               jsonb_data: ROM::SQL::Types::PG::JSONB.optional.meta(name: :jsonb_data, source: source),
-               money: ROM::SQL::Types::Decimal.meta(name: :money, source: source),
-               tags: ROM::SQL::Types::PG::Array('text').optional.meta(name: :tags, source: source),
-               tag_ids: ROM::SQL::Types::PG::Array('biging').optional.meta(name: :tag_ids, source: source),
-               color: ROM::SQL::Types::String.enum(*colors).optional.meta(name: :color, source: source),
-               ip: ROM::SQL::Types::PG::IPAddress.optional.meta(
-                 name: :ip,
-                 source: source,
-                 read: ROM::SQL::Types::PG::IPAddressR.optional
-               ),
-               subnet: ROM::SQL::Types::PG::IPAddress.optional.meta(
-                 name: :subnet,
-                 source: source,
-                 read: ROM::SQL::Types::PG::IPAddressR.optional
-               ),
-               hw_address: ROM::SQL::Types::String.optional.meta(name: :hw_address, source: source),
-               center: ROM::SQL::Types::PG::PointT.optional.meta(
-                 name: :center,
-                 source: source,
-                 read: ROM::SQL::Types::PG::PointTR.optional
-               ),
-               page: ROM::SQL::Types::String.optional.meta(name: :page, source: source),
-               mapping: ROM::SQL::Types::PG::HStore.optional.meta(
-                 name: :mapping,
-                 source: source,
-                 read: ROM::SQL::Types::PG::HStoreR.optional
-               ),
-               line: ROM::SQL::Types::PG::LineT.optional.meta(
-                 name: :line,
-                 source: source,
-                 read: ROM::SQL::Types::PG::LineTR.optional
-               ),
-               circle: ROM::SQL::Types::PG::CircleT.optional.meta(
-                 name: :circle,
-                 source: source,
-                 read: ROM::SQL::Types::PG::CircleTR.optional
-               ),
-               box: ROM::SQL::Types::PG::BoxT.optional.meta(
-                 name: :box,
-                 source: source,
-                 read: ROM::SQL::Types::PG::BoxTR.optional
-               ),
-               lseg: ROM::SQL::Types::PG::LineSegmentT.optional.meta(
-                 name: :lseg,
-                 source: source,
-                 read: ROM::SQL::Types::PG::LineSegmentTR.optional
-               ),
-               polygon: ROM::SQL::Types::PG::PolygonT.optional.meta(
-                 name: :polygon,
-                 source: source,
-                 read: ROM::SQL::Types::PG::PolygonTR.optional
-               ),
-               path: ROM::SQL::Types::PG::PathT.optional.meta(
-                 name: :path,
-                 source: source,
-                 read: ROM::SQL::Types::PG::PathTR.optional
-               ),
-               created_at: ROM::SQL::Types::Time.optional.meta(name: :created_at, source: source),
-               datetime: ROM::SQL::Types::Time.optional.meta(name: :datetime, source: source),
-               datetime_tz: ROM::SQL::Types::Time.optional.meta(name: :datetime_tz, source: source),
-               flag: ROM::SQL::Types::Bool.meta(name: :flag, source: source)
+               id: ROM::SQL::Types::PG::UUID.meta(name: :id, primary_key: true),
+               big: ROM::SQL::Types::Int.optional.meta(name: :big),
+               json_data: ROM::SQL::Types::PG::JSON.optional.meta(name: :json_data),
+               jsonb_data: ROM::SQL::Types::PG::JSONB.optional.meta(name: :jsonb_data),
+               money: ROM::SQL::Types::Decimal.meta(name: :money),
+               tags: ROM::SQL::Types::PG::Array('text').optional.meta(name: :tags),
+               tag_ids: ROM::SQL::Types::PG::Array('bigint').optional.meta(name: :tag_ids),
+               ip: ROM::SQL::Types::PG::IPAddress.optional.meta(name: :ip),
+               color: ROM::SQL::Types::String.enum(*colors).optional.meta(name: :color),
+               subnet: ROM::SQL::Types::PG::IPAddress.optional.meta(name: :subnet),
+               hw_address: ROM::SQL::Types::String.optional.meta(name: :hw_address),
+               center: ROM::SQL::Types::PG::PointT.optional.meta(name: :center),
+               page: ROM::SQL::Types::String.optional.meta(name: :page),
+               mapping: ROM::SQL::Types::PG::HStore.optional.meta(name: :mapping),
+               line: ROM::SQL::Types::PG::LineT.optional.meta(name: :line),
+               circle: ROM::SQL::Types::PG::CircleT.optional.meta(name: :circle),
+               box: ROM::SQL::Types::PG::BoxT.optional.meta(name: :box),
+               lseg: ROM::SQL::Types::PG::LineSegmentT.optional.meta(name: :lseg),
+               polygon: ROM::SQL::Types::PG::PolygonT.optional.meta(name: :polygon),
+               path: ROM::SQL::Types::PG::PathT.optional.meta(name: :path),
+               created_at: ROM::SQL::Types::Time.optional.meta(name: :created_at),
+               datetime: ROM::SQL::Types::Time.optional.meta(name: :datetime),
+               datetime_tz: ROM::SQL::Types::Time.optional.meta(name: :datetime_tz),
+               flag: ROM::SQL::Types::Bool.meta(name: :flag)
              )
            )
     end
@@ -197,6 +165,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
         line: line, circle: circle, lseg: lseg, box: box,
         polygon: polygon, closed_path: closed_path, open_path: open_path
       )
+
       expect(inserted).
         to eql(
              id: 1, center: point, ip: dns, mapping: mapping,

@@ -14,12 +14,20 @@ module ROM
 
         UUID = Types::String
 
-        # Array
+        Array = Types::Array
 
-        Array = Types.Definition(Sequel::Postgres::PGArray)
+        ArrayRead = Array.constructor { |v| v.respond_to?(:to_ary) ? v.to_ary : v }
+
+        @array_types = Hash.new do |hash, db_type|
+          type = Array.constructor(-> (v) { Sequel.pg_array(v, db_type) }).meta(
+            type: db_type, read: ArrayRead
+          )
+          TypeExtensions.register(type) { include ArrayMethods }
+          hash[db_type] = type
+        end
 
         def self.Array(db_type)
-          Array.constructor(-> (v) { Sequel.pg_array(v, db_type) }).meta(type: db_type)
+          @array_types[db_type]
         end
 
         # @!parse
@@ -111,7 +119,7 @@ module ROM
         #     #
         #     #   @api public
         #   end
-        TypeExtensions.register(Array.constructor -> {  }) do
+        module ArrayMethods
           def contain(type, expr, other)
             Attribute[Types::Bool].meta(sql_expr: expr.pg_array.contains(type[other]))
           end
@@ -137,7 +145,7 @@ module ROM
           end
 
           def remove_value(type, expr, value)
-            Attribute[type].meta(sql_expr: expr.pg_array.remove(value))
+            Attribute[type].meta(sql_expr: expr.pg_array.remove(cast(type, value)))
           end
 
           def join(type, expr, delimiter = '', null = nil)
@@ -147,27 +155,28 @@ module ROM
           def +(type, expr, other)
             Attribute[type].meta(sql_expr: expr.pg_array.concat(other))
           end
+
+          private
+
+          def cast(type, value)
+            db_type = type.optional? ? type.right.meta[:type] : type.meta[:type]
+            Sequel.cast(value, db_type)
+          end
         end
 
-        # JSON
+        JSONRead = (Types::Array | Types::Hash).constructor do |value|
+          if value.respond_to?(:to_hash)
+            value.to_hash
+          elsif value.respond_to?(:to_ary)
+            value.to_ary
+          else
+            value
+          end
+        end
 
-        JSONArray = Types.Constructor(Sequel::Postgres::JSONArray, &Sequel.method(:pg_json))
+        JSON = (Types::Array | Types::Hash).constructor(Sequel.method(:pg_json)).meta(read: JSONRead)
 
-        JSONHash = Types.Constructor(Sequel::Postgres::JSONArray, &Sequel.method(:pg_json))
-
-        JSONOp = Types.Constructor(Sequel::Postgres::JSONOp, &Sequel.method(:pg_json))
-
-        JSON = JSONArray | JSONHash | JSONOp
-
-        # JSONB
-
-        JSONBArray = Types.Constructor(Sequel::Postgres::JSONBArray, &Sequel.method(:pg_jsonb))
-
-        JSONBHash = Types.Constructor(Sequel::Postgres::JSONBHash, &Sequel.method(:pg_jsonb))
-
-        JSONBOp = Types.Constructor(Sequel::Postgres::JSONBOp, &Sequel.method(:pg_jsonb))
-
-        JSONB = JSONBArray | JSONBHash | JSONBOp
+        JSONB = (Types::Array | Types::Hash).constructor(Sequel.method(:pg_jsonb)).meta(read: JSONRead)
 
         # @!parse
         #   class ROM::SQL::Attribute

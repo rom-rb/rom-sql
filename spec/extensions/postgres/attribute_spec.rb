@@ -14,14 +14,6 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
   let(:create_person) { commands[:people].create }
 
   %i(json jsonb).each do |type|
-    if type == :json
-      json_hash = Sequel::Postgres::JSONHash.method(:new)
-      json_array = Sequel::Postgres::JSONArray.method(:new)
-    else
-      json_hash = Sequel::Postgres::JSONBHash.method(:new)
-      json_array = Sequel::Postgres::JSONBArray.method(:new)
-    end
-
     describe "using arrays in #{ type }" do
       before do
         conn.create_table :pg_people do
@@ -42,7 +34,7 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
 
       it 'fetches data from jsonb array by index' do
         expect(people.select { [fields.get(1).as(:field)] }.where(name: 'John Doe').one).
-          to eql(field: json_hash['name' => 'height', 'value' => 180])
+          to eql(field: { 'name' => 'height', 'value' => 180 })
       end
 
       it 'fetches data from jsonb array' do
@@ -68,18 +60,18 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
 
         it 'deletes key from result' do
           expect(people.select { fields.delete(0).as(:result) }.limit(1).one).
-            to eq(result: json_array[['name' => 'height', 'value' => 180]])
+            to eq(result: ['name' => 'height', 'value' => 180])
         end
 
         it 'deletes by path' do
           expect(people.select { fields.delete('0', 'name').delete('1', 'name').as(:result) }.limit(1).one).
-            to eq(result: json_array[[{ 'value' => '30' }, { 'value' => 180 }]])
+            to eq(result: [{ 'value' => '30' }, { 'value' => 180 }])
         end
 
         it 'concatenates JSON values' do
           expect(people.select { (fields + [name: 'height', value: 165]).as(:result) }.by_pk(2).one).
-            to eq(result: json_array[[{ 'name' => 'age', 'value' => '25' },
-                                      { 'name' => 'height', 'value' => 165 }]])
+            to eq(result: [{ 'name' => 'age', 'value' => '25' },
+                           { 'name' => 'height', 'value' => 165 }])
         end
       end
     end
@@ -125,13 +117,13 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
 
         it 'concatenates JSON values' do
           expect(people.select { data.merge(height: 165).as(:result) }.by_pk(2).one).
-            to eql(result: json_hash['age' => 25, 'height' => 165])
+            to eql(result: { 'age' => 25, 'height' => 165 })
         end
 
         it 'deletes key from result' do
           expect(people.select { data.delete('height').as(:result) }.to_a).
-            to eql([{ result: json_hash['age' => 30] },
-                    { result: json_hash['age' => 25] }])
+            to eql([{ result: { 'age' => 30 } },
+                    { result: { 'age' => 25 } }])
         end
       end
     end
@@ -194,12 +186,11 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
         to eql(name: 'Jade Doe')
     end
 
-    it 'removes element by value' do
+    fit 'removes element by value' do
       expect(people.select { emails.remove_value('john@example.com').as(:emails) }.to_a).
         to eq([{ emails: %w(john@doe.com) }, { emails: %w(jade@hotmail.com) }])
 
-      pending "doesn't have auto-casting yet"
-      expect(people.select(:name).where { bigids.remove_value(100).contains([42]) }.one).
+      expect(people.select(:name).where { bigids.remove_value(100).contain([42]) }.one).
         to eql(name: 'Jade Doe')
     end
 

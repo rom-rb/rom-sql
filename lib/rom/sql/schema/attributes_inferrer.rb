@@ -84,12 +84,11 @@ module ROM
 
             if mapped_type
               read_type = mapped_type.meta[:read]
-              mapped_type = mapped_type.optional if allow_null
 
               if read_type && allow_null
-                mapped_type.meta(read: read_type.optional)
-              elsif read_type
-                mapped_type.meta(read: read_type)
+                mapped_type.optional.meta(read: read_type.optional)
+              elsif allow_null
+                mapped_type.optional
               else
                 mapped_type
               end
