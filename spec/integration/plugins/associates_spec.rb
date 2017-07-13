@@ -192,6 +192,71 @@ RSpec.describe 'Plugins / :associates', seeds: false do
             expect(tags).to eql(result)
           end
         end
+
+        context 'with one-to-one association' do
+          before do
+            conn.drop_table?(:profiles)
+
+            conn.create_table :profiles do
+              primary_key :id
+              column :user_id, Integer
+              column :avatar, String
+            end
+
+            conf.relation(:users_with_profiles) do
+              schema(:users, as: :users_with_profiles, infer: true) do
+                associations do
+                  has_one :profile
+                end
+              end
+            end
+
+            conf.relation(:profiles) do
+              schema(infer: true) do
+                associations do
+                  has_one :user, foreign_key: :user_id
+                end
+              end
+            end
+
+            conf.commands(:users_with_profiles) do
+              define(:create) do
+                result :one
+              end
+            end
+
+            conf.commands(:profiles) do
+              define(:create) do
+                result :one
+              end
+            end
+          end
+
+          let(:create_user) do
+            container.commands[:users_with_profiles][:create]
+          end
+
+          let(:user) do
+            create_user.(name: 'Jane')
+          end
+
+          let(:create_profile) do
+            container.commands[:profiles][:create].with_association(:user)
+          end
+
+          it 'replaces existing record' do
+            command = create_profile.with_association(:user)
+
+            expect(command.call({ avatar: 'circle.png' }, user)).
+              to eql(id: 1, avatar: 'circle.png', user_id: user[:id])
+
+            expect(command.call({ avatar: 'triangle.jpg' }, user)).
+              to eql(id: 2, avatar: 'triangle.jpg', user_id: user[:id])
+
+            expect(container.relations[:profiles].to_a).
+              to eql([ id: 2, avatar: 'triangle.jpg', user_id: user[:id] ])
+          end
+        end
       end
 
       it 'raises when already defined' do
