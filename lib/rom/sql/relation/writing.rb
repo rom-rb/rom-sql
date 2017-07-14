@@ -77,6 +77,44 @@ module ROM
         def delete(*args, &block)
           dataset.delete(*args, &block)
         end
+
+        # Insert tuples from other relation
+        # NOTE: The method implicitly uses a transaction
+        #
+        # @example
+        #   users.import(new_users)
+        #
+        # @overload import(other_sql_relation, options)
+        #   If both relations uses the same gateway
+        #   the INSERT ... SELECT statement will
+        #   be used for importing the data
+        #
+        #   @params [SQL::Relation] other_sql_relation
+        #
+        #   @option [Integer] :slice
+        #     Split loading into batches of provided size,
+        #     every batch will be processed in a separate
+        #     transaction block
+        #
+        # @overload import(other, options)
+        #   Import data from another relation. The source
+        #   relation will be materialized before loading
+        #
+        #   @params [Relation] other
+        #
+        #   @option [Integer] :slice
+        #
+        # @api public
+        def import(other, options = EMPTY_HASH)
+          if other.gateway.eql?(gateway)
+            columns = other.schema.map { |a| a.alias || a.name }
+            dataset.import(columns, other.dataset, options)
+          else
+            columns = other.schema.map { |a| a.alias || a.name }
+            keys = columns.map(&:to_sym)
+            dataset.import(columns, other.to_a.map { |record| record.to_h.values_at(*keys) }, options)
+          end
+        end
       end
     end
   end

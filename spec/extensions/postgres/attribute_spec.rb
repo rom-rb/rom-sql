@@ -186,7 +186,7 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
         to eql(name: 'Jade Doe')
     end
 
-    fit 'removes element by value' do
+    it 'removes element by value' do
       expect(people.select { emails.remove_value('john@example.com').as(:emails) }.to_a).
         to eq([{ emails: %w(john@doe.com) }, { emails: %w(jade@hotmail.com) }])
 
