@@ -2,8 +2,8 @@ require 'rom/sql/schema/attributes_inferrer'
 
 module ROM
   module SQL
-    class Schema
-      class SqliteInferrer < AttributesInferrer[:sqlite]
+    module SQLite
+      class AttributesInferrer < Schema::AttributesInferrer[:sqlite]
         NO_TYPE = EMPTY_STRING
 
         def map_type(_, db_type, **_kw)

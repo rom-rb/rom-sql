@@ -3,8 +3,8 @@ require 'rom/sql/commands/update'
 
 module ROM
   module SQL
-    module Commands
-      module Postgres
+    module Postgres
+      module Commands
         module Create
           # Executes insert statement and returns inserted tuples
           #
@@ -113,5 +113,7 @@ module ROM
         end
       end
     end
+
+    Commands::Postgres = Postgres::Commands
   end
 end

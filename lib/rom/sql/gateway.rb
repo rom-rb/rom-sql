@@ -39,9 +39,9 @@ module ROM
         if type == :postgres
           ext =
             if klass < Commands::Create
-              Commands::Postgres::Create
+              Postgres::Commands::Create
             elsif klass < Commands::Update
-              Commands::Postgres::Update
+              Postgres::Commands::Update
             end
 
           klass.send(:include, ext) if ext

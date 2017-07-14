@@ -4,8 +4,8 @@ require 'rom/sql/extensions/postgres/types'
 
 module ROM
   module SQL
-    class Schema
-      class PostgresInferrer < AttributesInferrer[:postgres]
+    module Postgres
+      class AttributesInferrer < Schema::AttributesInferrer[:postgres]
         defines :db_numeric_types, :db_type_mapping, :db_array_type_matcher
 
         db_numeric_types %w(
@@ -15,23 +15,23 @@ module ROM
         ).to_set.freeze
 
         db_type_mapping(
-          'uuid'  => Types::PG::UUID,
-          'money' => Types::PG::Money,
-          'bytea' => Types::Blob,
-          'json'  => Types::PG::JSON,
-          'jsonb' => Types::PG::JSONB,
-          'inet' => Types::PG::IPAddress,
-          'cidr' => Types::PG::IPAddress,
-          'macaddr' => Types::String,
-          'point' => Types::PG::PointT,
-          'xml' => Types::String,
-          'hstore' => Types::PG::HStore,
-          'line' => Types::PG::LineT,
-          'circle' => Types::PG::CircleT,
-          'box' => Types::PG::BoxT,
-          'lseg' => Types::PG::LineSegmentT,
-          'polygon' => Types::PG::PolygonT,
-          'path' => Types::PG::PathT
+          'uuid'  => Types::UUID,
+          'money' => Types::Money,
+          'bytea' => SQL::Types::Blob,
+          'json'  => Types::JSON,
+          'jsonb' => Types::JSONB,
+          'inet' => Types::IPAddress,
+          'cidr' => Types::IPAddress,
+          'macaddr' => SQL::Types::String,
+          'point' => Types::PointT,
+          'xml' => SQL::Types::String,
+          'hstore' => Types::HStore,
+          'line' => Types::LineT,
+          'circle' => Types::CircleT,
+          'box' => Types::BoxT,
+          'lseg' => Types::LineSegmentT,
+          'polygon' => Types::PolygonT,
+          'path' => Types::PathT
         ).freeze
 
         db_array_type_matcher '[]'.freeze
@@ -50,9 +50,9 @@ module ROM
 
         def map_type(ruby_type, db_type, enum_values: nil, **_)
           if db_type.end_with?(self.class.db_array_type_matcher)
-            Types::PG::Array(db_type[0...-2])
+            Types::Array(db_type[0...-2])
           elsif enum_values
-            Types::String.enum(*enum_values)
+            SQL::Types::String.enum(*enum_values)
           else
             map_db_type(db_type) || super
           end
@@ -60,7 +60,7 @@ module ROM
 
         def map_db_type(db_type)
           self.class.db_type_mapping[db_type] ||
-            (db_type.start_with?('timestamp') ? Types::Time : nil)
+            (db_type.start_with?('timestamp') ? SQL::Types::Time : nil)
         end
 
         def numeric?(ruby_type, db_type)
