@@ -1,11 +1,7 @@
-require 'set'
-require 'rom/sql/schema/attributes_inferrer'
-require 'rom/sql/extensions/postgres/types'
-
 module ROM
   module SQL
     module Postgres
-      class AttributesInferrer < Schema::AttributesInferrer[:postgres]
+      class TypeBuilder < Schema::TypeBuilder
         defines :db_numeric_types, :db_type_mapping, :db_array_type_matcher
 
         db_numeric_types %w(
@@ -35,8 +31,6 @@ module ROM
         ).freeze
 
         db_array_type_matcher '[]'.freeze
-
-        private
 
         def map_pk_type(type, db_type)
           if numeric?(type, db_type)
@@ -68,5 +62,7 @@ module ROM
         end
       end
     end
+
+    Schema::TypeBuilder.register(:postgres, Postgres::TypeBuilder.new.freeze)
   end
 end

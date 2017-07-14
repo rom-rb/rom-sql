@@ -4,7 +4,8 @@ module ROM
   module SQL
     module SQLite
       module Types
-        Object = ::ROM::SQL::Types::Any
+        Any = ::ROM::SQL::Types::Any
+        Object = Any
       end
     end
 

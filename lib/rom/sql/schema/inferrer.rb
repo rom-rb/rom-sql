@@ -1,5 +1,6 @@
 require 'set'
 
+require 'rom/sql/schema/type_builder'
 require 'rom/sql/schema/attributes_inferrer'
 require 'rom/sql/attribute'
 
@@ -8,8 +9,12 @@ module ROM
     class Schema < ROM::Schema
       # @api private
       class Inferrer < ROM::Schema::Inferrer
+        defines :type_builders
+
         attributes_inferrer -> (schema, gateway, options) do
-          AttributesInferrer.get(gateway.database_type).with(options).(schema, gateway)
+          builder = TypeBuilder[gateway.database_type]
+          inferrer = AttributesInferrer.new(type_builder: builder, **options)
+          inferrer.(schema, gateway)
         end
 
         attr_class SQL::Attribute

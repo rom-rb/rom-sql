@@ -1,1 +1,1 @@
-require 'rom/sql/extensions/mysql/attributes_inferrer'
+require 'rom/sql/extensions/mysql/type_builder'
