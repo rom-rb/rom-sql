@@ -31,23 +31,6 @@ module ROM
       #   @return [Hash] Options used for connection
       attr_reader :options
 
-      subscribe('configuration.commands.class.before_build') do |event|
-        klass = event[:command]
-        dataset = event[:dataset]
-        type = dataset.db.database_type
-
-        if type == :postgres
-          ext =
-            if klass < Commands::Create
-              Postgres::Commands::Create
-            elsif klass < Commands::Update
-              Postgres::Commands::Update
-            end
-
-          klass.send(:include, ext) if ext
-        end
-      end
-
       # Initialize an SQL gateway
       #
       # Gateways are typically initialized via ROM::Configuration object, gateway constructor

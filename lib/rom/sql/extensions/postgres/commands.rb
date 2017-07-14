@@ -115,5 +115,22 @@ module ROM
     end
 
     Commands::Postgres = Postgres::Commands
+
+    Gateway.subscribe('configuration.commands.class.before_build') do |event|
+      klass = event[:command]
+      dataset = event[:dataset]
+      type = dataset.db.database_type
+
+      if type == :postgres
+        ext =
+          if klass < Commands::Create
+            Postgres::Commands::Create
+          elsif klass < Commands::Update
+            Postgres::Commands::Update
+          end
+
+        klass.include(ext) if ext
+      end
+    end
   end
 end
