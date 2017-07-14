@@ -45,21 +45,19 @@ module ROM
 
         # Upsert command
         #
-        # Uses a feature of PostgreSQL 9.5 commonly called an "upsert".
-        # The command been called attempts to perform an insert and
-        # can make an update (or silently do nothing) in case of
-        # the insertion was unsuccessful due to a violation of a unique
-        # constraint.
-        # Very important implementation detail is that the whole operation
-        # is atomic, i.e. aware of concurrent transactions, and doesn't raise
-        # exceptions if used properly.
+        # The command beign called attempts to insert a record and
+        # if the inserted row would violate a unique constraint
+        # updates the conflicting row (or silently does nothing).
+        # A very important implementation detail is that the whole operation
+        # is serializable, i.e. aware of concurrent transactions, and doesn't raise
+        # exceptions and doesn't issue missing updates once used properly.
         #
         # See PG's docs in INSERT statement for details
         # https://www.postgresql.org/docs/current/static/sql-insert.html
         #
-        # Normally, the command should configured via class level settings.
-        # By default, that is without any settings provided, the command
-        # uses ON CONFLICT DO NOTHING clause.
+        # Normally, the command should be configured via class level settings.
+        # By default, that is without any setting provided, the command
+        # uses the ON CONFLICT DO NOTHING clause.
         #
         # This implementation uses Sequel's API underneath, the docs are available at
         # http://sequel.jeremyevans.net/rdoc-adapters/classes/Sequel/Postgres/DatasetMethods.html#method-i-insert_conflict
