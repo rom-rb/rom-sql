@@ -81,15 +81,15 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
                color: ROM::SQL::Types::String.enum(*colors).optional.meta(name: :color),
                subnet: ROM::SQL::Types::PG::IPAddress.optional.meta(name: :subnet),
                hw_address: ROM::SQL::Types::String.optional.meta(name: :hw_address),
-               center: ROM::SQL::Types::PG::PointT.optional.meta(name: :center),
+               center: ROM::SQL::Types::PG::Point.optional.meta(name: :center),
                page: ROM::SQL::Types::String.optional.meta(name: :page),
                mapping: ROM::SQL::Types::PG::HStore.optional.meta(name: :mapping),
-               line: ROM::SQL::Types::PG::LineT.optional.meta(name: :line),
-               circle: ROM::SQL::Types::PG::CircleT.optional.meta(name: :circle),
-               box: ROM::SQL::Types::PG::BoxT.optional.meta(name: :box),
-               lseg: ROM::SQL::Types::PG::LineSegmentT.optional.meta(name: :lseg),
-               polygon: ROM::SQL::Types::PG::PolygonT.optional.meta(name: :polygon),
-               path: ROM::SQL::Types::PG::PathT.optional.meta(name: :path),
+               line: ROM::SQL::Types::PG::Line.optional.meta(name: :line),
+               circle: ROM::SQL::Types::PG::Circle.optional.meta(name: :circle),
+               box: ROM::SQL::Types::PG::Box.optional.meta(name: :box),
+               lseg: ROM::SQL::Types::PG::LineSegment.optional.meta(name: :lseg),
+               polygon: ROM::SQL::Types::PG::Polygon.optional.meta(name: :polygon),
+               path: ROM::SQL::Types::PG::Path.optional.meta(name: :path),
                created_at: ROM::SQL::Types::Time.optional.meta(name: :created_at),
                datetime: ROM::SQL::Types::Time.optional.meta(name: :datetime),
                datetime_tz: ROM::SQL::Types::Time.optional.meta(name: :datetime_tz),
@@ -137,30 +137,30 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
       end
     end
 
-    let(:point) { ROM::SQL::Types::PG::Point.new(7.5, 30.5) }
-    let(:point_2) { ROM::SQL::Types::PG::Point.new(8.5, 35.5) }
-    let(:line) { ROM::SQL::Types::PG::Line.new(2.3, 4.9, 3.1415) }
+    let(:point) { ROM::SQL::Postgres::Values::Point.new(7.5, 30.5) }
+    let(:point_2) { ROM::SQL::Postgres::Values::Point.new(8.5, 35.5) }
+    let(:line) { ROM::SQL::Postgres::Values::Line.new(2.3, 4.9, 3.1415) }
     let(:dns) { IPAddr.new('8.8.8.8') }
     let(:mapping) { Hash['hot' => 'cold'] }
-    let(:circle) { ROM::SQL::Types::PG::Circle.new(point, 1.0) }
-    let(:lseg) { ROM::SQL::Types::PG::LineSegment.new(point, point_2) }
-    let(:box_corrected) { ROM::SQL::Types::PG::Box.new(point_2, point) }
+    let(:circle) { ROM::SQL::Postgres::Values::Circle.new(point, 1.0) }
+    let(:lseg) { ROM::SQL::Postgres::Values::LineSegment.new(point, point_2) }
+    let(:box_corrected) { ROM::SQL::Postgres::Values::Box.new(point_2, point) }
     let(:box) do
-      upper_left = ROM::SQL::Types::PG::Point.new(point.x, point_2.y)
-      lower_right = ROM::SQL::Types::PG::Point.new(point_2.x, point.y)
+      upper_left = ROM::SQL::Postgres::Values::Point.new(point.x, point_2.y)
+      lower_right = ROM::SQL::Postgres::Values::Point.new(point_2.x, point.y)
 
-      ROM::SQL::Types::PG::Box.new(upper_left, lower_right)
+      ROM::SQL::Postgres::Values::Box.new(upper_left, lower_right)
     end
-    let(:polygon) { ROM::SQL::Types::PG::Polygon[[point, point_2]] }
-    let(:closed_path) { ROM::SQL::Types::PG::Path.new([point, point_2], :closed) }
-    let(:open_path) { ROM::SQL::Types::PG::Path.new([point, point_2], :open) }
+    let(:polygon) { [point, point_2] }
+    let(:closed_path) { ROM::SQL::Postgres::Values::Path.new([point, point_2], :closed) }
+    let(:open_path) { ROM::SQL::Postgres::Values::Path.new([point, point_2], :open) }
 
     let(:relation) { container.relations[:test_bidirectional] }
     let(:create) { commands[:test_bidirectional].create }
 
     it 'writes and reads data & corrects data' do
       # Box coordinates are reordered if necessary
-      inserted = create.call(
+      inserted = create.(
         id: 1, center: point, ip: dns, mapping: mapping,
         line: line, circle: circle, lseg: lseg, box: box,
         polygon: polygon, closed_path: closed_path, open_path: open_path

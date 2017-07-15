@@ -19,15 +19,15 @@ module ROM
           'inet' => Types::IPAddress,
           'cidr' => Types::IPAddress,
           'macaddr' => SQL::Types::String,
-          'point' => Types::PointT,
+          'point' => Types::Point,
           'xml' => SQL::Types::String,
           'hstore' => Types::HStore,
-          'line' => Types::LineT,
-          'circle' => Types::CircleT,
-          'box' => Types::BoxT,
-          'lseg' => Types::LineSegmentT,
-          'polygon' => Types::PolygonT,
-          'path' => Types::PathT
+          'line' => Types::Line,
+          'circle' => Types::Circle,
+          'box' => Types::Box,
+          'lseg' => Types::LineSegment,
+          'polygon' => Types::Polygon,
+          'path' => Types::Path
         ).freeze
 
         db_array_type_matcher '[]'.freeze

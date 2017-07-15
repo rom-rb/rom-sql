@@ -1,4 +1,5 @@
 require 'rom/types'
+require 'rom/sql/type_dsl'
 
 module ROM
   module SQL
@@ -15,6 +16,10 @@ module ROM
 
       def self.ForeignKey(relation, type = Types::Int.meta(index: true))
         super
+      end
+
+      def self.define(value_type, &block)
+        TypeDSL.new(value_type).call(&block)
       end
 
       Serial = Int.meta(primary_key: true)

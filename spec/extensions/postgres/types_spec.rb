@@ -1,4 +1,8 @@
-RSpec.describe 'ROM::SQL::Types' do
+require 'securerandom'
+
+RSpec.describe 'ROM::SQL::Postgres::Types' do
+  let(:values) { ROM::SQL::Postgres::Values }
+
   describe 'ROM::SQL::Types::PG::JSON' do
     it 'coerces to pg json hash' do
       input = { foo: 'bar' }
@@ -130,8 +134,8 @@ RSpec.describe 'ROM::SQL::Types' do
     end
   end
 
-  describe ROM::SQL::Types::PG::PointT do
-    let(:point) { ROM::SQL::Types::PG::Point.new(7.5, 30.5) }
+  describe ROM::SQL::Types::PG::Point do
+    let(:point) { values::Point.new(7.5, 30.5) }
 
     it 'serializes a point down to a string' do
       expect(described_class[point]).to eql('(7.5,30.5)')
@@ -157,8 +161,8 @@ RSpec.describe 'ROM::SQL::Types' do
     end
   end
 
-  describe ROM::SQL::Types::PG::LineT do
-    let(:line) { ROM::SQL::Types::PG::Line.new(2.3, 4.9, 3.1415) }
+  describe ROM::SQL::Types::PG::Line do
+    let(:line) { values::Line.new(2.3, 4.9, 3.1415) }
 
     it 'serializes a line using the {A,B,C} format' do
       expect(described_class[line]).to eql('{2.3,4.9,3.1415}')
@@ -169,9 +173,9 @@ RSpec.describe 'ROM::SQL::Types' do
     end
   end
 
-  describe ROM::SQL::Types::PG::CircleT do
-    let(:center) { ROM::SQL::Types::PG::Point.new(7.5, 30.5) }
-    let(:circle) { ROM::SQL::Types::PG::Circle.new(center, 1.2) }
+  describe ROM::SQL::Types::PG::Circle do
+    let(:center) { values::Point.new(7.5, 30.5) }
+    let(:circle) { values::Circle.new(center, 1.2) }
 
     it 'serializes a circle using the <(x,y),r> format' do
       expect(described_class[circle]).to eql('<(7.5,30.5),1.2>')
@@ -182,11 +186,11 @@ RSpec.describe 'ROM::SQL::Types' do
     end
   end
 
-  describe ROM::SQL::Types::PG::BoxT do
-    let(:lower_left) { ROM::SQL::Types::PG::Point.new(7.5, 20.5) }
-    let(:upper_right) { ROM::SQL::Types::PG::Point.new(8.5, 30.5) }
+  describe ROM::SQL::Types::PG::Box do
+    let(:lower_left) { values::Point.new(7.5, 20.5) }
+    let(:upper_right) { values::Point.new(8.5, 30.5) }
 
-    let(:box) { ROM::SQL::Types::PG::Box.new(upper_right, lower_left) }
+    let(:box) { values::Box.new(upper_right, lower_left) }
 
     it 'serializes a box' do
       expect(described_class[box]).to eql('((8.5,30.5),(7.5,20.5))')
@@ -197,11 +201,11 @@ RSpec.describe 'ROM::SQL::Types' do
     end
   end
 
-  describe ROM::SQL::Types::PG::LineSegmentT do
-    let(:first) { ROM::SQL::Types::PG::Point.new(8.5, 30.5) }
-    let(:second) { ROM::SQL::Types::PG::Point.new(7.5, 20.5) }
+  describe ROM::SQL::Types::PG::LineSegment do
+    let(:first) { values::Point.new(8.5, 30.5) }
+    let(:second) { values::Point.new(7.5, 20.5) }
 
-    let(:lseg) { ROM::SQL::Types::PG::LineSegment.new(first, second) }
+    let(:lseg) { values::LineSegment.new(first, second) }
 
     it 'serializes a lseg using [ ( x1 , y1 ) , ( x2 , y2 ) ] format' do
       expect(described_class[lseg]).to eql('[(8.5,30.5),(7.5,20.5)]')
@@ -212,12 +216,12 @@ RSpec.describe 'ROM::SQL::Types' do
     end
   end
 
-  describe ROM::SQL::Types::PG::PolygonT do
-    let(:first) { ROM::SQL::Types::PG::Point.new(8.5, 30.5) }
-    let(:second) { ROM::SQL::Types::PG::Point.new(7.5, 20.5) }
-    let(:third) { ROM::SQL::Types::PG::Point.new(6.5, 10.5) }
+  describe ROM::SQL::Types::PG::Polygon do
+    let(:first) { values::Point.new(8.5, 30.5) }
+    let(:second) {values::Point.new(7.5, 20.5) }
+    let(:third) { values::Point.new(6.5, 10.5) }
 
-    let(:polygon) { ROM::SQL::Types::PG::Polygon[[first, second, third]] }
+    let(:polygon) { [first, second, third] }
 
     it 'serializes a polygon using ( ( x1 , y1 ) ... ( xn , yn ) ) format' do
       expect(described_class[polygon]).to eql('((8.5,30.5),(7.5,20.5),(6.5,10.5))')
@@ -228,13 +232,13 @@ RSpec.describe 'ROM::SQL::Types' do
     end
   end
 
-  describe ROM::SQL::Types::PG::PathT do
-    let(:first) { ROM::SQL::Types::PG::Point.new(8.5, 30.5) }
-    let(:second) { ROM::SQL::Types::PG::Point.new(7.5, 20.5) }
-    let(:third) { ROM::SQL::Types::PG::Point.new(6.5, 10.5) }
+  describe ROM::SQL::Types::PG::Path do
+    let(:first) { values::Point.new(8.5, 30.5) }
+    let(:second) { values::Point.new(7.5, 20.5) }
+    let(:third) { values::Point.new(6.5, 10.5) }
 
-    let(:closed_path) { ROM::SQL::Types::PG::Path.new([first, second, third], :closed) }
-    let(:open_path) { ROM::SQL::Types::PG::Path.new([first, second, third], :open) }
+    let(:closed_path) { values::Path.new([first, second, third], :closed) }
+    let(:open_path) { values::Path.new([first, second, third], :open) }
 
     it 'serializes a closed path using ( ( x1 , y1 ) ... ( xn , yn ) ) format' do
       expect(described_class[closed_path]).to eql('((8.5,30.5),(7.5,20.5),(6.5,10.5))')
