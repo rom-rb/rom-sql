@@ -12,9 +12,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'http://rom-rb.org'
   spec.license       = 'MIT'
 
-  spec.files         = `git ls-files -z`.split("\x0")
-  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
+  gem.files          = Dir['CHANGELOG.md', 'LICENSE', 'README.md', 'lib/**/*']
   spec.require_paths = ['lib']
 
   spec.add_runtime_dependency 'sequel', '~> 4.43'
