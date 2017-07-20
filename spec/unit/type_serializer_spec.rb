@@ -6,12 +6,12 @@ RSpec.describe ROM::SQL::TypeSerializer do
   it 'serialize data types' do
     types = {
       'integer' => ROM::SQL::Types::Int,
-      'string' => ROM::SQL::Types::String,
-      'timestamp' => Types::Time,
-      'date' => Types::Date,
-      'boolean' => Types::Bool,
-      'numeric' => Types::Decimal,
-      'float' => Types::Float
+      'varchar' => ROM::SQL::Types::String,
+      'timestamp' => ROM::SQL::Types::Time,
+      'date' => ROM::SQL::Types::Date,
+      'boolean' => ROM::SQL::Types::Bool,
+      'numeric' => ROM::SQL::Types::Decimal,
+      'float' => ROM::SQL::Types::Float
     }
 
     types.each do |db_type, rom_type|

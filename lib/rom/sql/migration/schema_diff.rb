@@ -1,8 +1,16 @@
+require 'rom/sql/type_serializer'
+
 module ROM
   module SQL
     module Migration
       # @api private
       class SchemaDiff
+        extend Initializer
+
+        param :database_type
+
+        option :type_serializer, default: -> { ROM::SQL::TypeSerializer[database_type] }
+
         class TableDiff
           extend Initializer
 
@@ -49,11 +57,11 @@ module ROM
         end
 
         class AttributeDiff
-          attr_reader :attr
+          extend Initializer
 
-          def initialize(attr)
-            @attr = attr
-          end
+          param :attr
+
+          option :type_serializer
 
           def name
             attr.name
@@ -74,7 +82,7 @@ module ROM
 
         class AttributeAdded < AttributeDiff
           def type
-            unwrap(attr).primitive
+            type_serializer.(unwrap(attr).type)
           end
         end
 
@@ -82,14 +90,8 @@ module ROM
         end
 
         class AttributeChanged < AttributeDiff
-          attr_reader :current
+          param :current
           alias_method :target, :attr
-
-          def initialize(current, target)
-            super(target)
-
-            @current = current
-          end
 
           def nullability_changed?
             current.optional? ^ target.optional?
@@ -177,7 +179,7 @@ module ROM
           if current.empty?
             TableCreated.new(
               target_schema: target,
-              attributes: target.map { |attr| AttributeAdded.new(attr) },
+              attributes: map_attributes(target.to_h, AttributeAdded),
               indexes: target.indexes.map { |idx| IndexAdded.new(idx) },
               foreign_keys: target.foreign_keys.map { |fk| ForeignKeyAdded.new(fk) }
             )
@@ -204,14 +206,14 @@ module ROM
           changed_attributes = target.select { |name, attr|
             current.key?(name) && !attributes_equal?(current[name], attr)
           }.map { |name, target_attr|
-            [name, [current[name], target_attr]]
+            [name, [target_attr, current[name]]]
           }.to_h
           added_attributes = target.select { |name, _| !current.key?(name) }
           removed_attributes = current.select { |name, _| !target.key?(name) }
 
-          removed_attributes.values.map { |attr| AttributeRemoved.new(attr) } +
-            added_attributes.values.map { |attr| AttributeAdded.new(attr) } +
-            changed_attributes.values.map { |attrs| AttributeChanged.new(*attrs) }
+          map_attributes(removed_attributes, AttributeRemoved) +
+            map_attributes(added_attributes, AttributeAdded) +
+            map_attributes(changed_attributes, AttributeChanged)
         end
 
         def compare_indexes(current, target)
@@ -239,6 +241,10 @@ module ROM
 
         def attributes_equal?(a, b)
           a.qualified == b.qualified
+        end
+
+        def map_attributes(attributes, change_type)
+          attributes.values.map { |args| change_type.new(*args, type_serializer: type_serializer) }
         end
       end
     end

@@ -66,7 +66,7 @@ module ROM
 
         # @api private
         def auto_migrate!(gateway, schemas, options = EMPTY_HASH, &block)
-          diff_finder = SchemaDiff.new
+          diff_finder = SchemaDiff.new(gateway.database_type)
 
           changes = schemas.map { |target|
             empty = SQL::Schema.define(target.name)

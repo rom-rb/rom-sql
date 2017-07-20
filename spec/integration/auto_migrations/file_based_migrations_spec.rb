@@ -47,7 +47,7 @@ ROM::SQL.migration do
   change do
     create_table :users do
       primary_key :id
-      column :name, String, null: false
+      column :name, "text", null: false
       index :name, name: :unique_name, unique: true
       index :name
     end
@@ -91,8 +91,8 @@ ROM::SQL.migration do
   change do
     alter_table :users do
       drop_column :name
-      add_column :first_name, String, null: false
-      add_column :last_name, String, null: false
+      add_column :first_name, "text", null: false
+      add_column :last_name, "text", null: false
       set_column_not_null :age
       add_index [:first_name, :last_name], name: :unique_name, unique: true
     end
