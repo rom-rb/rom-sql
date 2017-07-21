@@ -1,7 +1,7 @@
 require 'sequel/core'
 require 'dry/core/cache'
 
-require 'rom/schema/attribute'
+require 'rom/attribute'
 
 require 'rom/sql/type_extensions'
 require 'rom/sql/projection_dsl'
@@ -11,7 +11,7 @@ module ROM
     # Extended schema attributes tailored for SQL databases
     #
     # @api public
-    class Attribute < ROM::Schema::Attribute
+    class Attribute < ROM::Attribute
       OPERATORS = %i[>= <= > <].freeze
       NONSTANDARD_EQUALITY_VALUES = [true, false, nil].freeze
       META_KEYS = %i(index foreign_key target sql_expr qualified).freeze

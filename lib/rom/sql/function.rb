@@ -1,9 +1,9 @@
-require 'rom/schema/attribute'
+require 'rom/attribute'
 
 module ROM
   module SQL
     # @api private
-    class Function < ROM::Schema::Attribute
+    class Function < ROM::Attribute
       def sql_literal(ds)
         if name
           ds.literal(func.as(name))
