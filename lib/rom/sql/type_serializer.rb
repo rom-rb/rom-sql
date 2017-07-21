@@ -31,7 +31,12 @@ module ROM
       )
 
       def call(type)
-        self.class.mapping.fetch(type.with(meta: {})) { raise "Cannot serialize #{ type }" }
+        db_type = type.meta[:db_type]
+        meta = db_type ? { db_type: db_type } : EMPTY_HASH
+
+        self.class.mapping.fetch(type.with(meta: meta)) {
+          raise "Cannot serialize #{ type }"
+        }
       end
     end
   end

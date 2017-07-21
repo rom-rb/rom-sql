@@ -21,7 +21,8 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
       bigint :big
       Json :json_data
       Jsonb :jsonb_data
-      Decimal :money, null: false
+      money :money, null: false
+      decimal :decimal, null: false
       column :tags, "text[]"
       column :tag_ids, "bigint[]"
       column :ip, "inet"
@@ -55,7 +56,10 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
         attr = ROM::SQL::Attribute.new(type)
       end
 
-      acc[key] = attr.meta(name: type.meta[:name], source: source).qualified
+      meta = { name: type.meta[:name], source: source }
+      meta[:db_type] = type.meta[:db_type] if type.meta[:db_type]
+
+      acc[key] = attr.meta(meta).qualified
     end
   end
 
@@ -74,7 +78,8 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
                big: ROM::SQL::Types::Int.optional.meta(name: :big),
                json_data: ROM::SQL::Types::PG::JSON.optional.meta(name: :json_data),
                jsonb_data: ROM::SQL::Types::PG::JSONB.optional.meta(name: :jsonb_data),
-               money: ROM::SQL::Types::Decimal.meta(name: :money),
+               money: ROM::SQL::Types::PG::Money.meta(name: :money),
+               decimal: ROM::SQL::Types::Decimal.meta(name: :decimal),
                tags: ROM::SQL::Types::PG::Array('text').optional.meta(name: :tags),
                tag_ids: ROM::SQL::Types::PG::Array('bigint').optional.meta(name: :tag_ids),
                ip: ROM::SQL::Types::PG::IPAddress.optional.meta(name: :ip),
@@ -82,7 +87,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
                subnet: ROM::SQL::Types::PG::IPAddress.optional.meta(name: :subnet),
                hw_address: ROM::SQL::Types::String.optional.meta(name: :hw_address),
                center: ROM::SQL::Types::PG::Point.optional.meta(name: :center),
-               page: ROM::SQL::Types::String.optional.meta(name: :page),
+               page: ROM::SQL::Types::PG::XML.optional.meta(name: :page),
                mapping: ROM::SQL::Types::PG::HStore.optional.meta(name: :mapping),
                line: ROM::SQL::Types::PG::Line.optional.meta(name: :line),
                circle: ROM::SQL::Types::PG::Circle.optional.meta(name: :circle),

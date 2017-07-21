@@ -3,7 +3,7 @@ require 'rom/sql/type_serializer'
 RSpec.describe ROM::SQL::TypeSerializer do
   subject(:serializer) { described_class.new }
 
-  it 'serialize data types' do
+  it 'serializes data types' do
     types = {
       'integer' => ROM::SQL::Types::Int,
       'varchar' => ROM::SQL::Types::String,

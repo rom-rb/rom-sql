@@ -5,7 +5,22 @@ module ROM
       class TypeSerializer < ROM::SQL::TypeSerializer
         mapping(
           mapping.merge(
-            SQL::Types::String => 'text'
+            SQL::Types::String => 'text',
+            Types::UUID => 'uuid',
+            Types::XML => 'xml',
+            Types::Money => 'money',
+            Types::Bytea => 'bytea',
+            Types::JSON => 'json',
+            Types::JSONB => 'jsonb',
+            Types::HStore => 'hstore',
+            Types::IPAddress => 'inet',
+            Types::Point => 'point',
+            Types::Line => 'line',
+            Types::Circle => 'circle',
+            Types::Box => 'box',
+            Types::LineSegment => 'lseg',
+            Types::Polygon => 'polygon',
+            Types::Path => 'path'
           )
         )
       end

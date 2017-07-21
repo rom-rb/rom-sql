@@ -12,7 +12,7 @@ module ROM
   module SQL
     module Postgres
       module Types
-        UUID = SQL::Types::String
+        UUID = SQL::Types::String.meta(db_type: 'uuid')
 
         HStoreR = SQL::Types.Constructor(Hash, &:to_hash)
         HStore = SQL::Types.Constructor(Hash, &Sequel.method(:hstore))
@@ -20,7 +20,9 @@ module ROM
 
         Bytea = SQL::Types.Constructor(String, &Sequel::SQL::Blob.method(:new))
 
-        Money = SQL::Types::Decimal
+        Money = SQL::Types::Decimal.meta(db_type: 'money')
+
+        XML = SQL::Types::String.meta(db_type: 'xml')
       end
     end
 
