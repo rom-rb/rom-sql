@@ -1,3 +1,6 @@
+require 'sequel/deprecated'
+require 'sequel/exceptions'
+
 require 'rom/sql/error'
 
 module ROM

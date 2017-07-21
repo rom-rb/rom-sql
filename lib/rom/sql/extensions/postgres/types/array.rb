@@ -1,4 +1,4 @@
-require 'sequel'
+require 'sequel/core'
 
 Sequel.extension(*%i(pg_array pg_array_ops))
 

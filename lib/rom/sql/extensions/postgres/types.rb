@@ -1,4 +1,4 @@
-require 'sequel'
+require 'sequel/core'
 
 require 'rom/sql/type_extensions'
 require 'rom/sql/extensions/postgres/types/array'

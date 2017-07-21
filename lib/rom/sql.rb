@@ -1,5 +1,5 @@
 require 'dry/equalizer'
-require 'sequel'
+
 require 'rom/core'
 
 require 'rom/sql/version'

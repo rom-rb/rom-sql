@@ -1,4 +1,5 @@
 require 'logger'
+require 'sequel/core'
 
 require 'dry/core/constants'
 
