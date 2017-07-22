@@ -14,7 +14,7 @@ module ROM
         # @api public
         def [](type)
           unwrapped = type.optional? ? type.right : type
-          @types[unwrapped.pristine] || EMPTY_HASH
+          @types[unwrapped.meta(sql_expr: nil)] || EMPTY_HASH
         end
 
         # Registers a set of operations supported for a specific type
@@ -34,7 +34,7 @@ module ROM
           mod = Module.new(&block)
           ctx = Object.new.extend(mod)
           functions = mod.public_instance_methods.each_with_object({}) { |m, ms| ms[m] = ctx.method(m) }
-          @types[type] = functions
+          @types[type.meta(sql_expr: nil)] = functions
         end
       end
 
