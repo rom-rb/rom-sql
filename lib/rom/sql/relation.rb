@@ -6,7 +6,6 @@ require 'rom/sql/transaction'
 
 require 'rom/sql/relation/reading'
 require 'rom/sql/relation/writing'
-require 'rom/sql/relation/sequel_api'
 
 module ROM
   module SQL
