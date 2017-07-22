@@ -16,13 +16,17 @@ module ROM
           end
         end
 
-        JSON = (SQL::Types::Array | SQL::Types::Hash)
-                 .constructor(Sequel.method(:pg_json))
-                 .meta(read: JSONRead)
+        JSON = Type('json') do
+          (SQL::Types::Array | SQL::Types::Hash)
+            .constructor(Sequel.method(:pg_json))
+            .meta(read: JSONRead)
+        end
 
-        JSONB = (SQL::Types::Array | SQL::Types::Hash)
-                  .constructor(Sequel.method(:pg_jsonb))
-                  .meta(read: JSONRead)
+        JSONB = Type('jsonb') do
+          (SQL::Types::Array | SQL::Types::Hash)
+            .constructor(Sequel.method(:pg_jsonb))
+            .meta(read: JSONRead)
+        end
 
         # @!parse
         #   class SQL::Attribute

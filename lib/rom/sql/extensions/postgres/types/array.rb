@@ -10,12 +10,14 @@ module ROM
 
         ArrayRead = Array.constructor { |v| v.respond_to?(:to_ary) ? v.to_ary : v }
 
-        @array_types = ::Hash.new do |hash, db_type|
-          type = Array.constructor(-> (v) { Sequel.pg_array(v, db_type) }).meta(
-            type: db_type, read: ArrayRead
-          )
-          TypeExtensions.register(type) { include ArrayMethods }
-          hash[db_type] = type
+        constructor = -> type { -> value { Sequel.pg_array(value, type) } }
+
+        @array_types = ::Hash.new do |hash, type|
+          name = "#{ type }[]"
+          array_type = Type(name, Array.constructor(constructor.(type))).
+                         meta(type: type, read: ArrayRead)
+          TypeExtensions.register(array_type) { include ArrayMethods }
+          hash[type] = array_type
         end
 
         def self.Array(db_type)

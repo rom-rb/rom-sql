@@ -12,9 +12,9 @@ module ROM
         # @return [Hash]
         #
         # @api public
-        def [](type)
-          unwrapped = type.optional? ? type.right : type
-          @types[unwrapped.meta(sql_expr: nil)] || EMPTY_HASH
+        def [](wrapped)
+          type = wrapped.optional? ? wrapped.right : wrapped
+          @types[type.meta[:database]][type.meta[:db_type]] || EMPTY_HASH
         end
 
         # Registers a set of operations supported for a specific type
@@ -30,15 +30,20 @@ module ROM
         #
         # @api public
         def register(type, &block)
-          raise ArgumentError, "Type #{ type } already registered" if @types.key?(type)
+          extensions = @types[type.meta[:database]]
+          db_type = type.meta[:db_type]
+
+          raise ArgumentError, "Type #{ db_type } already registered" if extensions.key?(db_type)
           mod = Module.new(&block)
           ctx = Object.new.extend(mod)
           functions = mod.public_instance_methods.each_with_object({}) { |m, ms| ms[m] = ctx.method(m) }
-          @types[type.meta(sql_expr: nil)] = functions
+          extensions[db_type] = functions
         end
       end
 
-      @types = {}
+      @types = ::Hash.new do |hash, database|
+        hash[database] = {}
+      end
     end
   end
 end

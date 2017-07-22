@@ -1,10 +1,6 @@
 require 'sequel/core'
 
 require 'rom/sql/type_extensions'
-require 'rom/sql/extensions/postgres/types/array'
-require 'rom/sql/extensions/postgres/types/json'
-require 'rom/sql/extensions/postgres/types/geometric'
-require 'rom/sql/extensions/postgres/types/network'
 
 Sequel.extension(:pg_hstore)
 
@@ -12,17 +8,26 @@ module ROM
   module SQL
     module Postgres
       module Types
-        UUID = SQL::Types::String.meta(db_type: 'uuid')
+        def self.Type(name, type = yield)
+          type.meta(db_type: name, database: 'postgres')
+        end
 
-        HStoreR = SQL::Types.Constructor(Hash, &:to_hash)
-        HStore = SQL::Types.Constructor(Hash, &Sequel.method(:hstore))
-                   .meta(read: HStoreR)
+        UUID = Type('uuid', SQL::Types::String)
 
-        Bytea = SQL::Types.Constructor(Sequel::SQL::Blob, &Sequel::SQL::Blob.method(:new))
+        HStore = Type('hstore') do
+          read = SQL::Types.Constructor(Hash, &:to_hash)
 
-        Money = SQL::Types::Decimal.meta(db_type: 'money')
+          SQL::Types.Constructor(Hash, &Sequel.method(:hstore))
+            .meta(read: read)
+        end
 
-        XML = SQL::Types::String.meta(db_type: 'xml')
+        Bytea = Type('bytea') do
+          SQL::Types.Constructor(Sequel::SQL::Blob, &Sequel::SQL::Blob.method(:new))
+        end
+
+        Money = Type('money', SQL::Types::Decimal)
+
+        XML = Type('xml', SQL::Types::String)
       end
     end
 
@@ -31,3 +36,8 @@ module ROM
     end
   end
 end
+
+require 'rom/sql/extensions/postgres/types/array'
+require 'rom/sql/extensions/postgres/types/json'
+require 'rom/sql/extensions/postgres/types/geometric'
+require 'rom/sql/extensions/postgres/types/network'
