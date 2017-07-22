@@ -31,11 +31,14 @@ module ROM
       )
 
       def call(type)
-        db_type = type.meta[:db_type]
-        meta = db_type ? { db_type: db_type } : EMPTY_HASH
+        meta = {}
+        meta[:db_type] = type.meta[:db_type] if type.meta[:db_type]
+        meta[:read] = type.meta[:read] if type.meta[:read]
 
         self.class.mapping.fetch(type.with(meta: meta)) {
-          raise "Cannot serialize #{ type }"
+          if block_given?
+            yield(type)
+          end or raise "Cannot serialize #{ type }"
         }
       end
     end

@@ -17,7 +17,8 @@ RSpec.describe ROM::SQL::TypeSerializer[:postgres] do
       'box' => ROM::SQL::Postgres::Types::Box,
       'lseg' => ROM::SQL::Postgres::Types::LineSegment,
       'polygon' => ROM::SQL::Postgres::Types::Polygon,
-      'path' => ROM::SQL::Postgres::Types::Path
+      'path' => ROM::SQL::Postgres::Types::Path,
+      'text[]' => ROM::SQL::Postgres::Types::Array('text')
     }
 
     types.each do |db_type, rom_type|

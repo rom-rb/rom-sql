@@ -23,6 +23,14 @@ module ROM
             Types::Path => 'path'
           )
         )
+
+        def call(type)
+          super do
+            if type.respond_to?(:primitive) && type.primitive.equal?(Array)
+              "#{ type.meta[:type] }[]"
+            end
+          end
+        end
       end
     end
 

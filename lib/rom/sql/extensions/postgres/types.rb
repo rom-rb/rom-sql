@@ -18,7 +18,7 @@ module ROM
         HStore = SQL::Types.Constructor(Hash, &Sequel.method(:hstore))
                    .meta(read: HStoreR)
 
-        Bytea = SQL::Types.Constructor(String, &Sequel::SQL::Blob.method(:new))
+        Bytea = SQL::Types.Constructor(Sequel::SQL::Blob, &Sequel::SQL::Blob.method(:new))
 
         Money = SQL::Types::Decimal.meta(db_type: 'money')
 

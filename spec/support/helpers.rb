@@ -22,4 +22,18 @@ module Helpers
     definition = ROM::Associations::Definitions.const_get(klass).new(*args)
     ROM::SQL::Associations.const_get(definition.type).new(definition, relations)
   end
+
+  def attributes(schema)
+    schema.each_with_object({}) do |(key, type), acc|
+      if type.optional?
+        attr = ROM::SQL::Attribute.new(type.right).optional
+      else
+        attr = ROM::SQL::Attribute.new(type)
+      end
+
+      meta = { name: key, source: source }
+
+      acc[key] = attr.meta(meta)
+    end
+  end
 end

@@ -1,4 +1,4 @@
-RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
+RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
   include_context 'database setup'
 
   before do
@@ -45,35 +45,22 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
     end
   end
 
-  let(:schema) { container.relations[:test_inferrence].schema }
-  let(:source) { container.relations[:test_inferrence].name }
+  let(:gateway) { container.gateways[:default] }
 
-  def qualified(schema)
-    schema.each_with_object({}) do |(key, type), acc|
-      if type.optional?
-        attr = ROM::SQL::Attribute.new(type.right).optional
-      else
-        attr = ROM::SQL::Attribute.new(type)
-      end
+  let(:source) { ROM::Relation::Name[:test_inferrence] }
 
-      meta = { name: type.meta[:name], source: source }
-      meta[:db_type] = type.meta[:db_type] if type.meta[:db_type]
+  let(:inferrer) { ROM::SQL::Schema::Inferrer.new }
 
-      acc[key] = attr.meta(meta).qualified
-    end
+  subject(:schema) do
+    empty = define_schema(:test_inferrence)
+    empty.with(inferrer.(empty, gateway))
   end
 
   context 'inferring db-specific attributes' do
-    before do
-      conf.relation(:test_inferrence) do
-        schema(infer: true)
-      end
-    end
-
     it 'can infer attributes for dataset' do
       expect(schema.to_h).
         to eql(
-             qualified(
+             attributes(
                id: ROM::SQL::Types::PG::UUID.meta(name: :id, primary_key: true),
                big: ROM::SQL::Types::Int.optional.meta(name: :big),
                json_data: ROM::SQL::Types::PG::JSON.optional.meta(name: :json_data),

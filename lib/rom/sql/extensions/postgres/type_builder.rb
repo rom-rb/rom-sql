@@ -13,7 +13,7 @@ module ROM
         db_type_mapping(
           'uuid'  => Types::UUID,
           'money' => Types::Money,
-          'bytea' => SQL::Types::Blob,
+          'bytea' => Types::Bytea,
           'json'  => Types::JSON,
           'jsonb' => Types::JSONB,
           'xml' => Types::XML,
