@@ -3,6 +3,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
   before do
     conn.drop_table?(:test_pg_types)
+
+    conn.execute('create extension if not exists hstore')
   end
 
   let(:table_name) { :test_pg_types }
