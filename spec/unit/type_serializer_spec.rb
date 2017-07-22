@@ -18,4 +18,9 @@ RSpec.describe ROM::SQL::TypeSerializer do
       expect(serializer.(rom_type)).to eql(db_type)
     end
   end
+
+  it 'serializes arbitrary data types' do
+    custom = ROM::SQL::Types::Any.meta(db_type: 'custom')
+    expect(serializer.(custom)).to eql('custom')
+  end
 end

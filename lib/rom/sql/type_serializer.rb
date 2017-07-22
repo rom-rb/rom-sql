@@ -31,9 +31,9 @@ module ROM
       )
 
       def call(type)
-        meta = {}
-        meta[:db_type] = type.meta[:db_type] if type.meta[:db_type]
-        meta[:read] = type.meta[:read] if type.meta[:read]
+        return type.meta[:db_type] if type.meta[:db_type]
+
+        meta = type.meta[:read] ? { read: type.meta[:read] } : EMPTY_HASH
 
         self.class.mapping.fetch(type.with(meta: meta)) {
           if block_given?
