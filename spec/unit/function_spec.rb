@@ -44,5 +44,10 @@ RSpec.describe ROM::SQL::Function, :postgres do
       expect(func.cast(:id, 'varchar').sql_literal(ds)).
         to eql(%(CAST("id" AS varchar(255))))
     end
+
+    it 'infers db_type from type if not specify' do
+      expect(func.cast(:id).sql_literal(ds)).
+        to eql(%(CAST("id" AS integer)))
+    end
   end
 end

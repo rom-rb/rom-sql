@@ -37,7 +37,7 @@ module ROM
       # @return [ROM::SQL::Attribute]
       #
       # @api private
-      def cast(expr, db_type)
+      def cast(expr, db_type = TypeSerializer[:default].call(type))
         Attribute[type].meta(sql_expr: ::Sequel.cast(expr, db_type))
       end
 
