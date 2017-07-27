@@ -1,7 +1,7 @@
 RSpec.describe ROM::Relation, '#import' do
   subject(:relation) { relations[:users] }
 
-  include_context 'users and tasks'
+  include_context 'users'
 
   let(:source) { relations[:users_for_loading] }
 

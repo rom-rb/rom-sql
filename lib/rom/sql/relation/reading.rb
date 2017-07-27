@@ -880,6 +880,45 @@ module ROM
           where(other.where(join_condition).dataset.exists)
         end
 
+        # Process the dataset in batches.
+        # The method yields a relation restricted by a primary key value.
+        # This means it discards any order internally and uses the PK sort.
+        # Currently, works only with a single-column primary key.
+        #
+        # @example update in batches
+        #   users.each_batch do |rel|
+        #     rel.
+        #       command(:update).
+        #       call(name: users[:first_name].concat(users[:last_name])
+        #   end
+        #
+        # @option [Integer] size The size of a batch (max number of records)
+        # @yieldparam [SQL::Relation]
+        #
+        # @api public
+        def each_batch(size: 1000)
+          pks = schema.primary_key
+
+          if pks.size > 1
+            raise ArgumentError, 'Composite primary keys are not supported yet'
+          end
+
+          source = order(pks[0]).limit(size)
+          rel = source
+
+          loop do
+            ids = rel.pluck(primary_key)
+
+            break if ids.empty?
+
+            yield(rel)
+
+            break if ids.size < size
+
+            rel = source.where(pks[0] > ids.last)
+          end
+        end
+
         private
 
         # Build a locking clause
