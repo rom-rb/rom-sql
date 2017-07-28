@@ -55,14 +55,6 @@ module ROM
       #
       #   @param [Hash] options connection options
       #
-      #   @option options [Array<Symbol>] :inferrable_relations
-      #     A list of dataset names that should be inferred. If
-      #     this is set explicitly to an empty array relations
-      #     won't be inferred at all
-      #
-      #   @option options [Array<Symbol>] :not_inferrable_relations
-      #     A list of dataset names that should NOT be inferred
-      #
       #   @option options [Array<Symbol>] :extensions
       #     A list of connection extensions supported by Sequel
       #
