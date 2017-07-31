@@ -16,6 +16,11 @@ RSpec.describe 'ROM::SQL::Schema::MysqlInferrer', :mysql do
       timestamp :unix_time_usec
       column :unix_time_sec, 'timestamp(0) null'
       boolean :flag, null: false
+
+      column :ttext, 'tinytext', null: false
+      column :mtext, 'mediumtext', null: false
+      column :rtext, 'text', null: false
+      column :ltext, 'longtext', null: false
     end
   end
 
@@ -56,5 +61,17 @@ RSpec.describe 'ROM::SQL::Schema::MysqlInferrer', :mysql do
     expect(schema[:flag].source).to be(source)
     expect(schema[:flag].unwrap.type.left.primitive).to be(TrueClass)
     expect(schema[:flag].unwrap.type.right.primitive).to be(FalseClass)
+
+    expect(schema[:ttext].source).to be(source)
+    expect(schema[:ttext].unwrap.type.primitive).to be(String)
+
+    expect(schema[:rtext].source).to be(source)
+    expect(schema[:rtext].unwrap.type.primitive).to be(String)
+
+    expect(schema[:mtext].source).to be(source)
+    expect(schema[:mtext].unwrap.type.primitive).to be(String)
+
+    expect(schema[:ltext].source).to be(source)
+    expect(schema[:ltext].unwrap.type.primitive).to be(String)
   end
 end
