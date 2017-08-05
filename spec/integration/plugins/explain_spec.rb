@@ -6,20 +6,19 @@ RSpec.describe 'Plugins / :explain', :postgres do
   end
 
   it 'returns the execution plan of a request' do
-    expect(users.explain).
-      to match(/Index Scan using users_pkey on users/)
+    expect(users.explain).to match(/(Index|Seq Scan)|Sort/)
   end
 
   it 'supports JSON format' do
     plan = users.explain(format: :json)
 
     expect(plan).to be_a(Hash)
-    expect(plan['Node Type']).to eql('Index Scan')
+    expect(plan['Node Type']).to match(/(Index|Seq Scan)|Sort/)
   end
 
   it 'supports YAML format' do
     yaml = YAML.load(users.explain(format: :yaml))[0]
-    expect(yaml['Plan']['Node Type']).to eql('Index Scan')
+    expect(yaml['Plan']['Node Type']).to match(/(Index|Seq Scan)|Sort/)
   end
 
   it 'supports the ANALYZE option' do
@@ -31,7 +30,7 @@ RSpec.describe 'Plugins / :explain', :postgres do
   end
 
   it 'supports the COSTS option' do
-    expect(users.explain(costs: false)).to eql("Index Scan using users_pkey on users")
+    expect(users.explain(costs: false)).not_to match(/cost/)
   end
 
   it 'supports the BUFFERS option' do
