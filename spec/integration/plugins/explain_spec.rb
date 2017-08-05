@@ -1,3 +1,5 @@
+require 'yaml'
+
 RSpec.describe 'Plugins / :explain', :postgres do
   include_context 'users and tasks'
 
