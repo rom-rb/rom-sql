@@ -50,4 +50,50 @@ RSpec.describe ROM::SQL::Function, :postgres do
         to eql(%(CAST("id" AS integer)))
     end
   end
+
+  describe '#over' do
+    example 'with the ORDER BY clause' do
+      expect(func.row_number.over(order: :id).sql_literal(ds)).
+        to eql('ROW_NUMBER() OVER (ORDER BY "id")')
+
+      expect(func.row_number.over(order: [:id, :name]).sql_literal(ds)).
+        to eql('ROW_NUMBER() OVER (ORDER BY "id", "name")')
+    end
+
+    example 'with the PARTITION BY clause' do
+      expect(func.row_number.over(partition: :name).sql_literal(ds)).
+        to eql('ROW_NUMBER() OVER (PARTITION BY "name")')
+    end
+
+    example 'with the frame clause' do
+      expect(func.row_number.over(frame: :all).sql_literal(ds)).
+        to eql('ROW_NUMBER() OVER (ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)')
+
+      expect(func.row_number.over(frame: :rows).sql_literal(ds)).
+        to eql('ROW_NUMBER() OVER (ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)')
+
+      expect(func.row_number.over(frame: { range: :current }).sql_literal(ds)).
+        to eql('ROW_NUMBER() OVER (RANGE BETWEEN CURRENT ROW AND CURRENT ROW)')
+
+      expect(func.row_number.over(frame: { range: [:current, :end] }).sql_literal(ds)).
+        to eql('ROW_NUMBER() OVER (RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)')
+
+      expect(func.row_number.over(frame: { range: [:start, :current] }).sql_literal(ds)).
+        to eql('ROW_NUMBER() OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)')
+
+      expect(func.row_number.over(frame: { range: [-3, 3] }).sql_literal(ds)).
+        to eql('ROW_NUMBER() OVER (RANGE BETWEEN 3 PRECEDING AND 3 FOLLOWING)')
+
+      expect(func.row_number.over(frame: { rows: [-3, :current] }).sql_literal(ds)).
+        to eql('ROW_NUMBER() OVER (ROWS BETWEEN 3 PRECEDING AND CURRENT ROW)')
+
+      expect(func.row_number.over(frame: { rows: [-3, :end] }).sql_literal(ds)).
+        to eql('ROW_NUMBER() OVER (ROWS BETWEEN 3 PRECEDING AND UNBOUNDED FOLLOWING)')
+    end
+
+    it 'supports aliases' do
+      expect(func.row_number.over(order: :id).as(:row_no).sql_literal(ds)).
+        to eql('ROW_NUMBER() OVER (ORDER BY "id") AS "row_no"')
+    end
+  end
 end
