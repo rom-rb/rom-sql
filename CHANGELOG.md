@@ -66,6 +66,7 @@
 * [BREAKING] based on rom 4.0 now (flash-gordon + solnic)
 * [BREAKING] `Associates` command plugin requires associations now (solnic)
 * [BREAKING] `Command#transaction` is gone in favor of `Relation#transaction` (solnic)
+* [BREAKING] `PG::JSONArray`, `PG::JSONBArray`, `PG::JSONHash`, and `PG::JSONBHash` types were dropped, use `PG::JSON` and `PG::JSONB` instead (flash-gordon)
 * `ManyToOne` no longer uses a join (solnic)
 * `AutoCombine` and `AutoWrap` plugins were removed as this functionality is provided by core API (solnic)
 * Foreign keys are indexed by default (flash-gordon)
