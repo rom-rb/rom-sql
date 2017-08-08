@@ -89,6 +89,12 @@ RSpec.describe ROM::SQL::Function, :postgres do
 
       expect(func.row_number.over(frame: { rows: [-3, :end] }).sql_literal(ds)).
         to eql('ROW_NUMBER() OVER (ROWS BETWEEN 3 PRECEDING AND UNBOUNDED FOLLOWING)')
+
+      expect(func.row_number.over(frame: { rows: [3, 6] }).sql_literal(ds)).
+        to eql('ROW_NUMBER() OVER (ROWS BETWEEN 3 FOLLOWING AND 6 FOLLOWING)')
+
+      expect(func.row_number.over(frame: { rows: [-6, -3] }).sql_literal(ds)).
+        to eql('ROW_NUMBER() OVER (ROWS BETWEEN 6 PRECEDING AND 3 PRECEDING)')
     end
 
     it 'supports aliases' do
