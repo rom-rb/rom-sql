@@ -4,6 +4,62 @@
 
 * Support for schema plugins (flash-gordon)
 * Support for auto migrations (flash-gordon)
+* Add DLS for describing table indexes (flash-gordon)
+
+  ```ruby
+  schema do
+    indexes do
+      index :name, name: :unique_name, unique: true
+      index :props, type: :gin
+      index :name, name: :long_names_only, predicate: 'length(name) > 10'
+      index :user_id, :title, name: :composite_idx
+    end
+  end
+  ```
+
+* Support for composite indexes in the auto-restrictions plugin (flash-gordon)
+* `SQL::Gateway#call` calls a SQL function (flash-gordon)
+
+  ```ruby
+    gateway.(:upper, 'foo') # => "FOO"
+    gateway.(:pg_advisory_xact_lock, 1234) # => nil
+  ```
+
+* `SQL::Gateway#run` executes a SQL string, e.g. a DDL statement (flash-gordon)
+
+  ```ruby
+    gateway.run('set session IntervalStyle to default')
+  ```
+
+* `SQL::Relation#exists` joins a relation with the `EXISTS` operator (flash-gordon)
+
+  ```ruby
+    users.exists(posts) # => users with posts
+  ```
+
+* Support for processing a relation in batches (flash-gordon)
+
+  ```ruby
+    users.each_batch(size: 100) do |rel|
+      rel.
+        command(:update).
+        call(name: users[:first_name].concat(users[:last_name])
+    end
+  ```
+
+* `SQL::Relation#import` inserts data from another relation using the `INSERT ... AS SELECT` syntax which is often far more effective than row-by-row processing and an ordinary multi-insert. Relations defined on another gateway are also supported, and in this case, the implementation falls back to the multi-insert strategy (flash-gordon)
+
+  ```ruby
+    users.import(authors.select { first_name.concat(last_name).as(:name) })
+  ```
+
+* Support for `tinytext`, `text`, `mediumtext`, and `longtext data types in MySQL (panthomakos)
+* The new `pg_explain` plugin for getting query plans on PostgreSQL (flash-gordon)
+
+  ```ruby
+    users.by_pk(1).explain(format: :json, analyze: true)
+  ```
+
 
 ### Changed
 
@@ -12,6 +68,9 @@
 * [BREAKING] `Command#transaction` is gone in favor of `Relation#transaction` (solnic)
 * `ManyToOne` no longer uses a join (solnic)
 * `AutoCombine` and `AutoWrap` plugins were removed as this functionality is provided by core API (solnic)
+* Foreign keys are indexed by default (flash-gordon)
+* Schemas are qualified by default (solnic)
+* `PG::JSON`, `PG::JSONB`, and `PG::Array` now all have read types so that they return plain Hash/Array values instead of Sequel's wrappers (flash-gordon)
 
 ### Fixed
 
