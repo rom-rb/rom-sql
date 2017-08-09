@@ -7,14 +7,14 @@
 * Add DLS for describing table indexes (flash-gordon)
 
   ```ruby
-  schema do
-    indexes do
-      index :name, name: :unique_name, unique: true
-      index :props, type: :gin
-      index :name, name: :long_names_only, predicate: 'length(name) > 10'
-      index :user_id, :title, name: :composite_idx
+    schema do
+      indexes do
+        index :name, name: :unique_name, unique: true
+        index :props, type: :gin
+        index :name, name: :long_names_only, predicate: 'length(name) > 10'
+        index :user_id, :title, name: :composite_idx
+      end
     end
-  end
   ```
 
 * Support for composite indexes in the auto-restrictions plugin (flash-gordon)
@@ -58,6 +58,12 @@
 
   ```ruby
     users.by_pk(1).explain(format: :json, analyze: true)
+  ```
+
+* Support for window function calls
+
+  ```ruby
+    employees.select { [dep_no, salary, int::avg(salary).over(partition: dep_no, order: id).as(:avg_salary)] }
   ```
 
 
