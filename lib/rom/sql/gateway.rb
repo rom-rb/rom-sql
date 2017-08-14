@@ -94,7 +94,7 @@ module ROM
 
       # Return dataset with the given name
       #
-      # Thsi returns a raw Sequel database
+      # This returns a raw Sequel database
       #
       # @param [String, Symbol] name The dataset name
       #
