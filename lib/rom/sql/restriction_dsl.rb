@@ -14,7 +14,7 @@ module ROM
       # @example
       #   users.where { exists(users.where(name: 'John')) }
       def exists(relation)
-        relation.dataset.exists
+        ::ROM::SQL::Attribute[Types::Bool].meta(sql_expr: relation.dataset.exists)
       end
 
       private

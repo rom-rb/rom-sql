@@ -42,7 +42,7 @@ RSpec.describe ROM::Relation, '#exists', relations: false do
 
     it 'returns true if subquery has no tuples' do
       subquery = tasks.where(tasks[:user_id] => users[:id])
-      expect(users.where { ~exists(subquery) }.count).to eql(1)
+      expect(users.where { !exists(subquery) }.count).to eql(1)
     end
   end
 end
