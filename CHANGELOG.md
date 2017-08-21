@@ -84,6 +84,7 @@
 * Self-ref associations work correctly with custom FKs (solnic)
 * Aliased associations with custom FKs work correctly (solnic)
 * Defining a custom dataset block no longer prevents default views like `by_pk` to be defined (solnic)
+* `Relation#group` uses canonical schema now (solnic)
 
 [Compare v1.3.3...master](https://github.com/rom-rb/rom-sql/compare/v1.3.3...master)
 
