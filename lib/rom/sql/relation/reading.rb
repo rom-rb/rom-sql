@@ -241,7 +241,7 @@ module ROM
         #
         # @api public
         def select_append(*args, &block)
-          schema.merge(self.class.schema.project(*args, &block)).(self)
+          schema.merge(schema.canonical.project(*args, &block)).(self)
         end
 
         # Returns a copy of the relation with a SQL DISTINCT clause.
@@ -354,7 +354,7 @@ module ROM
         # @api public
         def where(*args, &block)
           if block
-            where(*args).where(self.class.schema.restriction(&block))
+            where(*args).where(schema.canonical.restriction(&block))
           elsif args.size == 1 && args[0].is_a?(Hash)
             new(dataset.where(coerce_conditions(args[0])))
           elsif !args.empty?
@@ -413,7 +413,7 @@ module ROM
         # @api public
         def having(*args, &block)
           if block
-            new(dataset.having(*args, *self.class.schema.restriction(&block)))
+            new(dataset.having(*args, *schema.canonical.restriction(&block)))
           else
             new(dataset.__send__(__method__, *args))
           end
@@ -468,7 +468,7 @@ module ROM
         # @api public
         def order(*args, &block)
           if block
-            new(dataset.order(*args, *self.class.schema.order(&block)))
+            new(dataset.order(*args, *schema.canonical.order(&block)))
           else
             new(dataset.__send__(__method__, *args, &block))
           end
@@ -678,10 +678,10 @@ module ROM
             if args.size > 0
               group(*args).group_append(&block)
             else
-              new(dataset.__send__(__method__, *self.class.schema.group(&block)))
+              new(dataset.__send__(__method__, *schema.canonical.group(&block)))
             end
           else
-            new(dataset.__send__(__method__, *self.class.schema.project(*args).canonical))
+            new(dataset.__send__(__method__, *schema.canonical.project(*args)))
           end
         end
 
@@ -717,7 +717,7 @@ module ROM
             if args.size > 0
               group_append(*args).group_append(&block)
             else
-              new(dataset.group_append(*schema.group(&block)))
+              new(dataset.group_append(*schema.canonical.group(&block)))
             end
           else
             new(dataset.group_append(*args))
@@ -949,8 +949,8 @@ module ROM
         # @api private
         def coerce_conditions(conditions)
           conditions.each_with_object({}) { |(k, v), h|
-            if k.is_a?(Symbol) && self.class.schema.key?(k)
-              type = self.class.schema[k]
+            if k.is_a?(Symbol) && schema.canonical.key?(k)
+              type = schema.canonical[k]
               h[k] = v.is_a?(Array) ? v.map { |e| type[e] } : type[v]
             else
               h[k] = v

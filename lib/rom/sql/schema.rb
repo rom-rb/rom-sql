@@ -44,15 +44,6 @@ module ROM
         new(map { |attr| attr.qualified(table_alias) })
       end
 
-      # Return a new schema with attributes restored to canonical form
-      #
-      # @return [Schema]
-      #
-      # @api public
-      def canonical
-        new(map(&:canonical))
-      end
-
       # @api public
       def project(*names, &block)
         if block

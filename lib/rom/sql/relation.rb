@@ -61,7 +61,7 @@ module ROM
           #   @api public
           class_eval <<-RUBY, __FILE__, __LINE__ + 1
             def by_pk(#{schema.primary_key.map(&:name).join(', ')})
-              where(#{schema.primary_key.map { |attr| "self.class.schema[:#{attr.name}] => #{attr.name}" }.join(', ')})
+              where(#{schema.primary_key.map { |attr| "schema.canonical[:#{attr.name}] => #{attr.name}" }.join(', ')})
             end
           RUBY
         else
@@ -80,7 +80,7 @@ module ROM
                   "Missing primary key for :\#{schema.name}"
                 )
               end
-              where(self.class.schema[self.class.schema.primary_key_name].qualified => pk)
+              where(schema.canonical[schema.canonical.primary_key_name].qualified => pk)
             end
           RUBY
         end
