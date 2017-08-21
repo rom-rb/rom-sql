@@ -33,6 +33,14 @@ RSpec.describe ROM::Relation, '#group' do
 
       expect(grouped.to_a).to eql([{ user_id: 1 }, { user_id: 2 }])
     end
+
+    it 'groups projected relation' do
+      grouped = relation.
+                  select(:id).
+                  group(:id, :name)
+
+      expect(grouped.to_a).to eql([{ id: 1 }, { id: 2 }])
+    end
   end
 
   with_adapters :postgres do

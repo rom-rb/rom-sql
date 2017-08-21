@@ -678,10 +678,10 @@ module ROM
             if args.size > 0
               group(*args).group_append(&block)
             else
-              new(dataset.__send__(__method__, *schema.group(&block)))
+              new(dataset.__send__(__method__, *self.class.schema.group(&block)))
             end
           else
-            new(dataset.__send__(__method__, *schema.project(*args).canonical))
+            new(dataset.__send__(__method__, *self.class.schema.project(*args).canonical))
           end
         end
 
