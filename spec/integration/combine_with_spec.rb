@@ -40,4 +40,62 @@ RSpec.describe 'Eager loading' do
       expect(relation.call).to be_instance_of(ROM::Relation::Loaded)
     end
   end
+
+  describe 'using natural keys' do
+    include_context 'articles'
+
+    with_adapters do
+      before do
+        conf.relation(:users) do
+          schema infer: true do
+            associations do
+              has_many :articles, override: true, view: :for_users,
+                       combine_keys: { name: :author_name }
+
+              has_many :articles, as: :drafts, override: true, view: :with_drafts,
+                       combine_keys: { name: :author_name }
+            end
+          end
+
+          def by_name(name)
+            where(name: name)
+          end
+        end
+
+        conf.relation(:articles) do
+          schema infer: true do
+            associations do
+              belongs_to :users, foreign_key: :author_name
+            end
+          end
+
+          def for_users(_assoc, users)
+            where(author_name: users.pluck(:name))
+          end
+
+          def with_drafts(_assoc, users)
+            for_users(assoc, users).where(status: 'draft')
+          end
+        end
+      end
+
+      it 'loads associated data' do
+        users = container.relations[:users].by_name('John')
+
+        authors = users.combine_with(users.node(:articles)).to_a
+
+        expect(authors.map { |a| a[:name] }).to eql(['John'])
+        expect(authors.map { |a| a[:articles].size }).to eql([1])
+      end
+
+      it 'allows a left join' do
+        users = container.relations[:users]
+
+        authors = users.combine_with(users.node(:drafts)).to_a
+
+        expect(authors.map { |a| a[:name] }).to eql(['Jane', 'Joe', 'John'])
+        expect(authors.map { |a| a[:drafts].size }).to eql([0, 1, 0])
+      end
+    end
+  end
 end
