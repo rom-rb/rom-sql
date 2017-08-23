@@ -65,8 +65,9 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
 
         def for_eans(assoc, eans)
           join(:contract_ean_stats, contract_id: contracts[:id]).
-            join(:ean_stats, ean_id: eans.pluck(:id)).
-            select_append(ean_stats[:ean_id])
+            join(:ean_stats, id: contract_ean_stats[:ean_stat_id]).
+            select_append(ean_stats[:ean_id]).
+            where(ean_id: eans.pluck(:id))
         end
       end
     end
