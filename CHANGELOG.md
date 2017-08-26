@@ -66,6 +66,13 @@
     employees.select { [dep_no, salary, int::avg(salary).over(partition: dep_no, order: id).as(:avg_salary)] }
   ```
 
+* Function result can be negated, also `ROM::SQL::Function#not` was added (flash-gordon)
+
+  ```ruby
+     users.where { !string::lower(name).is('John') }
+     users.where { string::lower(name).not('John') }
+  ```
+
 
 ### Changed
 

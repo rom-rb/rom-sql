@@ -26,6 +26,16 @@ RSpec.describe ROM::SQL::Function, :postgres do
     it 'returns an sql boolean expression' do
       expect(ds.literal(func.count(:id).is(1))).to eql(%((COUNT("id") = 1)))
     end
+
+    it 'can be negated' do
+      expect(ds.literal(!func.count(:id).is(1))).to eql(%((COUNT("id") != 1)))
+    end
+  end
+
+  describe '#not' do
+    it 'returns an sql boolean expression' do
+      expect(ds.literal(func.count(:id).not(1))).to eql(%((COUNT("id") != 1)))
+    end
   end
 
   describe '#method_missing' do

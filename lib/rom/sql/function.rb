@@ -56,9 +56,18 @@ module ROM
         )
       end
 
+      # @see ROM::SQL::Attribute#is
       # @api private
       def is(other)
-        ::Sequel::SQL::BooleanExpression.new(:'=', func, other)
+        ::ROM::SQL::Attribute[::ROM::SQL::Types::Bool].meta(
+          sql_expr: ::Sequel::SQL::BooleanExpression.new(:'=', func, other)
+        )
+      end
+
+      # @see ROM::SQL::Attribute#not
+      # @api private
+      def not(other)
+        !is(other)
       end
 
       # Add an OVER clause making a window function call
