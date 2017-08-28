@@ -69,8 +69,8 @@
 * Function result can be negated, also `ROM::SQL::Function#not` was added (flash-gordon)
 
   ```ruby
-     users.where { !string::lower(name).is('John') }
-     users.where { string::lower(name).not('John') }
+     users.where { !lower(name).is('John') }
+     users.where { lower(name).not('John') }
   ```
 
 
