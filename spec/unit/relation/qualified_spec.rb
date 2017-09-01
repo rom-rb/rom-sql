@@ -21,5 +21,13 @@ RSpec.describe ROM::Relation, '#qualified' do
 
       expect(qualified.to_a).to eql([{ id: 1, count: 1 }, { id: 2, count: 1 }])
     end
+
+    it 're-qualifies columns when aliased' do
+      schema = relation.as(:authors).schema
+
+      expect(schema.all?(&:qualified)).to be(true)
+
+      expect(schema[:name].meta[:qualified]).to eql(:authors)
+    end
   end
 end
