@@ -8,9 +8,10 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
   colors = %w(red orange yellow green blue purple)
 
   before do
-    conn.extension :pg_enum
-
     conn.execute('create extension if not exists hstore')
+
+    conn.extension :pg_enum
+    conn.extension :pg_hstore
     conn.drop_table?(:test_inferrence)
     conn.drop_enum(:rainbow, if_exists: true)
 
