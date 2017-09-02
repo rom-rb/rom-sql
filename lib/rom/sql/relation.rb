@@ -121,20 +121,6 @@ module ROM
         Transaction.new(dataset.db).run(opts, &block)
       end
 
-      # Return a new relation with an aliased name
-      #
-      # @example
-      #   users.as(:people)
-      #
-      # @param [Symbol] aliaz Aliased name
-      #
-      # @return [SQL::Relation]
-      #
-      # @api public
-      def as(aliaz)
-        with(name: name.as(aliaz), schema: schema.qualified(aliaz))
-      end
-
       # Return raw column names
       #
       # @return [Array<Symbol>]
