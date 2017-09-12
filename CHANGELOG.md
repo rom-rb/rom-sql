@@ -1,3 +1,11 @@
+## v1.3.4 2017-09-12
+
+### Fixed
+
+* A warning caused by using `EMPTY_BRACKET` from Sequel (flash-gordon)
+
+[Compare v1.3.3..v1.3.4](https://github.com/rom-rb/rom-sql/compare/v1.3.3...v1.3.4)
+
 ## v1.3.3 2017-05-30
 
 ### Added
