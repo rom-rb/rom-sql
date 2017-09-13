@@ -9,14 +9,6 @@ module ROM
     module Types
       include ROM::Types
 
-      def self.Constructor(*args, &block)
-        ROM::Types.Constructor(*args, &block)
-      end
-
-      def self.Definition(*args, &block)
-        ROM::Types.Definition(*args, &block)
-      end
-
       def self.ForeignKey(relation, type = Types::Int.meta(index: true))
         super
       end
