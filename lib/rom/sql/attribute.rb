@@ -221,7 +221,7 @@ module ROM
       #   users.where { id.in(1, 2, 3) }
       #   users.where(users[:id].in(1, 2, 3))
       #
-      # @param [Array<Object>] *args A range or a list of values for an inclusion check
+      # @param [Array<Object>] args A range or a list of values for an inclusion check
       #
       # @api public
       def in(*args)
@@ -267,7 +267,7 @@ module ROM
 
       # Sequel calls this method to coerce an attribute into SQL string
       #
-      # @param [Sequel::Dataset]
+      # @param [Sequel::Dataset] ds
       #
       # @api private
       def sql_literal(ds)

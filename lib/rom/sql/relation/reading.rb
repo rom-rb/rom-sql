@@ -273,7 +273,7 @@ module ROM
         # @example
         #   users.sum(:age)
         #
-        # @param [Array<Symbol>] *args A list with column names
+        # @param [Array<Symbol>] args A list with column names
         #
         # @return [Integer]
         #
@@ -287,7 +287,7 @@ module ROM
         # @example
         #   users.min(:age)
         #
-        # @param [Array<Symbol>] *args A list with column names
+        # @param [Array<Symbol>] args A list with column names
         #
         # @return Number
         #
@@ -301,7 +301,7 @@ module ROM
         # @example
         #   users.max(:age)
         #
-        # @param [Array<Symbol>] *args A list with column names
+        # @param [Array<Symbol>] args A list with column names
         #
         # @return Number
         #
@@ -315,7 +315,7 @@ module ROM
         # @example
         #   users.avg(:age)
         #
-        # @param [Array<Symbol>] *args A list with column names
+        # @param [Array<Symbol>] args A list with column names
         #
         # @return Number
         #
@@ -369,7 +369,7 @@ module ROM
         # @example
         #   users.exclude(name: 'Jane')
         #
-        # @param [Hash] *args A hash with conditions for exclusion
+        # @param [Hash] args A hash with conditions for exclusion
         #
         # @return [Relation]
         #
@@ -730,7 +730,7 @@ module ROM
         #   tasks.group_and_count(:user_id)
         #   # => [{ user_id: 1, count: 2 }, { user_id: 2, count: 3 }]
         #
-        # @param [Array<Symbol>] *args A list of column names
+        # @param [Array<Symbol>] args A list of column names
         #
         # @return [Relation]
         #
@@ -745,7 +745,7 @@ module ROM
         #   tasks.select_group(:user_id)
         #   # => [{ user_id: 1 }, { user_id: 2 }]
         #
-        # @param [Array<Symbol>] *args A list of column names
+        # @param [Array<Symbol>] args A list of column names
         #
         # @return [Relation]
         #

@@ -30,7 +30,7 @@ module ROM
         # @example
         #   users.insert(name: 'Jane')
         #
-        # @param [Hash] tuple
+        # @param [Hash] args
         #
         # @return [Hash] Inserted tuple
         #
@@ -44,7 +44,7 @@ module ROM
         # @example
         #   users.multi_insert([{name: 'Jane'}, {name: 'Jack'}])
         #
-        # @param [Array] tuples
+        # @param [Array<Hash>] args
         #
         # @return [Array<String>] A list of executed SQL statements
         #
@@ -92,7 +92,7 @@ module ROM
         #   the INSERT ... SELECT statement will
         #   be used for importing the data
         #
-        #   @params [SQL::Relation] other_sql_relation
+        #   @param [SQL::Relation] other_sql_relation
         #
         #   @option [Integer] :slice
         #     Split loading into batches of provided size,
@@ -103,7 +103,7 @@ module ROM
         #   Import data from another relation. The source
         #   relation will be materialized before loading
         #
-        #   @params [Relation] other
+        #   @param [Relation] other
         #
         #   @option [Integer] :slice
         #

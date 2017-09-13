@@ -38,11 +38,11 @@ module ROM
           #   result = create_user.call
           #   result[:created_at]  #=> Time.now.utc
           #
-          # @param [Symbol] name of the attribute to set
+          # @param [Array<Symbol>] names A list of attribute names
           #
           # @api public
-          def timestamps(*args)
-            timestamp_columns timestamp_columns.merge(args)
+          def timestamps(*names)
+            timestamp_columns timestamp_columns.merge(names)
 
             include InstanceMethods
           end
@@ -62,11 +62,11 @@ module ROM
           #   result = create_user.call
           #   result[:created_at]  #=> Date.today
           #
-          # @param [Symbol] name of the attribute to set
+          # @param [Array<Symbol>] names A list of attribute names
           #
           # @api public
-          def datestamps(*args)
-            datestamp_columns datestamp_columns.merge(args)
+          def datestamps(*names)
+            datestamp_columns datestamp_columns.merge(names)
 
             include InstanceMethods
           end

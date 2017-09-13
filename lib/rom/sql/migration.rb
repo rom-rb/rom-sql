@@ -47,8 +47,9 @@ module ROM
       #     end
       #   end
       #
-      # @param [ROM::Container] container The container instance used for accessing gateways
-      # @param [Symbol] gateway The gateway name, :default by default
+      # @overload migration(container, gateway)
+      #   @param [ROM::Container] container The container instance used for accessing gateways
+      #   @param [Symbol] gateway The gateway name, :default by default
       #
       # @api public
       def migration(*args, &block)
