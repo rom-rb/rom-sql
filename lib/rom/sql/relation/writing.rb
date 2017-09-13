@@ -11,6 +11,8 @@ module ROM
         #   users.upsert({ name: 'Jane', email: 'jane@foo.com' },
         #                { target: :email, update: { name: :excluded__name } }
         #
+        # @return [Integer] Number of affected rows
+        #
         # @api public
         def upsert(*args, &block)
           if args.size > 1 && args[-1].is_a?(Hash)
@@ -30,7 +32,7 @@ module ROM
         #
         # @param [Hash] tuple
         #
-        # @return [Relation]
+        # @return [Hash] Inserted tuple
         #
         # @api public
         def insert(*args, &block)
@@ -44,7 +46,7 @@ module ROM
         #
         # @param [Array] tuples
         #
-        # @return [Relation]
+        # @return [Array<String>] A list of executed SQL statements
         #
         # @api public
         def multi_insert(*args, &block)
@@ -57,7 +59,7 @@ module ROM
         #   users.update(name: 'Jane')
         #   users.where(name: 'Jane').update(name: 'Jane Doe')
         #
-        # @return [Relation]
+        # @return [Integer] Number of updated rows
         #
         # @api public
         def update(*args, &block)
@@ -71,7 +73,7 @@ module ROM
         #   users.where(name: 'Jane').delete # delete tuples
         #                                      from restricted relation
         #
-        # @return [Relation]
+        # @return [Integer] Number of deleted tuples
         #
         # @api public
         def delete(*args, &block)
@@ -79,6 +81,7 @@ module ROM
         end
 
         # Insert tuples from other relation
+        #
         # NOTE: The method implicitly uses a transaction
         #
         # @example
@@ -103,6 +106,8 @@ module ROM
         #   @params [Relation] other
         #
         #   @option [Integer] :slice
+        #
+        # @return [Integer] Number of imported tuples
         #
         # @api public
         def import(other, options = EMPTY_HASH)

@@ -98,7 +98,7 @@ module ROM
         #     #   Translates to an `array_to_string` call
         #     #
         #     #   @param [Object] delimiter
-        #     #   @param [Object] null
+        #     #   @param [Object] null_repr
         #     #
         #     #   @return [SQL::Attribute<Types::String>]
         #     #

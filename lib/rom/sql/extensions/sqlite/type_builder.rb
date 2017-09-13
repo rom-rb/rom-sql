@@ -4,6 +4,7 @@ module ROM
       class TypeBuilder < Schema::TypeBuilder
         NO_TYPE = EMPTY_STRING
 
+        # @api private
         def map_type(_, db_type, **_kw)
           if db_type.eql?(NO_TYPE)
             ROM::SQL::Types::SQLite::Any

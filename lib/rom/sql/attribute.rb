@@ -77,7 +77,7 @@ module ROM
       # Whenever you join two schemas, the right schema's attribute
       # will be marked as joined using this method
       #
-      # @return [SQL::Attribute]
+      # @return [SQL::Attribute] Original attribute marked as joined
       #
       # @api public
       def joined
