@@ -11,6 +11,9 @@ require 'rom/sql/schema/inferrer'
 
 module ROM
   module SQL
+    # Specialized schema for SQL databases
+    #
+    # @api public
     class Schema < ROM::Schema
       # @!attribute [r] indexes
       #   @return [Array<Index>] Array with schema indexes
@@ -20,16 +23,34 @@ module ROM
       #   @return [Array<ForeignKey>] Array with foreign keys
       option :foreign_keys, default: -> { EMPTY_SET }
 
+      # Open restriction DSL for defining query conditions using schema attributes
+      #
+      # @see Relation#where
+      #
+      # @return [Mixed] Result of the block call
+      #
       # @api public
       def restriction(&block)
         RestrictionDSL.new(self).call(&block)
       end
 
+      # Open Order DSL for setting ORDER clause in queries
+      #
+      # @see Relation#order
+      #
+      # @return [Mixed] Result of the block call
+      #
       # @api public
       def order(&block)
         OrderDSL.new(self).call(&block)
       end
 
+      # Open Group DSL for setting GROUP BY clause in queries
+      #
+      # @see Relation#group
+      #
+      # @return [Mixed] Result of the block call
+      #
       # @api public
       def group(&block)
         GroupDSL.new(self).call(&block)
@@ -60,21 +81,39 @@ module ROM
         end
       end
 
+      # Project schema so that it only contains primary key
+      #
+      # @return [Schema]
+      #
       # @api private
       def project_pk
         project(*primary_key_names)
       end
 
+      # Project schema so that it only contains renamed foreign key
+      #
+      # @return [Schema]
+      #
       # @api private
       def project_fk(mapping)
         new(rename(mapping).map(&:foreign_key))
       end
 
+      # Join with another schema
+      #
+      # @param [Schema] other The other schema to join with
+      #
+      # @return [Schema]
+      #
       # @api public
       def join(other)
         merge(other.joined)
       end
 
+      # Return a new schema with all attributes marked as joined
+      #
+      # @return [Schema]
+      #
       # @api public
       def joined
         new(map(&:joined))
@@ -100,6 +139,8 @@ module ROM
         new(EMPTY_ARRAY)
       end
 
+      # Finalize all attributes by qualifying them and initializing primary key names
+      #
       # @api private
       def finalize_attributes!(options = EMPTY_HASH)
         super do
@@ -108,6 +149,8 @@ module ROM
         end
       end
 
+      # Finalize associations
+      #
       # @api private
       def finalize_associations!(relations:)
         super do

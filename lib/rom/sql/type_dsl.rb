@@ -1,8 +1,12 @@
 module ROM
   module SQL
+    # Type DSL used by Types.define method
+    #
+    # @api public
     class TypeDSL
       attr_reader :definition, :input_constructor, :output_constructor
 
+      # @api private
       def initialize(value_type)
         if value_type.class < ::Dry::Types::Type
           @definition = value_type
@@ -11,6 +15,7 @@ module ROM
         end
       end
 
+      # @api private
       def call(&block)
         instance_exec(&block)
 
@@ -18,10 +23,12 @@ module ROM
           .meta(read: definition.constructor(output_constructor))
       end
 
+      # @api private
       def input(&block)
         @input_constructor = block
       end
 
+      # @api private
       def output(&block)
         @output_constructor = block
       end

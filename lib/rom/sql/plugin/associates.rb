@@ -10,6 +10,7 @@ module ROM
         class AssociateOptions
           attr_reader :name, :assoc, :opts
 
+          # @api private
           def initialize(name, relation, opts)
             @name = name
             @assoc = relation.associations[name]
@@ -42,6 +43,7 @@ module ROM
           super
         end
 
+        # @api public
         module ClassMethods
           # @see ROM::Command::ClassInterface.build
           #
@@ -134,6 +136,12 @@ module ROM
             result_type == :one ? output_tuples[0] : output_tuples
           end
 
+          # Return a new command with the provided association
+          #
+          # @param [Symbol, Relation::Name] name The name of the association
+          #
+          # @return [Command]
+          #
           # @api public
           def with_association(name, opts = EMPTY_HASH)
             self.class.build(

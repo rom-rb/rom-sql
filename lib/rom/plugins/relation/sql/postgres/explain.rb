@@ -3,6 +3,8 @@ module ROM
     module Relation
       module SQL
         module Postgres
+          # PG-specific extensions which adds `Relation#explain` method
+          #
           # @api public
           module Explain
             # Show the execution plan

@@ -2,6 +2,8 @@ require 'rom/attribute'
 
 module ROM
   module SQL
+    # Specialized attribute type for defining SQL functions
+    #
     # @api public
     class Function < ROM::Attribute
       class << self
@@ -49,6 +51,8 @@ module ROM
         meta[:alias] || super
       end
 
+      # @see Attribute#qualified
+      #
       # @api private
       def qualified(table_alias = nil)
         meta(
@@ -57,7 +61,8 @@ module ROM
       end
 
       # @see ROM::SQL::Attribute#is
-      # @api private
+      #
+      # @api public
       def is(other)
         ::ROM::SQL::Attribute[::ROM::SQL::Types::Bool].meta(
           sql_expr: ::Sequel::SQL::BooleanExpression.new(:'=', func, other)
@@ -65,7 +70,8 @@ module ROM
       end
 
       # @see ROM::SQL::Attribute#not
-      # @api private
+      #
+      # @api public
       def not(other)
         !is(other)
       end

@@ -168,6 +168,13 @@ module ROM
         self =~ other
       end
 
+      # Return a new attribute with an equality expression
+      #
+      # @example
+      #   users.where { email =~ 1 }
+      #
+      # @return [Attribute]
+      #
       # @api public
       def =~(other)
         meta(sql_expr: sql_expr =~ binary_operation_arg(other))

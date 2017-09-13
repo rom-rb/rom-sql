@@ -3,34 +3,76 @@ require 'rom/initializer'
 module ROM
   module SQL
     module Plugin
+      # Pagination plugin for Relations
+      #
+      # @api public
       module Pagination
+        # Pager object provides the underlying pagination API for relations
+        #
+        # @api public
         class Pager
           extend Initializer
           include Dry::Equalizer(:dataset, :options)
 
+          # @!attribute [r] dataset
+          #   @return [Sequel::Dataset] Relation's dataset
           param :dataset
 
+          # @!attribute [r] current_page
+          #   @return [Integer] Current page number
           option :current_page, default: -> { 1 }
+
+          # @!attribute [r] per_page
+          #   @return [Integer] Current per-page number
           option :per_page
 
+          # Return next page number
+          #
+          # @example
+          #   users.page(2).pager.next_page
+          #   # => 3
+          #
+          # @return [Integer]
+          #
+          # @api public
           def next_page
             num = current_page + 1
             num if total_pages >= num
           end
 
+          # Return previous page number
+          #
+          # @example
+          #   users.page(2).pager.prev_page
+          #   # => 1
+          #
+          # @return [Integer]
+          #
+          # @api public
           def prev_page
             num = current_page - 1
             num if num > 0
           end
 
+          # Return total number of tuples
+          #
+          # @return [Integer]
+          #
+          # @api public
           def total
             dataset.unlimited.count
           end
 
+          # Return total number of pages
+          #
+          # @return [Integer]
+          #
+          # @api public
           def total_pages
             (total / per_page.to_f).ceil
           end
 
+          # @api private
           def at(dataset, current_page, per_page = self.per_page)
             current_page = current_page.to_i
             per_page = per_page.to_i
@@ -44,6 +86,7 @@ module ROM
           alias_method :limit_value, :per_page
         end
 
+        # @api private
         def self.included(klass)
           super
 
@@ -59,9 +102,8 @@ module ROM
         # Paginate a relation
         #
         # @example
-        #   rom.relations[:users].class.per_page(10)
-        #   rom.relations[:users].page(1)
-        #   rom.relations[:users].pager # => info about pagination
+        #   users.page(1)
+        #   users.pager # => info about pagination
         #
         # @return [Relation]
         #
@@ -74,7 +116,9 @@ module ROM
         # Set limit for pagination
         #
         # @example
-        #   rom.relations[:users].page(2).per_page(10)
+        #   users.per_page(10).page(2)
+        #
+        # @return [Relation]
         #
         # @api public
         def per_page(num)

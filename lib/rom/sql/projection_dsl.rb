@@ -3,8 +3,20 @@ require 'rom/sql/function'
 
 module ROM
   module SQL
-    # @api private
+    # Projection DSL used in reading API (`select`, `select_append` etc.)
+    #
+    # @api public
     class ProjectionDSL < DSL
+      # Return a string literal that will be directly used in an SQL statement or query
+      #
+      # @example
+      #   users.select { `FOO`.as(:foo) }.first
+      #   # => { :foo => "FOO" }
+      #
+      # @param [String] value A string object
+      #
+      # @return [Attribute] An SQL attribute with a string literal expression
+      #
       # @api public
       def `(value)
         expr = ::Sequel.lit(value)
