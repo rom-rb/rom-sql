@@ -7,6 +7,10 @@ module ROM
       module ErrorWrapper
         # Handle Sequel errors and re-raise ROM-specific errors
         #
+        # @return [Hash, Array<Hash>]
+        #
+        # @raise SQL::Error
+        #
         # @api public
         def call(*args)
           super

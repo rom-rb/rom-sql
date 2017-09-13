@@ -1,2 +1,3 @@
 --query '@api.text != "private"'
 --embed-mixins
+lib/**/*.rb
