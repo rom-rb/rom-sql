@@ -27,12 +27,7 @@ module ROM
       # @api private
       def relation
         relation = nodes.reduce(root) do |a, e|
-          if associations.key?(e.name.key)
-            a.associations[e.name.key].join(:join, a, e)
-          else
-            # TODO: deprecate this before 2.0
-            a.qualified.join(e.name.dataset, e.meta[:keys])
-          end
+          a.associations[e.name.key].join(:join, a, e)
         end
         schema.(relation)
       end
