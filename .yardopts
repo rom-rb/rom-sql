@@ -1,3 +1,5 @@
 --query '@api.text != "private"'
 --embed-mixins
+--markup-provider=redcarpet
+--markup=markdown
 lib/**/*.rb
