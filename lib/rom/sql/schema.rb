@@ -44,6 +44,13 @@ module ROM
         new(map { |attr| attr.qualified(table_alias) })
       end
 
+      # Project a schema
+      #
+      # @see ROM::Schema#project
+      # @see Relation#select
+      #
+      # @return [Schema] A new schema with projected attributes
+      #
       # @api public
       def project(*names, &block)
         if block
