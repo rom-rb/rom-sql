@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = ">= 2.3.0"
 
-  spec.add_runtime_dependency 'sequel', '~> 5.0'
+  spec.add_runtime_dependency 'sequel', '>= 4.43', '~> 5.0'
   spec.add_runtime_dependency 'dry-equalizer', '~> 0.2'
   spec.add_runtime_dependency 'dry-types', '~> 0.11', '>= 0.11.1'
   spec.add_runtime_dependency 'dry-core', '~> 0.3'
