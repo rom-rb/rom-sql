@@ -2,9 +2,6 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'dry-types', git: 'https://github.com/dry-rb/dry-types', branch: 'master'
-gem 'dry-logic', git: 'https://github.com/dry-rb/dry-logic', branch: 'master'
-
 gem 'rom', git: 'https://github.com/rom-rb/rom', branch: 'master' do
   gem 'rom-core'
   gem 'rom-mapper'
