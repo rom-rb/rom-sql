@@ -21,6 +21,17 @@ module ROM
         end
       end
 
+      # Return a string literal that will be used directly in an ORDER clause
+      #
+      # @param [String] value
+      #
+      # @return [Sequel::LiteralString]
+      #
+      # @api public
+      def `(value)
+        ::Sequel.lit(value)
+      end
+
       # @api private
       def respond_to_missing?(name, include_private = false)
         super || schema.key?(name)

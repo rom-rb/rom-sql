@@ -21,6 +21,12 @@ RSpec.describe ROM::SQL::OrderDSL, :postgres, helpers: true do
     end
   end
 
+  describe '#`' do
+    it 'produces a string literal' do
+      expect(ds.literal(dsl.call { `foo` }.first)).to eql("foo")
+    end
+  end
+
   describe '#method_missing' do
     it 'responds to methods matching attribute names' do
       expect(dsl.id.name).to be(:id)
