@@ -132,7 +132,38 @@ module ROM
         Attribute[type].meta(sql_expr: ::Sequel.cast(expr, db_type))
       end
 
+      # Add a FILTER clause to aggregate function (supported by PostgreSQL 9.4+)
+      # @see https://www.postgresql.org/docs/current/static/sql-expressions.html
+      #
+      # Filter aggregate using the specified conditions
+      #
+      # @example
+      #   users.project { int::count(:id).filter(name.is("Jack")).as(:jacks) }.order(nil)
+      #   users.project { int::count(:id).filter { name.is("John") }).as(:johns) }.order(nil)
+      #
+      # @param [Hash,SQL::Attribute] Conditions
+      # @yield [block] A block with restrictions
+      #
+      # @return [SQL::Function]
+      #
+      # @api public
+      def filter(condition = Undefined, &block)
+        if block
+          conditions = schema.restriction(&block)
+          conditions = conditions & condition unless condition.equal?(Undefined)
+        else
+          conditions = condition
+        end
+
+        super(conditions)
+      end
+
       private
+
+      # @api private
+      def schema
+        meta[:schema]
+      end
 
       # @api private
       def func

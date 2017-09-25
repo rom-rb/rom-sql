@@ -38,7 +38,7 @@ module ROM
           type = type(meth)
 
           if type
-            ::ROM::SQL::Function.new(type)
+            ::ROM::SQL::Function.new(type, schema: schema)
           else
             super
           end
