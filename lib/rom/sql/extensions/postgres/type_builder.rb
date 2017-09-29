@@ -27,7 +27,13 @@ module ROM
           'box' => Types::Box,
           'lseg' => Types::LineSegment,
           'polygon' => Types::Polygon,
-          'path' => Types::Path
+          'path' => Types::Path,
+          'int4range' => Types::Int4Range,
+          'int8range' => Types::Int8Range,
+          'numrange' => Types::NumRange,
+          'tsrange' => Types::TsRange,
+          'tstzrange' => Types::TsTzRange,
+          'daterange' => Types::DateRange
         ).freeze
 
         db_array_type_matcher '[]'.freeze

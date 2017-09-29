@@ -20,7 +20,13 @@ module ROM
             Types::Box => 'box',
             Types::LineSegment => 'lseg',
             Types::Polygon => 'polygon',
-            Types::Path => 'path'
+            Types::Path => 'path',
+            Types::Int4Range => 'int4range',
+            Types::Int8Range => 'int8range',
+            Types::NumRange => 'numrange',
+            Types::TsRange => 'tsrange',
+            Types::TsTzRange => 'tstzrange',
+            Types::DateRange => 'daterange'
           )
         )
 

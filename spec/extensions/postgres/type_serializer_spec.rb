@@ -18,7 +18,13 @@ RSpec.describe ROM::SQL::TypeSerializer[:postgres] do
       'lseg' => ROM::SQL::Postgres::Types::LineSegment,
       'polygon' => ROM::SQL::Postgres::Types::Polygon,
       'path' => ROM::SQL::Postgres::Types::Path,
-      'text[]' => ROM::SQL::Postgres::Types::Array('text')
+      'text[]' => ROM::SQL::Postgres::Types::Array('text'),
+      'int4range' => ROM::SQL::Postgres::Types::Int4Range,
+      'int8range' => ROM::SQL::Postgres::Types::Int8Range,
+      'numrange' => ROM::SQL::Postgres::Types::NumRange,
+      'tsrange' => ROM::SQL::Postgres::Types::TsRange,
+      'tstzrange' => ROM::SQL::Postgres::Types::TsTzRange,
+      'daterange' => ROM::SQL::Postgres::Types::DateRange
     }
 
     types.each do |db_type, rom_type|
