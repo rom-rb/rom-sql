@@ -26,7 +26,8 @@ module ROM
             Types::NumRange => 'numrange',
             Types::TsRange => 'tsrange',
             Types::TsTzRange => 'tstzrange',
-            Types::DateRange => 'daterange'
+            Types::DateRange => 'daterange',
+            Types::LTree => 'ltree'
           )
         )
 

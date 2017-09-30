@@ -24,7 +24,8 @@ RSpec.describe ROM::SQL::TypeSerializer[:postgres] do
       'numrange' => ROM::SQL::Postgres::Types::NumRange,
       'tsrange' => ROM::SQL::Postgres::Types::TsRange,
       'tstzrange' => ROM::SQL::Postgres::Types::TsTzRange,
-      'daterange' => ROM::SQL::Postgres::Types::DateRange
+      'daterange' => ROM::SQL::Postgres::Types::DateRange,
+      'ltree' => ROM::SQL::Postgres::Types::LTree
     }
 
     types.each do |db_type, rom_type|

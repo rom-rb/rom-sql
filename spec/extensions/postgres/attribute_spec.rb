@@ -205,4 +205,133 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
         to eq(emails: %w(jade@hotmail.com foo@bar.com))
     end
   end
+
+  describe 'using ltree types' do
+    before do
+      conn.execute('create extension if not exists ltree')
+
+      conn.create_table :pg_people do
+        primary_key :id
+        String :name
+        column :ltree_tags, :ltree
+        column :parents_tags, 'ltree[]', default: []
+      end
+
+      conf.commands(:people) do
+        define(:create)
+        define(:update)
+      end
+
+      create_person.(name: 'John Wilkson',ltree_tags: ltree('Bottom'), parents_tags: [ltree('Top').path, ltree('Top.Building').path])
+      create_person.(name: 'John Wayne',ltree_tags: ltree('Bottom.Countries'), parents_tags: [ltree('Left').path, ltree('Left.Parks').path])
+      create_person.(name: 'John Fake',ltree_tags: ltree('Bottom.Cities'), parents_tags: [ltree('Top.Building.EmpireState').path, ltree('Top.Building.EmpireState.381').path])
+      create_person.(name: 'John Bros',ltree_tags: ltree('Bottom.Cities.Melbourne'), parents_tags: [ltree('Right.Cars.Ford').path, ltree('Right.Cars.Nissan').path])
+      create_person.(name: 'John Wick',ltree_tags: ltree('Bottom.Countries.Australia'))
+      create_person.(name: 'Jade Doe', ltree_tags: ltree('Bottom.Countries.Australia.Brasil'))
+    end
+
+    def ltree(label_path)
+      ROM::SQL::Postgres::Values::LabelPath.new(label_path)
+    end
+
+    it 'matches regular expression' do
+      expect(people.select(:name).where { ltree_tags.match('Bottom.Cities') }.one).
+        to eql(name: 'John Fake')
+    end
+
+    it 'matches any lquery' do
+      expect(people.select(:name).where { ltree_tags.match_any(['Bottom', 'Bottom.Cities.*']) }.to_a).
+        to eql([{:name=>"John Wilkson"}, {:name=>"John Fake"}, {:name=>"John Bros"}])
+    end
+
+    it 'matches any lquery using string' do
+      expect(people.select(:name).where { ltree_tags.match_any('Bottom,Bottom.Cities.*') }.to_a).
+        to eql([{:name=>"John Wilkson"}, {:name=>"John Fake"}, {:name=>"John Bros"}])
+    end
+
+    it 'match ltextquery' do
+      expect(people.select(:name).where { ltree_tags.match_ltextquery('Countries & Brasil') }.one).
+        to eql(:name=>"Jade Doe")
+    end
+
+    describe 'concatenation' do
+      it 'concatenates ltrees' do
+        expect(people.select { (ltree_tags + ROM::SQL::Postgres::Values::LabelPath.new('Moscu')).as(:ltree_tags) }.where { name.is('Jade Doe') }.one).
+          to eq(ltree_tags: ROM::SQL::Postgres::Values::LabelPath.new('Bottom.Countries.Australia.Brasil.Moscu'))
+      end
+
+      it 'concatenates strings' do
+        expect(people.select { (ltree_tags + 'Moscu').as(:ltree_tags) }.where { name.is('Jade Doe') }.one).
+          to eq(ltree_tags: ROM::SQL::Postgres::Values::LabelPath.new('Bottom.Countries.Australia.Brasil.Moscu'))
+      end
+    end
+
+    it 'allow query by descendant of ltree' do
+      expect(people.select(:name).where { ltree_tags.descendant('Bottom.Countries') }.to_a).
+        to eql([{:name=>"John Wayne"}, {:name=>"John Wick"}, {:name=>"Jade Doe"}])
+    end
+
+    it 'allow query by any descendant contain in the array' do
+      expect(people.select(:name).where { ltree_tags.contain_descendant(['Bottom.Cities']) }.to_a).
+        to eql([{:name=>"John Fake"}, {:name=>"John Bros"}])
+    end
+
+    it 'allow query by ascendant of ltree' do
+      expect(people.select(:name).where { ltree_tags.ascendant('Bottom.Countries.Australia.Brasil') }.to_a).
+        to eql([{:name=>"John Wilkson"}, {:name=>"John Wayne"}, {:name=>"John Wick"}, {:name=>"Jade Doe"}])
+    end
+
+    it 'allow query by any ascendant contain in the array' do
+      expect(people.select(:name).where { ltree_tags.contain_ascendant(['Bottom.Cities']) }.to_a).
+        to eql([{:name=>"John Wilkson"}, {:name=>"John Fake"}])
+    end
+
+    describe 'Using with in array ltree[]' do
+      it 'contains any ltextquery' do
+        expect(people.select(:name).where { parents_tags.contain_any_ltextquery('Parks')}.to_a).
+          to eql([{:name=>"John Wayne"}])
+      end
+
+      it 'contains any ancestor' do
+        expect(people.select(:name).where { parents_tags.contain_ancestor('Top.Building.EmpireState.381')}.to_a).
+          to eql([{:name=>"John Wilkson"}, {:name=>"John Fake"}])
+      end
+
+      it 'contains any descendant' do
+        expect(people.select(:name).where { parents_tags.contain_descendant('Left')}.to_a).
+          to eql([{:name=>"John Wayne"}])
+      end
+
+      it 'allow to filter by matching lquery' do
+        expect(people.select(:name).where { parents_tags.match('T*|Left.*')}.to_a).
+          to eql([{:name=>"John Wilkson"}, {:name=>"John Wayne"}, {:name=>"John Fake"}])
+      end
+
+      it 'allow to filter by matching any lquery conatin in the array' do
+        expect(people.select(:name).where { parents_tags.match_any(['Top.*', 'Left.*'])}.to_a).
+          to eql([{:name=>"John Wilkson"}, {:name=>"John Wayne"}, {:name=>"John Fake"}])
+      end
+
+      it 'finds first array entry that is an ancestor of ltree' do
+        expect(people.select(:name).where { parents_tags.find_ancestor('Left.Parks').not(nil)}.to_a).
+          to eql([{:name=>"John Wayne"}])
+      end
+
+      it 'finds first array entry that is an descendant of ltree' do
+        expect(people.select(:name).where { parents_tags.find_descendant('Right.Cars').not(nil)}.to_a).
+          to eql([name: "John Bros"])
+      end
+
+      it 'finds first array entry that is a match (lquery)' do
+        expect(people.select(:name).where { parents_tags.match_any_lquery('Right.*').not(nil)}.to_a).
+          to eql([{:name=>"John Bros"}])
+      end
+
+      it 'finds first array entry that is a match (ltextquery)' do
+        expect(people.select(:name).where { parents_tags.match_any_ltextquery('EmpireState').not(nil)}.to_a).
+          to eql([{:name=>"John Fake"}])
+      end
+    end
+
+  end
 end
