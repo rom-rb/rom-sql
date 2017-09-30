@@ -20,7 +20,8 @@ module ROM
             Types::Box => 'box',
             Types::LineSegment => 'lseg',
             Types::Polygon => 'polygon',
-            Types::Path => 'path'
+            Types::Path => 'path',
+            Types::Ltree => 'ltree'
           )
         )
 

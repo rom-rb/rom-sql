@@ -18,6 +18,7 @@ RSpec.describe ROM::SQL::TypeSerializer[:postgres] do
       'lseg' => ROM::SQL::Postgres::Types::LineSegment,
       'polygon' => ROM::SQL::Postgres::Types::Polygon,
       'path' => ROM::SQL::Postgres::Types::Path,
+      'ltree' => ROM::SQL::Postgres::Types::Ltree,
       'text[]' => ROM::SQL::Postgres::Types::Array('text')
     }
 

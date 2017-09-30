@@ -27,6 +27,7 @@ module ROM
           'box' => Types::Box,
           'lseg' => Types::LineSegment,
           'polygon' => Types::Polygon,
+          'ltree' => Types::Ltree,
           'path' => Types::Path
         ).freeze
 
