@@ -81,4 +81,52 @@ RSpec.describe ROM::SQL::Attribute, :postgres do
         to eql(%(CONCAT("users"."id", ' ', "users"."name") AS "uid"))
     end
   end
+
+  describe 'extensions' do
+    before do
+      ROM::SQL::TypeExtensions.instance_variable_get(:@types)['sqlite'].delete('custom')
+
+      ROM::SQL::TypeExtensions.register(type) do
+        def custom(type, expr, value)
+          ROM::SQL::Attribute[ROM::SQL::Types::Bool].
+            meta(sql_expr: Sequel::SQL::BooleanExpression.new(:'=', 1, value))
+        end
+      end
+    end
+
+    let(:equality_expr) { Sequel::SQL::BooleanExpression.new(:'=', 1, 2) }
+
+    shared_context 'type methods' do
+      fit 'successfully invokes type-specific methods' do
+        expect(attribute.custom(2)).
+          to eql(ROM::SQL::Attribute[ROM::SQL::Types::Bool].meta(sql_expr: equality_expr))
+      end
+    end
+
+    let(:type) { Dry::Types['int'].meta(database: 'sqlite', db_type: 'custom') }
+
+    context 'plain type' do
+      subject(:attribute) { ROM::SQL::Attribute[type] }
+
+      include_context 'type methods'
+    end
+
+    context 'optional type' do
+      subject(:attribute) { ROM::SQL::Attribute[type.optional] }
+
+      include_context 'type methods'
+    end
+
+    context 'default type' do
+      subject(:attribute) { ROM::SQL::Attribute[type.default(42)] }
+
+      include_context 'type methods'
+    end
+
+    context 'optional with default' do
+      subject(:attribute) { ROM::SQL::Attribute[type.optional.default(42)] }
+
+      include_context 'type methods'
+    end
+  end
 end

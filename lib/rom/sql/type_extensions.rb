@@ -13,7 +13,8 @@ module ROM
         #
         # @api public
         def [](wrapped)
-          type = wrapped.optional? ? wrapped.right : wrapped
+          type = wrapped.default? ? wrapped.type : wrapped
+          type = type.optional? ? type.right : type
           @types[type.meta[:database]][type.meta[:db_type]] || EMPTY_HASH
         end
 
