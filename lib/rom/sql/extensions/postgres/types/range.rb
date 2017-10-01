@@ -10,13 +10,16 @@ module ROM
       end
 
       module Types
-        def self.Range(name, subtype)
+        def self.Range(name, read_type)
           Type(name) do
             read = SQL::Types.Constructor(Values::Range) do |value|
               pg_range =
-                if value.is_a?(String)
-                  Sequel::Postgres::PGRange::Parser.new(name, subtype).(value)
-                elsif value.is_a?(Sequel::Postgres::PGRange)
+                if value.is_a?(Sequel::Postgres::PGRange)
+                  value
+                elsif value && value.respond_to?(:to_s)
+                  Sequel::Postgres::PGRange::Parser.new(name, read_type)
+                                                   .call(value.to_s)
+                else
                   value
                 end
 
@@ -28,7 +31,7 @@ module ROM
               )
             end
 
-            type = SQL::Types::String.constructor do |range|
+            type = SQL::Types.Definition(Values::Range).constructor do |range|
               format('%s%s,%s%s',
                      range.lower_bound,
                      range.lower,
@@ -36,7 +39,7 @@ module ROM
                      range.upper_bound)
             end
 
-            type.meta(read: read, subtype: subtype)
+            type.meta(read: read)
           end
         end
 
