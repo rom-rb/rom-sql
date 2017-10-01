@@ -97,7 +97,7 @@ RSpec.describe ROM::SQL::Attribute, :postgres do
     let(:equality_expr) { Sequel::SQL::BooleanExpression.new(:'=', 1, 2) }
 
     shared_context 'type methods' do
-      fit 'successfully invokes type-specific methods' do
+      it 'successfully invokes type-specific methods' do
         expect(attribute.custom(2)).
           to eql(ROM::SQL::Attribute[ROM::SQL::Types::Bool].meta(sql_expr: equality_expr))
       end
