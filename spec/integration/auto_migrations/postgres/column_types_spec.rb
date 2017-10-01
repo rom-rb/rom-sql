@@ -48,7 +48,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
           attribute :lseg,            ROM::SQL::Types::PG::LineSegment
           attribute :polygon,         ROM::SQL::Types::PG::Polygon
           attribute :path,            ROM::SQL::Types::PG::Path
-          attribute :ltree_path,      ROM::SQL::Types::PG::Ltree
+          attribute :ltree_path,      ROM::SQL::Types::PG::LTree
         end
       end
     end
@@ -82,7 +82,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
                lseg: ROM::SQL::Types::PG::LineSegment,
                polygon: ROM::SQL::Types::PG::Polygon,
                path: ROM::SQL::Types::PG::Path,
-               ltree_path: ROM::SQL::Types::PG::Ltree
+               ltree_path: ROM::SQL::Types::PG::LTree
              )
            )
     end

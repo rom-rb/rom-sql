@@ -2,8 +2,8 @@ module ROM
   module SQL
     module Postgres
       module Values
-        Label = ::Struct.new(:path) do
-          def segments
+        LabelPath = ::Struct.new(:path) do
+          def labels
             path.split('.')
           end
         end
@@ -13,13 +13,13 @@ module ROM
       module Types
         # @see https://www.postgresql.org/docs/current/static/ltree.html
 
-        Ltree = SQL::Types.define(Values::Label) do
-          input do |label|
-            label.path
+        LTree = SQL::Types.define(Values::LabelPath) do
+          input do |label_path|
+            label_path.path
           end
 
-          output do |label|
-            Values::Label.new(label.to_s)
+          output do |label_path|
+            Values::LabelPath.new(label_path.to_s)
           end
         end
       end

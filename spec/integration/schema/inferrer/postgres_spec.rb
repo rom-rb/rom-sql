@@ -85,7 +85,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
                lseg: ROM::SQL::Types::PG::LineSegment.optional.meta(name: :lseg),
                polygon: ROM::SQL::Types::PG::Polygon.optional.meta(name: :polygon),
                path: ROM::SQL::Types::PG::Path.optional.meta(name: :path),
-               ltree_path: ROM::SQL::Types::PG::Ltree.optional.meta(name: :ltree),
+               ltree_path: ROM::SQL::Types::PG::LTree.optional.meta(name: :ltree),
                created_at: ROM::SQL::Types::Time.optional.meta(name: :created_at),
                datetime: ROM::SQL::Types::Time.optional.meta(name: :datetime),
                datetime_tz: ROM::SQL::Types::Time.optional.meta(name: :datetime_tz),
@@ -152,7 +152,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
     let(:polygon) { [point, point_2] }
     let(:closed_path) { ROM::SQL::Postgres::Values::Path.new([point, point_2], :closed) }
     let(:open_path) { ROM::SQL::Postgres::Values::Path.new([point, point_2], :open) }
-    let(:ltree) { ROM::SQL::Postgres::Values::Label.new('Top.Countries.Europe.Russia') }
+    let(:ltree) { ROM::SQL::Postgres::Values::LabelPath.new('Top.Countries.Europe.Russia') }
 
     let(:relation) { container.relations[:test_bidirectional] }
     let(:create) { commands[:test_bidirectional].create }

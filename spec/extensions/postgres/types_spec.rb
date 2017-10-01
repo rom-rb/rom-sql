@@ -254,8 +254,8 @@ RSpec.describe 'ROM::SQL::Postgres::Types' do
     end
   end
 
-  describe ROM::SQL::Types::PG::Ltree do
-    let(:label) { values::Label.new('Top.Countries.Europe.Russia') }
+  describe ROM::SQL::Types::PG::LTree do
+    let(:label) { values::LabelPath.new('Top.Countries.Europe.Russia') }
 
     it 'serializes a ltree' do
       expect(described_class[label]).to eql(label.path)

@@ -21,7 +21,7 @@ module ROM
             Types::LineSegment => 'lseg',
             Types::Polygon => 'polygon',
             Types::Path => 'path',
-            Types::Ltree => 'ltree'
+            Types::LTree => 'ltree'
           )
         )
 
