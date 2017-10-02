@@ -8,6 +8,8 @@ gem 'rom', git: 'https://github.com/rom-rb/rom', branch: 'master' do
   gem 'rom-repository', group: :tools
 end
 
+gem 'dry-types', git: 'https://github.com/dry-rb/dry-types'
+
 group :test do
   gem 'pry-byebug', platforms: :mri
   gem 'pry', platforms: %i(jruby rbx)
