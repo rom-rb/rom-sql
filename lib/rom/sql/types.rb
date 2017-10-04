@@ -1,5 +1,4 @@
 require 'sequel/core'
-require 'sequel/sql'
 
 require 'rom/types'
 require 'rom/sql/type_dsl'
