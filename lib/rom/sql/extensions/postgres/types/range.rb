@@ -9,28 +9,56 @@ module ROM
         Range = ::Struct.new(:lower, :upper, :lower_bound, :upper_bound)
       end
 
+      # @api public
       module Types
-        def self.Range(name, read_type)
+        # The list of range types supported by PostgreSQL
+        # @see https://www.postgresql.org/docs/current/static/rangetypes.html
+
+        @range_parsers = {
+          int4range: Sequel::Postgres::PGRange::Parser.new(
+            'int4range', SQL::Types::Coercible::Int
+          ),
+          int8range: Sequel::Postgres::PGRange::Parser.new(
+            'int8range', SQL::Types::Coercible::Int
+          ),
+          numrange:  Sequel::Postgres::PGRange::Parser.new(
+            'numrange', SQL::Types::Coercible::Int
+          ),
+          tsrange:   Sequel::Postgres::PGRange::Parser.new(
+            'tsrange', SQL::Types::Form::Time
+          ),
+          tstzrange: Sequel::Postgres::PGRange::Parser.new(
+            'tstzrange', SQL::Types::Form::Time
+          ),
+          daterange: Sequel::Postgres::PGRange::Parser.new(
+            'daterange', SQL::Types::Form::Date
+          )
+        }.freeze
+
+        # @api private
+        def self.range_read_type(name)
+          SQL::Types.Constructor(Values::Range) do |value|
+            pg_range =
+              if value.is_a?(Sequel::Postgres::PGRange)
+                value
+              elsif value && value.respond_to?(:to_s)
+                @range_parsers[name].(value.to_s)
+              else
+                value
+              end
+
+            Values::Range.new(
+              pg_range.begin,
+              pg_range.end,
+              pg_range.exclude_begin? ? :'(' : :'[',
+              pg_range.exclude_end? ? :')' : :']'
+            )
+          end
+        end
+
+        # @api private
+        def self.range(name, read_type)
           Type(name) do
-            read = SQL::Types.Constructor(Values::Range) do |value|
-              pg_range =
-                if value.is_a?(Sequel::Postgres::PGRange)
-                  value
-                elsif value && value.respond_to?(:to_s)
-                  Sequel::Postgres::PGRange::Parser.new(name, read_type)
-                                                   .call(value.to_s)
-                else
-                  value
-                end
-
-              Values::Range.new(
-                pg_range.begin,
-                pg_range.end,
-                pg_range.exclude_begin? ? :'(' : :'[',
-                pg_range.exclude_end? ? :')' : :']'
-              )
-            end
-
             type = SQL::Types.Definition(Values::Range).constructor do |range|
               format('%s%s,%s%s',
                      range.lower_bound,
@@ -39,16 +67,16 @@ module ROM
                      range.upper_bound)
             end
 
-            type.meta(read: read)
+            type.meta(read: read_type)
           end
         end
 
-        Int4Range = Range('int4range', SQL::Types::Coercible::Int)
-        Int8Range = Range('int8range', SQL::Types::Coercible::Int)
-        NumRange  = Range('numrange',  SQL::Types::Coercible::Int)
-        TsRange   = Range('tsrange',   SQL::Types::Form::Time)
-        TsTzRange = Range('tstzrange', SQL::Types::Form::Time)
-        DateRange = Range('daterange', SQL::Types::Form::Date)
+        Int4Range = range('int4range', range_read_type(:int4range))
+        Int8Range = range('int8range', range_read_type(:int8range))
+        NumRange  = range('numrange',  range_read_type(:numrange))
+        TsRange   = range('tsrange',   range_read_type(:tsrange))
+        TsTzRange = range('tstzrange', range_read_type(:tstzrange))
+        DateRange = range('daterange', range_read_type(:daterange))
 
         module RangeOperators
           def contains(_type, expr, value)
