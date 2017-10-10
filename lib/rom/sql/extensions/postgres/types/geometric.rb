@@ -33,7 +33,7 @@ module ROM
         # @see https://www.postgresql.org/docs/current/static/datatype-geometric.html
 
         Point = Type('point') do
-            SQL::Types.define(Values::Point) do
+          SQL::Types.define(Values::Point) do
             input do |point|
               "(#{ point.x },#{ point.y })"
             end
