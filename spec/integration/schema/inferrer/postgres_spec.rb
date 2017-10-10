@@ -167,22 +167,22 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
     let(:closed_path) { ROM::SQL::Postgres::Values::Path.new([point, point_2], :closed) }
     let(:open_path) { ROM::SQL::Postgres::Values::Path.new([point, point_2], :open) }
 
-    let(:int4range) { values::Range.new(0, 2, :'[', :')') }
-    let(:int8range) { values::Range.new(5, 7, :'[', :')') }
-    let(:numrange)  { values::Range.new(3, 9, :'[', :')') }
+    let(:int4range) { values::Range.new(0, 2, exclude_end: true) }
+    let(:int8range) { values::Range.new(5, 7, exclude_end: true) }
+    let(:numrange)  { values::Range.new(3, 9, exclude_end: true) }
 
     let(:tsrange)   do
       timestamp = Time.parse('2017-09-25 07:00:00')
-      values::Range.new(timestamp, timestamp + 3600 * 8, :'[', :')')
+      values::Range.new(timestamp, timestamp + 3600 * 8, exclude_end: true)
     end
 
     let(:tstzrange) do
       timestamp = Time.parse('2017-09-25 07:00:00 +0000')
-      values::Range.new(timestamp, timestamp + 3600 * 8, :'[', :')')
+      values::Range.new(timestamp, timestamp + 3600 * 8, exclude_end: true)
     end
 
     let(:daterange) do
-      values::Range.new(Date.today, Date.today.next_day, :'[', :')')
+      values::Range.new(Date.today, Date.today.next_day, exclude_end: true)
     end
 
     let(:relation) { container.relations[:test_bidirectional] }
