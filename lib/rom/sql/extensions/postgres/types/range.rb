@@ -6,11 +6,17 @@ module ROM
   module SQL
     module Postgres
       module Values
-        Range = ::Struct.new(:lower, :upper, :exclude_begin, :exclude_end) do
-          def initialize(lower, upper, options = EMPTY_HASH)
-            exclude_begin = options.fetch(:exclude_begin, false)
-            exclude_end = options.fetch(:exclude_end, false)
-            super(lower, upper, exclude_begin, exclude_end)
+        Range = ::Struct.new(:lower, :upper, :bounds) do
+          def initialize(lower, upper, bounds = :'[)')
+            super
+          end
+
+          def exclude_begin?
+            bounds[0] == '('
+          end
+
+          def exclude_end?
+            bounds[1] == ')'
           end
         end
       end
@@ -56,8 +62,9 @@ module ROM
             Values::Range.new(
               pg_range.begin,
               pg_range.end,
-              exclude_begin: pg_range.exclude_begin?,
-              exclude_end: pg_range.exclude_end?
+              [pg_range.exclude_begin? ? :'(' : :'[',
+               pg_range.exclude_end? ? :')' : :']']
+              .join('').to_sym
             )
           end
         end
@@ -67,10 +74,10 @@ module ROM
           Type(name) do
             type = SQL::Types.Definition(Values::Range).constructor do |range|
               format('%s%s,%s%s',
-                     range.exclude_begin ? :'(' : :'[',
+                     range.exclude_begin? ? :'(' : :'[',
                      range.lower,
                      range.upper,
-                     range.exclude_end ? :')' : :']')
+                     range.exclude_end? ? :')' : :']')
             end
 
             type.meta(read: read_type)

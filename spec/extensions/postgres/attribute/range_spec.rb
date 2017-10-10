@@ -81,10 +81,10 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
 
       let(:values) do
         {
-          containing: range_value.new(3, 9),
-          contained: range_value.new(5, 7, exclude_end: true),
-          left: range_value.new(1, 3, exclude_begin: true),
-          right: range_value.new(9, 12, exclude_begin: true, exclude_end: true)
+          containing: range_value.new(3, 9, :'[]'),
+          contained: range_value.new(5, 7, :'[)'),
+          left: range_value.new(1, 3, :'(]'),
+          right: range_value.new(9, 12, :'()')
         }
       end
 
@@ -100,23 +100,23 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
         {
           containing: range_value.new(
             Time.parse('2017-09-25 03:00:00'),
-            Time.parse('2017-09-25 09:00:00')
+            Time.parse('2017-09-25 09:00:00'),
+            :'[]'
           ),
           contained: range_value.new(
             Time.parse('2017-09-25 05:00:00'),
             Time.parse('2017-09-25 07:00:00'),
-            exclude_end: true
+            :'[)'
           ),
           left: range_value.new(
             Time.parse('2017-09-25 01:00:00'),
             Time.parse('2017-09-25 04:00:00'),
-            exclude_end: true
+            :'[)'
           ),
           right: range_value.new(
             Time.parse('2017-09-25 09:00:00'),
             Time.parse('2017-09-25 12:00:00'),
-            exclude_begin: true,
-            exclude_end: true
+            :'()'
           )
         }
       end
@@ -133,23 +133,23 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
         {
           containing: range_value.new(
             Date.parse('2017-10-03'),
-            Date.parse('2017-10-09')
+            Date.parse('2017-10-09'),
+            :'[]'
           ),
           contained: range_value.new(
             Date.parse('2017-10-05'),
             Date.parse('2017-10-07'),
-            exclude_end: true
+            :'[)'
           ),
           left: range_value.new(
             Date.parse('2017-10-01'),
             Date.parse('2017-10-04'),
-            exclude_end: true
+            :'[)'
           ),
           right: range_value.new(
             Date.parse('2017-10-09'),
             Date.parse('2017-10-12'),
-            exclude_begin: true,
-            exclude_end: true
+            :'()'
           )
         }
       end

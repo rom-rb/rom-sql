@@ -255,27 +255,27 @@ RSpec.describe 'ROM::SQL::Postgres::Types' do
   end
 
   describe ROM::SQL::Types::PG::Int4Range do
-    let(:range) { values::Range.new(1, 4, exclude_end: true) }
+    let(:range) { values::Range.new(1, 4, :'[)') }
 
     it 'serialize a range to a string' do
       expect(described_class[range]).to eql '[1,4)'
     end
 
     it 'read serialized format' do
-      expect(described_class.meta[:read]['[42, 64)']).to eql(
-        values::Range.new(42, 64, exclude_end: true)
+      expect(described_class.meta[:read]['(42, 64]']).to eql(
+        values::Range.new(42, 64, :'(]')
       )
     end
 
-    it 'read a empty value' do
+    it 'read an empty value' do
       expect(described_class.meta[:read]['empty']).to eql(
-        values::Range.new(nil, nil)
+        values::Range.new(nil, nil, :'[]')
       )
     end
 
-    it 'read a unbounded range' do
+    it 'read an unbounded range' do
       expect(described_class.meta[:read]['(,)']).to eql(
-        values::Range.new(nil, nil, exclude_begin: true, exclude_end: true)
+        values::Range.new(nil, nil, :'()')
       )
     end
   end
