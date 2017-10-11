@@ -7,16 +7,19 @@ module ROM
     module Postgres
       module Values
         Range = ::Struct.new(:lower, :upper, :bounds) do
+          PAREN_LEFT  = '('.freeze
+          PAREN_RIGHT = ')'.freeze
+
           def initialize(lower, upper, bounds = :'[)')
             super
           end
 
           def exclude_begin?
-            bounds[0] == '('
+            bounds[0] == PAREN_LEFT
           end
 
           def exclude_end?
-            bounds[1] == ')'
+            bounds[1] == PAREN_RIGHT
           end
         end
       end
