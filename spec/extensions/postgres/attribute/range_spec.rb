@@ -23,7 +23,7 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
   end
 
   shared_examples 'range type' do
-    let(:rel) { pg_ranges. select { [name] } }
+    let(:rel) { pg_ranges.select { [name] } }
 
     it 'restrict by contains (`@>`)' do
       expect(rel.where(pg_ranges[:range].contains(ref_value)).to_a)
@@ -32,7 +32,7 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
 
     it 'restrict by contained_by (`<@`)' do
       expect(rel.where(pg_ranges[:range].contained_by(ref_value)).to_a)
-        .to eql([{ name: 'contained' }])
+        .to eql([{ name: 'contained' }, { name: 'empty' }])
     end
 
     it 'restrict by strict left of (`<<`)' do
@@ -62,7 +62,41 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
 
     it 'restrict by adjacent to (`-|-`)' do
       expect(rel.where(pg_ranges[:range].adjacent_to(ref_value)).to_a)
-        .to eql([{ name: 'left' }])
+        .to eql([{ name: 'right' }])
+    end
+
+    describe 'functions' do
+      it 'lower' do
+        expect(rel.where { range.contains(range.lower) }.to_a)
+          .to eql(rel.where { range.lower_inc }.to_a)
+      end
+
+      it 'upper' do
+        expect(rel.where { range.contains(range.upper) }.to_a)
+          .to eql(rel.where { range.upper_inc }.to_a)
+      end
+
+      it 'lower included' do
+        expect(rel.where { range.lower_inc }.to_a)
+          .to eql(rel.where { range.contains(range.lower) }.to_a)
+      end
+
+      it 'upper included' do
+        expect(rel.where { range.upper_inc }.to_a)
+          .to eql(rel.where { range.contains(range.upper) }.to_a)
+      end
+
+      it 'lower infinity' do
+        expect(rel.where { range.lower_inf }.to_a).to eql([{ name: 'left' }])
+      end
+
+      it 'upper infinity' do
+        expect(rel.where { range.upper_inf }.to_a).to eql([{ name: 'right' }])
+      end
+
+      it 'is empty' do
+        expect(rel.where { range.isempty }.to_a).to eql([{ name: 'empty' }])
+      end
     end
   end
 
@@ -76,15 +110,16 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
       create_ranges_table(db_type, values)
     end
 
-    describe 'int4range' do
-      let(:db_type) { :int4range }
+    describe 'numrange' do
+      let(:db_type) { :numrange }
 
       let(:values) do
         {
           containing: range_value.new(3, 9, :'[]'),
           contained: range_value.new(5, 7, :'[)'),
-          left: range_value.new(1, 3, :'(]'),
-          right: range_value.new(9, 12, :'()')
+          empty: range_value.new(0, 0, :'()'),
+          left: range_value.new(nil, 3, :'(]'),
+          right: range_value.new(8, nil, :'()')
         }
       end
 
@@ -108,16 +143,12 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
             Time.parse('2017-09-25 07:00:00'),
             :'[)'
           ),
-          left: range_value.new(
-            Time.parse('2017-09-25 01:00:00'),
-            Time.parse('2017-09-25 04:00:00'),
-            :'[)'
+          empty: range_value.new(
+            Time.parse('2017-09-25 00:00:00'),
+            Time.parse('2017-09-25 00:00:00'), :'()'
           ),
-          right: range_value.new(
-            Time.parse('2017-09-25 09:00:00'),
-            Time.parse('2017-09-25 12:00:00'),
-            :'()'
-          )
+          left: range_value.new(nil, Time.parse('2017-09-25 03:00:00'), :'(]'),
+          right: range_value.new(Time.parse('2017-09-25 08:00:00'), nil, :'()')
         }
       end
 
@@ -141,16 +172,13 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
             Date.parse('2017-10-07'),
             :'[)'
           ),
-          left: range_value.new(
+          empty: range_value.new(
             Date.parse('2017-10-01'),
-            Date.parse('2017-10-04'),
-            :'[)'
-          ),
-          right: range_value.new(
-            Date.parse('2017-10-09'),
-            Date.parse('2017-10-12'),
+            Date.parse('2017-10-01'),
             :'()'
-          )
+          ),
+          left: range_value.new(nil, Date.parse('2017-10-03'), :'[)'),
+          right: range_value.new(Date.parse('2017-10-08'), nil, :'()')
         }
       end
 
