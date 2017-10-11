@@ -16,8 +16,16 @@ module ROM
 
         Array = Types.Definition(Sequel::Postgres::PGArray)
 
+        @array_types = ::Hash.new do |hash, type|
+          name = "#{ type }[]"
+          array_type = Array.constructor(-> (v) { Sequel.pg_array(v, type) }).
+                         meta(type: name, db_type: name, database: 'postgres')
+          Attribute::TypeExtensions.register(array_type) { include ArrayMethods }
+          hash[type] = array_type
+        end
+
         def self.Array(db_type)
-          Array.constructor(-> (v) { Sequel.pg_array(v, db_type) }).meta(type: db_type)
+          @array_types[db_type]
         end
 
         # @!parse
@@ -109,7 +117,7 @@ module ROM
         #     #
         #     #   @api public
         #   end
-        Attribute::TypeExtensions.register(Array.constructor -> {  }) do
+        module ArrayMethods
           def contain(type, expr, other)
             Attribute[Types::Bool].meta(sql_expr: expr.pg_array.contains(type[other]))
           end
@@ -147,6 +155,10 @@ module ROM
           end
         end
 
+        Attribute::TypeExtensions.register(Array.constructor -> {  }) do
+          include ArrayMethods
+        end
+
         # JSON
 
         JSONArray = Types.Constructor(Sequel::Postgres::JSONArray, &Sequel.method(:pg_json))
@@ -155,7 +167,7 @@ module ROM
 
         JSONOp = Types.Constructor(Sequel::Postgres::JSONOp, &Sequel.method(:pg_json))
 
-        JSON = JSONArray | JSONHash | JSONOp
+        JSON = (JSONArray | JSONHash | JSONOp).meta(database: 'postgres', db_type: 'jsonb')
 
         # JSONB
 
@@ -165,7 +177,7 @@ module ROM
 
         JSONBOp = Types.Constructor(Sequel::Postgres::JSONBOp, &Sequel.method(:pg_jsonb))
 
-        JSONB = JSONBArray | JSONBHash | JSONBOp
+        JSONB = (JSONBArray | JSONBHash | JSONBOp).meta(database: 'postgres', db_type: 'jsonb')
 
         # @!parse
         #   class ROM::SQL::Attribute

@@ -50,7 +50,7 @@ module ROM
 
         def map_type(ruby_type, db_type, enum_values: nil, **_)
           if db_type.end_with?(self.class.db_array_type_matcher)
-            Types::PG::Array(db_type)
+            Types::PG::Array(db_type[0...db_type.size-2])
           elsif enum_values
             Types::String.enum(*enum_values)
           else

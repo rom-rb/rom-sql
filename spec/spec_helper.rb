@@ -21,7 +21,7 @@ require 'logger'
 require 'tempfile'
 
 begin
-  require 'byebug'
+  require 'pry-byebug'
 rescue LoadError
   require 'pry'
 end

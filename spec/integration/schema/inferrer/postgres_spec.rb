@@ -63,7 +63,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres do
              jsonb_data: ROM::SQL::Types::PG::JSONB.optional.meta(name: :jsonb_data, source: source),
              money: ROM::SQL::Types::Decimal.meta(name: :money, source: source),
              tags: ROM::SQL::Types::PG::Array('text').optional.meta(name: :tags, source: source),
-             tag_ids: ROM::SQL::Types::PG::Array('biging').optional.meta(name: :tag_ids, source: source),
+             tag_ids: ROM::SQL::Types::PG::Array('bigint').optional.meta(name: :tag_ids, source: source),
              color: ROM::SQL::Types::String.enum(*colors).optional.meta(name: :color, source: source),
              ip: ROM::SQL::Types::PG::IPAddress.optional.meta(
                name: :ip,
