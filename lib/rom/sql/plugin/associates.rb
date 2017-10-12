@@ -154,6 +154,11 @@ module ROM
                 else
                   tuples.map { |tuple| Hash(tuple).update(fk => parent[pk]) }
                 end
+              when Association::OneToOne
+                with_input_tuples(tuples).map { |tuple|
+                  assoc.remove_associated(__registry__, parent)
+                  assoc.associate(__registry__, tuple, parent)
+                }
               when Association
                 with_input_tuples(tuples).map { |tuple|
                   assoc.associate(__registry__, tuple, parent)
