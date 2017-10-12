@@ -95,7 +95,7 @@ module ROM
         DateRange = range('daterange', range_read_type(:daterange))
 
         module RangeOperators
-          def contains(_type, expr, value)
+          def contain(_type, expr, value)
             Attribute[SQL::Types::Bool].meta(
               sql_expr: Sequel.pg_range(expr).contains(value)
             )
@@ -157,7 +157,7 @@ module ROM
             )
           end
 
-          def isempty(_type, expr)
+          def is_empty(_type, expr)
             Attribute[SQL::Types::Bool].meta(
               sql_expr: Sequel.pg_range(expr).isempty
             )

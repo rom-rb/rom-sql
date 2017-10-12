@@ -26,7 +26,7 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
     let(:rel) { pg_ranges.select { [name] } }
 
     it 'restrict by contains (`@>`)' do
-      expect(rel.where(pg_ranges[:range].contains(ref_value)).to_a)
+      expect(rel.where(pg_ranges[:range].contain(ref_value)).to_a)
         .to eql([{ name: 'containing' }])
     end
 
@@ -67,23 +67,23 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
 
     describe 'functions' do
       it 'lower' do
-        expect(rel.where { range.contains(range.lower) }.to_a)
+        expect(rel.where { range.contain(range.lower) }.to_a)
           .to eql(rel.where { range.lower_inc }.to_a)
       end
 
       it 'upper' do
-        expect(rel.where { range.contains(range.upper) }.to_a)
+        expect(rel.where { range.contain(range.upper) }.to_a)
           .to eql(rel.where { range.upper_inc }.to_a)
       end
 
       it 'lower included' do
         expect(rel.where { range.lower_inc }.to_a)
-          .to eql(rel.where { range.contains(range.lower) }.to_a)
+          .to eql(rel.where { range.contain(range.lower) }.to_a)
       end
 
       it 'upper included' do
         expect(rel.where { range.upper_inc }.to_a)
-          .to eql(rel.where { range.contains(range.upper) }.to_a)
+          .to eql(rel.where { range.contain(range.upper) }.to_a)
       end
 
       it 'lower infinity' do
@@ -95,7 +95,7 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
       end
 
       it 'is empty' do
-        expect(rel.where { range.isempty }.to_a).to eql([{ name: 'empty' }])
+        expect(rel.where { range.is_empty }.to_a).to eql([{ name: 'empty' }])
       end
     end
   end
