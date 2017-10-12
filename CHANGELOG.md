@@ -1,3 +1,11 @@
+## v1.3.5 2017-10-12
+
+### Changed
+
+* Added compatibility with `dry-types` 0.11  (flash-gordon)
+
+[Compare v1.3.4..v1.3.5](https://github.com/rom-rb/rom-sql/compare/v1.3.4...v1.3.5)
+
 ## v1.3.4 2017-09-12
 
 ### Fixed
