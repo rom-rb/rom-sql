@@ -188,34 +188,18 @@ module ROM
           end
         end
 
-        TypeExtensions.register(Int4Range) do
-          include RangeOperators
-          include RangeFunctions
-        end
-
-        TypeExtensions.register(Int8Range) do
-          include RangeOperators
-          include RangeFunctions
-        end
-
-        TypeExtensions.register(NumRange) do
-          include RangeOperators
-          include RangeFunctions
-        end
-
-        TypeExtensions.register(TsRange) do
-          include RangeOperators
-          include RangeFunctions
-        end
-
-        TypeExtensions.register(TsTzRange) do
-          include RangeOperators
-          include RangeFunctions
-        end
-
-        TypeExtensions.register(DateRange) do
-          include RangeOperators
-          include RangeFunctions
+        [
+          Int4Range,
+          Int8Range,
+          NumRange,
+          TsRange,
+          TsTzRange,
+          DateRange
+        ].each do |type|
+          TypeExtensions.register(type) do
+            include RangeOperators
+            include RangeFunctions
+          end
         end
       end
     end
