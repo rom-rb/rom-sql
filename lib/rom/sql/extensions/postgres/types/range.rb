@@ -107,7 +107,7 @@ module ROM
             )
           end
 
-          def overlaps(_type, expr, value)
+          def overlap(_type, expr, value)
             Attribute[SQL::Types::Bool].meta(
               sql_expr: Sequel.pg_range(expr).overlaps(value)
             )

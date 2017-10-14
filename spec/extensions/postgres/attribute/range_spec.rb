@@ -56,7 +56,7 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
     end
 
     it 'restrict by overlapping (`&&`)' do
-      expect(rel.where(pg_ranges[:range].overlaps(ref_value)).to_a)
+      expect(rel.where(pg_ranges[:range].overlap(ref_value)).to_a)
         .to eql([{ name: 'containing' }, { name: 'contained' }])
     end
 
