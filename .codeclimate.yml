@@ -4,6 +4,10 @@ engines:
     checks:
       Rubocop/Lint/UnusedMethodArgument:
         enabled: false
+      Rubocop/Lint/UnusedBlockArgument:
+        enabled: false
+      Rubocop/Metrics/CyclomaticComplexity:
+        max: 7
   duplication:
     enabled: true
     config:
