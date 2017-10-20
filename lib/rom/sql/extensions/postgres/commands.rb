@@ -10,9 +10,9 @@ module ROM
           #
           # @api private
           def insert(tuples)
-            dataset = tuples.map do |tuple|
+            dataset = tuples.flat_map do |tuple|
               relation.dataset.returning.insert(tuple)
-            end.flatten(1)
+            end
 
             wrap_dataset(dataset)
           end

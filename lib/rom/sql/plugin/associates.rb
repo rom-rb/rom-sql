@@ -121,9 +121,9 @@ module ROM
 
                 case parent
                 when Array
-                  parent.map do |p|
+                  parent.flat_map do |p|
                     tuples.map { |tuple| Hash(tuple).merge(fk => p[pk]) }
-                  end.flatten(1)
+                  end
                 else
                   tuples.map { |tuple| Hash(tuple).update(fk => parent[pk]) }
                 end
