@@ -1,3 +1,12 @@
+## v2.1.0 to-be-released
+
+### Added
+
+* Support for PG's range types (v-kolesnikov)
+* Support for PG's `ltree` (GustavoCaso)
+
+[Compare v2.0.0...v2.1.0](https://github.com/rom-rb/rom-sql/compare/v2.0.0...v2.1.0)
+
 ## v2.0.0 2017-10-18
 
 ### Added
