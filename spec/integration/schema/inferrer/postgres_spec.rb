@@ -9,6 +9,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
 
   before do
     conn.execute('create extension if not exists hstore')
+    conn.execute('create extension if not exists ltree')
 
     conn.extension :pg_enum
     conn.extension :pg_hstore
@@ -39,6 +40,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
       lseg :lseg
       polygon :polygon
       path :path
+      ltree :ltree_path
       timestamp :created_at
       column :datetime, "timestamp(0) without time zone"
       column :datetime_tz, "timestamp(0) with time zone"
@@ -83,6 +85,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
                lseg: ROM::SQL::Types::PG::LineSegment.optional.meta(name: :lseg),
                polygon: ROM::SQL::Types::PG::Polygon.optional.meta(name: :polygon),
                path: ROM::SQL::Types::PG::Path.optional.meta(name: :path),
+               ltree_path: ROM::SQL::Types::PG::LTree.optional.meta(name: :ltree),
                created_at: ROM::SQL::Types::Time.optional.meta(name: :created_at),
                datetime: ROM::SQL::Types::Time.optional.meta(name: :datetime),
                datetime_tz: ROM::SQL::Types::Time.optional.meta(name: :datetime_tz),
@@ -106,6 +109,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
   context 'with a column with bi-directional mapping' do
     before do
       conn.execute('create extension if not exists hstore')
+      conn.execute('create extension if not exists ltree')
 
       conn.create_table(:test_bidirectional) do
         primary_key :id
@@ -119,6 +123,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
         polygon :polygon
         path :closed_path
         path :open_path
+        ltree :ltree_path
       end
 
       conf.relation(:test_bidirectional) { schema(infer: true) }
@@ -147,6 +152,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
     let(:polygon) { [point, point_2] }
     let(:closed_path) { ROM::SQL::Postgres::Values::Path.new([point, point_2], :closed) }
     let(:open_path) { ROM::SQL::Postgres::Values::Path.new([point, point_2], :open) }
+    let(:ltree) { ROM::SQL::Postgres::Values::LabelPath.new('Top.Countries.Europe.Russia') }
 
     let(:relation) { container.relations[:test_bidirectional] }
     let(:create) { commands[:test_bidirectional].create }
@@ -156,14 +162,16 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
       inserted = create.(
         id: 1, center: point, ip: dns, mapping: mapping,
         line: line, circle: circle, lseg: lseg, box: box,
-        polygon: polygon, closed_path: closed_path, open_path: open_path
+        polygon: polygon, closed_path: closed_path, open_path: open_path,
+        ltree_path: ltree
       )
 
       expect(inserted).
         to eql(
              id: 1, center: point, ip: dns, mapping: mapping,
              line: line, circle: circle, lseg: lseg, box: box_corrected,
-             polygon: polygon, closed_path: closed_path, open_path: open_path
+             polygon: polygon, closed_path: closed_path, open_path: open_path,
+             ltree_path: ltree
            )
       expect(relation.to_a).to eql([inserted])
     end

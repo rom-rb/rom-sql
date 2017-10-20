@@ -5,6 +5,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
     conn.drop_table?(:test_pg_types)
 
     conn.execute('create extension if not exists hstore')
+    conn.execute('create extension if not exists ltree')
   end
 
   let(:table_name) { :test_pg_types }
@@ -47,6 +48,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
           attribute :lseg,            ROM::SQL::Types::PG::LineSegment
           attribute :polygon,         ROM::SQL::Types::PG::Polygon
           attribute :path,            ROM::SQL::Types::PG::Path
+          attribute :ltree_path,      ROM::SQL::Types::PG::LTree
         end
       end
     end
@@ -79,7 +81,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
                box: ROM::SQL::Types::PG::Box,
                lseg: ROM::SQL::Types::PG::LineSegment,
                polygon: ROM::SQL::Types::PG::Polygon,
-               path: ROM::SQL::Types::PG::Path
+               path: ROM::SQL::Types::PG::Path,
+               ltree_path: ROM::SQL::Types::PG::LTree
              )
            )
     end
