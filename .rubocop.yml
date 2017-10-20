@@ -851,7 +851,7 @@ Style/PercentLiteralDelimiters:
   Enabled: false
 
 Style/PercentQLiterals:
-  Description: 'Checks if uses of %Q/%q match the configured preference.'
+  Description: 'Checks if uses of %Q/%q match the configured preference.'
   Enabled: false
 
 Style/PerlBackrefs:
