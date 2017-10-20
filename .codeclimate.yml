@@ -10,4 +10,7 @@ engines:
 
 ratings:
   paths:
-    - "lib/**/*.rb"
+    - lib/**/*.rb
+
+exclude_paths:
+  - spec/**/*
