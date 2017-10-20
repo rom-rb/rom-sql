@@ -1,9 +1,9 @@
 require 'rom/sql/function'
 
 RSpec.describe ROM::SQL::Function, :postgres do
-  subject(:func) { ROM::SQL::Function.new(type) }
+  include_context 'users'
 
-  include_context 'database setup'
+  subject(:func) { ROM::SQL::Function.new(type).meta(schema: users.schema) }
 
   let(:ds) { container.gateways[:default][:users] }
   let(:type) { ROM::SQL::Types::Int }
@@ -110,6 +110,28 @@ RSpec.describe ROM::SQL::Function, :postgres do
     it 'supports aliases' do
       expect(func.row_number.over(order: :id).as(:row_no).sql_literal(ds)).
         to eql('ROW_NUMBER() OVER (ORDER BY "id") AS "row_no"')
+    end
+  end
+
+  describe '#filter' do
+    it 'adds basic FILTER clause' do
+      expect(func.sum(:id).filter(:value).sql_literal(ds)).
+        to eql('SUM("id") FILTER (WHERE "value")')
+    end
+
+    it 'supports restriction block' do
+      expect(func.sum(:id).filter { id > 1 }.sql_literal(ds)).
+        to eql('SUM("id") FILTER (WHERE ("users"."id" > 1))')
+    end
+
+    it 'supports combined conditions' do
+      expect(func.sum(:id).filter(:value) { id > 1 }.sql_literal(ds)).
+        to eql('SUM("id") FILTER (WHERE (("users"."id" > 1) AND "value"))')
+    end
+
+    it 'supports hashes' do
+      expect(func.count(:id).filter(id: 1).sql_literal(ds)).
+        to eql('COUNT("id") FILTER (WHERE ("id" = 1))')
     end
   end
 end
