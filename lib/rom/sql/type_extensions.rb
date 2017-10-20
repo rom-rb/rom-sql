@@ -34,11 +34,10 @@ module ROM
           extensions = @types[type.meta[:database]]
           db_type = type.meta[:db_type]
 
-          raise ArgumentError, "Type #{ db_type } already registered" if extensions.key?(db_type)
           mod = Module.new(&block)
           ctx = Object.new.extend(mod)
           functions = mod.public_instance_methods.each_with_object({}) { |m, ms| ms[m] = ctx.method(m) }
-          extensions[db_type] = functions
+          extensions[db_type] = (extensions[db_type] || {}).merge(functions)
         end
       end
 

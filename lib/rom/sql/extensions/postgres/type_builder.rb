@@ -33,7 +33,8 @@ module ROM
           'numrange' => Types::NumRange,
           'tsrange' => Types::TsRange,
           'tstzrange' => Types::TsTzRange,
-          'daterange' => Types::DateRange
+          'daterange' => Types::DateRange,
+          'ltree' => Types::LTree
         ).freeze
 
         db_array_type_matcher '[]'.freeze

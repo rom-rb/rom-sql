@@ -9,6 +9,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
 
   before do
     conn.execute('create extension if not exists hstore')
+    conn.execute('create extension if not exists ltree')
 
     conn.extension :pg_enum
     conn.extension :pg_hstore
@@ -39,6 +40,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
       lseg :lseg
       polygon :polygon
       path :path
+      ltree :ltree_path
       timestamp :created_at
       column :datetime, "timestamp(0) without time zone"
       column :datetime_tz, "timestamp(0) with time zone"
@@ -65,41 +67,43 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
 
   context 'inferring db-specific attributes' do
     it 'can infer attributes for dataset' do
-      expect(schema.to_h).to eql(
-        attributes(
-          id: ROM::SQL::Types::PG::UUID.meta(name: :id, primary_key: true),
-          big: ROM::SQL::Types::Int.optional.meta(name: :big),
-          json_data: ROM::SQL::Types::PG::JSON.optional.meta(name: :json_data),
-          jsonb_data: ROM::SQL::Types::PG::JSONB.optional.meta(name: :jsonb_data),
-          money: ROM::SQL::Types::PG::Money.meta(name: :money),
-          decimal: ROM::SQL::Types::Decimal.meta(name: :decimal),
-          tags: ROM::SQL::Types::PG::Array('text').optional.meta(name: :tags),
-          tag_ids: ROM::SQL::Types::PG::Array('bigint').optional.meta(name: :tag_ids),
-          ip: ROM::SQL::Types::PG::IPAddress.optional.meta(name: :ip),
-          color: ROM::SQL::Types::String.enum(*colors).optional.meta(name: :color),
-          subnet: ROM::SQL::Types::PG::IPAddress.optional.meta(name: :subnet),
-          hw_address: ROM::SQL::Types::String.optional.meta(name: :hw_address),
-          center: ROM::SQL::Types::PG::Point.optional.meta(name: :center),
-          page: ROM::SQL::Types::PG::XML.optional.meta(name: :page),
-          mapping: ROM::SQL::Types::PG::HStore.optional.meta(name: :mapping),
-          line: ROM::SQL::Types::PG::Line.optional.meta(name: :line),
-          circle: ROM::SQL::Types::PG::Circle.optional.meta(name: :circle),
-          box: ROM::SQL::Types::PG::Box.optional.meta(name: :box),
-          lseg: ROM::SQL::Types::PG::LineSegment.optional.meta(name: :lseg),
-          polygon: ROM::SQL::Types::PG::Polygon.optional.meta(name: :polygon),
-          path: ROM::SQL::Types::PG::Path.optional.meta(name: :path),
-          created_at: ROM::SQL::Types::Time.optional.meta(name: :created_at),
-          datetime: ROM::SQL::Types::Time.optional.meta(name: :datetime),
-          datetime_tz: ROM::SQL::Types::Time.optional.meta(name: :datetime_tz),
-          flag: ROM::SQL::Types::Bool.meta(name: :flag),
-          int4range: ROM::SQL::Types::PG::Int4Range.optional.meta(name: :int4range),
-          int8range: ROM::SQL::Types::PG::Int8Range.optional.meta(name: :int8range),
-          numrange: ROM::SQL::Types::PG::NumRange.optional.meta(name: :numrange),
-          tsrange: ROM::SQL::Types::PG::TsRange.optional.meta(name: :tsrange),
-          tstzrange: ROM::SQL::Types::PG::TsTzRange.optional.meta(name: :tstzrange),
-          daterange: ROM::SQL::Types::PG::DateRange.optional.meta(name: :daterange)
-        )
-      )
+      expect(schema.to_h).
+        to eql(
+             attributes(
+               id: ROM::SQL::Types::PG::UUID.meta(name: :id, primary_key: true),
+               big: ROM::SQL::Types::Int.optional.meta(name: :big),
+               json_data: ROM::SQL::Types::PG::JSON.optional.meta(name: :json_data),
+               jsonb_data: ROM::SQL::Types::PG::JSONB.optional.meta(name: :jsonb_data),
+               money: ROM::SQL::Types::PG::Money.meta(name: :money),
+               decimal: ROM::SQL::Types::Decimal.meta(name: :decimal),
+               tags: ROM::SQL::Types::PG::Array('text').optional.meta(name: :tags),
+               tag_ids: ROM::SQL::Types::PG::Array('bigint').optional.meta(name: :tag_ids),
+               ip: ROM::SQL::Types::PG::IPAddress.optional.meta(name: :ip),
+               color: ROM::SQL::Types::String.enum(*colors).optional.meta(name: :color),
+               subnet: ROM::SQL::Types::PG::IPAddress.optional.meta(name: :subnet),
+               hw_address: ROM::SQL::Types::String.optional.meta(name: :hw_address),
+               center: ROM::SQL::Types::PG::Point.optional.meta(name: :center),
+               page: ROM::SQL::Types::PG::XML.optional.meta(name: :page),
+               mapping: ROM::SQL::Types::PG::HStore.optional.meta(name: :mapping),
+               line: ROM::SQL::Types::PG::Line.optional.meta(name: :line),
+               circle: ROM::SQL::Types::PG::Circle.optional.meta(name: :circle),
+               box: ROM::SQL::Types::PG::Box.optional.meta(name: :box),
+               lseg: ROM::SQL::Types::PG::LineSegment.optional.meta(name: :lseg),
+               polygon: ROM::SQL::Types::PG::Polygon.optional.meta(name: :polygon),
+               path: ROM::SQL::Types::PG::Path.optional.meta(name: :path),
+               ltree_path: ROM::SQL::Types::PG::LTree.optional.meta(name: :ltree),
+               created_at: ROM::SQL::Types::Time.optional.meta(name: :created_at),
+               datetime: ROM::SQL::Types::Time.optional.meta(name: :datetime),
+               datetime_tz: ROM::SQL::Types::Time.optional.meta(name: :datetime_tz),
+               flag: ROM::SQL::Types::Bool.meta(name: :flag),
+               int4range: ROM::SQL::Types::PG::Int4Range.optional.meta(name: :int4range),
+               int8range: ROM::SQL::Types::PG::Int8Range.optional.meta(name: :int8range),
+               numrange: ROM::SQL::Types::PG::NumRange.optional.meta(name: :numrange),
+               tsrange: ROM::SQL::Types::PG::TsRange.optional.meta(name: :tsrange),
+               tstzrange: ROM::SQL::Types::PG::TsTzRange.optional.meta(name: :tstzrange),
+               daterange: ROM::SQL::Types::PG::DateRange.optional.meta(name: :daterange)
+             )
+           )
     end
   end
 
@@ -117,6 +121,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
   context 'with a column with bi-directional mapping' do
     before do
       conn.execute('create extension if not exists hstore')
+      conn.execute('create extension if not exists ltree')
 
       conn.create_table(:test_bidirectional) do
         primary_key :id
@@ -136,6 +141,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
         tsrange :tsrange
         tstzrange :tstzrange
         daterange :daterange
+        ltree :ltree_path
       end
 
       conf.relation(:test_bidirectional) { schema(infer: true) }
@@ -166,6 +172,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
     let(:polygon) { [point, point_2] }
     let(:closed_path) { ROM::SQL::Postgres::Values::Path.new([point, point_2], :closed) }
     let(:open_path) { ROM::SQL::Postgres::Values::Path.new([point, point_2], :open) }
+    let(:ltree) { ROM::SQL::Postgres::Values::LabelPath.new('Top.Countries.Europe.Russia') }
 
     let(:int4range) { values::Range.new(0, 2, :'[)') }
     let(:int8range) { values::Range.new(5, 7, :'[)') }
@@ -195,7 +202,8 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
         line: line, circle: circle, lseg: lseg, box: box,
         polygon: polygon, closed_path: closed_path, open_path: open_path,
         int4range: int4range, int8range: int8range, numrange: numrange,
-        tsrange: tsrange, tstzrange: tstzrange, daterange: daterange
+        tsrange: tsrange, tstzrange: tstzrange, daterange: daterange,
+        ltree_path: ltree
       )
 
       expect(inserted).to eql(
@@ -203,9 +211,9 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
         line: line, circle: circle, lseg: lseg, box: box_corrected,
         polygon: polygon, closed_path: closed_path, open_path: open_path,
         int4range: int4range, int8range: int8range, numrange: numrange,
-        tsrange: tsrange, tstzrange: tstzrange, daterange: daterange
+        tsrange: tsrange, tstzrange: tstzrange, daterange: daterange,
+        ltree_path: ltree
       )
-      expect(relation.to_a).to eql([inserted])
     end
   end
 end
