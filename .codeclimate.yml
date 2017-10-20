@@ -8,7 +8,7 @@ engines:
         enabled: false
       Rubocop/Metrics/CyclomaticComplexity:
         enabled: true
-        max: 7
+        Max: 7
   duplication:
     enabled: true
     config:
