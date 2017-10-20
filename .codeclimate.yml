@@ -6,9 +6,6 @@ engines:
         enabled: false
       Rubocop/Lint/UnusedBlockArgument:
         enabled: false
-      Rubocop/Metrics/CyclomaticComplexity:
-        enabled: true
-        Max: 7
   duplication:
     enabled: true
     config:
