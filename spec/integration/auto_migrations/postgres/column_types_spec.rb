@@ -47,6 +47,12 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
           attribute :lseg,            ROM::SQL::Types::PG::LineSegment
           attribute :polygon,         ROM::SQL::Types::PG::Polygon
           attribute :path,            ROM::SQL::Types::PG::Path
+          attribute :int4range,       ROM::SQL::Types::PG::Int4Range
+          attribute :int8range,       ROM::SQL::Types::PG::Int8Range
+          attribute :numrange,        ROM::SQL::Types::PG::NumRange
+          attribute :tsrange,         ROM::SQL::Types::PG::TsRange
+          attribute :tstzrange,       ROM::SQL::Types::PG::TsTzRange
+          attribute :daterange,       ROM::SQL::Types::PG::DateRange
         end
       end
     end
@@ -79,7 +85,13 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
                box: ROM::SQL::Types::PG::Box,
                lseg: ROM::SQL::Types::PG::LineSegment,
                polygon: ROM::SQL::Types::PG::Polygon,
-               path: ROM::SQL::Types::PG::Path
+               path: ROM::SQL::Types::PG::Path,
+               int4range: ROM::SQL::Types::PG::Int4Range,
+               int8range: ROM::SQL::Types::PG::Int8Range,
+               numrange: ROM::SQL::Types::PG::NumRange,
+               tsrange: ROM::SQL::Types::PG::TsRange,
+               tstzrange: ROM::SQL::Types::PG::TsTzRange,
+               daterange: ROM::SQL::Types::PG::DateRange
              )
            )
     end
