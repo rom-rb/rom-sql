@@ -39,27 +39,37 @@ module ROM
             elements.fetch(db_type) do
               name = "#{db_type}[]"
 
-              write_array =
-                if member_type
-                  base_write_type.constructor(constructor[db_type, member_type])
-                else
-                  base_write_type.constructor(constructor[db_type])
-                end
+              write_type = build_write_type(db_type, member_type)
+              read_type = build_read_type(db_type, member_type)
 
-              read_array =
-                if member_type && member_type.meta[:read]
-                  base_read_type.of(member_type.meta[:read])
-                else
-                  base_read_type
-                end
+              array_type = Types.Type(name, write_type).meta(type: db_type, read: read_type)
 
-              array_type = Types.Type(name, write_array).
-                             meta(type: db_type, read: read_array)
-
-              TypeExtensions.register(array_type) { include ArrayMethods }
+              register_extension(array_type)
 
               elements[db_type] = array_type
             end
+          end
+
+          private
+
+          def build_write_type(db_type, member_type)
+            if member_type
+              base_write_type.constructor(constructor[db_type, member_type])
+            else
+              base_write_type.constructor(constructor[db_type])
+            end
+          end
+
+          def build_read_type(db_type, member_type)
+            if member_type && member_type.meta[:read]
+              base_read_type.of(member_type.meta[:read])
+            else
+              base_read_type
+            end
+          end
+
+          def register_extension(type)
+            TypeExtensions.register(type) { include ArrayMethods }
           end
         end
 
