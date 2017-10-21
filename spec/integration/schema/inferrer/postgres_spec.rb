@@ -172,7 +172,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
     let(:polygon) { [point, point_2] }
     let(:closed_path) { ROM::SQL::Postgres::Values::Path.new([point, point_2], :closed) }
     let(:open_path) { ROM::SQL::Postgres::Values::Path.new([point, point_2], :open) }
-    let(:ltree) { ROM::SQL::Postgres::Values::LabelPath.new('Top.Countries.Europe.Russia') }
+    let(:ltree) { ROM::Types::Values::TreePath.new('Top.Countries.Europe.Russia') }
 
     let(:int4range) { values::Range.new(0, 2, :'[)') }
     let(:int8range) { values::Range.new(5, 7, :'[)') }

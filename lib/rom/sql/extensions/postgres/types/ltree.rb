@@ -1,26 +1,20 @@
+require 'rom/types/values'
+
 module ROM
   module SQL
     module Postgres
-      module Values
-        LabelPath = ::Struct.new(:path) do
-          def labels
-            path.split('.')
-          end
-        end
-      end
-
       # @api public
       module Types
         # @see https://www.postgresql.org/docs/current/static/ltree.html
 
         LTree = Type('ltree') do
-          SQL::Types.define(Values::LabelPath) do
+          SQL::Types.define(ROM::Types::Values::TreePath) do
             input do |label_path|
-              label_path ? label_path.path : nil
+              label_path.to_s
             end
 
             output do |label_path|
-              label_path ? Values::LabelPath.new(label_path.to_s) : nil
+              ROM::Types::Values::TreePath.new(label_path.to_s) if label_path
             end
           end
         end
@@ -126,7 +120,7 @@ module ROM
         #     #   Translates to ||
         #     #
         #     #   @example
-        #     #     people.select { (ltree_tags + ROM::SQL::Postgres::Values::LabelPath.new('Moscu')).as(:ltree_tags) }.where { name.is('Jade Doe') }
+        #     #     people.select { (ltree_tags + ROM::SQL::Postgres::ROM::Types::Values::TreePath.new('Moscu')).as(:ltree_tags) }.where { name.is('Jade Doe') }
         #     #     people.select { (ltree_tags + 'Moscu').as(:ltree_tags) }.where { name.is('Jade Doe') }
         #     #
         #     #   @param [LTree, String] keys
@@ -262,7 +256,7 @@ module ROM
           end
         end
 
-        TypeExtensions.register(ROM::SQL::Types::PG::Array('ltree')) do
+        TypeExtensions.register(ROM::SQL::Types::PG::Array('ltree', LTree)) do
           include LTreeMethods
 
           def contain_any_ltextquery(type, expr, query)
@@ -321,12 +315,12 @@ module ROM
 
           def +(type, expr, other)
             other_value = case other
-                          when Values::LabelPath
+                          when ROM::Types::Values::TreePath
                             other
                           else
-                            Values::LabelPath.new(other)
+                            ROM::Types::Values::TreePath.new(other)
                           end
-            Attribute[LTree].meta(sql_expr: Sequel::SQL::StringExpression.new(:'||', expr, other_value.path))
+            Attribute[LTree].meta(sql_expr: Sequel::SQL::StringExpression.new(:'||', expr, other_value.to_s))
           end
         end
       end

@@ -222,16 +222,16 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
         define(:update)
       end
 
-      create_person.(name: 'John Wilkson',ltree_tags: ltree('Bottom'), parents_tags: [ltree('Top').path, ltree('Top.Building').path])
-      create_person.(name: 'John Wayne',ltree_tags: ltree('Bottom.Countries'), parents_tags: [ltree('Left').path, ltree('Left.Parks').path])
-      create_person.(name: 'John Fake',ltree_tags: ltree('Bottom.Cities'), parents_tags: [ltree('Top.Building.EmpireState').path, ltree('Top.Building.EmpireState.381').path])
-      create_person.(name: 'John Bros',ltree_tags: ltree('Bottom.Cities.Melbourne'), parents_tags: [ltree('Right.Cars.Ford').path, ltree('Right.Cars.Nissan').path])
+      create_person.(name: 'John Wilkson',ltree_tags: ltree('Bottom'), parents_tags: [ltree('Top'), ltree('Top.Building')])
+      create_person.(name: 'John Wayne',ltree_tags: ltree('Bottom.Countries'), parents_tags: [ltree('Left'), ltree('Left.Parks')])
+      create_person.(name: 'John Fake',ltree_tags: ltree('Bottom.Cities'), parents_tags: [ltree('Top.Building.EmpireState'), ltree('Top.Building.EmpireState.381')])
+      create_person.(name: 'John Bros',ltree_tags: ltree('Bottom.Cities.Melbourne'), parents_tags: [ltree('Right.Cars.Ford'), ltree('Right.Cars.Nissan')])
       create_person.(name: 'John Wick',ltree_tags: ltree('Bottom.Countries.Australia'))
       create_person.(name: 'Jade Doe', ltree_tags: ltree('Bottom.Countries.Australia.Brasil'))
     end
 
     def ltree(label_path)
-      ROM::SQL::Postgres::Values::LabelPath.new(label_path)
+      ROM::Types::Values::TreePath.new(label_path)
     end
 
     it 'matches regular expression' do
@@ -256,13 +256,13 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
 
     describe 'concatenation' do
       it 'concatenates ltrees' do
-        expect(people.select { (ltree_tags + ROM::SQL::Postgres::Values::LabelPath.new('Moscu')).as(:ltree_tags) }.where { name.is('Jade Doe') }.one).
-          to eq(ltree_tags: ROM::SQL::Postgres::Values::LabelPath.new('Bottom.Countries.Australia.Brasil.Moscu'))
+        expect(people.select { (ltree_tags + ROM::Types::Values::TreePath.new('Moscu')).as(:ltree_tags) }.where { name.is('Jade Doe') }.one).
+          to eq(ltree_tags: ROM::Types::Values::TreePath.new('Bottom.Countries.Australia.Brasil.Moscu'))
       end
 
       it 'concatenates strings' do
         expect(people.select { (ltree_tags + 'Moscu').as(:ltree_tags) }.where { name.is('Jade Doe') }.one).
-          to eq(ltree_tags: ROM::SQL::Postgres::Values::LabelPath.new('Bottom.Countries.Australia.Brasil.Moscu'))
+          to eq(ltree_tags: ROM::Types::Values::TreePath.new('Bottom.Countries.Australia.Brasil.Moscu'))
       end
     end
 
