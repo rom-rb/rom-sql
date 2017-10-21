@@ -51,7 +51,10 @@ module ROM
 
         def map_type(ruby_type, db_type, enum_values: nil, **_)
           if db_type.end_with?(self.class.db_array_type_matcher)
-            Types::Array(db_type[0...-2])
+            member_name = db_type[0...-2]
+            member_type = self.class.db_type_mapping[member_name]
+
+            Types::Array(member_name, member_type)
           elsif enum_values
             SQL::Types::String.enum(*enum_values)
           else

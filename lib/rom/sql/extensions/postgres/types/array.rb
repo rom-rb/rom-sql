@@ -10,18 +10,67 @@ module ROM
 
         ArrayRead = Array.constructor { |v| v.respond_to?(:to_ary) ? v.to_ary : v }
 
-        constructor = -> type { -> value { Sequel.pg_array(value, type) } }
+        # @api private
+        class ArrayTypes
+          attr_reader :elements
 
-        @array_types = ::Hash.new do |hash, type|
-          name = "#{ type }[]"
-          array_type = Type(name, Array.constructor(constructor.(type))).
-                         meta(type: type, read: ArrayRead)
-          TypeExtensions.register(array_type) { include ArrayMethods }
-          hash[type] = array_type
+          attr_reader :constructor
+
+          attr_reader :base_write_type
+
+          attr_reader :base_read_type
+
+          def initialize
+            @elements = {}
+            @base_write_type = Postgres::Types::Array
+            @base_read_type = ArrayRead
+            @constructor = proc { |db_type, member|
+              -> arr {
+                if member
+                  Sequel.pg_array(arr.map { |v| member[v] }, db_type)
+                else
+                  Sequel.pg_array(arr, db_type)
+                end
+              }
+            }
+          end
+
+          def [](db_type, member_type = nil)
+            elements.fetch(db_type) do
+              name = "#{db_type}[]"
+
+              write_array =
+                if member_type
+                  base_write_type.constructor(constructor[db_type, member_type])
+                else
+                  base_write_type.constructor(constructor[db_type])
+                end
+
+              read_array =
+                if member_type && member_type.meta[:read]
+                  base_read_type.of(member_type.meta[:read])
+                else
+                  base_read_type
+                end
+
+              array_type = Types.Type(name, write_array).
+                             meta(type: db_type, read: read_array)
+
+              TypeExtensions.register(array_type) { include ArrayMethods }
+
+              elements[db_type] = array_type
+            end
+          end
         end
 
-        def self.Array(db_type)
-          @array_types[db_type]
+        # @api private
+        def self.array_types
+          @array_types ||= ArrayTypes.new
+        end
+
+        # @api private
+        def self.Array(db_type, member_type = nil)
+          array_types[db_type, member_type]
         end
 
         # @!parse
