@@ -1,4 +1,4 @@
-## v2.1.0 to-be-released
+## v2.1.0 2017-10-23
 
 ### Added
 
@@ -8,6 +8,7 @@
 ### Fixed
 
 * Schema inference works with primary keys that have custom types (ie an enum PK column) (v-kolesnikov)
+* Ruby warnings are gone (solnic)
 
 [Compare v2.0.0...v2.1.0](https://github.com/rom-rb/rom-sql/compare/v2.0.0...v2.1.0)
 
