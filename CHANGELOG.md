@@ -4,6 +4,7 @@
 
 * Support for PG's range types (v-kolesnikov)
 * Support for PG's `ltree` (GustavoCaso + solnic)
+* Support for the `FILTER` clause (flash-gordon)
 
 ### Fixed
 
