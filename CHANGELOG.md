@@ -3,7 +3,11 @@
 ### Added
 
 * Support for PG's range types (v-kolesnikov)
-* Support for PG's `ltree` (GustavoCaso)
+* Support for PG's `ltree` (GustavoCaso + solnic)
+
+### Fixed
+
+* Schema inference works with primary keys that have custom types (ie an enum PK column) (v-kolesnikov)
 
 [Compare v2.0.0...v2.1.0](https://github.com/rom-rb/rom-sql/compare/v2.0.0...v2.1.0)
 
