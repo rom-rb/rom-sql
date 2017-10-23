@@ -33,6 +33,8 @@ module ROM
           [inferred, missing]
         end
 
+        undef :with
+
         # @api private
         def with(new_options)
           self.class.new(options.merge(new_options))
