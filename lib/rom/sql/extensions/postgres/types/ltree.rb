@@ -120,7 +120,7 @@ module ROM
         #     #   Translates to ||
         #     #
         #     #   @example
-        #     #     people.select { (ltree_tags + ROM::SQL::Postgres::ROM::Types::Values::TreePath.new('Moscu')).as(:ltree_tags) }.where { name.is('Jade Doe') }
+        #     #     people.select { (ltree_tags + ROM::Types::Values::TreePath.new('Moscu')).as(:ltree_tags) }.where { name.is('Jade Doe') }
         #     #     people.select { (ltree_tags + 'Moscu').as(:ltree_tags) }.where { name.is('Jade Doe') }
         #     #
         #     #   @param [LTree, String] keys
