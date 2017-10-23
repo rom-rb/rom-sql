@@ -19,13 +19,11 @@ module ROM
             @base_write_type = base_write_type
             @base_read_type = base_read_type
             @constructor = proc { |db_type, member|
-              -> arr {
-                if member
-                  Sequel.pg_array(arr.map { |v| member[v] }, db_type)
-                else
-                  Sequel.pg_array(arr, db_type)
-                end
-              }
+              if member
+                -> arr { Sequel.pg_array(arr.map { |v| member[v] }, db_type) }
+              else
+                -> arr { Sequel.pg_array(arr, db_type) }
+              end
             }
           end
 
