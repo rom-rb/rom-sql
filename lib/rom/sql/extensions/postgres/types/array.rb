@@ -2,6 +2,8 @@ require 'sequel/core'
 
 Sequel.extension(*%i(pg_array pg_array_ops))
 
+require 'rom/sql/extensions/postgres/types/array_types'
+
 module ROM
   module SQL
     module Postgres
@@ -10,18 +12,14 @@ module ROM
 
         ArrayRead = Array.constructor { |v| v.respond_to?(:to_ary) ? v.to_ary : v }
 
-        constructor = -> type { -> value { Sequel.pg_array(value, type) } }
-
-        @array_types = ::Hash.new do |hash, type|
-          name = "#{ type }[]"
-          array_type = Type(name, Array.constructor(constructor.(type))).
-                         meta(type: type, read: ArrayRead)
-          TypeExtensions.register(array_type) { include ArrayMethods }
-          hash[type] = array_type
+        # @api private
+        def self.array_types
+          @array_types ||= ArrayTypes.new(Postgres::Types::Array, Postgres::Types::ArrayRead)
         end
 
-        def self.Array(db_type)
-          @array_types[db_type]
+        # @api private
+        def self.Array(db_type, member_type = nil)
+          array_types[db_type, member_type]
         end
 
         # @!parse
