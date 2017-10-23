@@ -65,6 +65,22 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
     empty.with(inferrer.(empty, gateway))
   end
 
+  context 'when pg_enum in primary key' do
+    before do
+      conn.drop_table?(:test_inferrence)
+      conn.create_table(:test_inferrence) do
+        column :colours, :rainbow
+        primary_key [:colours]
+      end
+    end
+
+    it 'can infer primary key on enum column' do
+      expect(schema.to_h).to eql(attributes(
+        colours: ROM::SQL::Types::String.enum(*colors).meta(primary_key: true)
+      ))
+    end
+  end
+
   context 'inferring db-specific attributes' do
     it 'can infer attributes for dataset' do
       expect(schema.to_h).
