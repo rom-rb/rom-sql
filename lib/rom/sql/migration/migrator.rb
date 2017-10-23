@@ -2,7 +2,7 @@ require 'pathname'
 
 require 'rom/types'
 require 'rom/initializer'
-require 'rom/sql/migration'
+
 require 'rom/sql/migration/runner'
 require 'rom/sql/migration/inline_runner'
 require 'rom/sql/migration/writer'
