@@ -5,6 +5,7 @@
 * Support for PG's range types (v-kolesnikov)
 * Support for PG's `ltree` (GustavoCaso + solnic)
 * Support for the `FILTER` clause (flash-gordon)
+* PG's array types will use custom types for processing members ie `ltree[]` will use `LTree` type (solnic)
 
 ### Fixed
 
