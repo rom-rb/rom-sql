@@ -37,7 +37,7 @@ module ROM
 
         def call(primary_key:, db_type:, type:, allow_null:, **rest)
           if primary_key
-            map_pk_type(type, db_type)
+            map_pk_type(type, db_type, **rest)
           else
             mapped_type = map_type(type, db_type, rest)
 
@@ -56,7 +56,7 @@ module ROM
         end
 
         # @api private
-        def map_pk_type(_ruby_type, _db_type)
+        def map_pk_type(_ruby_type, _db_type, **)
           self.class.numeric_pk_type.meta(primary_key: true)
         end
 
