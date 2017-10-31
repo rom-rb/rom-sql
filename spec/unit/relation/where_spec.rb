@@ -22,6 +22,11 @@ RSpec.describe ROM::Relation, '#where' do
         expect(relation.rename(id: :user_id).where { id > 3 }.to_a).to be_empty
       end
 
+      it 'restricts relation using attributes from another relation' do
+        expect(relation.join(:users, id: :user_id).where { |r| r[:users][:name].is("Jane") }.to_a).
+          to eql([{ id: 2, title: "Jane's task" }])
+      end
+
       it 'restricts with or condition' do
         expect(relation.where { id.is(1) | id.is(2) }.to_a).
           to eql([{ id: 1, title: "Joe's task" }, { id: 2, title: "Jane's task" }])
