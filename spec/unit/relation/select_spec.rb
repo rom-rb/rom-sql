@@ -30,6 +30,10 @@ RSpec.describe ROM::Relation, '#select' do
       expect(relation.select { [id, title] }.schema.map(&:name)).to eql(%i[id title])
     end
 
+    it 'supports attributes from other relations in a block' do
+      expect(relation.select { |r| [id, title, r[:users][:name]] }.schema.map(&:name)).to eql(%i[id title name])
+    end
+
     it 'supports selecting literal strings' do
       new_rel = relation.select { `'event'`.as(:type) }
 

@@ -1,18 +1,26 @@
+require 'rom/constants'
+
 module ROM
   module SQL
     # @api private
     class DSL < BasicObject
-      # @api private
+      # @!attribute [r] schema
+      #   @return [SQL::Schema]
       attr_reader :schema
+
+      # @!attribute [r] relations
+      #   @return [Hash, RelationRegistry]
+      attr_reader :relations
 
       # @api private
       def initialize(schema)
         @schema = schema
+        @relations = schema.respond_to?(:relations) ? schema.relations : EMPTY_HASH
       end
 
       # @api private
       def call(&block)
-        result = instance_exec(&block)
+        result = instance_exec(relations, &block)
 
         if result.is_a?(::Array)
           result
