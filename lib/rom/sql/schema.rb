@@ -145,7 +145,6 @@ module ROM
       def finalize_attributes!(options = EMPTY_HASH)
         super do
           @attributes = map(&:qualified)
-          initialize_primary_key_names
         end
       end
 
