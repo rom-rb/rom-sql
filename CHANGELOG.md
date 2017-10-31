@@ -1,3 +1,11 @@
+## v2.2.0 to-be-released
+
+### Fixed
+
+* Schemas no longer finalize PKs (this is done in core schema already) (solnic)
+
+[Compare v2.1.0...v2.2.0](https://github.com/rom-rb/rom-sql/compare/v2.1.0...v2.2.0)
+
 ## v2.1.0 2017-10-23
 
 ### Added
