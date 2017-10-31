@@ -1,5 +1,9 @@
 ## v2.2.0 to-be-released
 
+### Added
+
+* Relation registry is passed as an argument to DSL blocks (in `select`, `where`, `order` etc.), which enables syntax like `select { |r| [id, r.tasks[:title]] }` (solnic)
+
 ### Fixed
 
 * Schemas no longer finalize PKs (this is done in core schema already) (solnic)
