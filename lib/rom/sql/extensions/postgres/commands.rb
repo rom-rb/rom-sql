@@ -5,13 +5,23 @@ module ROM
   module SQL
     module Postgres
       module Commands
+        module Core
+          private
+
+          def returning_dataset
+            relation.dataset.returning(*relation.columns)
+          end
+        end
+
         module Create
+          include Core
+
           # Executes insert statement and returns inserted tuples
           #
           # @api private
           def insert(tuples)
             dataset = tuples.flat_map do |tuple|
-              relation.dataset.returning.insert(tuple)
+              returning_dataset.insert(tuple)
             end
 
             wrap_dataset(dataset)
@@ -21,7 +31,7 @@ module ROM
           #
           # @api private
           def multi_insert(tuples)
-            relation.dataset.returning.multi_insert(tuples)
+            returning_dataset.multi_insert(tuples)
           end
 
           # Executes upsert statement (INSERT with ON CONFLICT clause)
@@ -29,17 +39,18 @@ module ROM
           #
           # @api private
           def upsert(tuple, opts = EMPTY_HASH)
-            relation.dataset.returning.insert_conflict(opts).insert(tuple)
+            returning_dataset.insert_conflict(opts).insert(tuple)
           end
         end
 
         module Update
+          include Core
+
           # Executes update statement and returns updated tuples
           #
           # @api private
           def update(tuple)
-            dataset = relation.dataset.returning.update(tuple)
-            wrap_dataset(dataset)
+            wrap_dataset(returning_dataset.update(tuple))
           end
         end
 
