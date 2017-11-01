@@ -3,6 +3,7 @@
 ### Added
 
 * Relation registry is passed as an argument to DSL blocks (in `select`, `where`, `order` etc.), which enables syntax like `select { |r| [id, r.tasks[:title]] }` (solnic)
+* Support for self-referenced many-to-many associations (solnic)
 
 ### Fixed
 
