@@ -1,11 +1,13 @@
 require 'rom/associations/many_to_many'
 require 'rom/sql/associations/core'
+require 'rom/sql/associations/self_ref'
 
 module ROM
   module SQL
     module Associations
       class ManyToMany < ROM::Associations::ManyToMany
         include Associations::Core
+        include Associations::SelfRef
 
         # @api public
         def call(target: self.target)
@@ -22,7 +24,7 @@ module ROM
               target_schema
             end.qualified
 
-          relation = left.join(source.name.dataset, join_keys)
+          relation = left.join(source_table, join_keys)
 
           if view
             apply_view(schema, relation)
@@ -41,11 +43,6 @@ module ROM
         # @api public
         def join_keys
           { source_attr => target_attr }
-        end
-
-        # @api public
-        def source_attr
-          source[source_key].qualified
         end
 
         # @api public
