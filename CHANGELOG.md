@@ -1,12 +1,14 @@
-## v2.2.0 to-be-released
+## v2.2.0 2017-11-02
 
 ### Added
 
 * Relation registry is passed as an argument to DSL blocks (in `select`, `where`, `order` etc.), which enables syntax like `select { |r| [id, r.tasks[:title]] }` (solnic)
 * Support for self-referenced many-to-many associations (solnic)
+* PG's geometric types include meta data about db types (GustavoCaso)
 
 ### Fixed
 
+* Custom schema is used correctly in command results (solnic)
 * Schemas no longer finalize PKs (this is done in core schema already) (solnic)
 
 [Compare v2.1.0...v2.2.0](https://github.com/rom-rb/rom-sql/compare/v2.1.0...v2.2.0)
