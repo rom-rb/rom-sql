@@ -5,9 +5,15 @@ module ROM
   module SQL
     module Postgres
       module Commands
+        # @api private
         module Core
           private
 
+          # Common dataset used by create/update commands
+          #
+          # @return [Sequel::Dataset]
+          #
+          # @api private
           def returning_dataset
             relation.dataset.returning(*relation.columns)
           end
