@@ -23,7 +23,8 @@ group :test do
   end
 
   gem 'mysql2', platforms: [:mri, :rbx]
-  gem 'jdbc-postgres', platforms: :jruby
+  # TODO: 9.4.1210 is broken, we should report it
+  gem 'jdbc-postgres', '9.4.1206', platforms: :jruby
   gem 'jdbc-mysql', platforms: :jruby
   gem 'sqlite3', platforms: [:mri, :rbx]
   gem 'jdbc-sqlite3', platforms: :jruby
