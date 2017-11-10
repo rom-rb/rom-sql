@@ -2,7 +2,27 @@ module ROM
   module Plugins
     module Relation
       module SQL
-        # @api private
+        # Instrumentation for relations and commands
+        #
+        # This plugin allows configuring a notification system, that will be used
+        # to instrument interactions with databases, it's based on an abstract API
+        # so it should work with any instrumentation object that provides
+        # `instrument(identifier, payload)` method.
+        #
+        # By default, instrumentation is triggered with following arguments:
+        #   - `identifier` is set to `:sql`
+        #   - `payload` is set to a hash with following keys:
+        #     - `:name` database type, ie `:sqlite`, `:postgresql` etc.
+        #     - `:query` a string with an SQL statement that was executed
+        #
+        # @example configuring notifications
+        #   config = ROM::Configuration.new(:sqlite, 'sqlite::memory')
+        #
+        #   config.plugin(:sql, relations: :instrumentation) do |c|
+        #     c.notifications = MyNotifications.new
+        #   end
+        #
+        # @api public
         module Instrumentation
           extend Notifications::Listener
 
@@ -18,10 +38,21 @@ module ROM
             end
           end
 
+          # This stateful module is used to extend database connection objects
+          # and monkey-patches `log_connection_yield` method, which unfortunately
+          # is the only way to provide instrumentation on the sequel side.
+          #
+          # @api private
           class Instrumenter < Module
+            # @!attribute [r] name
+            #   @return [Symbol] database type
             attr_reader :name
+
+            # @!attribute [r] notifications
+            #   @return [Object] any object that responds to `instrument`
             attr_reader :notifications
 
+            # @api private
             def initialize(name, notifications)
               @name = name
               @notifications = notifications
@@ -30,6 +61,7 @@ module ROM
 
             private
 
+            # @api private
             def define_log_connection_yield
               name = self.name
               notifications = self.notifications
@@ -42,6 +74,9 @@ module ROM
             end
           end
 
+          # Add `:notifications` option to a relation
+          #
+          # @api private
           def self.included(klass)
             super
             klass.option :notifications
