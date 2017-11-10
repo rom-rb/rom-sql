@@ -19,27 +19,25 @@ RSpec.describe ROM::SQL::Relation, '#instrument', :sqlite do
     users.to_a
 
     expect(notifications).
-      to have_received(:instrument).with(:sql, name: :users, query: users.dataset.sql)
+      to have_received(:instrument).with(:sql, name: :sqlite, query: users.dataset.sql)
   end
 
   it 'instruments methods that return a single tuple' do
     users.first
 
     expect(notifications).
-      to have_received(:instrument).with(:sql, name: :users, query: users.limit(1).dataset.sql)
+      to have_received(:instrument).with(:sql, name: :sqlite, query: users.limit(1).dataset.sql)
 
     users.last
 
     expect(notifications).
-      to have_received(:instrument).with(:sql, name: :users, query: users.reverse.limit(1).dataset.sql)
+      to have_received(:instrument).with(:sql, name: :sqlite, query: users.reverse.limit(1).dataset.sql)
   end
 
   it 'instruments aggregation methods' do
-    pending "no idea how to make this work with sequel"
-
     users.count
 
     expect(notifications).
-      to have_received(:instrument).with(:sql, name: :users, query: 'SELECT COUNT(*) FROM users')
+      to have_received(:instrument).with(:sql, name: :sqlite, query: "SELECT count(*) AS 'count' FROM `users` LIMIT 1")
   end
 end
