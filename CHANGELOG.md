@@ -3,6 +3,7 @@
 ### Fixed
 
 * Instrumentation works with all db interactions (not just queries that materialize relations) (solnic)
+* Typo in `MissingEnv` exception message (romatr)
 
 [Compare v2.2.0...v2.2.1](https://github.com/rom-rb/rom-sql/compare/v2.2.0...v2.2.1)
 
