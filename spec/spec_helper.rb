@@ -37,9 +37,9 @@ oracle_settings = {
 
 if defined? JRUBY_VERSION
   DB_URIS = {
-    sqlite: 'jdbc:sqlite:::memory',
+    sqlite: 'jdbc:sqlite:',
     postgres: 'jdbc:postgresql://localhost/rom_sql',
-    mysql: 'jdbc:mysql://localhost/rom_sql?user=root&sql_mode=STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION',
+    mysql: 'jdbc:mysql://localhost/rom_sql?user=root&sql_mode=STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION&useSSL=false',
     oracle: ENV['ROM_USE_ORACLE'] ? fail('Setup Oracle for JRuby!') : nil
   }
 else
