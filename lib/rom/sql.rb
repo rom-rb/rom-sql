@@ -9,6 +9,7 @@ require 'rom/configuration_dsl'
 
 require 'rom/sql/plugins'
 require 'rom/sql/relation'
+require 'rom/sql/mapper_compiler'
 require 'rom/sql/associations'
 require 'rom/sql/gateway'
 require 'rom/sql/migration'
