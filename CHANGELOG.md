@@ -1,3 +1,11 @@
+## v2.2.2 2017-11-14
+
+### Fixed
+
+* Command extensions are properly applied in multi-adapter setups (solnic)
+
+[Compare v2.2.1...v2.2.2](https://github.com/rom-rb/rom-sql/compare/v2.2.1...v2.2.2)
+
 ## v2.2.1 2017-11-10
 
 ### Fixed
