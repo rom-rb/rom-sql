@@ -15,7 +15,7 @@ module ROM
           #
           # @api private
           def returning_dataset
-            relation.dataset.returning(*relation.columns)
+            relation.dataset.returning(*relation.qualified_columns)
           end
         end
 
