@@ -131,7 +131,7 @@ module ROM
 
     Commands::Postgres = Postgres::Commands
 
-    Gateway.subscribe('configuration.commands.class.before_build') do |event|
+    Gateway.subscribe('configuration.commands.class.before_build', adapter: :sql) do |event|
       klass = event[:command]
       dataset = event[:dataset]
       type = dataset.db.database_type
