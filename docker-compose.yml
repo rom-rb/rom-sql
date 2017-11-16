@@ -1,0 +1,25 @@
+version: "2"
+
+services:
+  mariadb:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: it-is-a-secret-123
+      MYSQL_DATABASE: rom_sql
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB:       rom_sql
+      POSTGRES_PASSWORD: it-is-a-secret-123
+      POSTGRES_USER:     rom-sql
+
+  gem:
+    build: .
+    entrypoint: bash -l
+    env_file: .env
+    depends_on:
+      - mariadb
+      - postgres
+    volumes:
+      - "./:/gem"
