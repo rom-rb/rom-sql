@@ -9,7 +9,7 @@ module ROM
         #
         # @example
         #   users.upsert({ name: 'Jane', email: 'jane@foo.com' },
-        #                { target: :email, update: { name: :excluded__name } }
+        #                { target: :email, update: { name: :excluded__name } })
         #
         # @return [Integer] Number of affected rows
         #
