@@ -1,6 +1,5 @@
 language: ruby
-dist: trusty
-sudo: required
+sudo: false
 cache: bundler
 services:
   - postgresql
