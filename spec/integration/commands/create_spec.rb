@@ -3,9 +3,12 @@ require 'dry-struct'
 RSpec.describe 'Commands / Create', :postgres, seeds: false do
   include_context 'relations'
 
+  let(:profile_commands) { container.commands[:profiles] }
+
   let(:create_user) { user_commands.create }
   let(:create_users) { user_commands.create_many }
   let(:create_task) { task_commands.create }
+  let(:create_profile) { profile_commands.create }
 
   before do |ex|
     module Test
@@ -26,6 +29,12 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
       conn.execute "ALTER TABLE tasks add CONSTRAINT tasks_title_key UNIQUE (title)"
     end
 
+    conf.relation(:profiles) do
+      schema(:users, infer: true) do
+        attribute :name, Types::String.meta(alias: 'login')
+      end
+    end
+
     conf.commands(:users) do
       define(:create) do
         input Test::Params
@@ -36,6 +45,10 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
       define(:create_many, type: :create) do
         result :many
       end
+    end
+
+    conf.commands(:profiles) do
+      define(:create)
     end
 
     conf.commands(:tasks) do
@@ -220,6 +233,11 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
           result = create_user.execute(name: 'Jane')
 
           expect(result).to eq([{ id: 1, name: 'Jane' }])
+        end
+
+        it 'materializes aliased results' do
+          result = create_profile.execute(name: 'Joe')
+          expect(result).to eq([{id: 1, login: 'Joe'}])
         end
       end
 

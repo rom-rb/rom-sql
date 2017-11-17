@@ -3,7 +3,10 @@ require 'dry-struct'
 RSpec.describe 'Commands / Update', seeds: false do
   include_context 'users'
 
+  let(:profile_commands) { container.commands[:profiles] }
+
   let(:update_user) { user_commands[:update] }
+  let(:update_profile) { profile_commands[:update] }
 
   let(:piotr) { users.by_name('Piotr').one }
   let(:peter) { { name: 'Peter' } }
@@ -27,7 +30,21 @@ RSpec.describe 'Commands / Update', seeds: false do
         end
       end
 
+      conf.relation(:profiles) do
+        schema(:users, infer: true) do
+          attribute :name, Types::String.meta(alias: 'login')
+        end
+
+        def by_name(name)
+          where(name: name)
+        end
+      end
+
       conf.commands(:users) do
+        define(:update)
+      end
+
+      conf.commands(:profiles) do
         define(:update)
       end
 
@@ -76,6 +93,12 @@ RSpec.describe 'Commands / Update', seeds: false do
         expect(result).to eq([
           { id: 1, name: 'Pete' }
         ])
+      end
+
+      it 'materializes aliased results' do
+        result = update_profile.by_name('Piotr').call(name: 'Pete')
+
+        expect(result).to eq([{login: 'Pete', id: 1}])
       end
 
       it 'materializes multiple results' do
