@@ -2,6 +2,7 @@
 
 ### Fixed
 
+* Aliased attributes are handled correctly in PG's commands (cflipse)
 * Command extensions are properly applied in multi-adapter setups (solnic)
 
 ### Internal
