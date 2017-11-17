@@ -4,6 +4,10 @@
 
 * Command extensions are properly applied in multi-adapter setups (solnic)
 
+### Internal
+
+* Custom SQL-specific mapper compiler was added, which is used starting from rom-core 4.1.0 (solnic)
+
 [Compare v2.2.1...v2.3.0](https://github.com/rom-rb/rom-sql/compare/v2.2.1...v2.3.0)
 
 ## v2.2.1 2017-11-10
