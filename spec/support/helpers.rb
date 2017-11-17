@@ -18,7 +18,7 @@ module Helpers
   end
 
   def build_assoc(type, *args)
-    klass = Dry::Core::Inflector.classify(type)
+    klass = ROM::Inflector.classify(type)
     definition = ROM::Associations::Definitions.const_get(klass).new(*args)
     ROM::SQL::Associations.const_get(definition.type).new(definition, relations)
   end

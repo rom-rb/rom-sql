@@ -1,3 +1,4 @@
+require 'rom/support/inflector'
 require 'rom/constants'
 
 module ROM
@@ -49,7 +50,7 @@ module ROM
 
       # @api private
       def type(identifier)
-        type_name = ::Dry::Core::Inflector.classify(identifier)
+        type_name = Inflector.classify(identifier)
         types.const_get(type_name) if types.const_defined?(type_name)
       end
 

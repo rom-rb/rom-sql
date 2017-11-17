@@ -1,4 +1,4 @@
-require 'dry/core/inflector'
+require 'rom/support/inflector'
 
 module ROM
   module SQL
@@ -90,7 +90,7 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def prefix(name = Dry::Core::Inflector.singularize(schema.name.dataset))
+        def prefix(name = Inflector.singularize(schema.name.dataset))
           schema.prefix(name).(self)
         end
 
