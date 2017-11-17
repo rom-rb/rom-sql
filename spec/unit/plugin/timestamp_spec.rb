@@ -1,5 +1,3 @@
-require 'rom/sql/plugin/timestamps'
-
 RSpec.describe 'Plugin / Timestamp' do
   include_context 'users'
   include_context 'notes'
