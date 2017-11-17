@@ -213,6 +213,8 @@ module ROM
         case uri
         when ::Sequel::Database
           uri
+        when Hash
+          ::Sequel.connect(uri, *args)
         else
           ::Sequel.connect(uri.to_s, *args)
         end
