@@ -131,20 +131,25 @@ module ROM
 
     Commands::Postgres = Postgres::Commands
 
-    Gateway.subscribe('configuration.commands.class.before_build', adapter: :sql) do |event|
+    Gateway.subscribe('configuration.commands.class.before_build') do |event|
       klass = event[:command]
-      dataset = event[:dataset]
-      type = dataset.db.database_type
 
-      if type == :postgres
-        ext =
-          if klass < Commands::Create
-            Postgres::Commands::Create
-          elsif klass < Commands::Update
-            Postgres::Commands::Update
-          end
+      # TODO: remove this conditional in favor of `adapter: :sql` in subscribe
+      #       this is here for backward compatibilty with rom-core 4.x
+      if klass.adapter == :sql
+        dataset = event[:dataset]
+        type = dataset.db.database_type
 
-        klass.include(ext) if ext
+        if type == :postgres
+          ext =
+            if klass < Commands::Create
+              Postgres::Commands::Create
+            elsif klass < Commands::Update
+              Postgres::Commands::Update
+            end
+
+          klass.include(ext) if ext
+        end
       end
     end
   end
