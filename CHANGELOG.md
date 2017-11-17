@@ -2,6 +2,7 @@
 
 ### Added
 
+* Command's `:timestamp` plugin now supports passing options (GustavoCaso)
 * Configuration supports hash with connection options (Kjarrigan + solnic)
 
 ### Fixed
@@ -12,6 +13,7 @@
 ### Internal
 
 * Custom SQL-specific mapper compiler was added, which is used starting from rom-core 4.1.0 (solnic)
+* Command's `:timestamp` plugin was removed, as it was moved to rom-core (GustavoCaso)
 
 [Compare v2.2.1...v2.3.0](https://github.com/rom-rb/rom-sql/compare/v2.2.1...v2.3.0)
 
