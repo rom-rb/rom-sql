@@ -1,5 +1,9 @@
 ## v2.3.0 to-be-released
 
+### Added
+
+* Configuration supports hash with connection options (Kjarrigan + solnic)
+
 ### Fixed
 
 * Aliased attributes are handled correctly in PG's commands (cflipse)
