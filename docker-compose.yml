@@ -16,7 +16,7 @@ services:
 
   gem:
     build: .
-    entrypoint: bash -l
+    entrypoint: bash -c
     env_file: .env
     depends_on:
       - mariadb

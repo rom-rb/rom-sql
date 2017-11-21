@@ -34,6 +34,36 @@ Or install it yourself as:
 
     $ gem install rom-sql
 
+## Docker
+
+### Development
+
+In order to have reproducible environment for development, Docker can be used. Provided it's installed, in order to start developing, one can simply execute:
+
+```bash
+make dev
+```
+
+If this is the first time this command is executed, it will take some time to set up the dependencies and build the rom-sql container. This should happen only on first execution and in case dependency images are removed.
+
+After dependencies are set container will be started in a bash shell.
+
+### Testing
+
+In order to test the changes, execute:
+
+```bash
+make build -k test
+```
+
+### Stopping the dependencies
+
+In order to stop the dependencies, execute:
+
+```bash
+make down
+```
+
 ## License
 
 See `LICENSE` file.
