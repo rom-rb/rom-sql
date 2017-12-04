@@ -5,9 +5,10 @@ module ROM
     # Specialized wrap relation for SQL
     #
     # This type of relations is returned when using `Relation#wrap` and it uses
-    # a join, unlike `Relation#combine`, which means a relation is restricted
-    # only to tuples which have associated tuples. It should be used in cases
-    # where you want to rely on this restriction.
+    # a join, unlike `Relation#combine` which makes separate queries. This
+    # means a relation is restricted only to tuples which have associated
+    # tuples, so it should be used in cases where you want to rely on this
+    # restriction.
     #
     # @api public
     class Wrap < Relation::Wrap
