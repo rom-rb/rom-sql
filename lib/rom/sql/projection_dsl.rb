@@ -28,6 +28,10 @@ module ROM
         super || type(name)
       end
 
+      def f(name, attr)
+        ::ROM::SQL::Function.new(::ROM::Types::Any, schema: schema).public_send(name, attr)
+      end
+
       private
 
       # @api private
