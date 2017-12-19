@@ -58,7 +58,7 @@ RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
 
     it 'supports functions with any as return type' do
       literals = dsl
-                   .call { f(:count, :id).as(:count) }
+                   .call { function(:count, :id).as(:count) }
                    .map { |attr| attr.sql_literal(ds) }
 
       expect(literals).to eql([%(COUNT("id") AS "count")])

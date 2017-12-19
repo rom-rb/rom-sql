@@ -28,9 +28,10 @@ module ROM
         super || type(name)
       end
 
-      def f(name, attr)
+      def function(name, attr)
         ::ROM::SQL::Function.new(::ROM::Types::Any, schema: schema).public_send(name, attr)
       end
+      alias_method :f, :function
 
       private
 
