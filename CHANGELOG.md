@@ -1,3 +1,9 @@
+## v2.3.1 to-be-released
+
+### Added
+
+* Support for functions with `Any` return type (GustavoCaso)
+
 ## v2.3.0 2017-11-17
 
 ### Added

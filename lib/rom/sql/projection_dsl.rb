@@ -23,6 +23,22 @@ module ROM
         ::ROM::SQL::Attribute.new(type(:string)).meta(sql_expr: expr)
       end
 
+      # Return a SQL function with value `Any`
+      #
+      # @example
+      #   users.select { function(:count, :id).as(:total) }
+      #
+      # @param [Symbol] name SQL function
+      # @param [Symbol] attr
+      #
+      # @return [Rom::SQL::Function]
+      #
+      # @api public
+      def function(name, attr)
+        ::ROM::SQL::Function.new(::ROM::Types::Any, schema: schema).public_send(name, attr)
+      end
+      alias_method :f, :function
+
       # @api private
       def respond_to_missing?(name, include_private = false)
         super || type(name)
