@@ -47,6 +47,14 @@ module ROM
           def upsert(tuple, opts = EMPTY_HASH)
             returning_dataset.insert_conflict(opts).insert(tuple)
           end
+
+          # Executes multi_upsert statement (INSERT with ON CONFLICT clause)
+          # and returns inserted/updated tuples
+          #
+          # @api private
+          def multi_upsert(tuples, opts = EMPTY_HASH)
+            returning_dataset.insert_conflict(opts).multi_insert(tuples)
+          end
         end
 
         module Update
@@ -109,11 +117,15 @@ module ROM
           #
           # @api public
           def execute(tuples)
-            inserted_tuples = with_input_tuples(tuples) do |tuple|
-              upsert(input[tuple], upsert_options)
+            upsert_tuples = with_input_tuples(tuples) do |tuple|
+              input[tuple]
             end
 
-            inserted_tuples.flatten(1)
+            if upsert_tuples.length > 1
+              multi_upsert(upsert_tuples, upsert_options)
+            else
+              upsert(upsert_tuples.first, upsert_options)
+            end.flatten(1)
           end
 
           # @api private
