@@ -919,6 +919,24 @@ module ROM
           end
         end
 
+        # Returns hash with all tuples being
+        # the key of each the provided attribute
+        #
+        # @example default use primary_key
+        #   users.as_hash
+        #   # {1 => {id: 1, name: 'Jane'}}
+        #
+        # @example using other attribute
+        #   users.as_hash(:name)
+        #   # {'Jane' => {id: 1, name: 'Jane'}}
+        #
+        # @return [Hash]
+        #
+        # @api public
+        def as_hash(attribute = primary_key)
+          dataset.as_hash(attribute)
+        end
+
         private
 
         # Build a locking clause
