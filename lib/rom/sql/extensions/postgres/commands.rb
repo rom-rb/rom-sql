@@ -62,7 +62,7 @@ module ROM
 
         # Upsert command
         #
-        # The command beign called attempts to insert a record and
+        # The command being called attempts to insert a record and
         # if the inserted row would violate a unique constraint
         # updates the conflicting row (or silently does nothing).
         # A very important implementation detail is that the whole operation
