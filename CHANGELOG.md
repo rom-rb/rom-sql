@@ -1,8 +1,11 @@
-## v2.3.1 to-be-released
+## v2.4.0 2018-02-18
 
 ### Added
 
 * Support for functions with `Any` return type (GustavoCaso)
+* New `Relation#as_hash` method (GustavoCaso)
+
+[Compare v2.3.0...v2.4.0](https://github.com/rom-rb/rom-sql/compare/v2.3.0...v2.4.0)
 
 ## v2.3.0 2017-11-17
 
