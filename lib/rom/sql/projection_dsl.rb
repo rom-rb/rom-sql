@@ -10,7 +10,7 @@ module ROM
       # Return a string literal that will be directly used in an SQL statement or query
       #
       # @example
-      #   users.select { `FOO`.as(:foo) }.first
+      #   users.select { `'FOO'`.as(:foo) }.first
       #   # => { :foo => "FOO" }
       #
       # @param [String] value A string object
