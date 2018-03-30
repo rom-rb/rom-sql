@@ -132,6 +132,26 @@ module ROM
         Attribute[type].meta(sql_expr: ::Sequel.cast(expr, db_type))
       end
 
+      # Add a CASE clause for handling if/then logic
+      #
+      # @example
+      #   users.select { string::case(status, { "active" => true }, false).as(:activated) }
+      #   users.select { string::case({ "active" => true }, false).as(:activated) }
+      #   users.select { string::case([[{ status: ["active", nil]}, true]], false) }
+      #
+      # @param [ROM::SQL::Attribute] expr Expression consist of 3 args - conditions, default value and optional expression
+      #
+      # @return [ROM::SQL::Attribute]
+      #
+      # @api public
+      def case(*args, **opts)
+        if opts[:expr]
+          Attribute[type].meta(sql_expr: ::Sequel.case(*args, opts[:expr]))
+        else
+          Attribute[type].meta(sql_expr: ::Sequel.case(*args))
+        end
+      end
+
       # Add a FILTER clause to aggregate function (supported by PostgreSQL 9.4+)
       # @see https://www.postgresql.org/docs/current/static/sql-expressions.html
       #

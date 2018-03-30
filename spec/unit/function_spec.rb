@@ -61,6 +61,31 @@ RSpec.describe ROM::SQL::Function, :postgres do
     end
   end
 
+  describe '#case' do
+    context 'when additional expression is provided' do
+      it 'returns an sql expression' do
+        expect(func.case({ 1 => "first" }, "last", expr: users[:id]).sql_literal(ds))
+          .to eql(%((CASE "users"."id" WHEN 1 THEN 'first' ELSE 'last' END)))
+      end
+    end
+
+    context 'when additional expression is not provided' do
+      context 'when condition argument is a Hash' do
+        it 'returns an sql expression' do
+          expect(func.case({ '1' => "first" }, "last").sql_literal(ds))
+            .to eql(%((CASE WHEN '1' THEN 'first' ELSE 'last' END)))
+        end
+      end
+
+      context 'when condition argument is an Array' do
+        it 'returns an sql expression' do
+          expect(func.case([[{ users[:id] => [1, 2] }, 'first']], 'last').sql_literal(ds))
+            .to eql(%((CASE WHEN ("users"."id" IN (1, 2)) THEN 'first' ELSE 'last' END)))
+        end
+      end
+    end
+  end
+
   describe '#over' do
     example 'with the ORDER BY clause' do
       expect(func.row_number.over(order: :id).sql_literal(ds)).
