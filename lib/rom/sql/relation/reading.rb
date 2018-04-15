@@ -155,7 +155,7 @@ module ROM
         #
         # @api public
         def pluck(name)
-          map(name)
+          select(name).map(name)
         end
 
         # Rename columns in a relation
