@@ -40,13 +40,13 @@ module ROM
             'numrange', SQL::Types::Coercible::Int
           ),
           tsrange:   Sequel::Postgres::PGRange::Parser.new(
-            'tsrange', SQL::Types::Form::Time
+            'tsrange', ::Time.method(:parse)
           ),
           tstzrange: Sequel::Postgres::PGRange::Parser.new(
-            'tstzrange', SQL::Types::Form::Time
+            'tstzrange', ::Time.method(:parse)
           ),
           daterange: Sequel::Postgres::PGRange::Parser.new(
-            'daterange', SQL::Types::Form::Date
+            'daterange', ::Date.method(:parse)
           )
         }.freeze
 
