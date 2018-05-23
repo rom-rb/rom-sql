@@ -37,6 +37,38 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
         specify { expect(assoc.combine_keys).to eql(id: :task_id) }
       end
 
+      describe '#dataset' do
+        it 'actually performs the correct join' do
+          # get the resulting dataset from an ordinary join
+          ds = tasks.join(:tags).dataset
+
+          # now get the joins
+          joins = ds.opts[:join]
+
+          # joins should be an array of two elements
+          expect(joins).to be_a Array
+          expect(joins.length).to be 2
+
+          # collect a list of join pairs
+          join_coll = []
+          joins.each do |j|
+            # if this isn't true then this loop will crash
+            expect(j).to be_a Sequel::SQL::JoinOnClause
+
+            join_coll << j.on.args.map(&:to_sym)
+          end
+
+          # here is what the join column pairs should look like
+          join_ok = [
+            [:tasks__id, :task_tags__task_id],
+            [:task_tags__tag_id, :tags__id],
+          ].freeze
+
+          # mkay?
+          expect(join_coll).to eql join_ok
+        end
+      end
+
       describe '#call' do
         it 'prepares joined relations' do
           relation = assoc.()
