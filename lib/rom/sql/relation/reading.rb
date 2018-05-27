@@ -937,6 +937,12 @@ module ROM
           dataset.as_hash(attribute)
         end
 
+        def query(attr_name)
+          attr = schema.to_a[0]
+          subquery = schema.project(attr).(self).dataset.unordered
+          SQL::Attribute[attr.type].meta(sql_expr: subquery).as(attr_name)
+        end
+
         private
 
         # Build a locking clause

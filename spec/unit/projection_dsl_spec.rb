@@ -8,7 +8,12 @@ RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
   end
 
   let(:schema) do
-    define_schema(:users, id: ROM::SQL::Types::Serial, name: ROM::SQL::Types::String, meta: ROM::SQL::Types::PG::JSONB)
+    define_schema(
+      :users,
+      id: ROM::SQL::Types::Serial,
+      name: ROM::SQL::Types::String,
+      meta: ROM::SQL::Types::PG::JSONB
+    )
   end
 
   let(:ds) do
