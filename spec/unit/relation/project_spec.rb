@@ -27,9 +27,9 @@ RSpec.describe ROM::Relation, '#project' do
                         project { int::count(id) }.
                         where(tasks[:user_id] => users[:id]).
                         where(tasks[:title].ilike('joe%')).
-                        query(:tasks_count)
+                        query
 
-        results = relation.project { [id, tasks_count] }.to_a
+        results = relation.project { [id, tasks_count.as(:tasks_count)] }.to_a
 
         expect(results).to eql([ {id: 1, tasks_count: 0}, {id: 2, tasks_count: 1} ])
       end
