@@ -937,6 +937,18 @@ module ROM
           dataset.as_hash(attribute)
         end
 
+        # Turn a relation into a subquery. Can be used
+        # for selecting a column with a subquery or
+        # restricting the result set with a IN (SELECT ...) condtion.
+        #
+        # @example adding number of user tasks
+        #   tasks = relations[:tasks]
+        #   users = relations[:users]
+        #   user_tasks = tasks.where(tasks[:user_id].is(users[:id])
+        #   tasks_count = user_tasks.select { int::count(id) }
+        #   users.select_append(tasks_count.as(:tasks_count))
+        #
+        # @return [SQL::Attribute]
         def query
           attr = schema.to_a[0]
           subquery = schema.project(attr).(self).dataset.unordered
