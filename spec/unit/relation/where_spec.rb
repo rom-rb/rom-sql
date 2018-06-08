@@ -74,6 +74,19 @@ RSpec.describe ROM::Relation, '#where' do
         expect(relation.where { string::lower(title).like("joe%") }.to_a).
           to eql([{ id: 1, title: "Joe's task" }])
       end
+
+      it 'works with subqueries' do
+        conn[:users].insert name: 'Jack'
+        tasks = self.tasks
+        users = self.users
+        rows = relation.
+                 where(
+                   tasks[:user_id].is(
+                     users.where { users[:id].is(tasks[:user_id]) }.query
+                   )
+                 ).to_a
+        expect(rows.size).to eql(2)
+      end
     end
 
     context 'with :read types' do

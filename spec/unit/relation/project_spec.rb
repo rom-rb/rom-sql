@@ -20,5 +20,19 @@ RSpec.describe ROM::Relation, '#project' do
       expect(projected.schema[:name]).to be_qualified
       expect(projected.first).to eql(name: 'Jane')
     end
+
+    describe 'subqueries' do
+      it 'supports single-column relations as attributes' do
+        tasks_count = tasks.
+                        project { int::count(id) }.
+                        where(tasks[:user_id] => users[:id]).
+                        where(tasks[:title].ilike('joe%')).
+                        query
+
+        results = relation.project { [id, tasks_count.as(:tasks_count)] }.to_a
+
+        expect(results).to eql([ {id: 1, tasks_count: 0}, {id: 2, tasks_count: 1} ])
+      end
+    end
   end
 end
