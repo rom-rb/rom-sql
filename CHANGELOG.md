@@ -1,3 +1,18 @@
+## v2.5.0 2018-06-08
+
+### Added
+
+* Support for subqueries in `SELECT` and `WHERE` :tada: (flash-gordon)
+  ```ruby
+  tasks = relations[:tasks]
+  users = relations[:users]
+  user_tasks = tasks.where(tasks[:user_id].is(users[:id])
+  tasks_count = user_tasks.select { int::count(id) }
+  users.select_append(tasks_count.as(:tasks_count))
+  ```
+
+[Compare v2.4.0...v2.5.0](https://github.com/rom-rb/rom-sql/compare/v2.4.0...v2.5.0)
+
 ## v2.4.0 2018-02-18
 
 ### Added
