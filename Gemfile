@@ -11,7 +11,6 @@ end
 group :test do
   gem 'pry-byebug', platforms: :mri
   gem 'pry', platforms: %i(jruby rbx)
-  gem 'dry-struct'
   gem 'activesupport', '~> 5.0'
   gem 'codeclimate-test-reporter', require: false
   gem 'simplecov', require: false
