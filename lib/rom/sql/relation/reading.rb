@@ -944,7 +944,7 @@ module ROM
         # @example adding number of user tasks
         #   tasks = relations[:tasks]
         #   users = relations[:users]
-        #   user_tasks = tasks.where(tasks[:user_id].is(users[:id])
+        #   user_tasks = tasks.where(tasks[:user_id].is(users[:id]))
         #   tasks_count = user_tasks.select { int::count(id) }
         #   users.select_append(tasks_count.as(:tasks_count))
         #
