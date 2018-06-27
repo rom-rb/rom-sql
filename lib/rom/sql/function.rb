@@ -60,6 +60,13 @@ module ROM
         )
       end
 
+      # @see Attribute#qualified?
+      #
+      # @api private
+      def qualified?(table_alias = nil)
+        meta[:func].args.all?(&:qualified?)
+      end
+
       # @see ROM::SQL::Attribute#is
       #
       # @api public
