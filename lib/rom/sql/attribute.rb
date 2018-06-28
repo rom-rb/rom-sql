@@ -62,6 +62,7 @@ module ROM
       # @api public
       def qualified(table_alias = nil)
         return self if qualified? && table_alias.nil?
+        return meta(qualified: false) unless qualifiable?
 
         case sql_expr
         when Sequel::SQL::AliasedExpression, Sequel::SQL::Identifier, Sequel::SQL::QualifiedIdentifier
@@ -112,6 +113,15 @@ module ROM
       # @api public
       def qualified?
         meta[:qualified].equal?(true) || meta[:qualified].is_a?(Symbol)
+      end
+
+      # Return if an attribute is qualifiable
+      #
+      # @return [Boolean]
+      #
+      # @api public
+      def qualifiable?
+        !source.nil?
       end
 
       # Return a new attribute marked as a FK
