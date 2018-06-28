@@ -110,7 +110,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
       conf.relation(:posts) do
         schema do
           attribute :id,       ROM::SQL::Types::Serial
-          attribute :user_id,  ROM::SQL::Types::Int
+          attribute :user_id,  ROM::SQL::Types::Integer
         end
       end
 

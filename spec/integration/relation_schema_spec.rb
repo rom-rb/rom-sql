@@ -133,7 +133,7 @@ RSpec.describe 'Inferring schema from database' do
       it "allows defining a many-to-one" do
         class Test::Tags < ROM::Relation[:sql]
           schema(:tags) do
-            attribute :post_id, Types::Int
+            attribute :post_id, Types::Integer
 
             associations do
               many_to_one :posts
@@ -149,7 +149,7 @@ RSpec.describe 'Inferring schema from database' do
       it "allows defining a many-to-one using belongs_to shortcut" do
         class Test::Tags < ROM::Relation[:sql]
           schema(:tags) do
-            attribute :post_id, Types::Int
+            attribute :post_id, Types::Integer
 
             associations do
               belongs_to :post
@@ -165,7 +165,7 @@ RSpec.describe 'Inferring schema from database' do
       it "allows defining a many-to-one using belongs_to shortcut" do
         class Test::Tags < ROM::Relation[:sql]
           schema(:tags) do
-            attribute :post_id, Types::Int
+            attribute :post_id, Types::Integer
 
             associations do
               belongs_to :post, as: :post_tag
@@ -195,7 +195,7 @@ RSpec.describe 'Inferring schema from database' do
       it "allows defining a many-to-one with a custom name" do
         class Test::Tags < ROM::Relation[:sql]
           schema(:tags) do
-            attribute :post_id, Types::Int
+            attribute :post_id, Types::Integer
 
             associations do
               many_to_one :posts, as: :published_posts

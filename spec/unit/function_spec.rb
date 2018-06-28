@@ -6,7 +6,7 @@ RSpec.describe ROM::SQL::Function, :postgres do
   subject(:func) { ROM::SQL::Function.new(type).meta(schema: users.schema) }
 
   let(:ds) { container.gateways[:default][:users] }
-  let(:type) { ROM::SQL::Types::Int }
+  let(:type) { ROM::SQL::Types::Integer }
 
   describe '#sql_literal' do
     context 'without alias' do

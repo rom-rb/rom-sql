@@ -87,7 +87,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
         to eql(
              attributes(
                id: ROM::SQL::Types::PG::UUID.meta(name: :id, primary_key: true),
-               big: ROM::SQL::Types::Int.optional.meta(name: :big),
+               big: ROM::SQL::Types::Integer.optional.meta(name: :big),
                json_data: ROM::SQL::Types::PG::JSON.optional.meta(name: :json_data),
                jsonb_data: ROM::SQL::Types::PG::JSONB.optional.meta(name: :jsonb_data),
                money: ROM::SQL::Types::PG::Money.meta(name: :money),

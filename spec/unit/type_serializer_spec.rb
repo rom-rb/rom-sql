@@ -5,7 +5,7 @@ RSpec.describe ROM::SQL::TypeSerializer do
 
   it 'serializes data types' do
     types = {
-      'integer' => ROM::SQL::Types::Int,
+      'integer' => ROM::SQL::Types::Integer,
       'varchar' => ROM::SQL::Types::String,
       'timestamp' => ROM::SQL::Types::Time,
       'date' => ROM::SQL::Types::Date,

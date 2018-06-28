@@ -177,7 +177,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         let(:dataset) { :test_numeric }
         let(:source) { ROM::Relation::Name[dataset] }
 
-        let(:integer) { ROM::SQL::Types::Int.meta(source: source) }
+        let(:integer) { ROM::SQL::Types::Integer.meta(source: source) }
         let(:decimal) { ROM::SQL::Types::Decimal.meta(source: source) }
 
         it 'infers attributes with precision' do |example|

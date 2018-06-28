@@ -14,7 +14,7 @@ RSpec.describe 'Commands / Update', seeds: false do
   with_adapters do
     before do
       Test::User = Class.new(Dry::Struct) {
-        attribute :id, Types::Strict::Int
+        attribute :id, Types::Strict::Integer
         attribute :name, Types::Strict::String
       }
 

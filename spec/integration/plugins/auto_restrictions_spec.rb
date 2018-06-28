@@ -60,7 +60,7 @@ RSpec.describe 'Plugins / :auto_restrictions', seeds: true do
         conf.relation(:tasks) do
           schema do
             attribute :id, ROM::SQL::Types::Serial
-            attribute :user_id, ROM::SQL::Types::Int
+            attribute :user_id, ROM::SQL::Types::Integer
             attribute :title, ROM::SQL::Types::String.meta(index: true)
 
             indexes do
@@ -87,7 +87,7 @@ RSpec.describe 'Plugins / :auto_restrictions', seeds: true do
         conf.relation(:tasks) do
           schema do
             attribute :id, ROM::SQL::Types::Serial
-            attribute :user_id, ROM::SQL::Types::Int
+            attribute :user_id, ROM::SQL::Types::Integer
             attribute :title, ROM::SQL::Types::String
 
             indexes do

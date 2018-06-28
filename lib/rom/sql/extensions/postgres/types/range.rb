@@ -31,13 +31,13 @@ module ROM
 
         @range_parsers = {
           int4range: Sequel::Postgres::PGRange::Parser.new(
-            'int4range', SQL::Types::Coercible::Int
+            'int4range', SQL::Types::Coercible::Integer
           ),
           int8range: Sequel::Postgres::PGRange::Parser.new(
-            'int8range', SQL::Types::Coercible::Int
+            'int8range', SQL::Types::Coercible::Integer
           ),
           numrange:  Sequel::Postgres::PGRange::Parser.new(
-            'numrange', SQL::Types::Coercible::Int
+            'numrange', SQL::Types::Coercible::Integer
           ),
           tsrange:   Sequel::Postgres::PGRange::Parser.new(
             'tsrange', ::Time.method(:parse)
