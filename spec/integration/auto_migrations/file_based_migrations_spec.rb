@@ -71,7 +71,7 @@ end
             attribute :id,          ROM::SQL::Types::Serial
             attribute :first_name,  ROM::SQL::Types::String
             attribute :last_name,   ROM::SQL::Types::String
-            attribute :age,         ROM::SQL::Types::Int
+            attribute :age,         ROM::SQL::Types::Integer
 
             indexes do
               index :first_name, :last_name, name: :unique_name, unique: true

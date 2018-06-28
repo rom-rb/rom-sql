@@ -20,7 +20,7 @@ module ROM
       # @return [Dry::Types::Definition]
       #
       # @api public
-      def self.ForeignKey(relation, type = Types::Int.meta(index: true))
+      def self.ForeignKey(relation, type = Types::Integer.meta(index: true))
         super
       end
 

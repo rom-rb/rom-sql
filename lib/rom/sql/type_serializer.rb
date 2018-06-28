@@ -21,7 +21,7 @@ module ROM
       defines :mapping
 
       mapping(
-        Types::Int => 'integer',
+        Types::Integer => 'integer',
         Types::String => 'varchar',
         Types::Time => 'timestamp',
         Types::Date => 'date',

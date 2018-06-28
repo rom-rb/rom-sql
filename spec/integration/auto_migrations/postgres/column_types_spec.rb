@@ -27,7 +27,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
         schema do
           attribute :id,              ROM::SQL::Types::Serial
           attribute :string,          ROM::SQL::Types::String
-          attribute :int,             ROM::SQL::Types::Int
+          attribute :int,             ROM::SQL::Types::Integer
           attribute :time,            ROM::SQL::Types::Time
           attribute :date,            ROM::SQL::Types::Date
           attribute :decimal,         ROM::SQL::Types::Decimal
@@ -65,9 +65,9 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
       expect(migrated_schema.to_h).
         to eql(
              attributes(
-               id: ROM::SQL::Types::Int.meta(primary_key: true),
+               id: ROM::SQL::Types::Integer.meta(primary_key: true),
                string: ROM::SQL::Types::String,
-               int: ROM::SQL::Types::Int,
+               int: ROM::SQL::Types::Integer,
                time: ROM::SQL::Types::Time,
                date: ROM::SQL::Types::Date,
                decimal: ROM::SQL::Types::Decimal,

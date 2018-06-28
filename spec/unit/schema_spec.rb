@@ -13,7 +13,7 @@ RSpec.describe ROM::SQL::Schema, :postgres do
 
     it 'returns empty array when there is no PK defined' do
       schema_proc = Class.new(ROM::Relation[:sql]).schema do
-        attribute :id, ROM::SQL::Types::Int
+        attribute :id, ROM::SQL::Types::Integer
       end
 
       schema = schema_proc.call

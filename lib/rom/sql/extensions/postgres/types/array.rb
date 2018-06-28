@@ -66,7 +66,7 @@ module ROM
         #     # @!method length
         #     #   Return array size
         #     #
-        #     #   @return [SQL::Attribute<Types::Int>]
+        #     #   @return [SQL::Attribute<Types::Integer>]
         #     #
         #     #   @api public
         #
@@ -129,7 +129,7 @@ module ROM
           end
 
           def length(type, expr)
-            Attribute[SQL::Types::Int].meta(sql_expr: expr.pg_array.length)
+            Attribute[SQL::Types::Integer].meta(sql_expr: expr.pg_array.length)
           end
 
           def overlaps(type, expr, other_array)

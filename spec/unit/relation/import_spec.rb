@@ -46,9 +46,9 @@ RSpec.describe ROM::Relation, '#import' do
           gateway :other
 
           schema(:users_for_loading) do
-            attribute :id,   ROM::Types::Int
+            attribute :id,   ROM::Types::Integer
             attribute :name, ROM::Types::String
-            attribute :age,  ROM::Types::Int
+            attribute :age,  ROM::Types::Integer
           end
         end
       end

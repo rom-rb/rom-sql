@@ -22,7 +22,7 @@ module ROM
         DECIMAL_REGEX = /(?:decimal|numeric)\((\d+)(?:,\s*(\d+))?\)/.freeze
 
         ruby_type_mapping(
-          integer: Types::Int,
+          integer: Types::Integer,
           string: Types::String,
           time: Types::Time,
           date: Types::Date,

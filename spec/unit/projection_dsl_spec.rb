@@ -101,7 +101,7 @@ RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
     end
 
     it 'responds to methods matching type identifiers' do
-      expect(dsl.int).to eql(ROM::SQL::Types::Int)
+      expect(dsl.int).to eql(ROM::SQL::Types::Integer)
       expect(dsl.string).to eql(ROM::SQL::Types::String)
       expect(dsl.bool).to eql(ROM::SQL::Types::Bool)
     end
