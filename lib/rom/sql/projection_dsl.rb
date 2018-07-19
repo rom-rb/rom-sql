@@ -34,8 +34,8 @@ module ROM
       # @return [Rom::SQL::Function]
       #
       # @api public
-      def function(name, attr)
-        ::ROM::SQL::Function.new(::ROM::Types::Any, schema: schema).public_send(name, attr)
+      def function(name, *attrs)
+        ::ROM::SQL::Function.new(::ROM::Types::Any, schema: schema).public_send(name, *attrs)
       end
       alias_method :f, :function
 

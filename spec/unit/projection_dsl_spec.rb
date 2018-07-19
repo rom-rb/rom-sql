@@ -69,6 +69,14 @@ RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
       expect(literals).to eql([%(COUNT("id") AS "count")])
     end
 
+    it 'supports multi-agrs functions with any as return type' do
+      literals = dsl
+                   .call { function(:if, id > 0, id, nil).as(:id) }
+                   .map { |attr| attr.sql_literal(ds) }
+
+      expect(literals).to eql([%(IF(("id" > 0), "id", NULL) AS "id")])
+    end
+
     it 'supports functions with arg being a qualified attribute' do
       literals = dsl
                    .call { int::count(id.qualified).as(:count) }
