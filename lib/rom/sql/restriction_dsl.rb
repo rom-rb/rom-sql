@@ -9,14 +9,6 @@ module ROM
         instance_exec(select_relations(block.parameters), &block)
       end
 
-      # Returns a result of SQL EXISTS clause.
-      #
-      # @example
-      #   users.where { exists(users.where(name: 'John')) }
-      def exists(relation)
-        ::ROM::SQL::Attribute[Types::Bool].meta(sql_expr: relation.dataset.exists)
-      end
-
       private
 
       # @api private
