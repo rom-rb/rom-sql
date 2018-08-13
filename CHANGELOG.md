@@ -15,6 +15,14 @@
   users.join(posts).select_append { |posts: | posts[:title] }
   ```
 
+* Support for `.exists` in the projection DSL (flash-gordon)
+
+  ```ruby
+  users.select_append { |r|
+    exists(r[:posts].where(r[:posts][:user_id] => id)).as(:has_posts)
+  }
+  ```
+
 [Compare v2.5.0...master](https://github.com/rom-rb/rom-sql/compare/v2.5.0...master)
 
 ## v2.5.0 2018-06-08
