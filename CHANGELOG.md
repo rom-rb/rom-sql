@@ -1,3 +1,19 @@
+## to-be-released
+
+### Added
+
+* Support for `CASE` expression (wmaciejak + flash-gordon)
+
+  ```ruby
+  # matching expression result
+  users.select_append { id.case(1 => string('one'), else: string('something else')).as(:one_or_else) }
+
+  # searching for `true` result
+  users.select_append { string::case(id.is(1) => 'one', else: 'else').as(:one_or_else) }
+  ```
+
+[Compare v2.5.0...master](https://github.com/rom-rb/rom-sql/compare/v2.5.0...master)
+
 ## v2.5.0 2018-06-08
 
 ### Added
