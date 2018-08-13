@@ -151,12 +151,13 @@ module ROM
       # @return [ROM::SQL::Attribute]
       #
       # @api public
-      def case(*args, **opts)
-        if opts[:expr]
-          Attribute[type].meta(sql_expr: ::Sequel.case(*args, opts[:expr]))
-        else
-          Attribute[type].meta(sql_expr: ::Sequel.case(*args))
+      def case(mapping)
+        mapping = mapping.dup
+        otherwise = mapping.delete(:else) do
+          raise ArgumentError, 'provide the default case using the :else keyword'
         end
+
+        Attribute[type].meta(sql_expr: ::Sequel.case(mapping, otherwise))
       end
 
       # Add a FILTER clause to aggregate function (supported by PostgreSQL 9.4+)
