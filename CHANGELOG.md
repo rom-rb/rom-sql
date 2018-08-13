@@ -10,16 +10,14 @@
   # searching for `true` result
   users.select_append { string::case(id.is(1) => 'one', else: 'else').as(:one_or_else) }
   ```
-* Relations can be accessed in DSLs with keyword arguments
+* Relations can be accessed in DSLs with keyword arguments (flash-gordon)
   ```ruby
   users.join(posts).select_append { |posts: | posts[:title] }
   ```
-
 * Support for `.exists` in the projection DSL (flash-gordon)
-
   ```ruby
-  users.select_append { |r|
-    exists(r[:posts].where(r[:posts][:user_id] => id)).as(:has_posts)
+  users.select_append { |posts: |
+    exists(posts.where(posts[:user_id] => id)).as(:has_posts)
   }
   ```
 
