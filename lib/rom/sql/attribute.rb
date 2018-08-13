@@ -331,6 +331,21 @@ module ROM
         self.class.new(type.with(meta: cleaned_meta), options)
       end
 
+      def value(value)
+        meta(sql_expr: Sequel[value])
+      end
+
+      def case(mapping)
+        mapping = mapping.dup
+        otherwise = mapping.delete(:else) do
+          raise ArgumentError, 'provide the default case using the :else keyword'
+        end
+
+        type = mapping.values[0].type
+
+        Attribute[type].meta(sql_expr: ::Sequel.case(mapping, otherwise, self))
+      end
+
       private
 
       # Return Sequel Expression object for an attribute
