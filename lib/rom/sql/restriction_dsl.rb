@@ -6,7 +6,7 @@ module ROM
     class RestrictionDSL < DSL
       # @api private
       def call(&block)
-        instance_exec(relations, &block)
+        instance_exec(select_relations(block.parameters), &block)
       end
 
       # Returns a result of SQL EXISTS clause.

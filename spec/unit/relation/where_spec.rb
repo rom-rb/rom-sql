@@ -27,6 +27,11 @@ RSpec.describe ROM::Relation, '#where' do
           to eql([{ id: 2, title: "Jane's task" }])
       end
 
+      it 'supports keywords for accessing another relation' do
+        expect(relation.join(:users, id: :user_id).where { |r| r[:users][:name].is("Jane") }.to_a).
+          to eql([{ id: 2, title: "Jane's task" }])
+      end
+
       it 'restricts with or condition' do
         expect(relation.where { id.is(1) | id.is(2) }.to_a).
           to eql([{ id: 1, title: "Joe's task" }, { id: 2, title: "Jane's task" }])

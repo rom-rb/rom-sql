@@ -3,13 +3,16 @@
 ### Added
 
 * Support for `CASE` expression (wmaciejak + flash-gordon)
-
   ```ruby
   # matching expression result
   users.select_append { id.case(1 => string('one'), else: string('something else')).as(:one_or_else) }
 
   # searching for `true` result
   users.select_append { string::case(id.is(1) => 'one', else: 'else').as(:one_or_else) }
+  ```
+* Relations can be accessed in DSLs with keyword arguments
+  ```ruby
+  users.join(posts).select_append { |posts: | posts[:title] }
   ```
 
 [Compare v2.5.0...master](https://github.com/rom-rb/rom-sql/compare/v2.5.0...master)
