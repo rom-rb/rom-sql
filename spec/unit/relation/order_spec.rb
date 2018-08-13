@@ -38,6 +38,18 @@ RSpec.describe ROM::Relation, '#order' do
         to eql([{ id: 2, title: "Joe's task" }, { id: 1, title: "Jane's task" }])
     end
 
+    it 'accesses other relations through keywords' do
+      ordered = relation.
+                  select(:id).
+                  left_join(:tasks, user_id: :id).
+                  select_append { |tasks: | tasks[:title] }.
+                  order { |tasks: | tasks[:title].desc }.
+                  where { |tasks: | tasks[:title].not(nil) }
+
+      expect(ordered.to_a).
+        to eql([{ id: 2, title: "Joe's task" }, { id: 1, title: "Jane's task" }])
+    end
+
     it 'orders by provided attributes using a block' do
       ordered = relation.
                   qualified.

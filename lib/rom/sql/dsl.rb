@@ -1,3 +1,4 @@
+require 'concurrent/map'
 require 'rom/support/inflector'
 require 'rom/constants'
 
@@ -13,15 +14,20 @@ module ROM
       #   @return [Hash, RelationRegistry]
       attr_reader :relations
 
+      # @!attribute [r] picked_relations
+      #   @return [Concurrent::Map]
+      attr_reader :picked_relations
+
       # @api private
       def initialize(schema)
         @schema = schema
         @relations = schema.respond_to?(:relations) ? schema.relations : EMPTY_HASH
+        @picked_relations = ::Concurrent::Map.new
       end
 
       # @api private
       def call(&block)
-        result = instance_exec(relations, &block)
+        result = instance_exec(select_relations(block.parameters), &block)
 
         if result.is_a?(::Array)
           result
@@ -57,6 +63,19 @@ module ROM
       # @api private
       def types
         ::ROM::SQL::Types
+      end
+
+      # @api private
+      def select_relations(parameters)
+        @picked_relations.fetch_or_store(parameters) do
+          keys = parameters.select { |type, _| type == :keyreq }
+
+          if keys.empty?
+            relations
+          else
+            keys.each_with_object({}) { |(_, k), rs| rs[k] = relations[k] }
+          end
+        end
       end
     end
   end
