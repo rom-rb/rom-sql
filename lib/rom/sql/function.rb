@@ -139,15 +139,14 @@ module ROM
         Attribute[type].meta(sql_expr: ::Sequel.cast(expr, db_type))
       end
 
-      # Add a CASE clause for handling if/then logic
+      # Add a CASE clause for handling if/then logic. This version of CASE search for the first
+      # branch which evaluates to `true`. See SQL::Attriubte#case if you're looking for the
+      # version that matches an expression result
       #
       # @example
-      #   users.select { string::case(status, { "active" => true }, false).as(:activated) }
-      #   users.select { string::case({ "active" => true }, false).as(:activated) }
-      #   users.select { string::case([[{ status: ["active", nil]}, true]], false) }
+      #   users.select { bool::case(status.is("active") => true, else: false).as(:activated) }
       #
-      # @param [ROM::SQL::Attribute] expr Expression consist of 3 args - conditions, default value and optional expression
-      #
+      # @param [Hash] mapping mapping between boolean SQL expressions to arbitrary SQL expressions
       # @return [ROM::SQL::Attribute]
       #
       # @api public
