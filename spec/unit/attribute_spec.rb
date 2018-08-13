@@ -82,6 +82,18 @@ RSpec.describe ROM::SQL::Attribute, :postgres do
     end
   end
 
+  describe '#case' do
+    it 'builds a CASE expression based on attribute' do
+      string_type = ROM::SQL::Attribute[ROM::SQL::Types::String]
+      mapping = {
+        1 => string_type.value('first'),
+        else: string_type.value('second')
+      }
+      expect(users[:id].case(mapping).as(:mapped_id).sql_literal(ds)).
+        to eql(%[(CASE "users"."id" WHEN 1 THEN 'first' ELSE 'second' END) AS "mapped_id"])
+    end
+  end
+
   describe 'extensions' do
     before do
       ROM::SQL::TypeExtensions.instance_variable_get(:@types)['sqlite'].delete('custom')

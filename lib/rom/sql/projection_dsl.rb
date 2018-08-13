@@ -54,7 +54,11 @@ module ROM
           type = type(meth)
 
           if type
-            ::ROM::SQL::Function.new(type, schema: schema)
+            if args.empty?
+              ::ROM::SQL::Function.new(type, schema: schema)
+            else
+              ::ROM::SQL::Attribute[type].value(args[0])
+            end
           else
             super
           end

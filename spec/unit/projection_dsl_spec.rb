@@ -100,6 +100,15 @@ RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
 
       expect(literals).to eql([%(PG_ADVISORY_LOCK(1) AS "lock")])
     end
+
+    it 'supports building typed literals' do
+      schema = dsl.call { int(1).as(:one) }
+      literals = schema.map { |attr| attr.sql_literal(ds) }
+      attr = schema.to_a[0]
+
+      expect(literals).to eql([%(1 AS "one")])
+      expect(attr.type.to_ast(meta: false)).to eql(ROM::SQL::Types::Integer.to_ast)
+    end
   end
 
   describe '#method_missing' do

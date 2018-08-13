@@ -139,6 +139,26 @@ module ROM
         Attribute[type].meta(sql_expr: ::Sequel.cast(expr, db_type))
       end
 
+      # Add a CASE clause for handling if/then logic. This version of CASE search for the first
+      # branch which evaluates to `true`. See SQL::Attriubte#case if you're looking for the
+      # version that matches an expression result
+      #
+      # @example
+      #   users.select { bool::case(status.is("active") => true, else: false).as(:activated) }
+      #
+      # @param [Hash] mapping mapping between boolean SQL expressions to arbitrary SQL expressions
+      # @return [ROM::SQL::Attribute]
+      #
+      # @api public
+      def case(mapping)
+        mapping = mapping.dup
+        otherwise = mapping.delete(:else) do
+          raise ArgumentError, 'provide the default case using the :else keyword'
+        end
+
+        Attribute[type].meta(sql_expr: ::Sequel.case(mapping, otherwise))
+      end
+
       # Add a FILTER clause to aggregate function (supported by PostgreSQL 9.4+)
       # @see https://www.postgresql.org/docs/current/static/sql-expressions.html
       #

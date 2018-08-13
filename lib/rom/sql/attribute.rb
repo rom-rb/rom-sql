@@ -331,6 +331,40 @@ module ROM
         self.class.new(type.with(meta: cleaned_meta), options)
       end
 
+      # Wrap a value with the type, it allows using attribute and type specific methods
+      # on literals and things like this
+      #
+      # @param [Object] value any SQL-serializable value
+      # @return [SQL::Attribute]
+      #
+      # @api public
+      def value(value)
+        meta(sql_expr: Sequel[value])
+      end
+
+      # Build a case expression based on attribute. See SQL::Function#case
+      # when you don't have a specific expression after the CASE keyword.
+      # Pass the :else keyword to provide the catch-all case, it's mandatory
+      # because of the Sequel's API used underneath.
+      #
+      # @example
+      #   users.select_append { id.case(1 => `'first'`, else: `'other'`).as(:first_or_not) }
+      #
+      # @param [Hash] mapping mapping between SQL expressions
+      # @return [SQL::Attribute]
+      #
+      # @api public
+      def case(mapping)
+        mapping = mapping.dup
+        otherwise = mapping.delete(:else) do
+          raise ArgumentError, 'provide the default case using the :else keyword'
+        end
+
+        type = mapping.values[0].type
+
+        Attribute[type].meta(sql_expr: ::Sequel.case(mapping, otherwise, self))
+      end
+
       private
 
       # Return Sequel Expression object for an attribute
