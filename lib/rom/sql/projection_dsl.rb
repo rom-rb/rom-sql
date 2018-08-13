@@ -39,6 +39,15 @@ module ROM
       end
       alias_method :f, :function
 
+      # Returns a result of SQL EXISTS clause.
+      #
+      # @example
+      #   users.where { exists(users.where(name: 'John')) }
+      #   users.select_append { |r| exists(r[:posts].where(r[:posts][:user_id] => id)).as(:has_posts) }
+      def exists(relation)
+        ::ROM::SQL::Attribute[Types::Bool].meta(sql_expr: relation.dataset.exists)
+      end
+
       # @api private
       def respond_to_missing?(name, include_private = false)
         super || type(name)

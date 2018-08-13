@@ -109,6 +109,16 @@ RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
       expect(literals).to eql([%(1 AS "one")])
       expect(attr.type.to_ast(meta: false)).to eql(ROM::SQL::Types::Integer.to_ast)
     end
+
+    it 'supports exists operator' do
+      rel = double(dataset: ds)
+      schema = dsl.call { |r| exists(rel).as(:subq) }
+      literals = schema.map { |attr| attr.sql_literal(ds) }
+      attr = schema.to_a[0]
+
+      expect(literals).to eql([%((EXISTS (SELECT * FROM "users")) AS "subq")])
+      expect(attr.type.to_ast(meta: false)).to eql(ROM::SQL::Types::Bool.to_ast)
+    end
   end
 
   describe '#method_missing' do
