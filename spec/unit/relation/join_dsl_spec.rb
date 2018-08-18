@@ -21,5 +21,29 @@ RSpec.describe ROM::Relation, '#join_dsl' do
       expect(result.to_a).
         to eql([name: 'Jane', title: "Jane's task" ])
     end
+
+    it 'works with right join' do
+      result = relation.right_join(users) { |tasks:, users: |
+        tasks[:user_id].is(users[:id]) & (users[:id] > 1)
+      }.select(:title, users[:name])
+
+      expect(result.to_a).
+        to eql([
+                 { name: 'Joe', title: "Joe's task" },
+                 { name: 'Jane', title: nil }
+               ])
+    end
+
+    it 'works with right join' do
+      result = users.left_join(tasks) { |tasks:, users: |
+        tasks[:user_id].is(users[:id]) & (tasks[:id] > 1)
+      }.select(relation[:title], :name)
+
+      expect(result.to_a).
+        to eql([
+                 { name: 'Jane', title: "Jane's task" },
+                 { name: 'Joe', title: nil },
+               ])
+    end
   end
 end
