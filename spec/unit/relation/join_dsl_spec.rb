@@ -45,5 +45,15 @@ RSpec.describe ROM::Relation, '#join_dsl' do
                  { name: 'Joe', title: nil },
                ])
     end
+
+    it 'can join using alias' do
+      authors = users.as(:authors).qualified(:authors)
+
+      result = users.join(authors) { |users: |
+        users[:id].is(authors[:id]) & authors[:id].is(1)
+      }.select(:name)
+
+      expect(result.to_a).to eql([name: 'Jane'])
+    end
   end
 end

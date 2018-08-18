@@ -1011,7 +1011,14 @@ module ROM
           elsif other.respond_to?(:name) && other.name.is_a?(Relation::Name)
             if block
               join_cond = JoinDSL.new(schema).(&block)
-              new(dataset.__send__(type, other.name.to_sym, join_cond))
+
+              if other.name.aliaz
+                join_opts = { table_alias: other.name.aliaz }
+              else
+                join_opts = EMPTY_HASH
+              end
+
+              new(dataset.__send__(type, other.name.to_sym, join_cond, join_opts))
             else
               associations[other.name.key].join(type, self, other)
             end
