@@ -1,4 +1,5 @@
 require 'rom/support/inflector'
+require 'rom/sql/join_dsl'
 
 module ROM
   module SQL
@@ -1008,7 +1009,12 @@ module ROM
           elsif other.is_a?(Sequel::SQL::AliasedExpression)
             new(dataset.__send__(type, other, join_cond, opts, &block))
           elsif other.respond_to?(:name) && other.name.is_a?(Relation::Name)
-            associations[other.name.key].join(type, self, other)
+            if block
+              join_cond = JoinDSL.new(schema).(&block)
+              new(dataset.__send__(type, other.name.to_sym, join_cond))
+            else
+              associations[other.name.key].join(type, self, other)
+            end
           else
             raise ArgumentError, "+other+ must be either a symbol or a relation, #{other.class} given"
           end

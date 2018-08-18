@@ -4,7 +4,7 @@ RSpec.describe ROM::Relation, '#right_join' do
   include_context 'users and tasks'
 
   with_adapters :postgres, :mysql do
-    it 'joins relations using left outer join' do
+    it 'joins relations using right outer join' do
       users.insert id: 3, name: 'Jade'
       relation.insert id: 3, title: 'Unassigned'
 
