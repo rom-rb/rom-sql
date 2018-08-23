@@ -2,6 +2,20 @@
 
 ### Added
 
+* Join DSL so that you can use arbitrary conditions when joining relations (flash-gordon)
+  ```ruby
+  users.join(tasks) { |users:, tasks:|
+    tasks[:user_id].is(users[:id]) & users[:name].is('John')
+  }
+  ```
+  You also can use table aliases, however the setup is a bit hairy:
+  ```ruby
+  # self-join "users" with itself using "authors" as an alias
+  authors = users.as(:authors).qualified(:authors)
+  result = users.join(authors) { |users: |
+    users[:id].is(authors[:id])
+  }.select(:name)
+  ```
 * Support for `CASE` expression (wmaciejak + flash-gordon)
   ```ruby
   # matching expression result
