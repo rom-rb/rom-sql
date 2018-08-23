@@ -1,4 +1,5 @@
 require 'rom/support/inflector'
+require 'rom/sql/join_dsl'
 
 module ROM
   module SQL
@@ -558,6 +559,16 @@ module ROM
         #
         #   @param [Relation] relation A relation for join
         #
+        # @overload join(relation, &block)
+        #   Join with another relation using DSL
+        #
+        #   @example
+        #     users.join(tasks) { |users:, tasks:|
+        #       tasks[:user_id].is(users[:id]) & users[:name].is('John')
+        #     }
+        #
+        #   @param [Relation] relation A relation for join
+        #
         # @return [Relation]
         #
         # @api public
@@ -598,6 +609,16 @@ module ROM
         #
         #   @param [Relation] relation A relation for left_join
         #
+        # @overload join(relation, &block)
+        #   Join with another relation using DSL
+        #
+        #   @example
+        #     users.left_join(tasks) { |users:, tasks:|
+        #       tasks[:user_id].is(users[:id]) & users[:name].is('John')
+        #     }
+        #
+        #   @param [Relation] relation A relation for left_join
+        #
         # @return [Relation]
         #
         # @api public
@@ -634,6 +655,16 @@ module ROM
         #
         #   @example
         #     users.right_join(tasks)
+        #
+        #   @param [Relation] relation A relation for right_join
+        #
+        # @overload join(relation, &block)
+        #   Join with another relation using DSL
+        #
+        #   @example
+        #     users.right_join(tasks) { |users:, tasks:|
+        #       tasks[:user_id].is(users[:id]) & users[:name].is('John')
+        #     }
         #
         #   @param [Relation] relation A relation for right_join
         #
@@ -1008,7 +1039,19 @@ module ROM
           elsif other.is_a?(Sequel::SQL::AliasedExpression)
             new(dataset.__send__(type, other, join_cond, opts, &block))
           elsif other.respond_to?(:name) && other.name.is_a?(Relation::Name)
-            associations[other.name.key].join(type, self, other)
+            if block
+              join_cond = JoinDSL.new(schema).(&block)
+
+              if other.name.aliaz
+                join_opts = { table_alias: other.name.aliaz }
+              else
+                join_opts = EMPTY_HASH
+              end
+
+              new(dataset.__send__(type, other.name.to_sym, join_cond, join_opts))
+            else
+              associations[other.name.key].join(type, self, other)
+            end
           else
             raise ArgumentError, "+other+ must be either a symbol or a relation, #{other.class} given"
           end
