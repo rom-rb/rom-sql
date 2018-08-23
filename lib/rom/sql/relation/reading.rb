@@ -559,6 +559,16 @@ module ROM
         #
         #   @param [Relation] relation A relation for join
         #
+        # @overload join(relation, &block)
+        #   Join with another relation using DSL
+        #
+        #   @example
+        #     users.join(tasks) { |users:, tasks:|
+        #       tasks[:user_id].is(users[:id]) & users[:name].is('John')
+        #     }
+        #
+        #   @param [Relation] relation A relation for join
+        #
         # @return [Relation]
         #
         # @api public
@@ -599,6 +609,16 @@ module ROM
         #
         #   @param [Relation] relation A relation for left_join
         #
+        # @overload join(relation, &block)
+        #   Join with another relation using DSL
+        #
+        #   @example
+        #     users.left_join(tasks) { |users:, tasks:|
+        #       tasks[:user_id].is(users[:id]) & users[:name].is('John')
+        #     }
+        #
+        #   @param [Relation] relation A relation for left_join
+        #
         # @return [Relation]
         #
         # @api public
@@ -635,6 +655,16 @@ module ROM
         #
         #   @example
         #     users.right_join(tasks)
+        #
+        #   @param [Relation] relation A relation for right_join
+        #
+        # @overload join(relation, &block)
+        #   Join with another relation using DSL
+        #
+        #   @example
+        #     users.right_join(tasks) { |users:, tasks:|
+        #       tasks[:user_id].is(users[:id]) & users[:name].is('John')
+        #     }
         #
         #   @param [Relation] relation A relation for right_join
         #
