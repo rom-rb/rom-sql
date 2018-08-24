@@ -34,6 +34,7 @@
     exists(posts.where(posts[:user_id] => id)).as(:has_posts)
   }
   ```
+ * `Relation#unfiltered` returns an unrestricted relation (removes restrictions from `WHERE` and `HAVING`) (flash-gordon)
 
 [Compare v2.5.0...master](https://github.com/rom-rb/rom-sql/compare/v2.5.0...master)
 
