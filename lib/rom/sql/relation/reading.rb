@@ -986,6 +986,18 @@ module ROM
           SQL::Attribute[attr.type].meta(sql_expr: subquery)
         end
 
+        # Discard restrictions in `WHERE` and `HAVING` clauses
+        #
+        # @example calling .by_pk has no effect
+        #   users.by_pk(1).unfiltered
+        #
+        # @return [SQL::Relation]
+        #
+        # @api public
+        def unfiltered
+          dataset.__send__(__method__)
+        end
+
         private
 
         # Build a locking clause
