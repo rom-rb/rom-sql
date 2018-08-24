@@ -995,7 +995,7 @@ module ROM
         #
         # @api public
         def unfiltered
-          dataset.__send__(__method__)
+          new(dataset.__send__(__method__))
         end
 
         private
