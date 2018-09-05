@@ -150,4 +150,16 @@ RSpec.describe ROM::SQL::Function, :postgres do
         to eql('COUNT("id") FILTER (WHERE ("id" = 1))')
     end
   end
+
+  describe '#within_group' do
+    it 'adds WITHIN GROUP clause' do
+      expect(func.rank(:id).within_group(:value).sql_literal(ds)).
+        to eql('RANK("id") WITHIN GROUP (ORDER BY "value")')
+    end
+
+    it 'works with a block' do
+      expect(func.rank(:id).within_group { name }.sql_literal(ds)).
+        to eql('RANK("id") WITHIN GROUP (ORDER BY "users"."name")')
+    end
+  end
 end

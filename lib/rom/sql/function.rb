@@ -185,6 +185,30 @@ module ROM
         super(conditions)
       end
 
+      # Add a WITHIN GROUP clause to aggregate function (supported by PostgreSQL)
+      # @see https://www.postgresql.org/docs/current/static/sql-expressions.html#SYNTAX-AGGREGATES
+      #
+      # Establishes an order for an ordered-set aggregate, see the docs for more details
+      #
+      # @example
+      #   households.project { fload::percentile_cont(0.5).within_group(income).as(:percentile) }
+      #
+      # @param [Array] A list of expressions for sorting within a group
+      # @yield [block] A block for getting the expressions using the Order DSL
+      #
+      # @return [SQL::Function]
+      #
+      # @api public
+      def within_group(*args, &block)
+        if block
+          group = args + ::ROM::SQL::OrderDSL.new(schema).(&block)
+        else
+          group = args
+        end
+
+        super(*group)
+      end
+
       private
 
       # @api private

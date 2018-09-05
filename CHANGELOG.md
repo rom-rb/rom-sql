@@ -35,6 +35,13 @@
   }
   ```
  * `Relation#unfiltered` returns an unrestricted relation (removes restrictions from `WHERE` and `HAVING`) (flash-gordon)
+ * Support for `WITHIN GROUP` in the function DSL has been enhanced with block syntax (flash-gordon)
+ ```ruby
+  # previously available version
+  households.project { fload::percentile_cont(0.5).within_group(income).as(:percentile) }
+  # using the new syntax
+  households.project { fload::percentile_cont(0.5).within_group { income }.as(:percentile) }
+  ```
 
 [Compare v2.5.0...master](https://github.com/rom-rb/rom-sql/compare/v2.5.0...master)
 
