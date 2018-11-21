@@ -62,6 +62,23 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
         container.gateways[:default].run_migrations
       end
     end
+
+    context 'running migrations from a file system with custom path' do
+      before do
+        inferrable_relations.concat %i(schema_migrations)
+      end
+
+      let(:migration_dir) do
+        Pathname(__FILE__).dirname.join('../fixtures/migrations').realpath
+      end
+
+      let(:conf) { ROM::Configuration.new(:sql, [conn, migrator: { path: migration_dir }]) }
+      let(:container) { ROM.container(conf) }
+
+      it 'runs migrations from a specified directory' do
+        container.gateways[:default].run_migrations
+      end
+    end
   end
 
   describe 'transactions' do

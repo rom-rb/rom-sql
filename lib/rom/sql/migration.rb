@@ -98,7 +98,7 @@ module ROM
 
       # @api private
       def initialize(uri, options = EMPTY_HASH)
-        @migrator = options.fetch(:migrator) { Migrator.new(connection) }
+        @migrator = create_migrator(options[:migrator])
 
         self.class.instance ||= self
       end
@@ -145,6 +145,21 @@ module ROM
         end
 
         migrator.auto_migrate!(self, schemas, options)
+      end
+
+      private
+
+      # Create a `Migrator`. If `migrator_option` is a `Hash`, use it as options to `Migrator.new`.
+      #
+      # @api private
+      def create_migrator(migrator_option)
+        return Migrator.new(connection) unless migrator_option
+
+        if migrator_option.is_a?(Hash)
+          Migrator.new(connection, migrator_option)
+        else
+          migrator_option
+        end
       end
     end
   end
