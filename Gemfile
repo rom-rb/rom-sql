@@ -17,7 +17,7 @@ end
 
 group :test do
   gem 'pry-byebug', platforms: :mri
-  gem 'pry', platforms: :jruby
+  gem 'pry', platforms: %i(jruby truffleruby)
   gem 'activesupport', '~> 5.0'
   gem 'simplecov', require: false
   gem 'pg', '~> 1.1', platforms: :mri
