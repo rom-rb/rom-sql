@@ -37,8 +37,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
                   [:attribute,
                    [:id,
                     [:definition, [Integer, {}]],
-                    primary_key: true, source: :users]],
-                  [:attribute, [:name, [:definition, [String, {}]], source: :users]],
+                    primary_key: true, source: :users, alias: nil]],
+                  [:attribute, [:name, [:definition, [String, {}]], source: :users, alias: nil]],
                   [:attribute,
                    [:email,
                     [:sum,
@@ -48,7 +48,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
                         {}]],
                       [:definition, [String, {}]],
                       {}]],
-                    source: :users]]
+                    source: :users, alias: nil]]
                 ])
     end
   end
@@ -65,7 +65,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
       expect(attributes[1].to_ast)
         .to eql(
-              [:attribute, [:name, [:definition, [String, {}]], source: :users]]
+              [:attribute, [:name, [:definition, [String, {}]], source: :users, alias: nil]]
             )
       expect(attributes[2].to_ast)
         .to eql(
@@ -78,7 +78,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
                     {}]],
                   [:definition, [String, {}]],
                   {}]],
-                source: :users]]
+                source: :users, alias: nil]]
             )
     end
   end

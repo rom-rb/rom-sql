@@ -48,7 +48,7 @@ module ROM
 
       # @api private
       def name
-        meta[:alias] || super
+        self.alias || super
       end
 
       # @see Attribute#qualified

@@ -46,7 +46,7 @@ module ROM
       # @api public
       def canonical
         if aliased?
-          meta(alias: nil, sql_expr: nil)
+          with(alias: nil).meta(sql_expr: nil)
         else
           self
         end
@@ -292,11 +292,11 @@ module ROM
       def to_sql_name
         @_to_sql_name ||=
           if qualified? && aliased?
-            Sequel.qualify(table_name, name).as(meta[:alias])
+            Sequel.qualify(table_name, name).as(self.alias)
           elsif qualified?
             Sequel.qualify(table_name, name)
           elsif aliased?
-            Sequel.as(name, meta[:alias])
+            Sequel.as(name, self.alias)
           else
             Sequel[name]
           end
@@ -315,7 +315,7 @@ module ROM
       end
 
       # @api private
-      def meta_ast
+      def meta_options_ast
         meta = super
         meta[:index] = true if indexed?
         meta
