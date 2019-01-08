@@ -74,17 +74,23 @@ RSpec.describe 'Plugin / Pagination', seeds: false do
         expect(users.pager.current_page).to be(1)
         expect(users.pager.next_page).to be(2)
         expect(users.pager.prev_page).to be(nil)
+        expect(users.pager.first_in_page).to eq(1)
+        expect(users.pager.last_in_page).to eq(4)
 
         users = container.relations[:users].page(2)
 
         expect(users.pager.current_page).to be(2)
         expect(users.pager.next_page).to be(3)
         expect(users.pager.prev_page).to be(1)
+        expect(users.pager.first_in_page).to eq(5)
+        expect(users.pager.last_in_page).to eq(8)
 
         users = container.relations[:users].page(3)
 
         expect(users.pager.next_page).to be(nil)
         expect(users.pager.prev_page).to be(2)
+        expect(users.pager.first_in_page).to eq(9)
+        expect(users.pager.last_in_page).to eq(9)
       end
     end
   end
