@@ -25,10 +25,10 @@ module ROM
           inferred = columns.map do |(name, definition)|
             type = type_builder.(definition)
 
-            attr_class.new(type.meta(name: name, source: schema.name)) if type
+            attr_class.new(type.meta(source: schema.name), name: name) if type
           end.compact
 
-          missing = columns.map(&:first) - inferred.map { |attr| attr.meta[:name] }
+          missing = columns.map(&:first) - inferred.map { |attr| attr.name }
 
           [inferred, missing]
         end

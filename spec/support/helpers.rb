@@ -7,14 +7,19 @@ module Helpers
     relation_name = ROM::Relation::Name.new(name)
     ROM::SQL::Schema.define(
       relation_name,
-      attributes: attrs.map { |key, value| value.meta(name: key, source: relation_name) },
+      attributes: attrs.map do |attr_name, type|
+        ROM::SQL::Schema.build_attribute_info(
+          type.meta(source: relation_name),
+          name: attr_name
+        )
+      end,
       attr_class: ROM::SQL::Attribute
     )
   end
 
   def define_attribute(name, id, **opts)
     type = id.is_a?(Symbol) ? ROM::Types.const_get(id) : id
-    ROM::SQL::Attribute.new(type.meta(name: name, **opts))
+    ROM::SQL::Attribute.new(type.meta(**opts), name: name)
   end
 
   def build_assoc(type, *args)
@@ -26,12 +31,12 @@ module Helpers
   def attributes(schema)
     schema.each_with_object({}) do |(key, type), acc|
       if type.optional?
-        attr = ROM::SQL::Attribute.new(type.right).optional
+        attr = ROM::SQL::Attribute.new(type.right, name: key).optional
       else
-        attr = ROM::SQL::Attribute.new(type)
+        attr = ROM::SQL::Attribute.new(type, name: key)
       end
 
-      meta = { name: key, source: source }
+      meta = { source: source }
 
       acc[key] = attr.meta(meta)
     end

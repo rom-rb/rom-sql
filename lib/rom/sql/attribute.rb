@@ -36,8 +36,10 @@ module ROM
       # @return [SQL::Attribute]
       #
       # @api public
-      def aliased(name)
-        super.meta(name: meta.fetch(:name, name), sql_expr: sql_expr.as(name))
+      def aliased(alias_name)
+        super.with(name: name || alias_name).meta(
+          sql_expr: sql_expr.as(alias_name)
+        )
       end
       alias_method :as, :aliased
 
@@ -66,8 +68,8 @@ module ROM
 
         case sql_expr
         when Sequel::SQL::AliasedExpression, Sequel::SQL::Identifier, Sequel::SQL::QualifiedIdentifier
-          type = meta(qualified: table_alias || true)
-          type.meta(sql_expr: type.to_sql_name)
+          attr = meta(qualified: table_alias || true)
+          attr.meta(sql_expr: attr.to_sql_name)
         else
           raise QualifyError, "can't qualify #{name.inspect} (#{sql_expr.inspect})"
         end
