@@ -275,13 +275,20 @@ module ROM
         Function.new(type).concat(self, sep, other)
       end
 
-      # Sequel calls this method to coerce an attribute into SQL string
+      # Sequel calls this method to coerce an attribute into SQL string.
+      #
+      # If the attribute is aliased and it is on the right of the
+      # `FROM table` keyword, we need to use its canonical name.
       #
       # @param [Sequel::Dataset] ds
       #
       # @api private
-      def sql_literal(ds)
-        ds.literal(sql_expr)
+      def sql_literal_append(ds, sql)
+        if aliased? && sql.match?(/ FROM ["`]#{source.dataset}["`] /)
+          canonical.sql_literal_append(ds, sql)
+        else
+          ds.literal_append(sql, sql_expr)
+        end
       end
 
       # Sequel column representation
