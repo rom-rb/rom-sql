@@ -26,8 +26,6 @@ module ROM
         fetch_or_store(args) { new(*args) }
       end
 
-      option :extensions, type: Types::Hash, default: -> { TypeExtensions[type] }
-
       # Return a new attribute with an alias
       #
       # @example
@@ -420,6 +418,11 @@ module ROM
         else
           source.dataset
         end
+      end
+
+      # @api private
+      def extensions
+        TypeExtensions[type]
       end
 
       memoize :joined, :to_sql_name, :table_name, :canonical
