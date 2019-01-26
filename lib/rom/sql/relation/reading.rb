@@ -1031,6 +1031,8 @@ module ROM
             if k.is_a?(Symbol) && schema.canonical.key?(k)
               type = schema.canonical[k]
               h[k] = v.is_a?(Array) ? v.map { |e| type[e] } : type[v]
+            elsif k.is_a?(ROM::SQL::Attribute)
+              h[k.canonical] = v
             else
               h[k] = v
             end
