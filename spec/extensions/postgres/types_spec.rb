@@ -110,7 +110,7 @@ RSpec.describe 'ROM::SQL::Postgres::Types' do
 
   describe ROM::SQL::Types::PG::Money do
     it 'coerces to pg Money' do
-      input  = BigDecimal.new(1.0, 2)
+      input  = BigDecimal(1.0, 2)
       output = described_class[input]
 
       expect(output).to be_instance_of(BigDecimal)

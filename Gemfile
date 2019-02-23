@@ -7,7 +7,7 @@ gemspec
 gem 'dry-types', github: 'dry-rb/dry-types', branch: 'rework-schemas'
 gem 'dry-struct', github: 'dry-rb/dry-struct', branch: 'update-schemas'
 
-gem 'rom', git: 'https://github.com/rom-rb/rom', branch: 'master' do
+gem 'rom', github: 'rom-rb/rom', branch: 'update-schemas' do
   gem 'rom-core'
   gem 'rom-mapper'
   gem 'rom-repository', group: :tools

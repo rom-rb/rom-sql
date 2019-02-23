@@ -14,7 +14,7 @@ module Helpers
 
   def define_attribute(name, id, **opts)
     type = id.is_a?(Symbol) ? ROM::Types.const_get(id) : id
-    ROM::SQL::Attribute.new(type.meta(name: name, **opts))
+    ROM::SQL::Attribute.new(type.meta({ name: name, **opts }))
   end
 
   def build_assoc(type, *args)
