@@ -1,6 +1,11 @@
 source 'https://rubygems.org'
 
+git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
+
 gemspec
+
+gem 'dry-types', github: 'dry-rb/dry-types', branch: 'rework-schemas'
+gem 'dry-struct', github: 'dry-rb/dry-struct', branch: 'update-schemas'
 
 gem 'rom', git: 'https://github.com/rom-rb/rom', branch: 'master' do
   gem 'rom-core'
