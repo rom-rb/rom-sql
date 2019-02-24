@@ -1,5 +1,5 @@
 language: ruby
-sudo: false
+dist: senial
 cache: bundler
 services:
   - postgresql
@@ -8,15 +8,14 @@ bundler_args: --without yard guard benchmarks tools
 before_script:
   - psql -c 'create database rom_sql;' -U postgres
   - mysql -u root -e 'create database rom_sql;'
-  - rvm get master
 after_success:
   - '[ -d coverage ] && bundle exec codeclimate-test-reporter'
 script: "bundle exec rake ci"
 rvm:
-  - 2.5.0
-  - 2.3.6
-  - 2.4.3
-  - jruby-9.1.12.0
+  - 2.6.1
+  - 2.5.3
+  - 2.4.5
+  - jruby-9.2.6.0
 env:
   global:
     - CODECLIMATE_REPO_TOKEN=03d7f66589572702b12426d2bc71c4de6281a96139e33b335b894264b1f8f0b0
@@ -30,7 +29,7 @@ notifications:
     on_failure: always
     on_start: false
 addons:
-  postgresql: 9.5
+  postgresql: 10
   apt:
     packages:
       - mysql-server-5.6
