@@ -15,11 +15,11 @@ Gem::Specification.new do |spec|
   spec.files         = Dir['CHANGELOG.md', 'LICENSE', 'README.md', 'lib/**/*']
   spec.require_paths = ['lib']
 
-  spec.required_ruby_version = ">= 2.3.0"
+  spec.required_ruby_version = ">= 2.4.0"
 
   spec.add_runtime_dependency 'sequel', '>= 4.49'
   spec.add_runtime_dependency 'dry-equalizer', '~> 0.2'
-  spec.add_runtime_dependency 'dry-types', '~> 0.14.0'
+  spec.add_runtime_dependency 'dry-types', '~> 0.15.0'
   spec.add_runtime_dependency 'dry-core', '~> 0.3'
   spec.add_runtime_dependency 'rom-core', '~> 4.2'
 

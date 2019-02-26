@@ -1,8 +1,13 @@
 source 'https://rubygems.org'
 
+git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
+
 gemspec
 
-gem 'rom', git: 'https://github.com/rom-rb/rom', branch: 'master' do
+gem 'dry-types', github: 'dry-rb/dry-types'
+gem 'dry-struct', github: 'dry-rb/dry-struct'
+
+gem 'rom', github: 'rom-rb/rom' do
   gem 'rom-core'
   gem 'rom-mapper'
   gem 'rom-repository', group: :tools
