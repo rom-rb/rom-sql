@@ -1,4 +1,5 @@
 language: ruby
+dist: xenial
 cache: bundler
 services:
   - postgresql
@@ -30,7 +31,7 @@ notifications:
     on_failure: always
     on_start: false
 addons:
-  postgresql: 9.5
+  postgresql: 10
   apt:
     packages:
       - mysql-server-5.6
