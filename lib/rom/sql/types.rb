@@ -39,7 +39,7 @@ module ROM
         TypeDSL.new(value_type).call(&block)
       end
 
-      Serial = Int.meta(primary_key: true)
+      Serial = Integer.meta(primary_key: true)
 
       Blob = Constructor(Sequel::SQL::Blob, &Sequel::SQL::Blob.method(:new))
 
