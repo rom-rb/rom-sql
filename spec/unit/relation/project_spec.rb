@@ -24,7 +24,7 @@ RSpec.describe ROM::Relation, '#project' do
     describe 'subqueries' do
       it 'supports single-column relations as attributes' do
         tasks_count = tasks.
-                        project { int::count(id) }.
+                        project { integer::count(id) }.
                         where(tasks[:user_id] => users[:id]).
                         where(tasks[:title].ilike('joe%')).
                         query

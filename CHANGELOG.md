@@ -55,7 +55,7 @@
   tasks = relations[:tasks]
   users = relations[:users]
   user_tasks = tasks.where(tasks[:user_id].is(users[:id])
-  tasks_count = user_tasks.select { int::count(id) }
+  tasks_count = user_tasks.select { integer::count(id) }
   users.select_append(tasks_count.as(:tasks_count))
   ```
 
@@ -194,7 +194,7 @@
 * Support for window function calls
 
   ```ruby
-    employees.select { [dep_no, salary, int::avg(salary).over(partition: dep_no, order: id).as(:avg_salary)] }
+    employees.select { [dep_no, salary, integer::avg(salary).over(partition: dep_no, order: id).as(:avg_salary)] }
   ```
 
 * Function result can be negated, also `ROM::SQL::Function#not` was added (flash-gordon)

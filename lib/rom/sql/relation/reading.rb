@@ -218,7 +218,7 @@ module ROM
         #   Project relation using column names and projection DSL
         #
         #   @example using attributes
-        #     users.select(:id) { int::count(id).as(:count) }.group(:id).first
+        #     users.select(:id) { integer::count(id).as(:count) }.group(:id).first
         #     # {:id => 1, :count => 1}
         #
         #     users.select { [id, name] }
@@ -388,7 +388,7 @@ module ROM
         #     users.
         #       qualified.
         #       left_join(tasks).
-        #       select { [id, name, int::count(:tasks__id).as(:task_count)] }.
+        #       select { [id, name, integer::count(:tasks__id).as(:task_count)] }.
         #       group(users[:id].qualified).
         #       having(task_count: 2)
         #       first
@@ -403,7 +403,7 @@ module ROM
         #     users.
         #       qualified.
         #       left_join(tasks).
-        #       select { [id, name, int::count(:tasks__id).as(:task_count)] }.
+        #       select { [id, name, integer::count(:tasks__id).as(:task_count)] }.
         #       group(users[:id].qualified).
         #       having { count(id.qualified) >= 1 }.
         #       first
@@ -976,7 +976,7 @@ module ROM
         #   tasks = relations[:tasks]
         #   users = relations[:users]
         #   user_tasks = tasks.where(tasks[:user_id].is(users[:id]))
-        #   tasks_count = user_tasks.select { int::count(id) }
+        #   tasks_count = user_tasks.select { integer::count(id) }
         #   users.select_append(tasks_count.as(:tasks_count))
         #
         # @return [SQL::Attribute]

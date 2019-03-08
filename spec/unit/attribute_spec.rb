@@ -115,7 +115,7 @@ RSpec.describe ROM::SQL::Attribute, :postgres do
       end
     end
 
-    let(:type) { Dry::Types['int'].meta(database: 'sqlite', db_type: 'custom') }
+    let(:type) { Dry::Types['integer'].meta(database: 'sqlite', db_type: 'custom') }
 
     context 'plain type' do
       subject(:attribute) { ROM::SQL::Attribute[type] }
