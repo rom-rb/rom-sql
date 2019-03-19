@@ -11,7 +11,7 @@ module ROM
         if value_type.class < ::Dry::Types::Type
           @definition = value_type
         else
-          @definition = ::ROM::SQL::Types.Definition(value_type)
+          @definition = ::ROM::SQL::Types.Nominal(value_type)
         end
       end
 

@@ -49,11 +49,11 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
           .to eql([
                     [:attribute,
                      [:id,
-                      [:definition, [Integer, {}]],
+                      [:nominal, [Integer, {}]],
                       primary_key: true, source: :users]],
                     [:attribute,
                      [:name,
-                      [:definition, [String, {}]],
+                      [:nominal, [String, {}]],
                       index: true,
                       source: :users]],
                   ])

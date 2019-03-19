@@ -36,17 +36,17 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
         .to eql([
                   [:attribute,
                    [:id,
-                    [:definition, [Integer, {}]],
+                    [:nominal, [Integer, {}]],
                     primary_key: true, source: :users]],
-                  [:attribute, [:name, [:definition, [String, {}]], source: :users]],
+                  [:attribute, [:name, [:nominal, [String, {}]], source: :users]],
                   [:attribute,
                    [:email,
                     [:sum,
                      [[:constrained,
-                       [[:definition, [NilClass, {}]],
+                       [[:nominal, [NilClass, {}]],
                         [:predicate, [:type?, [[:type, NilClass], [:input, ROM::Undefined]]]],
                         {}]],
-                      [:definition, [String, {}]],
+                      [:nominal, [String, {}]],
                       {}]],
                     source: :users]]
                 ])
@@ -65,7 +65,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
       expect(attributes[1].to_ast)
         .to eql(
-              [:attribute, [:name, [:definition, [String, {}]], source: :users]]
+              [:attribute, [:name, [:nominal, [String, {}]], source: :users]]
             )
       expect(attributes[2].to_ast)
         .to eql(
@@ -73,10 +73,10 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
                [:email,
                 [:sum,
                  [[:constrained,
-                   [[:definition, [NilClass, {}]],
+                   [[:nominal, [NilClass, {}]],
                     [:predicate, [:type?, [[:type, NilClass], [:input, ROM::Undefined]]]],
                     {}]],
-                  [:definition, [String, {}]],
+                  [:nominal, [String, {}]],
                   {}]],
                 source: :users]]
             )
