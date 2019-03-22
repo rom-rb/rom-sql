@@ -5,7 +5,6 @@ git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 gemspec
 
 gem 'dry-equalizer', github: 'dry-rb/dry-equalizer'
-gem 'dry-types', github: 'dry-rb/dry-types'
 gem 'dry-struct', github: 'dry-rb/dry-struct'
 
 gem 'rom', github: 'rom-rb/rom' do
