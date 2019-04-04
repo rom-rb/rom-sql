@@ -13,7 +13,7 @@ RSpec.describe ROM::Relation, '#qualified' do
     it 'qualifies virtual attributes' do
       qualified = relation.
                     left_join(:tasks, tasks[:user_id].qualified => relation[:id].qualified).
-                    select(:id, tasks[:id].func { int::count(id).as(:count) }).
+                    select(:id, tasks[:id].func { integer::count(id).as(:count) }).
                     qualified.
                     group(:id)
 

@@ -23,7 +23,7 @@ RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
   describe '#call' do
     it 'evaluates the block and returns an array with attribute types' do
       literals = dsl
-                   .call { int::count(id).as(:count) }
+                   .call { integer::count(id).as(:count) }
                    .map { |attr| attr.sql_literal(ds) }
 
       expect(literals).to eql([%(COUNT("id") AS "count")])
@@ -39,7 +39,7 @@ RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
 
     it 'supports functions with args and chaining with other functions' do
       literals = dsl
-                   .call { int::count(id.qualified).distinct }
+                   .call { integer::count(id.qualified).distinct }
                    .map { |attr| attr.sql_literal(ds) }
 
       expect(literals).to eql([%(COUNT(DISTINCT "users"."id"))])
@@ -47,7 +47,7 @@ RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
 
     it 'supports functions with args and chaining with other functions and an alias' do
       literals = dsl
-                   .call { int::count(id.qualified).distinct.as(:count) }
+                   .call { integer::count(id.qualified).distinct.as(:count) }
                    .map { |attr| attr.sql_literal(ds) }
 
       expect(literals).to eql([%(COUNT(DISTINCT "users"."id") AS "count")])
@@ -55,7 +55,7 @@ RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
 
     it 'supports functions with arg being an attribute' do
       literals = dsl
-                   .call { int::count(id).as(:count) }
+                   .call { integer::count(id).as(:count) }
                    .map { |attr| attr.sql_literal(ds) }
 
       expect(literals).to eql([%(COUNT("id") AS "count")])
@@ -79,7 +79,7 @@ RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
 
     it 'supports functions with arg being a qualified attribute' do
       literals = dsl
-                   .call { int::count(id.qualified).as(:count) }
+                   .call { integer::count(id.qualified).as(:count) }
                    .map { |attr| attr.sql_literal(ds) }
 
       expect(literals).to eql([%(COUNT("users"."id") AS "count")])
@@ -102,7 +102,7 @@ RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
     end
 
     it 'supports building typed literals' do
-      schema = dsl.call { int(1).as(:one) }
+      schema = dsl.call { integer(1).as(:one) }
       literals = schema.map { |attr| attr.sql_literal(ds) }
       attr = schema.to_a[0]
 
@@ -128,7 +128,7 @@ RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
     end
 
     it 'responds to methods matching type identifiers' do
-      expect(dsl.int).to eql(ROM::SQL::Types::Integer)
+      expect(dsl.integer).to eql(ROM::SQL::Types::Integer)
       expect(dsl.string).to eql(ROM::SQL::Types::String)
       expect(dsl.bool).to eql(ROM::SQL::Types::Bool)
     end

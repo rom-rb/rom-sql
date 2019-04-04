@@ -24,7 +24,7 @@ RSpec.describe 'Plugins / :explain', :postgres do
   end
 
   it 'supports the ANALYZE option' do
-    expect(users.explain(analyze: true)).to match(/Execution time/)
+    expect(users.explain(analyze: true)).to match(/Execution time/i)
   end
 
   it 'supports the VERBOSE option' do

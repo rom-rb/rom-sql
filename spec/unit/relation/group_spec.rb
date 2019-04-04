@@ -59,7 +59,7 @@ RSpec.describe ROM::Relation, '#group' do
       notes.insert user_id: 1, text: 'Foo', created_at: Time.now, updated_at: Time.now
 
       grouped = notes
-                  .select { [int::count(id), time::date_trunc('day', created_at).as(:date)] }
+                  .select { [integer::count(id), time::date_trunc('day', created_at).as(:date)] }
                   .group { date_trunc('day', created_at) }
                   .order(nil)
 

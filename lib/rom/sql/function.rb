@@ -87,8 +87,8 @@ module ROM
       # @see https://www.postgresql.org/docs/9.6/static/tutorial-window.html
       #
       # @example
-      #   users.select { [id, int::row_number().over(partition: name, order: id).as(:row_no)] }
-      #   users.select { [id, int::row_number().over(partition: [first_name, last_name], order: id).as(:row_no)] }
+      #   users.select { [id, integer::row_number().over(partition: name, order: id).as(:row_no)] }
+      #   users.select { [id, integer::row_number().over(partition: [first_name, last_name], order: id).as(:row_no)] }
       #
       # @example frame variants
       #   # ROWS BETWEEN 3 PRECEDING AND CURRENT ROW
@@ -165,8 +165,8 @@ module ROM
       # Filter aggregate using the specified conditions
       #
       # @example
-      #   users.project { int::count(:id).filter(name.is("Jack")).as(:jacks) }.order(nil)
-      #   users.project { int::count(:id).filter { name.is("John") }).as(:johns) }.order(nil)
+      #   users.project { integer::count(:id).filter(name.is("Jack")).as(:jacks) }.order(nil)
+      #   users.project { integer::count(:id).filter { name.is("John") }).as(:johns) }.order(nil)
       #
       # @param [Hash,SQL::Attribute] Conditions
       # @yield [block] A block with restrictions

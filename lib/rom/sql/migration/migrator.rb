@@ -20,7 +20,7 @@ module ROM
 
         param :connection
 
-        option :path, type: ROM::Types.Definition(Pathname), default: -> { DEFAULT_PATH }
+        option :path, type: ROM::Types.Nominal(Pathname), default: -> { DEFAULT_PATH }
 
         option :inferrer, default: -> { DEFAULT_INFERRER }
 

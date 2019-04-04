@@ -19,7 +19,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
     conn.create_enum(:rainbow, colors)
 
     conn.create_table :test_inferrence do
-      primary_key :id, :uuid
+      uuid :id, primary_key: true
       bigint :big
       Json :json_data
       Jsonb :jsonb_data

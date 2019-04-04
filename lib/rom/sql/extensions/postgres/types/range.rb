@@ -75,7 +75,7 @@ module ROM
         # @api private
         def self.range(name, read_type)
           Type(name) do
-            type = SQL::Types.Definition(Values::Range).constructor do |range|
+            type = SQL::Types.Nominal(Values::Range).constructor do |range|
               format('%s%s,%s%s',
                      range.exclude_begin? ? :'(' : :'[',
                      range.lower,

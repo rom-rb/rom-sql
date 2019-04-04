@@ -249,7 +249,7 @@ module ROM
       # Create a function DSL from the attribute
       #
       # @example
-      #   users[:id].func { int::count(id).as(:count) }
+      #   users[:id].func { integer::count(id).as(:count) }
       #
       # @return [SQL::Function]
       #

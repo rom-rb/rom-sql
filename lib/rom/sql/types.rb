@@ -17,7 +17,7 @@ module ROM
       # @example with a custom type
       #   attribute :user_id, Types.ForeignKey(:users, Types::UUID)
       #
-      # @return [Dry::Types::Definition]
+      # @return [Dry::Types::Nominal]
       #
       # @api public
       def self.ForeignKey(relation, type = Types::Integer.meta(index: true))
@@ -32,14 +32,14 @@ module ROM
       #     output { Types::Coercible::Hash }
       #   end
       #
-      # @return [Dry::Types::Definition]
+      # @return [Dry::Types::Nominal]
       #
       # @api public
       def self.define(value_type, &block)
         TypeDSL.new(value_type).call(&block)
       end
 
-      Serial = Int.meta(primary_key: true)
+      Serial = Integer.meta(primary_key: true)
 
       Blob = Constructor(Sequel::SQL::Blob, &Sequel::SQL::Blob.method(:new))
 
