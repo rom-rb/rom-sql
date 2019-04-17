@@ -248,9 +248,9 @@ module ROM
 
           def build_array_query(query, array_type = 'lquery')
             case query
-            when Array
+            when ::Array
               ROM::SQL::Types::PG::Array(array_type)[query]
-            when String
+            when ::String
               ROM::SQL::Types::PG::Array(array_type)[query.split(',')]
             end
           end
