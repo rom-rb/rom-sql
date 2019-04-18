@@ -16,17 +16,17 @@ after_script:
 script:
   - bundle exec rake
 rvm:
-  - 2.6.1
-  - 2.5.3
-  - 2.4.5
-  - jruby-9.2.6.0
+  - 2.6.2
+  - 2.5.5
+  - 2.4.6
+  - jruby-9.2.7.0
 env:
   global:
     - COVERAGE='true'
 notifications:
   webhooks:
     urls:
-      - https://webhooks.gitter.im/e/39e1225f489f38b0bd09
+      - https://rom-rb.zulipchat.com/api/v1/external/travis?api_key=S1S2GRkXHlzlaCGyUwm7o4lg50IZrwCH&stream=notifications&topic=ci
     on_success: change
     on_failure: always
     on_start: false
