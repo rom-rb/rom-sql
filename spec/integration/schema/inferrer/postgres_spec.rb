@@ -82,44 +82,47 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
   end
 
   context 'inferring db-specific attributes' do
+    let(:expected) do
+      attributes(
+        id: define_attribute(:id, ROM::SQL::Types::PG::UUID, primary_key: true),
+        big: define_attribute(:big, ROM::SQL::Types::Integer.optional, source: source),
+        json_data: define_attribute(:json_data, ROM::SQL::Types::PG::JSON.optional, source: source),
+        jsonb_data: define_attribute(:jsonb_data, ROM::SQL::Types::PG::JSONB.optional, source: source),
+        money: define_attribute(:money, ROM::SQL::Types::PG::Money, source: source),
+        decimal: define_attribute(:decimal, ROM::SQL::Types::Decimal, source: source),
+        tags: define_attribute(:tags, ROM::SQL::Types::PG::Array('text').optional, source: source),
+        tag_ids: define_attribute(:tag_ids, ROM::SQL::Types::PG::Array('bigint').optional, source: source),
+        ip: define_attribute(:ip, ROM::SQL::Types::PG::IPAddress.optional, source: source),
+        color: define_attribute(:color, ROM::SQL::Types::String.enum(*colors).optional, source: source),
+        subnet: define_attribute(:subnet, ROM::SQL::Types::PG::IPAddress.optional, source: source),
+        hw_address: define_attribute(:hw_address, ROM::SQL::Types::String.optional, source: source),
+        center: define_attribute(:center, ROM::SQL::Types::PG::Point.optional, source: source),
+        page: define_attribute(:page, ROM::SQL::Types::PG::XML.optional, source: source),
+        mapping: define_attribute(:mapping, ROM::SQL::Types::PG::HStore.optional, source: source),
+        line: define_attribute(:line, ROM::SQL::Types::PG::Line.optional, source: source),
+        circle: define_attribute(:circle, ROM::SQL::Types::PG::Circle.optional, source: source),
+        box: define_attribute(:box, ROM::SQL::Types::PG::Box.optional, source: source),
+        lseg: define_attribute(:lseg, ROM::SQL::Types::PG::LineSegment.optional, source: source),
+        polygon: define_attribute(:polygon, ROM::SQL::Types::PG::Polygon.optional, source: source),
+        path: define_attribute(:path, ROM::SQL::Types::PG::Path.optional, source: source),
+        ltree_path: define_attribute(:ltree_path, ROM::SQL::Types::PG::LTree.optional, source: source),
+        created_at: define_attribute(:created_at, ROM::SQL::Types::Time.optional, source: source),
+        datetime: define_attribute(:datetime, ROM::SQL::Types::Time.optional, source: source),
+        datetime_tz: define_attribute(:datetime_tz, ROM::SQL::Types::Time.optional, source: source),
+        flag: define_attribute(:flag, ROM::SQL::Types::Bool, source: source),
+        int4range: define_attribute(:int4range, ROM::SQL::Types::PG::Int4Range.optional, source: source),
+        int8range: define_attribute(:int8range, ROM::SQL::Types::PG::Int8Range.optional, source: source),
+        numrange: define_attribute(:numrange, ROM::SQL::Types::PG::NumRange.optional, source: source),
+        tsrange: define_attribute(:tsrange, ROM::SQL::Types::PG::TsRange.optional, source: source),
+        tstzrange: define_attribute(:tstzrange, ROM::SQL::Types::PG::TsTzRange.optional, source: source),
+        daterange: define_attribute(:daterange, ROM::SQL::Types::PG::DateRange.optional, source: source)
+      )
+    end
+
     it 'can infer attributes for dataset' do
-      expect(schema.to_h).
-        to eql(
-             attributes(
-               id: ROM::SQL::Types::PG::UUID.meta(name: :id, primary_key: true),
-               big: ROM::SQL::Types::Integer.optional.meta(name: :big),
-               json_data: ROM::SQL::Types::PG::JSON.optional.meta(name: :json_data),
-               jsonb_data: ROM::SQL::Types::PG::JSONB.optional.meta(name: :jsonb_data),
-               money: ROM::SQL::Types::PG::Money.meta(name: :money),
-               decimal: ROM::SQL::Types::Decimal.meta(name: :decimal),
-               tags: ROM::SQL::Types::PG::Array('text').optional.meta(name: :tags),
-               tag_ids: ROM::SQL::Types::PG::Array('bigint').optional.meta(name: :tag_ids),
-               ip: ROM::SQL::Types::PG::IPAddress.optional.meta(name: :ip),
-               color: ROM::SQL::Types::String.enum(*colors).optional.meta(name: :color),
-               subnet: ROM::SQL::Types::PG::IPAddress.optional.meta(name: :subnet),
-               hw_address: ROM::SQL::Types::String.optional.meta(name: :hw_address),
-               center: ROM::SQL::Types::PG::Point.optional.meta(name: :center),
-               page: ROM::SQL::Types::PG::XML.optional.meta(name: :page),
-               mapping: ROM::SQL::Types::PG::HStore.optional.meta(name: :mapping),
-               line: ROM::SQL::Types::PG::Line.optional.meta(name: :line),
-               circle: ROM::SQL::Types::PG::Circle.optional.meta(name: :circle),
-               box: ROM::SQL::Types::PG::Box.optional.meta(name: :box),
-               lseg: ROM::SQL::Types::PG::LineSegment.optional.meta(name: :lseg),
-               polygon: ROM::SQL::Types::PG::Polygon.optional.meta(name: :polygon),
-               path: ROM::SQL::Types::PG::Path.optional.meta(name: :path),
-               ltree_path: ROM::SQL::Types::PG::LTree.optional.meta(name: :ltree),
-               created_at: ROM::SQL::Types::Time.optional.meta(name: :created_at),
-               datetime: ROM::SQL::Types::Time.optional.meta(name: :datetime),
-               datetime_tz: ROM::SQL::Types::Time.optional.meta(name: :datetime_tz),
-               flag: ROM::SQL::Types::Bool.meta(name: :flag),
-               int4range: ROM::SQL::Types::PG::Int4Range.optional.meta(name: :int4range),
-               int8range: ROM::SQL::Types::PG::Int8Range.optional.meta(name: :int8range),
-               numrange: ROM::SQL::Types::PG::NumRange.optional.meta(name: :numrange),
-               tsrange: ROM::SQL::Types::PG::TsRange.optional.meta(name: :tsrange),
-               tstzrange: ROM::SQL::Types::PG::TsTzRange.optional.meta(name: :tstzrange),
-               daterange: ROM::SQL::Types::PG::DateRange.optional.meta(name: :daterange)
-             )
-           )
+      expected.each do |name, attribute|
+        expect(schema[name]).to eql(attribute)
+      end
     end
   end
 

@@ -50,12 +50,12 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
                     [:attribute,
                      [:id,
                       [:nominal, [Integer, {}]],
-                      primary_key: true, source: :users]],
+                      primary_key: true, source: :users, alias: nil]],
                     [:attribute,
                      [:name,
                       [:nominal, [String, {}]],
                       index: true,
-                      source: :users]],
+                      source: :users, alias: nil]],
                   ])
 
         expect(migrated_schema.indexes.first).

@@ -31,7 +31,7 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
 
     conf.relation(:profiles) do
       schema(:users, infer: true) do
-        attribute :name, Types::String.meta(alias: 'login')
+        attribute :name, Types::String, alias: :login
       end
     end
 

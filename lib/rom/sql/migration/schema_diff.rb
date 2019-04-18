@@ -75,8 +75,8 @@ module ROM
             attr.primary_key?
           end
 
-          def unwrap(type)
-            type.optional? ? SQL::Attribute[type.right].meta(type.meta) : type
+          def unwrap(attr)
+            attr.optional? ? SQL::Attribute[attr.right, attr.options].meta(attr.meta) : attr
           end
         end
 
