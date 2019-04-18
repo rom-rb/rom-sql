@@ -6,6 +6,7 @@ gemspec
 
 gem 'dry-equalizer', github: 'dry-rb/dry-equalizer'
 gem 'dry-struct', github: 'dry-rb/dry-struct'
+gem 'dry-types', github: 'dry-rb/dry-types'
 
 gem 'rom', github: 'rom-rb/rom' do
   gem 'rom-core'
