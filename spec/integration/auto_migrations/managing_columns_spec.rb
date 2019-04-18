@@ -45,7 +45,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
                      [[:constrained,
                        [[:nominal, [NilClass, {}]],
                         [:predicate, [:type?, [[:type, NilClass], [:input, ROM::Undefined]]]],
-                        {}]],
+                        ]],
                       [:nominal, [String, {}]],
                       {}]],
                     source: :users]]
@@ -75,7 +75,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
                  [[:constrained,
                    [[:nominal, [NilClass, {}]],
                     [:predicate, [:type?, [[:type, NilClass], [:input, ROM::Undefined]]]],
-                    {}]],
+                    ]],
                   [:nominal, [String, {}]],
                   {}]],
                 source: :users]]
