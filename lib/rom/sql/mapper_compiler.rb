@@ -7,7 +7,7 @@ module ROM
         name, _, meta = node
 
         if meta[:wrapped]
-          [name, from: meta[:alias]]
+          [name, from: self.alias]
         else
           [name]
         end

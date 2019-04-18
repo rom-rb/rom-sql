@@ -162,4 +162,18 @@ RSpec.describe ROM::SQL::Function, :postgres do
         to eql('RANK("id") WITHIN GROUP (ORDER BY "users"."name")')
     end
   end
+
+  describe '#name' do
+    it 'returns name when no alias is configured' do
+      func = ROM::SQL::Function.new(type, name: :id)
+
+      expect(func.name).to eq(:id)
+    end
+
+    it 'returns alias when it is configured' do
+      func = ROM::SQL::Function.new(type, name: :id, alias: :pk)
+
+      expect(func.name).to eq(:pk)
+    end
+  end
 end

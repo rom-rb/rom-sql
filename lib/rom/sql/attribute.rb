@@ -26,8 +26,6 @@ module ROM
         fetch_or_store(args) { new(*args) }
       end
 
-      option :extensions, type: Types::Hash, default: -> { TypeExtensions[type] }
-
       # Return a new attribute with an alias
       #
       # @example
@@ -36,8 +34,10 @@ module ROM
       # @return [SQL::Attribute]
       #
       # @api public
-      def aliased(name)
-        super.meta(name: meta.fetch(:name, name), sql_expr: sql_expr.as(name))
+      def aliased(alias_name)
+        super.with(name: name || alias_name).meta(
+          sql_expr: sql_expr.as(alias_name)
+        )
       end
       alias_method :as, :aliased
 
@@ -46,7 +46,7 @@ module ROM
       # @api public
       def canonical
         if aliased?
-          meta(alias: nil, sql_expr: nil)
+          with(alias: nil).meta(sql_expr: nil)
         else
           self
         end
@@ -66,8 +66,8 @@ module ROM
 
         case sql_expr
         when Sequel::SQL::AliasedExpression, Sequel::SQL::Identifier, Sequel::SQL::QualifiedIdentifier
-          type = meta(qualified: table_alias || true)
-          type.meta(sql_expr: type.to_sql_name)
+          attr = meta(qualified: table_alias || true)
+          attr.meta(sql_expr: attr.to_sql_name)
         else
           raise QualifyError, "can't qualify #{name.inspect} (#{sql_expr.inspect})"
         end
@@ -292,11 +292,11 @@ module ROM
       def to_sql_name
         @_to_sql_name ||=
           if qualified? && aliased?
-            Sequel.qualify(table_name, name).as(meta[:alias])
+            Sequel.qualify(table_name, name).as(self.alias)
           elsif qualified?
             Sequel.qualify(table_name, name)
           elsif aliased?
-            Sequel.as(name, meta[:alias])
+            Sequel.as(name, self.alias)
           else
             Sequel[name]
           end
@@ -315,7 +315,7 @@ module ROM
       end
 
       # @api private
-      def meta_ast
+      def meta_options_ast
         meta = super
         meta[:index] = true if indexed?
         meta
@@ -418,6 +418,11 @@ module ROM
         else
           source.dataset
         end
+      end
+
+      # @api private
+      def extensions
+        TypeExtensions[type]
       end
 
       memoize :joined, :to_sql_name, :table_name, :canonical
