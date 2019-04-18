@@ -4,11 +4,11 @@ git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
 gemspec
 
-gem 'dry-equalizer', github: 'dry-rb/dry-equalizer'
-gem 'dry-struct', github: 'dry-rb/dry-struct'
-gem 'dry-types', github: 'dry-rb/dry-types'
+gem 'dry-equalizer', github: 'dry-rb/dry-equalizer', branch: 'master'
+gem 'dry-struct', github: 'dry-rb/dry-struct', branch: 'master'
+gem 'dry-types', github: 'dry-rb/dry-types', branch: 'master'
 
-gem 'rom', github: 'rom-rb/rom' do
+gem 'rom', github: 'rom-rb/rom', branch: 'master' do
   gem 'rom-core'
   gem 'rom-mapper'
   gem 'rom-repository', group: :tools
