@@ -20,11 +20,11 @@ group :test do
   gem 'pry', platforms: %i(jruby truffleruby)
   gem 'activesupport', '~> 5.0'
   gem 'simplecov', require: false
-  gem 'pg', '~> 1.1', platforms: :mri
-  gem 'mysql2', platforms: :mri
+  gem 'pg', '~> 1.1', platforms: %i(mri truffleruby)
+  gem 'mysql2', platforms: %i(mri truffleruby)
   gem 'jdbc-postgres', '>= 9.4.1212', platforms: :jruby
   gem 'jdbc-mysql', platforms: :jruby
-  gem 'sqlite3', platforms: :mri
+  gem 'sqlite3', platforms: %i(mri truffleruby)
   gem 'jdbc-sqlite3', platforms: :jruby
   gem 'ruby-oci8', platforms: :mri if ENV['ROM_USE_ORACLE']
 end
