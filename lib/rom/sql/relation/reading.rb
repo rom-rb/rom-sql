@@ -148,15 +148,19 @@ module ROM
 
         # Pluck values from a specific column
         #
-        # @example
+        # @example Single value
         #   users.pluck(:id)
-        #   # [1, 2, 3]
+        #   # [1, 2]
+        #
+        # @example Multiple values
+        #   users.pluck(:id, :name)
+        #   # [[1, "Jane"] [2, "Joe"]]
         #
         # @return [Array]
         #
         # @api public
-        def pluck(name)
-          select(name).map(name)
+        def pluck(*names)
+          select(*names).map(names.length == 1 ? names.first : names)
         end
 
         # Rename columns in a relation
