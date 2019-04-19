@@ -23,6 +23,9 @@ rvm:
 env:
   global:
     - COVERAGE='true'
+matrix:
+  allow_failures:
+    - rvm: jruby
 notifications:
   webhooks:
     urls:
