@@ -25,7 +25,7 @@ env:
     - COVERAGE='true'
 matrix:
   allow_failures:
-    - rvm: jruby
+    - rvm: jruby-9.2.7.0
 notifications:
   webhooks:
     urls:
