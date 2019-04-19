@@ -72,6 +72,26 @@ module ROM
             (total / per_page.to_f).ceil
           end
 
+          # Return one-based index of first tuple in page
+          #
+          # @return [Integer]
+          #
+          # @api public
+          def first_in_page
+            ((current_page - 1) * per_page) + 1
+          end
+
+          # Return one-based index of last tuple in page
+          #
+          # @return [Integer]
+          #
+          # @api public
+          def last_in_page
+            return total if current_page == total_pages
+
+            current_page * per_page
+          end
+
           # @api private
           def at(dataset, current_page, per_page = self.per_page)
             current_page = current_page.to_i
