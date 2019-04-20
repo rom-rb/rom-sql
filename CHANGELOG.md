@@ -48,7 +48,7 @@
 ### Changed
 
 * [BREAKING] Updated to work with `dry-types 1.0.0` (flash-gordon)
-* [BREAKING] `Types::Int` is now `Types::Integer` (flash-gordon)
+* [BREAKING] `Types::Int` is now `Types::Integer` (GustavoCaso)
 
 ### Fixed
 
