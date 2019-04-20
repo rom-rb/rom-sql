@@ -43,10 +43,17 @@
   households.project { fload::percentile_cont(0.5).within_group { income }.as(:percentile) }
   ```
  * Support for migrator options ie `ROM::Configuration.new(:sql, migrator: { path: "my_migrations" })` (rawburt)
+ * `Relation#pluck` works with multiple args too (timriley)
+
+### Changed
+
+* [BREAKING] Updated to work with `dry-types 1.0.0` (flash-gordon)
+* [BREAKING] `Types::Int` is now `Types::Integer` (flash-gordon)
 
 ### Fixed
 
 - Using `Relation#inner_join` with has-many-through produces correct query (issue #279) (doriantaylor + solnic)
+- Aliased attributes are handled correctly in `Relation#where` (waiting-for-dev)
 
 [Compare v2.5.0...master](https://github.com/rom-rb/rom-sql/compare/v2.5.0...master)
 
