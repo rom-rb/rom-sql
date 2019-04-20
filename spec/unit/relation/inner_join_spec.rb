@@ -122,10 +122,27 @@ RSpec.describe ROM::Relation, '#inner_join' do
                                    ])
       end
 
-      it 'joins relation with join keys inferred for m:m-through' do
-        result = tasks.inner_join(tags)
+      describe 'joined relation with join keys inferred for m:m-through' do
+        before do
+          tags.insert(id: 2, name: 'postponed')
+          tasks.task_tags.insert(tag_id: 2, task_id: 2)
+        end
 
-        expect(result.to_a).to eql([{ id: 1, user_id: 2, title: "Joe's task" }])
+        let(:expected_result) do
+          [{ id: 1, user_id: 2, title: "Joe's task" }, { id: 2, user_id: 1, title: "Jane's task" }]
+        end
+
+        it 'using target relation' do
+          result = tasks.inner_join(tags)
+
+          expect(result.to_a).to eql(expected_result)
+        end
+
+        it 'using target relation' do
+          result = tasks.inner_join(:tags)
+
+          expect(result.to_a).to eql(expected_result)
+        end
       end
 
       it 'joins by association name if no condition provided' do

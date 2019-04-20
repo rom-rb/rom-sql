@@ -36,8 +36,14 @@ module ROM
         # @api public
         def join(type, source = self.source, target = self.target)
           through_assoc = source.associations[through]
+
+          # first we join source to intermediary
           joined = through_assoc.join(type, source)
-          joined.__send__(type, target.name.dataset, join_keys).qualified
+
+          # then we join intermediary to target
+          target_ds  = target.name.dataset
+          through_jk = through_assoc.target.associations[target_ds].join_keys
+          joined.__send__(type, target_ds, through_jk).qualified
         end
 
         # @api public
