@@ -1,4 +1,4 @@
-## to-be-released
+## 3.0.0 to-be-released
 
 ### Added
 
@@ -43,6 +43,10 @@
   households.project { fload::percentile_cont(0.5).within_group { income }.as(:percentile) }
   ```
  * Support for migrator options ie `ROM::Configuration.new(:sql, migrator: { path: "my_migrations" })` (rawburt)
+
+### Fixed
+
+- Using `Relation#inner_join` with has-many-through produces correct query (issue #279) (doriantaylor + solnic)
 
 [Compare v2.5.0...master](https://github.com/rom-rb/rom-sql/compare/v2.5.0...master)
 
