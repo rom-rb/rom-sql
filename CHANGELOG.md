@@ -38,9 +38,9 @@
  * Support for `WITHIN GROUP` in the function DSL has been enhanced with block syntax (flash-gordon)
  ```ruby
   # previously available version
-  households.project { fload::percentile_cont(0.5).within_group(income).as(:percentile) }
+  households.project { float::percentile_cont(0.5).within_group(income).as(:percentile) }
   # using the new syntax
-  households.project { fload::percentile_cont(0.5).within_group { income }.as(:percentile) }
+  households.project { float::percentile_cont(0.5).within_group { income }.as(:percentile) }
   ```
  * Support for migrator options ie `ROM::Configuration.new(:sql, migrator: { path: "my_migrations" })` (rawburt)
  * `Relation#pluck` works with multiple args too (timriley)
