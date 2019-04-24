@@ -4,12 +4,6 @@ git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
 gemspec
 
-gem 'rom', github: 'rom-rb/rom', branch: 'master' do
-  gem 'rom-core'
-  gem 'rom-mapper'
-  gem 'rom-repository', group: :tools
-end
-
 group :test do
   gem 'pry-byebug', platforms: :mri
   gem 'pry', platforms: :jruby
