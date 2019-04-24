@@ -55,7 +55,7 @@
 - Using `Relation#inner_join` with has-many-through produces correct query (issue #279) (doriantaylor + solnic)
 - Aliased attributes are handled correctly in `Relation#where` (waiting-for-dev)
 
-[Compare v2.5.0...master](https://github.com/rom-rb/rom-sql/compare/v2.5.0...master)
+[Compare v2.5.0...v3.0.0](https://github.com/rom-rb/rom-sql/compare/v2.5.0...v3.0.0)
 
 ## v2.5.0 2018-06-08
 
