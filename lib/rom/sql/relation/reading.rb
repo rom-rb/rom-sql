@@ -1048,9 +1048,11 @@ module ROM
         # @api private
         def __join__(type, other, join_cond = EMPTY_HASH, opts = EMPTY_HASH, &block)
           if other.is_a?(Symbol) || other.is_a?(ROM::Relation::Name)
-            if join_cond.empty?
+            if join_cond.equal?(EMPTY_HASH) && !block
               assoc = associations[other]
               assoc.join(type, self)
+            elsif block
+              __join__(type, other, JoinDSL.new(schema).(&block), opts)
             else
               new(dataset.__send__(type, other.to_sym, join_cond, opts, &block))
             end
