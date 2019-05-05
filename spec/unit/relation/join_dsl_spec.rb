@@ -34,7 +34,7 @@ RSpec.describe ROM::Relation, '#join_dsl' do
                ])
     end
 
-    it 'works with right join' do
+    it 'works with left join' do
       result = users.left_join(tasks) { |tasks:, users: |
         tasks[:user_id].is(users[:id]) & (tasks[:id] > 1)
       }.select(relation[:title], :name)
