@@ -1,3 +1,11 @@
+## 3.0.1 2019-05-05
+
+### Fixed
+
+* Using joins with a relation object as the target and a block-based conditions produces correct query now (issue #331) (solnic)
+
+[Compare v3.0.0...v3.0.1](https://github.com/rom-rb/rom-sql/compare/v3.0.0...v3.0.1)
+
 ## 3.0.0 2019-04-24
 
 ### Added
