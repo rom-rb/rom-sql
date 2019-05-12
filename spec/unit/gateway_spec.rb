@@ -52,6 +52,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
 
       expect(connection).to receive(:extension).with(:pg_array, :pg_json, :pg_enum, :pg_array_ops)
       expect(connection).to receive(:extension).with(:freeze_datasets) unless RUBY_ENGINE == 'rbx'
+      expect(connection).to receive(:extension).with(:null_dataset)
 
       ROM::SQL::Gateway.new(connection, extensions: extensions)
     end
