@@ -807,7 +807,16 @@ module ROM
         #
         # @api public
         def union(relation, options = EMPTY_HASH, &block)
-          new(dataset.__send__(__method__, relation.dataset, options, &block))
+          # We use the original relation name here if both relations have the
+          # same name. This makes it so if the user at some point references
+          # the relation directly by name later on things won't break in
+          # confusing ways.
+          same_relation = name == relation.name
+          alias_name =  same_relation ? name : "#{name.to_sym}__#{relation.name.to_sym}"
+          opts = { alias: alias_name.to_sym, **options }
+
+          new_schema = schema.qualified(opts[:alias])
+          new_schema.(new(dataset.__send__(__method__, relation.dataset, opts, &block)))
         end
 
         # Checks whether a relation has at least one tuple
