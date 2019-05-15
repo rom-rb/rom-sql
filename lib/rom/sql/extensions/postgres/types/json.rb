@@ -16,16 +16,45 @@ module ROM
           end
         end
 
-        JSON = Type('json') do
-          (SQL::Types::Array | SQL::Types::Hash)
-            .constructor(Sequel.method(:pg_json))
-            .meta(read: JSONRead)
-        end
+        if Sequel.respond_to?(:pg_json_wrap)
+          json_types = [
+            SQL::Types::Array,
+            SQL::Types::Hash,
+            SQL::Types::Integer,
+            SQL::Types::Float,
+            SQL::Types::String,
+            SQL::Types::Nil,
+            SQL::Types::True,
+            SQL::Types::False
+          ]
 
-        JSONB = Type('jsonb') do
-          (SQL::Types::Array | SQL::Types::Hash)
-            .constructor(Sequel.method(:pg_jsonb))
-            .meta(read: JSONRead)
+          JSON = Type('json') do
+            json_cast_methods = Hash.new(:pg_json)
+            json_cast_methods.update(json_types.each_with_object({}) { |t, h| h[t.primitive] = :pg_json_wrap })
+
+            json_types
+              .reduce(:|)
+              .constructor { |value| Sequel.public_send(json_cast_methods[value.class], value) }
+              .meta(read: JSONRead)
+          end
+
+          JSONB = Type('jsonb') do
+            jsonb_cast_methods = Hash.new(:pg_jsonb)
+            jsonb_cast_methods.update(json_types.each_with_object({}) { |t, h| h[t.primitive] = :pg_jsonb_wrap })
+
+            json_types
+              .reduce(:|)
+              .constructor { |value| Sequel.public_send(jsonb_cast_methods[value.class], value) }
+              .meta(read: JSONRead)
+          end
+        else
+          JSON = Type('json') do
+            (SQL::Types::Array | SQL::Types::Hash).constructor(Sequel.method(:pg_json)).meta(read: JSONRead)
+          end
+
+          JSONB = Type('jsonb') do
+            (SQL::Types::Array | SQL::Types::Hash).constructor(Sequel.method(:pg_jsonb)).meta(read: JSONRead)
+          end
         end
 
         # @!parse

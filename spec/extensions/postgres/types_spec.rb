@@ -73,12 +73,20 @@ RSpec.describe 'ROM::SQL::Postgres::Types' do
       expect(output.to_a).to eql(input)
     end
 
-    it 'accepts any other type of objects' do
-      input  = [nil, 1, 'sutin', :sutin, 1.0].sample
-      output = described_class[input]
+    it 'accepts any other json primitives' do
+      [nil, 1, 'sutin', 1.0].each do |input|
+        output = described_class[input]
 
-      expect(output).to be_instance_of(Sequel::Postgres::JSONOp)
-      expect(output.value).to eql(input)
+        expect(output).to be_a(Sequel::Postgres::JSONObject)
+        expect(output.__getobj__).to be(input)
+      end
+    end
+
+    it 'falls back to JSONOp for other objects' do
+      output = described_class[:sutin]
+
+      expect(output).to be_a(Sequel::Postgres::JSONOp)
+      expect(output.value).to be(:sutin)
     end
   end
 
@@ -99,12 +107,13 @@ RSpec.describe 'ROM::SQL::Postgres::Types' do
       expect(output.to_a).to eql(input)
     end
 
-    it 'accepts any other type of objects' do
-      input  = [nil, 1, 'sutin', :sutin, 1.0].sample
-      output = described_class[input]
+    it 'accepts any other json primitives' do
+      [nil, 1, 'sutin', 1.0].each do |input|
+        output = described_class[input]
 
-      expect(output).to be_instance_of(Sequel::Postgres::JSONBOp)
-      expect(output.value).to eql(input)
+        expect(output).to be_a(Sequel::Postgres::JSONBObject)
+        expect(output.__getobj__).to be(input)
+      end
     end
   end
 
