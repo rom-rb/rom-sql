@@ -22,6 +22,9 @@ rvm:
 env:
   global:
     - COVERAGE='true'
+  matrix:
+    - USE_SEQUEL_MASTER=true
+    - USE_SEQUEL_MASTER=false
 matrix:
   include:
     - rvm: jruby-9.2.7.0
