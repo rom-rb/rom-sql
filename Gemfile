@@ -2,6 +2,10 @@ source 'https://rubygems.org'
 
 git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
+if ENV['USE_SEQUEL_MASTER'] == 'true'
+  gem 'sequel', github: 'jeremyevans/sequel'
+end
+
 gemspec
 
 group :test do
