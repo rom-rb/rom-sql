@@ -1,5 +1,5 @@
 [gem]: https://rubygems.org/gems/rom-sql
-[travis]: https://travis-ci.org/rom-rb/rom-sql
+[travis]: https://travis-ci.com/rom-rb/rom-sql
 [codeclimate]: https://codeclimate.com/github/rom-rb/rom-sql
 [inchpages]: http://inch-ci.org/github/rom-rb/rom-sql
 [chat]: https://rom-rb.zulipchat.com
@@ -7,7 +7,7 @@
 # rom-sql [![Join the chat at https://rom-rb.zulipchat.com](https://img.shields.io/badge/rom--rb-join%20chat-942283.svg)][chat]
 
 [![Gem Version](https://badge.fury.io/rb/rom-sql.svg)][gem]
-[![Build Status](https://travis-ci.org/rom-rb/rom-sql.svg?branch=master)][travis]
+[![Build Status](https://travis-ci.com/rom-rb/rom-sql.svg?branch=master)][travis]
 [![Code Climate](https://codeclimate.com/github/rom-rb/rom-sql/badges/gpa.svg)][codeclimate]
 [![Test Coverage](https://codeclimate.com/github/rom-rb/rom-sql/badges/coverage.svg)][codeclimate]
 [![Inline docs](http://inch-ci.org/github/rom-rb/rom-sql.svg?branch=master)][inchpages]
