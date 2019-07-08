@@ -11,6 +11,12 @@ Gem::Specification.new do |spec|
   spec.description   = spec.summary
   spec.homepage      = 'http://rom-rb.org'
   spec.license       = 'MIT'
+  spec.metadata      = {
+    'source_code_uri'   => 'https://github.com/rom-rb/rom-sql',
+    'documentation_uri' => 'https://api.rom-rb.org/rom-sql/',
+    'mailing_list_uri'  => 'https://discourse.rom-rb.org/',
+    'bug_tracker_uri'   => 'https://github.com/rom-rb/rom-sql/issues',
+  }
 
   spec.files         = Dir['CHANGELOG.md', 'LICENSE', 'README.md', 'lib/**/*']
   spec.require_paths = ['lib']
