@@ -27,6 +27,7 @@ RSpec.describe ROM::Relation, '#project' do
                         project { integer::count(id) }.
                         where(tasks[:user_id] => users[:id]).
                         where(tasks[:title].ilike('joe%')).
+                        order(nil).
                         query
 
         results = relation.project { [id, tasks_count.as(:tasks_count)] }.to_a
