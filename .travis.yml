@@ -25,6 +25,8 @@ env:
   matrix:
     - USE_SEQUEL_MASTER=true
     - USE_SEQUEL_MASTER=false
+    - USE_ROM_MASTER=true
+    - USE_ROM_MASTER=false
 matrix:
   include:
     - rvm: jruby-9.2.7.0

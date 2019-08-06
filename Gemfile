@@ -6,6 +6,10 @@ if ENV['USE_SEQUEL_MASTER'] == 'true'
   gem 'sequel', github: 'jeremyevans/sequel'
 end
 
+if ENV['USE_ROM_MASTER'] == 'true'
+  gem 'rom-core', github: 'rom-rb/rom'
+end
+
 gemspec
 
 group :test do
