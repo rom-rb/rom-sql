@@ -995,7 +995,7 @@ module ROM
         # @return [SQL::Attribute]
         def query
           attr = schema.to_a[0]
-          subquery = schema.project(attr).(self).dataset.unordered
+          subquery = schema.project(attr).(self).dataset
           SQL::Attribute[attr.type].meta(sql_expr: subquery)
         end
 

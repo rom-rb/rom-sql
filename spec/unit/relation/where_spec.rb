@@ -98,6 +98,21 @@ RSpec.describe ROM::Relation, '#where' do
                  ).to_a
         expect(rows.size).to eql(2)
       end
+
+      it 'really works with subqueries' do
+        conn[:users].insert name: 'Jane'
+
+        tasks = self.tasks
+        users = self.users
+        rows = relation.
+                 where(
+                   tasks[:user_id].is(
+                     users.select(:id).order { name.desc }.limit(1).query
+                   )
+                 ).to_a
+
+        expect(rows).to match([{ id: an_instance_of(Integer), title: "Joe's task" }])
+      end
     end
 
     context 'with :read types' do
