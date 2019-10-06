@@ -1,4 +1,5 @@
 require 'sequel/core'
+require 'singleton'
 
 Sequel.extension(*%i(pg_json pg_json_ops))
 
@@ -16,35 +17,60 @@ module ROM
           end
         end
 
-        if Sequel.respond_to?(:pg_json_wrap)
-          json_types = [
+        class JSONNullType
+          include ::Singleton
+
+          def to_s
+            'null'
+          end
+
+          def inspect
+            'null'
+          end
+        end
+
+        JSONNull = JSONNullType.instance.freeze
+
+        if ::Sequel.respond_to?(:pg_json_wrap)
+          primitive_json_types = [
             SQL::Types::Array,
             SQL::Types::Hash,
             SQL::Types::Integer,
             SQL::Types::Float,
             SQL::Types::String,
-            SQL::Types::Nil,
             SQL::Types::True,
             SQL::Types::False
           ]
 
           JSON = Type('json') do
-            json_cast_methods = Hash.new(:pg_json)
-            json_cast_methods.update(json_types.each_with_object({}) { |t, h| h[t.primitive] = :pg_json_wrap })
+            casts = ::Hash.new(-> v { ::Sequel.pg_json(v) })
+            json_null = ::Sequel.pg_json_wrap(nil)
+            casts[JSONNullType] = -> _ { json_null }
+            casts[::NilClass] = -> _ { json_null }
+            primitive_json_types.each do |type|
+              casts[type.primitive] = -> v { ::Sequel.pg_json_wrap(v) }
+            end
+            casts.freeze
 
-            json_types
+            [*primitive_json_types, SQL::Types.Constant(JSONNull)]
               .reduce(:|)
-              .constructor { |value| Sequel.public_send(json_cast_methods[value.class], value) }
+              .constructor { |value| casts[value.class].(value) }
               .meta(read: JSONRead)
           end
 
           JSONB = Type('jsonb') do
-            jsonb_cast_methods = Hash.new(:pg_jsonb)
-            jsonb_cast_methods.update(json_types.each_with_object({}) { |t, h| h[t.primitive] = :pg_jsonb_wrap })
+            casts = ::Hash.new(-> v { ::Sequel.pg_jsonb(v) })
+            jsonb_null = ::Sequel.pg_jsonb_wrap(nil)
+            casts[JSONNullType] = -> _ { jsonb_null }
+            casts[::NilClass] = -> _ { jsonb_null }
+            primitive_json_types.each do |type|
+              casts[type.primitive] = -> v { ::Sequel.pg_jsonb_wrap(v) }
+            end
+            casts.freeze
 
-            json_types
+            [*primitive_json_types, SQL::Types.Constant(JSONNull)]
               .reduce(:|)
-              .constructor { |value| Sequel.public_send(jsonb_cast_methods[value.class], value) }
+              .constructor { |value| casts[value.class].(value) }
               .meta(read: JSONRead)
           end
         else

@@ -151,8 +151,7 @@ module ROM
           private
 
           def cast(type, value)
-            db_type = type.optional? ? type.right.meta[:type] : type.meta[:type]
-            Sequel.cast(value, db_type)
+            Sequel.cast(value, type.meta[:type])
           end
         end
       end

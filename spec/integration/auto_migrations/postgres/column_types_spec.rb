@@ -62,41 +62,40 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
     it 'has support for PG data types' do
       gateway.auto_migrate!(conf, inline: true)
 
-      expect(migrated_schema.to_h).
-        to eql(
-             attributes(
-               id: ROM::SQL::Types::Integer.meta(primary_key: true),
-               string: ROM::SQL::Types::String,
-               int: ROM::SQL::Types::Integer,
-               time: ROM::SQL::Types::Time,
-               date: ROM::SQL::Types::Date,
-               decimal: ROM::SQL::Types::Decimal,
-               string_nullable: ROM::SQL::Types::String.optional,
-               jsonb: ROM::SQL::Types::PG::JSONB,
-               json: ROM::SQL::Types::PG::JSON,
-               tags: ROM::SQL::Types::PG::Array('text'),
-               money: ROM::SQL::Types::PG::Money,
-               uuid: ROM::SQL::Types::PG::UUID,
-               bytea: ROM::SQL::Types::PG::Bytea,
-               hstore: ROM::SQL::Types::PG::HStore,
-               inet: ROM::SQL::Types::PG::IPAddress,
-               xml: ROM::SQL::Types::PG::XML,
-               point: ROM::SQL::Types::PG::Point,
-               line: ROM::SQL::Types::PG::Line,
-               circle: ROM::SQL::Types::PG::Circle,
-               box: ROM::SQL::Types::PG::Box,
-               lseg: ROM::SQL::Types::PG::LineSegment,
-               polygon: ROM::SQL::Types::PG::Polygon,
-               path: ROM::SQL::Types::PG::Path,
-               int4range: ROM::SQL::Types::PG::Int4Range,
-               int8range: ROM::SQL::Types::PG::Int8Range,
-               numrange: ROM::SQL::Types::PG::NumRange,
-               tsrange: ROM::SQL::Types::PG::TsRange,
-               tstzrange: ROM::SQL::Types::PG::TsTzRange,
-               daterange: ROM::SQL::Types::PG::DateRange,
-               ltree_path: ROM::SQL::Types::PG::LTree
-             )
-           )
+      expect(migrated_schema.to_h).to eql(
+        attributes(
+          id: ROM::SQL::Types::Integer.meta(primary_key: true),
+          string: ROM::SQL::Types::String,
+          int: ROM::SQL::Types::Integer,
+          time: ROM::SQL::Types::Time,
+          date: ROM::SQL::Types::Date,
+          decimal: ROM::SQL::Types::Decimal,
+          string_nullable: ROM::SQL::Types::String.optional,
+          jsonb: ROM::SQL::Types::PG::JSONB,
+          json: ROM::SQL::Types::PG::JSON,
+          tags: ROM::SQL::Types::PG::Array('text'),
+          money: ROM::SQL::Types::PG::Money,
+          uuid: ROM::SQL::Types::PG::UUID,
+          bytea: ROM::SQL::Types::PG::Bytea,
+          hstore: ROM::SQL::Types::PG::HStore,
+          inet: ROM::SQL::Types::PG::IPAddress,
+          xml: ROM::SQL::Types::PG::XML,
+          point: ROM::SQL::Types::PG::Point,
+          line: ROM::SQL::Types::PG::Line,
+          circle: ROM::SQL::Types::PG::Circle,
+          box: ROM::SQL::Types::PG::Box,
+          lseg: ROM::SQL::Types::PG::LineSegment,
+          polygon: ROM::SQL::Types::PG::Polygon,
+          path: ROM::SQL::Types::PG::Path,
+          int4range: ROM::SQL::Types::PG::Int4Range,
+          int8range: ROM::SQL::Types::PG::Int8Range,
+          numrange: ROM::SQL::Types::PG::NumRange,
+          tsrange: ROM::SQL::Types::PG::TsRange,
+          tstzrange: ROM::SQL::Types::PG::TsTzRange,
+          daterange: ROM::SQL::Types::PG::DateRange,
+          ltree_path: ROM::SQL::Types::PG::LTree
+        )
+      )
     end
   end
 end

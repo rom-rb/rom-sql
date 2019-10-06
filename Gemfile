@@ -10,6 +10,8 @@ if ENV['USE_ROM_MASTER'] == 'true'
   gem 'rom-core', github: 'rom-rb/rom'
 end
 
+gem 'dry-types', github: 'dry-rb/dry-types', branch: 'master'
+
 gemspec
 
 group :test do
