@@ -2,15 +2,21 @@
 
 ### Added
 
-- Support for `.nullify` on a relation for easier usage of the null-object
-  pattern (@ianks)
+- `.nullify` that turns the result set of any relation into an empty set. Analogue of `ActiveRecord#none` (ianks + flash-gordon)
+
   ```ruby
+  # Don't forget to activate the plugin
+  conf.relation(:users) do
+    use :nullify
+  end
+
   users.nullify.count # => will always be 0
   users.nullify.to_a # => will always be empty ([])
   ```
+
 - Primitive JSON-compatible values such as Integer and String are automatically coerced to correct JSONB values and back if you're using a recent Sequel version (>= 5.2.0) (flash-gordon)
 
-[Compare v3.0.1...master](https://github.com/rom-rb/rom-sql/compare/v3.0.0...master)
+[Compare v3.0.1...master](https://github.com/rom-rb/rom-sql/compare/v3.0.1...master)
 
 ## 3.0.1 2019-05-05
 
