@@ -82,6 +82,13 @@ RSpec.describe 'ROM::SQL::Postgres::Types' do
       end
     end
 
+    it 'maps JSONNull to nil' do
+      # this is a special value to differentiate optional JSON(B) columns with
+      # SQL null from JSON(B) with JSON null
+      expect(described_class[ROM::SQL::Types::PG::JSONNull]).to be_a(Sequel::Postgres::JSONNull)
+      expect(described_class[ROM::SQL::Types::PG::JSONNull].__getobj__).to be_nil
+    end
+
     it 'falls back to JSONOp for other objects' do
       output = described_class[:sutin]
 
@@ -114,6 +121,13 @@ RSpec.describe 'ROM::SQL::Postgres::Types' do
         expect(output).to be_a(Sequel::Postgres::JSONBObject)
         expect(output.__getobj__).to be(input)
       end
+    end
+
+    it 'maps JSONNull to nil' do
+      # this is a special value to differentiate optional JSON(B) columns with
+      # SQL null from JSON(B) with JSON null
+      expect(described_class[ROM::SQL::Types::PG::JSONNull]).to be_a(Sequel::Postgres::JSONBNull)
+      expect(described_class[ROM::SQL::Types::PG::JSONNull].__getobj__).to be_nil
     end
   end
 

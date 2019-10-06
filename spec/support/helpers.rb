@@ -38,9 +38,7 @@ module Helpers
         attr = ROM::SQL::Attribute.new(type, name: key)
       end
 
-      meta = { source: source }
-
-      acc[key] = attr.meta(meta)
+      acc[key] = attr.meta(source: source)
     end
   end
 end
