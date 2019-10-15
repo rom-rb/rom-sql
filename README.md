@@ -55,7 +55,7 @@ In order to test the changes, execute:
 
 ```bash
 docker-compose build gem
-docker-compose run --rm gem 'rspec'
+bin/run-specs
 ```
 
 ### Stopping the dependencies

@@ -1,0 +1,3 @@
+#!/bin/sh
+
+exec docker-compose run --rm gem "bundle exec rspec $*"
