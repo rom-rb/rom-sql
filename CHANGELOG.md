@@ -14,6 +14,9 @@
   users.nullify.to_a # => will always be empty ([])
   ```
 
+### Fixed
+
+- Make `Relation#wrap` respect association views (@ianks)
 - Primitive JSON-compatible values such as Integer and String are automatically coerced to correct JSONB values and back if you're using a recent Sequel version (>= 5.2.0) (flash-gordon)
 
 [Compare v3.0.1...master](https://github.com/rom-rb/rom-sql/compare/v3.0.1...master)

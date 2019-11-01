@@ -1,4 +1,5 @@
 require 'rom/attribute'
+require 'rom/sql/attribute_wrapping'
 
 module ROM
   module SQL
@@ -6,6 +7,8 @@ module ROM
     #
     # @api public
     class Function < ROM::Attribute
+      include AttributeWrapping
+
       class << self
         # @api private
         def frame_limit(value)
@@ -36,6 +39,19 @@ module ROM
       WINDOW_FRAMES[:all] = WINDOW_FRAMES[rows: [:start, :end]]
       WINDOW_FRAMES[:rows] = WINDOW_FRAMES[rows: [:start, :current]]
       WINDOW_FRAMES[range: :current] = WINDOW_FRAMES[range: [:current, :current]]
+
+      # Return a new attribute with an alias
+      #
+      # @example
+      #   string::coalesce(users[:name], users[:id]).aliased(:display_name)
+      #
+      # @return [SQL::Function]
+      #
+      # @api public
+      def aliased(alias_name)
+        super.with(name: name || alias_name)
+      end
+      alias_method :as, :aliased
 
       # @api private
       def sql_literal(ds)

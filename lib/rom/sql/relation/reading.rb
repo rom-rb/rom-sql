@@ -1011,6 +1011,21 @@ module ROM
           new(dataset.__send__(__method__))
         end
 
+        # Wrap other relations using association names
+        #
+        # @example
+        #   tasks.wrap(:owner)
+        #
+        # @param [Array<Symbol>] names A list with association identifiers
+        #
+        # @return [Wrap]
+        #
+        # @api public
+        def wrap(*names)
+          others = names.map { |name| associations[name].wrapped }
+          wrap_around(*others)
+        end
+
         private
 
         # Build a locking clause

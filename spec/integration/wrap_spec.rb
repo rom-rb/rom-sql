@@ -86,6 +86,67 @@ RSpec.describe ROM::SQL::Wrap do
           let(:name) { :assignee }
         end
       end
+
+      context 'using association with a view' do
+        before do
+          conf.relation(:users) do
+            auto_map false
+
+            schema(infer: true)
+
+            def with_extra_attributes
+              select { `'testing'`.as(:extra_attribute) }
+            end
+
+            def with_extra_attributes_from_function
+              select { string.coalesce(`'testing'`, `'test'`).as(:extra_attribute) }
+            end
+
+            def with_renamed_attribute
+              select { [name.as(:new_name)] }
+            end
+          end
+
+          conf.relation(:tasks) do
+            auto_map true
+
+            schema(infer: true) do
+              associations do
+                belongs_to :users, view: :with_extra_attributes, as: :enhanced_user
+                belongs_to :users, view: :with_extra_attributes_from_function, as: :enhanced_user_func
+                belongs_to :users, view: :with_renamed_attribute, as: :with_renamed_attribute
+              end
+            end
+          end
+        end
+
+        it 'includes the extra attributes' do
+          result = tasks.wrap(:enhanced_user).to_a
+
+          expect(result.length).to be > 0
+
+          result.each do |task|
+            expect(task[:enhanced_user]).to eql(extra_attribute: 'testing')
+          end
+        end
+
+        it 'works with functions' do
+          result = tasks.wrap(:enhanced_user_func).to_a
+
+          expect(result.length).to be > 0
+
+          result.each do |task|
+            expect(task[:enhanced_user_func]).to eql(extra_attribute: 'testing')
+          end
+        end
+
+        it 'allows aliasing attributes' do
+          result = tasks.wrap(:with_renamed_attribute).to_a
+          values = result.map { |item| item[:with_renamed_attribute][:new_name] }
+
+          expect(values).to contain_exactly("Jane", "Joe")
+        end
+      end
     end
   end
 end
