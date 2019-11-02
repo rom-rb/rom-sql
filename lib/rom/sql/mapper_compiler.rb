@@ -7,10 +7,19 @@ module ROM
         name, _, meta_options = node
 
         if meta_options[:wrapped]
-          [name, from: meta_options[:alias]]
+          [extract_wrapped_name(node), from: meta_options[:alias]]
         else
           [name]
         end
+      end
+
+      private
+
+      def extract_wrapped_name(node)
+        _, _, meta_options = node
+        unwrapped_name = meta_options[:alias].to_s.dup
+        unwrapped_name.slice!("#{meta_options[:wrapped]}_")
+        unwrapped_name.to_sym
       end
     end
   end

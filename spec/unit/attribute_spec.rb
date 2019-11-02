@@ -94,6 +94,13 @@ RSpec.describe ROM::SQL::Attribute, :postgres do
     end
   end
 
+  describe '#aliased' do
+    it 'can alias a previously aliased attribute' do
+      expect(users[:id].as(:uid).as(:uuid).sql_literal(ds)).
+        to eql(%("users"."id" AS "uuid"))
+    end
+  end
+
   describe 'extensions' do
     before do
       ROM::SQL::TypeExtensions.instance_variable_get(:@types)['sqlite'].delete('custom')

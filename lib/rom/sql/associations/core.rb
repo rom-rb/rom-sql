@@ -14,6 +14,14 @@ module ROM
 
           target.where(target_key => target_pks)
         end
+
+        # @api private
+        def wrapped
+          new_target = view ? target.send(view) : target
+          to_wrap = self.class.allocate
+          to_wrap.send(:initialize, definition, options.merge(target: new_target))
+          to_wrap.wrap
+        end
       end
     end
   end

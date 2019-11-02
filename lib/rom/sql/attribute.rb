@@ -5,6 +5,8 @@ require 'rom/attribute'
 
 require 'rom/sql/type_extensions'
 require 'rom/sql/projection_dsl'
+require 'rom/sql/attribute_wrapping'
+require 'rom/sql/attribute_aliasing'
 
 module ROM
   module SQL
@@ -12,6 +14,9 @@ module ROM
     #
     # @api public
     class Attribute < ROM::Attribute
+      include AttributeWrapping
+      include AttributeAliasing
+
       OPERATORS = %i[>= <= > <].freeze
       NONSTANDARD_EQUALITY_VALUES = [true, false, nil].freeze
       META_KEYS = %i(index foreign_key target sql_expr qualified).freeze
@@ -25,21 +30,6 @@ module ROM
       def self.[](*args)
         fetch_or_store(args) { new(*args) }
       end
-
-      # Return a new attribute with an alias
-      #
-      # @example
-      #   users[:id].aliased(:user_id)
-      #
-      # @return [SQL::Attribute]
-      #
-      # @api public
-      def aliased(alias_name)
-        super.with(name: name || alias_name).meta(
-          sql_expr: sql_expr.as(alias_name)
-        )
-      end
-      alias_method :as, :aliased
 
       # Return a new attribute in its canonical form
       #
