@@ -2,8 +2,8 @@ version: "2"
 
 prepare:
   fetch:
-  - url: "https://raw.githubusercontent.com/rom-rb/devtools/master/.rubocop.yml"
-    path: ".rubocop.yml"
+    - url: "https://raw.githubusercontent.com/rom-rb/devtools/master/shared/.rubocop.yml"
+      path: ".rubocop.yml"
 
 exclude_patterns:
   - "benchmarks/"
