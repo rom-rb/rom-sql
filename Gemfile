@@ -15,6 +15,7 @@ gem 'dry-types', github: 'dry-rb/dry-types', branch: 'master'
 gemspec
 
 group :test do
+  gem 'codacy-coverage', require: false
   gem 'pry-byebug', platforms: :mri
   gem 'pry', platforms: :jruby
   gem 'activesupport', '~> 5.0'
