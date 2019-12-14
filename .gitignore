@@ -16,3 +16,5 @@
 mkmf.log
 log/*.log
 .rubocop.yml
+gemfiles/*.lock
+
