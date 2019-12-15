@@ -3,11 +3,12 @@ name: ci
 on:
   push:
     paths:
-      - .github/workflows/ci.yml
+      - .github/workflows/custom_ci.yml
       - lib/**
       - spec/**
       - Gemfile
       - "*.gemspec"
+      - .rubocop.yml 
   pull_request:
     branches:
       - master
