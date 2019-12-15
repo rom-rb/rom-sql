@@ -1,8 +1,8 @@
-## Unreleased
+## 3.1.0 2019-12-16
 
 ### Added
 
-- `.nullify` that turns the result set of any relation into an empty set. Analogue of `ActiveRecord#none` (ianks + flash-gordon)
+- `.nullify` that turns the result set of any relation into an empty set. Analogue of `ActiveRecord#none` (@ianks + @flash-gordon)
 
   ```ruby
   # Don't forget to activate the plugin
@@ -17,9 +17,11 @@
 ### Fixed
 
 - Make `Relation#wrap` respect association views (@ianks)
-- Primitive JSON-compatible values such as Integer and String are automatically coerced to correct JSONB values and back if you're using a recent Sequel version (>= 5.2.0) (flash-gordon)
+- Primitive JSON-compatible values such as Integer and String are automatically coerced to correct JSONB values and back if you're using a recent Sequel version (>= 5.2.0) (@flash-gordon)
+- Properly qualify relations when in `Relation#union` (@ianks)
+- `Relation#query` no longer removes order in the relation (@DNNX)
 
-[Compare v3.0.1...master](https://github.com/rom-rb/rom-sql/compare/v3.0.1...master)
+[Compare v3.0.1...v3.1.0](https://github.com/rom-rb/rom-sql/compare/v3.0.1...v3.1.0)
 
 ## 3.0.1 2019-05-05
 
