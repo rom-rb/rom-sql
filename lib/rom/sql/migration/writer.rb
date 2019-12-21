@@ -30,9 +30,9 @@ module ROM
 
         def write(operations, buffer, indent)
           operations.each do |operation|
-            op, args, nested = operation
+            op, args, kwargs, nested = operation
             buffer << indent << op.to_s << ' '
-            write_arguments(buffer, *args)
+            write_arguments(buffer, args, kwargs)
 
             if !nested.empty?
               buffer << ' do'
@@ -42,7 +42,7 @@ module ROM
           end
         end
 
-        def write_arguments(buffer, *args, **kwargs)
+        def write_arguments(buffer, args, kwargs)
           buffer << args.map(&:inspect).join(', ')
           kwargs.each do |key, value|
             buffer << ', ' << key.to_s << ': ' << value.inspect
@@ -53,7 +53,7 @@ module ROM
           create_or_alter, args = op
           table_name = args[0]
 
-          "#{ create_or_alter.to_s.sub('_table', '') }_#{ table_name }"
+          "#{create_or_alter.to_s.sub('_table', '')}_#{table_name}"
         end
       end
     end

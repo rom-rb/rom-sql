@@ -19,7 +19,7 @@ module ROM
         def wrapped
           new_target = view ? target.send(view) : target
           to_wrap = self.class.allocate
-          to_wrap.send(:initialize, definition, options.merge(target: new_target))
+          to_wrap.send(:initialize, definition, **options, target: new_target)
           to_wrap.wrap
         end
       end

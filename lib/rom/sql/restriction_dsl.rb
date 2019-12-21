@@ -6,7 +6,13 @@ module ROM
     class RestrictionDSL < DSL
       # @api private
       def call(&block)
-        instance_exec(select_relations(block.parameters), &block)
+        arg, kwargs = select_relations(block.parameters)
+
+        if kwargs.nil?
+          instance_exec(arg, &block)
+        else
+          instance_exec(**kwargs, &block)
+        end
       end
 
       private

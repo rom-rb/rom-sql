@@ -48,7 +48,7 @@ module ROM
           # @see ROM::Command::ClassInterface.build
           #
           # @api public
-          def build(relation, options = EMPTY_HASH)
+          def build(relation, **options)
             command = super
 
             configured_assocs = command.configured_associations
@@ -146,7 +146,7 @@ module ROM
           def with_association(name, opts = EMPTY_HASH)
             self.class.build(
               relation,
-              { **options, associations: associations.merge(name => opts) }
+              **options, associations: associations.merge(name => opts)
             )
           end
         end

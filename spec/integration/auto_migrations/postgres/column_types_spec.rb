@@ -18,7 +18,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
   subject(:migrated_schema) do
     empty = define_schema(table_name)
-    empty.with(inferrer.(empty, gateway))
+    empty.with(**inferrer.(empty, gateway))
   end
 
   describe 'common types' do

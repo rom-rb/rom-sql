@@ -2,6 +2,8 @@ source 'https://rubygems.org'
 
 gemspec
 
+gem 'transproc', github: 'solnic/transproc', branch: 'fix-keyword-warnings'
+
 group :test do
   gem 'codacy-coverage', require: false
   gem 'pry-byebug', platforms: :mri
@@ -15,4 +17,5 @@ group :test do
   gem 'sqlite3', platforms: :mri
   gem 'jdbc-sqlite3', platforms: :jruby
   gem 'ruby-oci8', platforms: :mri if ENV['ROM_USE_ORACLE']
+  gem 'warning'
 end

@@ -891,8 +891,8 @@ module ROM
         #   @yieldparam relation [Array]
         #
         # @api public
-        def lock(options = EMPTY_HASH, &block)
-          clause = lock_clause(options)
+        def lock(**options, &block)
+          clause = lock_clause(**options)
 
           if block
             transaction do

@@ -156,7 +156,7 @@ module ROM
         return Migrator.new(connection) unless migrator_option
 
         if migrator_option.is_a?(Hash)
-          Migrator.new(connection, migrator_option)
+          Migrator.new(connection, **migrator_option)
         else
           migrator_option
         end

@@ -142,7 +142,7 @@ module ROM
       # Finalize all attributes by qualifying them and initializing primary key names
       #
       # @api private
-      def finalize_attributes!(options = EMPTY_HASH)
+      def finalize_attributes!(**options)
         super do
           @attributes = map(&:qualified)
         end

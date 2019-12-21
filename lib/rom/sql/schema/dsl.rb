@@ -15,7 +15,7 @@ module ROM
         #
         # @api public
         def indexes(&block)
-          @index_dsl = IndexDSL.new(options, &block)
+          @index_dsl = IndexDSL.new(**options, &block)
         end
 
         private

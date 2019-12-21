@@ -1,7 +1,7 @@
 RSpec.describe ROM::SQL::Migration::Migrator, :postgres, skip_tables: true do
   include_context 'database setup'
 
-  subject(:migrator) { ROM::SQL::Migration::Migrator.new(conn, options) }
+  subject(:migrator) { ROM::SQL::Migration::Migrator.new(conn, **options) }
 
   let(:options) { { path: TMP_PATH.join('test/migrations') } }
 

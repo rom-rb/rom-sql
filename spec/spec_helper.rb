@@ -6,6 +6,16 @@ if ENV['COVERAGE'] == 'true'
   Codacy::Reporter.start
 end
 
+require 'warning'
+
+Warning.ignore(/\$SAFE/)
+Warning.ignore(/sequel/)
+Warning.ignore(/mysql2/)
+Warning.ignore(/rspec-core/)
+Warning.ignore(/__FILE__/)
+Warning.ignore(/__LINE__/)
+Warning.process { |w| raise RuntimeError, w } unless ENV['NO_WARNING']
+
 require 'rom-sql'
 require 'rom/sql/rake_task'
 
@@ -20,7 +30,6 @@ end
 
 LOGGER = Logger.new(File.open('./log/test.log', 'a'))
 ENV['TZ'] ||= 'UTC'
-
 
 oracle_settings = {
   db_name: ENV.fetch('ROM_ORACLE_DATABASE', 'xe'),
@@ -74,23 +83,9 @@ def with_adapters(*args, &block)
   end
 end
 
-warning_api_available = RUBY_VERSION >= '2.4.0'
-
-module SileneceWarnings
-  def warn(str)
-    if str['/sequel/'] || str['/rspec-core']
-      nil
-    else
-      super
-    end
-  end
-end
-
-Warning.extend(SileneceWarnings) if warning_api_available
-
 RSpec.configure do |config|
   config.disable_monkey_patching!
-  config.warnings = warning_api_available
+  config.warnings = true
   config.filter_run_when_matching :focus
 
   config.before(:suite) do

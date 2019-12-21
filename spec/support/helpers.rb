@@ -27,6 +27,7 @@ module Helpers
     definition = ROM::Associations::Definitions.const_get(klass).new(*args)
     ROM::SQL::Associations.const_get(definition.type).new(definition, relations)
   end
+  ruby2_keywords(:build_assoc) if respond_to?(:ruby2_keywords, true)
 
   def attributes(schema)
     schema.each_with_object({}) do |(key, type), acc|

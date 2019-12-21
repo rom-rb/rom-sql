@@ -46,7 +46,7 @@ module ROM
               end
 
               diff.indexes.each do |index|
-                index index.attributes, index.options
+                index index.attributes, **index.options
               end
             end
           end
@@ -67,8 +67,8 @@ module ROM
                   if attribute.type_changed?
                     from, to = attribute.current.unwrap, attribute.target.unwrap
                     raise UnsupportedConversion.new(
-                            "Don't know how to convert #{ from.inspect } to #{ to.inspect }"
-                          )
+                      "Don't know how to convert #{from.inspect} to #{to.inspect}"
+                    )
                   end
 
                   if attribute.nullability_changed?
@@ -84,9 +84,9 @@ module ROM
               diff.index_changes.each do |index|
                 case index
                 when SchemaDiff::IndexAdded
-                  add_index index.attributes, index.options
+                  add_index index.attributes, **index.options
                 when SchemaDiff::IndexRemoved
-                  drop_index index.attributes, index.options
+                  drop_index index.attributes, **index.options
                 end
               end
             end

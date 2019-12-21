@@ -27,7 +27,13 @@ module ROM
 
       # @api private
       def call(&block)
-        result = instance_exec(select_relations(block.parameters), &block)
+        arg, kwargs = select_relations(block.parameters)
+
+        if kwargs.nil?
+          result = instance_exec(arg, &block)
+        else
+          result = instance_exec(**kwargs, &block)
+        end
 
         if result.is_a?(::Array)
           result
@@ -82,9 +88,9 @@ module ROM
           keys = parameters.select { |type, _| type == :keyreq }
 
           if keys.empty?
-            relations
+            [relations, nil]
           else
-            keys.each_with_object({}) { |(_, k), rs| rs[k] = relations[k] }
+            [nil, keys.each_with_object({}) { |(_, k), rs| rs[k] = relations[k] }]
           end
         end
       end

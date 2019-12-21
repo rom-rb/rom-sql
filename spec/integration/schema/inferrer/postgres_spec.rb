@@ -62,7 +62,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
 
   subject(:schema) do
     empty = define_schema(:test_inferrence)
-    empty.with(inferrer.(empty, gateway))
+    empty.with(**inferrer.(empty, gateway))
   end
 
   context 'when pg_enum in primary key' do

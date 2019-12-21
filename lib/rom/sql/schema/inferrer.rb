@@ -32,9 +32,9 @@ module ROM
         # @api private
         def call(schema, gateway)
           if enabled?
-            infer_from_database(gateway, schema, super)
+            infer_from_database(gateway, schema, **super)
           else
-            infer_from_attributes(gateway, schema, super)
+            infer_from_attributes(gateway, schema, **super)
           end
         rescue Sequel::Error => error
           on_error(schema.name, error)
@@ -69,7 +69,8 @@ module ROM
           if gateway.connection.respond_to?(:indexes)
             dataset = schema.name.dataset
 
-            gateway.connection.indexes(dataset).map { |index_name, columns:, unique:, **rest|
+            gateway.connection.indexes(dataset).map { |index_name, definition|
+              columns, unique = definition.values_at(:columns, :unique)
               attrs = columns.map { |name| attributes[name] }
 
               SQL::Index.new(attrs, name: index_name, unique: unique)
@@ -83,7 +84,8 @@ module ROM
         def foreign_keys_from_database(gateway, schema, attributes)
           dataset = schema.name.dataset
 
-          gateway.connection.foreign_key_list(dataset).map { |columns:, table:, key:, **rest|
+          gateway.connection.foreign_key_list(dataset).map { |definition|
+            columns, table, key = definition.values_at(:columns, :table, :key)
             attrs = columns.map { |name| attributes[name] }
 
             SQL::ForeignKey.new(attrs, table, parent_keys: key)
