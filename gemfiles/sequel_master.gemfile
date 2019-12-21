@@ -2,7 +2,6 @@
 
 source "https://rubygems.org"
 
-gem "transproc", github: "solnic/transproc", branch: "fix-keyword-warnings"
 gem "sequel", git: "https://github.com/jeremyevans/sequel.git", branch: "master"
 
 group :test do

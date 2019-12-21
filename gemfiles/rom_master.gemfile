@@ -2,7 +2,6 @@
 
 source "https://rubygems.org"
 
-gem "transproc", github: "solnic/transproc", branch: "fix-keyword-warnings"
 gem "rom-core", git: "https://github.com/rom-rb/rom.git", branch: "master"
 
 group :test do
