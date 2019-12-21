@@ -16,6 +16,7 @@ group :test do
   gem "jdbc-mysql", platforms: :jruby
   gem "sqlite3", platforms: :mri
   gem "jdbc-sqlite3", platforms: :jruby
+  gem "warning"
 end
 
 gemspec path: "../"

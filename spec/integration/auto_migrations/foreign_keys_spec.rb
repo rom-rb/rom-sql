@@ -17,7 +17,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
   let(:migrated_schema) do
     empty = define_schema(table_name)
-    empty.with(inferrer.(empty, gateway))
+    empty.with(**inferrer.(empty, gateway))
   end
 
   let(:attributes) { migrated_schema.to_a }

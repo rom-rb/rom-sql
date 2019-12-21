@@ -39,11 +39,11 @@ module ROM
 
         db_array_type_matcher '[]'.freeze
 
-        def map_pk_type(type, db_type, options = {})
+        def map_pk_type(type, db_type, **options)
           if numeric?(type, db_type)
             type = self.class.numeric_pk_type
           else
-            type = map_type(type, db_type, options)
+            type = map_type(type, db_type, **options)
           end
 
           type.meta(primary_key: true)

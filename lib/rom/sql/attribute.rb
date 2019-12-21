@@ -26,9 +26,11 @@ module ROM
 
       extend Dry::Core::Cache
 
-      # @api private
-      def self.[](*args)
-        fetch_or_store(args) { new(*args) }
+      class << self
+        # @api private
+        def [](type, options = EMPTY_HASH)
+          fetch_or_store([type, options]) { new(type, **options) }
+        end
       end
 
       # Return a new attribute in its canonical form
@@ -318,7 +320,7 @@ module ROM
         cleaned_meta = meta.reject { |k, _| META_KEYS.include?(k) }
         type = optional? ? right : self.type
 
-        self.class.new(type.with(meta: cleaned_meta), options)
+        self.class.new(type.with(meta: cleaned_meta), **options)
       end
 
       # Wrap a value with the type, it allows using attribute and type specific methods

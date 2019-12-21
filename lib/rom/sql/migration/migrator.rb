@@ -70,7 +70,7 @@ module ROM
 
           changes = schemas.map { |target|
             empty = SQL::Schema.define(target.name)
-            current = target.with(inferrer.(empty, gateway))
+            current = target.with(**inferrer.(empty, gateway))
 
             diff_finder.(current, target)
           }.reject(&:empty?)

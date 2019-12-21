@@ -15,4 +15,5 @@ group :test do
   gem 'sqlite3', platforms: :mri
   gem 'jdbc-sqlite3', platforms: :jruby
   gem 'ruby-oci8', platforms: :mri if ENV['ROM_USE_ORACLE']
+  gem 'warning'
 end

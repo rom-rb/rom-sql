@@ -19,6 +19,7 @@ module ROM
 
           instance_exec(&block)
         end
+        ruby2_keywords(:initialize) if respond_to?(:ruby2_keywords, true)
 
         # @api public
         def index(*attributes, **options)
@@ -28,7 +29,7 @@ module ROM
         # @api private
         def call(schema_name, attrs)
           attributes = attrs.map do |attr|
-            attr_class.new(attr[:type], attr[:options] || {}).meta(source: schema_name)
+            attr_class.new(attr[:type], **(attr[:options] || {})).meta(source: schema_name)
           end
 
           registry.map { |attr_names, options|
@@ -44,7 +45,7 @@ module ROM
             attributes.find { |a| a.name == name }.unwrap
           end
 
-          Index.new(index_attributes, options)
+          Index.new(index_attributes, **options)
         end
       end
     end
