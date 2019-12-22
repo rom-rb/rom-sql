@@ -87,10 +87,9 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
         gateway.auto_migrate!(conf, inline: true)
 
         expect(migrated_schema.foreign_keys.size).to eql(1)
-        expect(migrated_schema.foreign_keys.first).
-          to eql(
-               ROM::SQL::ForeignKey.new([posts[:user_id].unwrap], :users)
-             )
+        expect(migrated_schema.foreign_keys.first).to eql(
+          ROM::SQL::ForeignKey.new([posts[:user_id].unwrap], :users)
+        )
       end
     end
   end

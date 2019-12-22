@@ -30,9 +30,9 @@ module ROM
 
         def write(operations, buffer, indent)
           operations.each do |operation|
-            op, args, kwargs, nested = operation
+            op, args, nested = operation
             buffer << indent << op.to_s << ' '
-            write_arguments(buffer, args, kwargs)
+            write_arguments(buffer, args)
 
             if !nested.empty?
               buffer << ' do'
@@ -42,9 +42,15 @@ module ROM
           end
         end
 
-        def write_arguments(buffer, args, kwargs)
+        def write_arguments(buffer, args)
+          if args.last.is_a?(::Hash)
+            args, options = args[0...-1], args.last
+          else
+            options = EMPTY_HASH
+          end
+
           buffer << args.map(&:inspect).join(', ')
-          kwargs.each do |key, value|
+          options.each do |key, value|
             buffer << ', ' << key.to_s << ': ' << value.inspect
           end
         end

@@ -11,9 +11,9 @@ module ROM
           instance_exec(&block) if block
         end
 
-        def method_missing(m, *args, **kwargs, &block)
+        def method_missing(m, *args, &block)
           nested = block ? Recorder.new(&block).operations : EMPTY_ARRAY
-          @operations << [m, args, kwargs, nested]
+          @operations << [m, args, nested]
         end
       end
     end
