@@ -72,7 +72,7 @@ ROM::SQL.load_extensions(:postgres, :sqlite)
 
 require 'dry-types'
 module Types
-  include Dry::Types.module
+  include Dry.Types(default: :strict)
 end
 
 def with_adapters(*args, &block)
