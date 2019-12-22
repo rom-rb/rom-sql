@@ -43,10 +43,9 @@ jobs:
             gemfile: "gemfiles/sequel_5.x.gemfile"
           - appraisal: "sequel-master"
             gemfile: "gemfiles/sequel_master.gemfile"
+
     steps:
       - uses: actions/checkout@v1
-      - name: Stop default Ubuntu MySQL
-        run: sudo service mysql stop
       - name: Install dependencies
         run: sudo apt-get install -y --no-install-recommends libpq-dev libmysqlclient-dev libsqlite3-dev
       - uses: harmon758/postgresql-action@v1
@@ -56,6 +55,8 @@ jobs:
           postgresql user: runner
       - uses: mirromutth/mysql-action@v1.1
         with:
+          host port: 3307
+          container port: 3307
           mysql version: "latest"
           mysql database: "rom_sql"
           mysql root password: "asdf123"
@@ -72,7 +73,7 @@ jobs:
           COVERAGE: ${{matrix.coverage}}
           CODACY_RUN_LOCAL: ${{matrix.coverage}}
           CODACY_PROJECT_TOKEN: ${{secrets.CODACY_PROJECT_TOKEN}}
-          MYSQL_DSN: mysql2://root:asdf123@127.0.0.1/rom_sql
+          MYSQL_DSN: mysql2://root:asdf123@127.0.0.1:3307/rom_sql
           BUNDLE_GEMFILE: ${{matrix.gemfile}}
           FAIL_ON_WARNINGS: ${{matrix.fail_on_warnings}}
         run: bundle exec rake
@@ -133,3 +134,42 @@ jobs:
         env:
           MYSQL_DSN: jdbc:mysql://mysql_db/rom_sql?user=root&password=asdf123&useSSL=false
           POSTGRES_DSN: jdbc:postgresql://postgres_db/rom_sql
+
+  tests-mri-latest:
+    runs-on: ubuntu-latest
+    container:
+      image: "ruby:rc"
+    strategy:
+      fail-fast: false
+      matrix:
+        gemfile:
+          - gemfiles/rom_master.gemfile
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends libpq-dev libsqlite3-dev
+      - uses: harmon758/postgresql-action@v1
+        with:
+          postgresql version: "11"
+          postgresql db: rom_sql
+          postgresql user: runner
+      - uses: mirromutth/mysql-action@v1.1
+        with:
+          host port: 3307
+          container port: 3307
+          mysql version: "latest"
+          mysql database: "rom_sql"
+          mysql root password: "asdf123"
+      - name: Install bundler
+        run: gem install bundler
+      - name: Bundle
+        run: bundle install --jobs 4 --retry 3 --without tools docs benchmarks --gemfile ${{matrix.gemfile}}
+      - name: Run all tests
+        env:
+          MYSQL_DSN: mysql2://root:asdf123@127.0.0.1:3307/rom_sql
+          BUNDLE_GEMFILE: ${{matrix.gemfile}}
+          FAIL_ON_WARNINGS: true
+        run: bundle exec rake

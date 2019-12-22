@@ -11,6 +11,7 @@ require 'warning'
 Warning.ignore(/\$SAFE/)
 Warning.ignore(/sequel/)
 Warning.ignore(/mysql2/)
+Warning.ignore(/rake/)
 Warning.ignore(/rspec-core/)
 Warning.ignore(/__FILE__/)
 Warning.ignore(/__LINE__/)
