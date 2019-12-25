@@ -29,7 +29,10 @@ module ROM
         def gateway
           if env.nil?
             Gateway.instance ||
-              raise(MissingEnv, 'Set up a configuration with ROM::SQL::RakeSupport.env= in the db:setup task')
+              raise(
+                MissingEnv,
+                'Set up a configuration with ROM::SQL::RakeSupport.env= in the db:setup task'
+              )
           else
             env.gateways[:default]
           end
