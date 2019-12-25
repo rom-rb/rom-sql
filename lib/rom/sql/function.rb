@@ -81,7 +81,7 @@ module ROM
       # @see Attribute#qualified?
       #
       # @api private
-      def qualified?(table_alias = nil)
+      def qualified?(_table_alias = nil)
         meta[:func].args.all?(&:qualified?)
       end
 

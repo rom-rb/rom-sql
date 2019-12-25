@@ -56,7 +56,7 @@ module ROM
         end
 
         # @api private
-        def infer_from_attributes(gateway, schema, attributes:, **rest)
+        def infer_from_attributes(_gateway, schema, attributes:, **rest)
           indexes = schema.indexes | indexes_from_attributes(attributes)
           foreign_keys = foreign_keys_from_attributes(attributes)
 

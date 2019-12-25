@@ -99,7 +99,7 @@ module ROM
       attr_reader :migrator
 
       # @api private
-      def initialize(uri, options = EMPTY_HASH)
+      def initialize(_uri, options = EMPTY_HASH)
         @migrator = create_migrator(options[:migrator])
 
         self.class.instance ||= self
@@ -141,7 +141,7 @@ module ROM
       end
 
       # @api public
-      def auto_migrate!(conf, options = EMPTY_HASH, &block)
+      def auto_migrate!(conf, options = EMPTY_HASH)
         schemas = conf.relation_classes(self).map do |klass|
           klass.schema_proc.call.finalize_attributes!(gateway: self)
         end

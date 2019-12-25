@@ -230,11 +230,11 @@ module ROM
             end
           end
 
-          def get(type, expr, *path)
+          def get(_type, expr, *path)
             Attribute[json_type].meta(sql_expr: wrap(expr)[path_args(path)])
           end
 
-          def get_text(type, expr, *path)
+          def get_text(_type, expr, *path)
             Attribute[SQL::Types::String].meta(sql_expr: wrap(expr).get_text(path_args(path)))
           end
 
@@ -256,32 +256,32 @@ module ROM
         TypeExtensions.register(JSONB) do
           include JSONMethods[JSONB, :pg_jsonb.to_proc]
 
-          def contain(type, expr, value)
+          def contain(_type, expr, value)
             Attribute[SQL::Types::Bool].meta(sql_expr: wrap(expr).contains(value))
           end
 
-          def contained_by(type, expr, value)
+          def contained_by(_type, expr, value)
             Attribute[SQL::Types::Bool].meta(sql_expr: wrap(expr).contained_by(value))
           end
 
-          def has_key(type, expr, key)
+          def has_key(_type, expr, key)
             Attribute[SQL::Types::Bool].meta(sql_expr: wrap(expr).has_key?(key))
           end
 
-          def has_any_key(type, expr, *keys)
+          def has_any_key(_type, expr, *keys)
             Attribute[SQL::Types::Bool].meta(sql_expr: wrap(expr).contain_any(keys))
           end
 
-          def has_all_keys(type, expr, *keys)
+          def has_all_keys(_type, expr, *keys)
             Attribute[SQL::Types::Bool].meta(sql_expr: wrap(expr).contain_all(keys))
           end
 
-          def merge(type, expr, value)
+          def merge(_type, expr, value)
             Attribute[JSONB].meta(sql_expr: wrap(expr).concat(value))
           end
           alias_method :+, :merge
 
-          def delete(type, expr, *path)
+          def delete(_type, expr, *path)
             sql_expr = path.size == 1 ? wrap(expr) - path : wrap(expr).delete_path(path)
             Attribute[JSONB].meta(sql_expr: sql_expr)
           end

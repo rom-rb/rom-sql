@@ -67,7 +67,7 @@ module ROM
         end
 
         # @api private
-        def auto_migrate!(gateway, schemas, options = EMPTY_HASH, &block)
+        def auto_migrate!(gateway, schemas, options = EMPTY_HASH)
           diff_finder = SchemaDiff.new(gateway.database_type)
 
           changes = schemas.map { |target|
