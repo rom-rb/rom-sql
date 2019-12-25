@@ -2,7 +2,7 @@
 
 require 'sequel/core'
 
-Sequel.extension(*%i(pg_array pg_array_ops))
+Sequel.extension(:pg_array, :pg_array_ops)
 
 require 'rom/sql/extensions/postgres/types/array_types'
 

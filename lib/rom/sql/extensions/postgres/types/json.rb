@@ -3,7 +3,7 @@
 require 'sequel/core'
 require 'singleton'
 
-Sequel.extension(*%i(pg_json pg_json_ops))
+Sequel.extension(:pg_json, :pg_json_ops)
 
 module ROM
   module SQL
