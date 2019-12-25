@@ -26,14 +26,11 @@ module ROM
             #
             # @api public
             def explain(format: :text, **options)
-              bool_options = options.map { |opt, value| "#{ opt.to_s.upcase } #{ !!value }" }
-              format_option = "FORMAT #{ format.to_s.upcase }"
+              bool_options = options.map { |opt, value| "#{opt.to_s.upcase} #{!!value}" }
+              format_option = "FORMAT #{format.to_s.upcase}"
+              explain_value = [format_option, *bool_options].join(', ')
 
-              query =
-                "EXPLAIN (" <<
-                [format_option, *bool_options].join(', ') <<
-                ") " <<
-                dataset.sql
+              query = "EXPLAIN (#{explain_value}) #{dataset.sql}"
 
               rows = dataset.with_sql(query).map(:'QUERY PLAN')
 

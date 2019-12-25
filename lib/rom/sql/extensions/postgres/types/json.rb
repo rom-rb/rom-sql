@@ -242,7 +242,7 @@ module ROM
 
           def path_args(path)
             case path.size
-            when 0 then raise ArgumentError, "wrong number of arguments (given 0, expected 1+)"
+            when 0 then raise ArgumentError, 'wrong number of arguments (given 0, expected 1+)'
             when 1 then path[0]
             else path
             end

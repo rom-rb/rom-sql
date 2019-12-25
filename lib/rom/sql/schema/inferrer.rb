@@ -151,9 +151,9 @@ module ROM
             raise e
           elsif !silent
             warn "[#{dataset}] failed to infer schema. " \
-                 "Make sure tables exist before ROM container is set up. " \
-                 "This may also happen when your migration tasks load ROM container, " \
-                 "which is not needed for migrations as only the connection is required " \
+                 'Make sure tables exist before ROM container is set up. ' \
+                 'This may also happen when your migration tasks load ROM container, ' \
+                 'which is not needed for migrations as only the connection is required ' \
                  "(#{e.message})"
           end
         end
