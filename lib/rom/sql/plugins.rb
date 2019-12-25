@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rom/plugins/relation/sql/instrumentation'
 require 'rom/plugins/relation/sql/auto_restrictions'
 

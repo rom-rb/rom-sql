@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'set'
 
 require 'rom/sql/schema/type_builder'

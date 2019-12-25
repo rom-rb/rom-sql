@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rom/sql/schema/attributes_inferrer'
 
 module ROM

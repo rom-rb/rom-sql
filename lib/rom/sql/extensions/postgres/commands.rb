@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rom/sql/commands/create'
 require 'rom/sql/commands/update'
 

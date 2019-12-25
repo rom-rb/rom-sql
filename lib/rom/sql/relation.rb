@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rom/sql/types'
 require 'rom/sql/schema'
 require 'rom/sql/attribute'

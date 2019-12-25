@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rom/types/values'
 
 module ROM
@@ -222,14 +224,14 @@ module ROM
         #
         #   end
         module LTreeMethods
-          ASCENDANT = ["(".freeze, " @> ".freeze, ")".freeze].freeze
-          FIND_ASCENDANT = ["(".freeze, " ?@> ".freeze, ")".freeze].freeze
-          DESCENDANT = ["(".freeze, " <@ ".freeze, ")".freeze].freeze
-          FIND_DESCENDANT = ["(".freeze, " ?<@ ".freeze, ")".freeze].freeze
-          MATCH_ANY = ["(".freeze, " ? ".freeze, ")".freeze].freeze
-          MATCH_ANY_LQUERY = ["(".freeze, " ?~ ".freeze, ")".freeze].freeze
-          MATCH_LTEXTQUERY = ["(".freeze, " @ ".freeze, ")".freeze].freeze
-          MATCH_ANY_LTEXTQUERY = ["(".freeze, " ?@ ".freeze, ")".freeze].freeze
+          ASCENDANT = ['(', ' @> ', ')'].freeze
+          FIND_ASCENDANT = ['(', ' ?@> ', ')'].freeze
+          DESCENDANT = ['(', ' <@ ', ')'].freeze
+          FIND_DESCENDANT = ['(', ' ?<@ ', ')'].freeze
+          MATCH_ANY = ['(', ' ? ', ')'].freeze
+          MATCH_ANY_LQUERY = ['(', ' ?~ ', ')'].freeze
+          MATCH_LTEXTQUERY = ['(', ' @ ', ')'].freeze
+          MATCH_ANY_LTEXTQUERY = ['(', ' ?@ ', ')'].freeze
 
           def match(type, expr, query)
             Attribute[SQL::Types::Bool].meta(sql_expr: Sequel::SQL::BooleanExpression.new(:'~', expr, query))

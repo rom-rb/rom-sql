@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 if defined? JRUBY_VERSION
   USING_JRUBY = true
 else

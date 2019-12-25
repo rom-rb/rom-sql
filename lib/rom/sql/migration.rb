@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rom/sql/migration/migrator'
 require 'rom/sql/migration/schema_diff'
 
