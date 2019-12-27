@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rom/support/inflector'
 require 'rom/sql/join_dsl'
 
@@ -1036,7 +1038,7 @@ module ROM
           stmt << ' OF ' << Array(of).join(', ') if of
 
           if skip_locked
-            raise ArgumentError, "SKIP LOCKED cannot be used with (NO)WAIT clause" if !wait.nil?
+            raise ArgumentError, 'SKIP LOCKED cannot be used with (NO)WAIT clause' if !wait.nil?
 
             stmt << ' SKIP LOCKED'
           else

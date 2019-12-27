@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'logger'
 require 'sequel/core'
 
@@ -21,7 +23,7 @@ module ROM
       adapter :sql
 
       CONNECTION_EXTENSIONS = {
-        postgres: %i(pg_array pg_json pg_enum)
+        postgres: %i[pg_array pg_json pg_enum]
       }.freeze
 
       # @!attribute [r] logger

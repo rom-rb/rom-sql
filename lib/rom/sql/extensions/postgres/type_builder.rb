@@ -1,14 +1,16 @@
+# frozen_string_literal: true
+
 module ROM
   module SQL
     module Postgres
       class TypeBuilder < Schema::TypeBuilder
         defines :db_numeric_types, :db_type_mapping, :db_array_type_matcher
 
-        db_numeric_types %w(
+        db_numeric_types %w[
           smallint integer bigint
           decimal numeric real
           double\ precision serial bigserial
-        ).to_set.freeze
+        ].to_set.freeze
 
         db_type_mapping(
           'uuid'  => Types::UUID,

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rom/sql/type_extensions'
 
 module ROM
@@ -52,7 +54,7 @@ module ROM
             end
           end
 
-          def build_read_type(db_type, member_type)
+          def build_read_type(_db_type, member_type)
             if member_type && member_type.meta[:read]
               base_read_type.of(member_type.meta[:read])
             else

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'set'
 
 require 'rom/sql/schema/type_builder'
@@ -54,7 +56,7 @@ module ROM
         end
 
         # @api private
-        def infer_from_attributes(gateway, schema, attributes:, **rest)
+        def infer_from_attributes(_gateway, schema, attributes:, **rest)
           indexes = schema.indexes | indexes_from_attributes(attributes)
           foreign_keys = foreign_keys_from_attributes(attributes)
 
@@ -149,9 +151,9 @@ module ROM
             raise e
           elsif !silent
             warn "[#{dataset}] failed to infer schema. " \
-                 "Make sure tables exist before ROM container is set up. " \
-                 "This may also happen when your migration tasks load ROM container, " \
-                 "which is not needed for migrations as only the connection is required " \
+                 'Make sure tables exist before ROM container is set up. ' \
+                 'This may also happen when your migration tasks load ROM container, ' \
+                 'which is not needed for migrations as only the connection is required ' \
                  "(#{e.message})"
           end
         end

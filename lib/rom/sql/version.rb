@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ROM
   module SQL
     VERSION = '3.1.0'.freeze

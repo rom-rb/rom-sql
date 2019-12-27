@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'sequel/core'
 
 Sequel.extension(:pg_range, :pg_range_ops)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rom/associations/many_to_one'
 require 'rom/sql/associations/core'
 require 'rom/sql/associations/self_ref'

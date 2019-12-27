@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rom/types/values'
 
 module ROM
@@ -222,20 +224,20 @@ module ROM
         #
         #   end
         module LTreeMethods
-          ASCENDANT = ["(".freeze, " @> ".freeze, ")".freeze].freeze
-          FIND_ASCENDANT = ["(".freeze, " ?@> ".freeze, ")".freeze].freeze
-          DESCENDANT = ["(".freeze, " <@ ".freeze, ")".freeze].freeze
-          FIND_DESCENDANT = ["(".freeze, " ?<@ ".freeze, ")".freeze].freeze
-          MATCH_ANY = ["(".freeze, " ? ".freeze, ")".freeze].freeze
-          MATCH_ANY_LQUERY = ["(".freeze, " ?~ ".freeze, ")".freeze].freeze
-          MATCH_LTEXTQUERY = ["(".freeze, " @ ".freeze, ")".freeze].freeze
-          MATCH_ANY_LTEXTQUERY = ["(".freeze, " ?@ ".freeze, ")".freeze].freeze
+          ASCENDANT = ['(', ' @> ', ')'].freeze
+          FIND_ASCENDANT = ['(', ' ?@> ', ')'].freeze
+          DESCENDANT = ['(', ' <@ ', ')'].freeze
+          FIND_DESCENDANT = ['(', ' ?<@ ', ')'].freeze
+          MATCH_ANY = ['(', ' ? ', ')'].freeze
+          MATCH_ANY_LQUERY = ['(', ' ?~ ', ')'].freeze
+          MATCH_LTEXTQUERY = ['(', ' @ ', ')'].freeze
+          MATCH_ANY_LTEXTQUERY = ['(', ' ?@ ', ')'].freeze
 
-          def match(type, expr, query)
+          def match(_type, expr, query)
             Attribute[SQL::Types::Bool].meta(sql_expr: Sequel::SQL::BooleanExpression.new(:'~', expr, query))
           end
 
-          def match_any(type, expr, query)
+          def match_any(_type, expr, query)
             array = build_array_query(query)
             Attribute[SQL::Types::Bool].meta(sql_expr: custom_operator_expr(MATCH_ANY, expr, array))
           end
@@ -259,31 +261,31 @@ module ROM
         TypeExtensions.register(ROM::SQL::Types::PG::Array('ltree', LTree)) do
           include LTreeMethods
 
-          def contain_any_ltextquery(type, expr, query)
+          def contain_any_ltextquery(_type, expr, query)
             Attribute[SQL::Types::Bool].meta(sql_expr: custom_operator_expr(LTreeMethods::MATCH_LTEXTQUERY, expr, query))
           end
 
-          def contain_ancestor(type, expr, query)
+          def contain_ancestor(_type, expr, query)
             Attribute[SQL::Types::Bool].meta(sql_expr: custom_operator_expr(LTreeMethods::ASCENDANT, expr, query))
           end
 
-          def contain_descendant(type, expr, query)
+          def contain_descendant(_type, expr, query)
             Attribute[SQL::Types::Bool].meta(sql_expr: custom_operator_expr(LTreeMethods::DESCENDANT, expr, query))
           end
 
-          def find_ancestor(type, expr, query)
+          def find_ancestor(_type, expr, query)
             Attribute[LTree].meta(sql_expr: custom_operator_expr(LTreeMethods::FIND_ASCENDANT, expr, query))
           end
 
-          def find_descendant(type, expr, query)
+          def find_descendant(_type, expr, query)
             Attribute[LTree].meta(sql_expr: custom_operator_expr(LTreeMethods::FIND_DESCENDANT, expr, query))
           end
 
-          def match_any_lquery(type, expr, query)
+          def match_any_lquery(_type, expr, query)
             Attribute[LTree].meta(sql_expr: custom_operator_expr(LTreeMethods::MATCH_ANY_LQUERY, expr, query))
           end
 
-          def match_any_ltextquery(type, expr, query)
+          def match_any_ltextquery(_type, expr, query)
             Attribute[LTree].meta(sql_expr: custom_operator_expr(LTreeMethods::MATCH_ANY_LTEXTQUERY, expr, query))
           end
         end
@@ -291,29 +293,29 @@ module ROM
         TypeExtensions.register(LTree) do
           include LTreeMethods
 
-          def match_ltextquery(type, expr, query)
+          def match_ltextquery(_type, expr, query)
             Attribute[SQL::Types::Bool].meta(sql_expr: custom_operator_expr(LTreeMethods::MATCH_LTEXTQUERY, expr, query))
           end
 
-          def contain_descendant(type, expr, query)
+          def contain_descendant(_type, expr, query)
             array = build_array_query(query, 'ltree')
             Attribute[SQL::Types::Bool].meta(sql_expr: custom_operator_expr(LTreeMethods::DESCENDANT, expr, array))
           end
 
-          def descendant(type, expr, query)
+          def descendant(_type, expr, query)
             Attribute[SQL::Types::Bool].meta(sql_expr: custom_operator_expr(LTreeMethods::DESCENDANT, expr, query))
           end
 
-          def contain_ascendant(type, expr, query)
+          def contain_ascendant(_type, expr, query)
             array = build_array_query(query, 'ltree')
             Attribute[SQL::Types::Bool].meta(sql_expr: custom_operator_expr(LTreeMethods::ASCENDANT, expr, array))
           end
 
-          def ascendant(type, expr, query)
+          def ascendant(_type, expr, query)
             Attribute[SQL::Types::Bool].meta(sql_expr: custom_operator_expr(LTreeMethods::ASCENDANT, expr, query))
           end
 
-          def +(type, expr, other)
+          def +(_type, expr, other)
             other_value = case other
                           when ROM::Types::Values::TreePath
                             other

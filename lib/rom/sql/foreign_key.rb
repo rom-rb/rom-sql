@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ROM
   module SQL
     # @api private
@@ -5,7 +7,7 @@ module ROM
       extend Initializer
       include Dry::Equalizer(:attributes, :parent_table, :options)
 
-      DEFAULT_PARENT_KEYS = %i(id).freeze
+      DEFAULT_PARENT_KEYS = %i[id].freeze
 
       param :attributes
 

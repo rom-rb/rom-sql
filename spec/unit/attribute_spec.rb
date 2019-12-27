@@ -106,7 +106,7 @@ RSpec.describe ROM::SQL::Attribute, :postgres do
       ROM::SQL::TypeExtensions.instance_variable_get(:@types)['sqlite'].delete('custom')
 
       ROM::SQL::TypeExtensions.register(type) do
-        def custom(type, expr, value)
+        def custom(_type, _expr, value)
           ROM::SQL::Attribute[ROM::SQL::Types::Bool].
             meta(sql_expr: Sequel::SQL::BooleanExpression.new(:'=', 1, value))
         end

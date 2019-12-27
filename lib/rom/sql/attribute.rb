@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'sequel/core'
 require 'dry/core/cache'
 
@@ -19,7 +21,7 @@ module ROM
 
       OPERATORS = %i[>= <= > <].freeze
       NONSTANDARD_EQUALITY_VALUES = [true, false, nil].freeze
-      META_KEYS = %i(index foreign_key target sql_expr qualified).freeze
+      META_KEYS = %i[index foreign_key target sql_expr qualified].freeze
 
       # Error raised when an attribute cannot be qualified
       QualifyError = Class.new(StandardError)

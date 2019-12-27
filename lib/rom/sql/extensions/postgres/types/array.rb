@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'sequel/core'
 
-Sequel.extension(*%i(pg_array pg_array_ops))
+Sequel.extension(:pg_array, :pg_array_ops)
 
 require 'rom/sql/extensions/postgres/types/array_types'
 
@@ -120,7 +122,7 @@ module ROM
             Attribute[type].meta(sql_expr: expr.pg_array[idx])
           end
 
-          def any(type, expr, value)
+          def any(_type, expr, value)
             Attribute[SQL::Types::Bool].meta(sql_expr: { value => expr.pg_array.any })
           end
 
@@ -128,7 +130,7 @@ module ROM
             Attribute[SQL::Types::Bool].meta(sql_expr: expr.pg_array.contained_by(type[other]))
           end
 
-          def length(type, expr)
+          def length(_type, expr)
             Attribute[SQL::Types::Integer].meta(sql_expr: expr.pg_array.length)
           end
 
@@ -140,7 +142,7 @@ module ROM
             Attribute[type].meta(sql_expr: expr.pg_array.remove(cast(type, value)))
           end
 
-          def join(type, expr, delimiter = '', null = nil)
+          def join(_type, expr, delimiter = '', null = nil)
             Attribute[SQL::Types::String].meta(sql_expr: expr.pg_array.join(delimiter, null))
           end
 
