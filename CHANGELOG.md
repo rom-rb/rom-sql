@@ -1,3 +1,11 @@
+## 3.2.0 2020-01-11
+
+### Fixed
+
+- Keyword warnings on Ruby 2.7 (@flash-gordon)
+
+[Compare v3.1.0...v3.2.0](https://github.com/rom-rb/rom-sql/compare/v3.1.0...v3.2.0)
+
 ## 3.1.0 2019-12-16
 
 ### Added
