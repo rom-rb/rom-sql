@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'dry-equalizer', '~> 0.2'
   spec.add_runtime_dependency 'dry-types', '~> 1.0'
   spec.add_runtime_dependency 'dry-core', '~> 0.4'
-  spec.add_runtime_dependency 'rom-core', '~> 5.0', '>= 5.0.1'
+  spec.add_runtime_dependency 'rom-core', '~> 5.2'
 
   spec.add_development_dependency 'appraisal'
   spec.add_development_dependency 'bundler'
