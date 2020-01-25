@@ -29,7 +29,6 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'dry-core', '~> 0.4'
   spec.add_runtime_dependency 'rom-core', '~> 5.2', '>= 5.2.1'
 
-  spec.add_development_dependency 'appraisal'
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rspec', '~> 3.9'

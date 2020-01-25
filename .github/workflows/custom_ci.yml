@@ -1,4 +1,4 @@
-name: ci
+name: Tests
 
 on:
   push:
@@ -11,141 +11,71 @@ on:
       - .rubocop.yml
 
 jobs:
-  tests-mri:
+  main:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:5.7
+        ports:
+          - 3307:3306
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: rom_sql
+      postgres:
+        image: postgres:11
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: rom_sql
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: rom-sql
     strategy:
       fail-fast: false
       matrix:
-        ruby: ["2.6.x", "2.5.x", "2.4.x"]
-        appraisal:
-          - "dry-types-1.x"
-          - "dry-types-master"
-          - "rom-5.x"
-          - "rom-master"
-          - "sequel-5.x"
-          - "sequel-master"
+        ruby:
+          - "2.7"
+          - "2.6"
+          - "2.4"
+          - "jruby"
         include:
-          - ruby: "2.6.x"
+          - ruby: "2.6"
             coverage: "true"
-          - appraisal: "dry-types-1.x"
-            gemfile: "gemfiles/dry_types_1.x.gemfile"
-          - appraisal: "dry-types-master"
-            gemfile: "gemfiles/dry_types_master.gemfile"
-          - appraisal: "rom-5.x"
-            gemfile: "gemfiles/rom_5.x.gemfile"
-          - appraisal: "rom-master"
-            gemfile: "gemfiles/rom_master.gemfile"
+          - ruby: "2.7"
             fail_on_warnings: "true"
-          - appraisal: "sequel-5.x"
-            gemfile: "gemfiles/sequel_5.x.gemfile"
-          - appraisal: "sequel-master"
-            gemfile: "gemfiles/sequel_master.gemfile"
+            dry_types_from_master: "true"
+            rom_core_from_master: "true"
+            sequel_from_master: "true"
+          - ruby: "jruby"
+            mysql_dsn: "jdbc:mysql://127.0.0.1:3307/rom_sql?user=root&password=password&sql_mode=STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION&useSSL=false"
+            postgres_dsn: "jdbc:postgresql://127.0.0.1:5432/rom_sql?user=rom-sql&password=password"
+    env:
+      APT_DEPS: "libpq-dev libmysqlclient-dev libsqlite3-dev"
+      POSTGRES_DSN: "${{matrix.postgres_dsn}}"
+      MYSQL_PORT: 3307
+      MYSQL_DSN: "${{matrix.mysql_dsn}}"
+      COVERAGE: ${{matrix.coverage}}
+      CODACY_RUN_LOCAL: ${{matrix.coverage}}
+      CODACY_PROJECT_TOKEN: ${{secrets.CODACY_PROJECT_TOKEN}}
+      FAIL_ON_WARNINGS: ${{matrix.fail_on_warnings}}
+      DRY_TYPES_FROM_MASTER: ${{matrix.dry_types_from_master}}
+      ROM_CORE_FROM_MASTER: ${{matrix.rom_core_from_master}}
+      SEQUEL_FROM_MASTER: ${{matrix.sequel_from_master}}
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+      - name: Stop default MySQL
+        run: sudo service mysql stop
       - name: Install dependencies
-        run: sudo apt-get install -y --no-install-recommends libpq-dev libmysqlclient-dev libsqlite3-dev
-      - uses: harmon758/postgresql-action@v1
-        with:
-          postgresql version: "11"
-          postgresql db: rom_sql
-          postgresql user: runner
-      - uses: mirromutth/mysql-action@v1.1
-        with:
-          host port: 3307
-          container port: 3307
-          mysql version: "latest"
-          mysql database: "rom_sql"
-          mysql root password: "asdf123"
+        run: sudo apt-get install -y --no-install-recommends $APT_DEPS
       - name: Set up Ruby
-        uses: actions/setup-ruby@v1
+        uses: eregon/use-ruby-action@master
         with:
           ruby-version: ${{matrix.ruby}}
       - name: Install bundler
-        run: gem install bundler
+        run: gem install bundler --no-document
       - name: Bundle
-        run: bundle install --jobs 4 --retry 3 --without tools docs benchmarks --gemfile ${{matrix.gemfile}}
-      - name: Run all tests
-        env:
-          COVERAGE: ${{matrix.coverage}}
-          CODACY_RUN_LOCAL: ${{matrix.coverage}}
-          CODACY_PROJECT_TOKEN: ${{secrets.CODACY_PROJECT_TOKEN}}
-          MYSQL_DSN: mysql2://root:asdf123@127.0.0.1:3307/rom_sql
-          BUNDLE_GEMFILE: ${{matrix.gemfile}}
-          FAIL_ON_WARNINGS: ${{matrix.fail_on_warnings}}
-        run: bundle exec rake
-      - name: Download test reporter
-        if: "matrix.coverage == 'true'"
-        env:
-          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
         run: |
-          [ "$CC_TEST_REPORTER_ID" = "" ] && exit 0
-          mkdir -p tmp/
-          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
-          chmod +x ./tmp/cc-test-reporter
-          ./tmp/cc-test-reporter before-build
-      - name: Send coverage results
-        if: "matrix.coverage == 'true'"
-        env:
-          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
-          GIT_COMMIT_SHA: ${{github.sha}}
-          GIT_BRANCH: ${{github.ref}}
-          GIT_COMMITTED_AT: ${{github.event.head_commit.timestamp}}
-        run: |
-          [ "$CC_TEST_REPORTER_ID" = "" ] && exit 0
-          GIT_BRANCH=`ruby -e "puts ENV['GITHUB_REF'].split('/', 3).last"` \
-          GIT_COMMITTED_AT=`ruby -r time -e "puts Time.iso8601(ENV['GIT_COMMITTED_AT']).to_i"` \
-          ./tmp/cc-test-reporter after-build
-
-  tests-others:
-    runs-on: ubuntu-latest
-    container:
-      image: ${{matrix.image}}
-    strategy:
-      fail-fast: false
-      matrix:
-        image: ["jruby:9.2.9", "ruby:rc"]
-        include:
-          - image: "jruby:9.2.9"
-            mysql_dsn: jdbc:mysql://mysql_db/rom_sql?user=root&password=asdf123&useSSL=false
-            postgres_dsn: jdbc:postgresql://postgres_db/rom_sql
-            fail_on_warnings: false
-            gemfile: Gemfile
-          - image: "ruby:rc"
-            mysql_dsn: mysql2://root:asdf123@mysql_db/rom_sql
-            postgres_dsn: postgres://postgres_db/rom_sql
-            fail_on_warnings: true
-            gemfile: gemfiles/rom_master.gemfile
-
-    services:
-      postgres_db:
-        image: postgres:10.8
-        env:
-          POSTGRES_USER: root
-          POSTGRES_PASSWORD: ""
-          POSTGRES_DB: rom_sql
-        ports:
-          - 5432:5432
-        # needed because the postgres container does not provide a healthcheck
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-      mysql_db:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: asdf123
-          MYSQL_DATABASE: rom_sql
-        ports:
-          - 3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
-    steps:
-      - uses: actions/checkout@v1
-      - name: Install bundler
-        run: gem install bundler
-      - name: Bundle
-        run: bundle install --jobs 4 --retry 3 --without tools docs benchmarks --gemfile ${{matrix.gemfile}}
+          bundle config set without 'tools docs benchmarks'
+          bundle install --jobs 4 --retry 3
       - name: Run all tests
         run: bundle exec rake
-        env:
-          BUNDLE_GEMFILE: ${{matrix.gemfile}}
-          FAIL_ON_WARNINGS: ${{matrix.fail_on_warnings}}
-          MYSQL_DSN: ${{matrix.mysql_dsn}}
-          POSTGRES_DSN: ${{matrix.postgres_dsn}}
