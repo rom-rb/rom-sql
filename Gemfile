@@ -2,6 +2,8 @@ source 'https://rubygems.org'
 
 gemspec
 
+eval_gemfile 'Gemfile.devtools'
+
 if ENV['ROM_CORE_FROM_MASTER'].eql?('true')
   gem 'rom-core', git: 'https://github.com/rom-rb/rom.git', branch: 'master'
 end
@@ -15,11 +17,9 @@ if ENV['SEQUEL_FROM_MASTER'].eql?('true')
 end
 
 group :test do
-  gem 'codacy-coverage', require: false
   gem 'pry-byebug', platforms: :mri
   gem 'pry', platforms: :jruby
   gem 'activesupport', '~> 5.0'
-  gem 'simplecov', require: false
   gem 'pg', '~> 1.1', platforms: :mri
   gem 'mysql2', platforms: :mri
   gem 'jdbc-postgres', '>= 9.4.1212', platforms: :jruby
@@ -27,5 +27,4 @@ group :test do
   gem 'sqlite3', platforms: :mri
   gem 'jdbc-sqlite3', platforms: :jruby
   gem 'ruby-oci8', platforms: :mri if ENV['ROM_USE_ORACLE']
-  gem 'warning'
 end
