@@ -39,18 +39,24 @@ oracle_settings = {
   port: Integer(ENV.fetch('ROM_ORACLE_PORT', '1521'))
 }
 
+def env_or(key, value)
+  (v = ENV[key]).to_s.empty? ? value : v
+end
+
+mysql_port = env_or('MYSQL_PORT', 3306)
+
 if defined? JRUBY_VERSION
   DB_URIS = {
     sqlite: 'jdbc:sqlite:',
-    postgres: ENV.fetch('POSTGRES_DSN', 'jdbc:postgresql://localhost/rom_sql'),
-    mysql: ENV.fetch('MYSQL_DSN', 'jdbc:mysql://localhost/rom_sql?user=root&sql_mode=STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION&useSSL=false'),
+    postgres: env_or('POSTGRES_DSN', 'jdbc:postgresql://127.0.0.1/rom_sql'),
+    mysql: env_or('MYSQL_DSN', "jdbc:mysql://127.0.0.1:#{mysql_port}/rom_sql?user=root&sql_mode=STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION&useSSL=false"),
     oracle: ENV['ROM_USE_ORACLE'] ? fail('Setup Oracle for JRuby!') : nil
   }
 else
   DB_URIS = {
     sqlite: 'sqlite::memory',
-    postgres: ENV.fetch('POSTGRES_DSN', 'postgres://localhost/rom_sql'),
-    mysql: ENV.fetch('MYSQL_DSN', 'mysql2://root@localhost/rom_sql?sql_mode=STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'),
+    postgres: env_or('POSTGRES_DSN', 'postgres://rom-sql:password@127.0.0.1/rom_sql'),
+    mysql: env_or('MYSQL_DSN', "mysql2://root:password@127.0.0.1:#{mysql_port}/rom_sql?sql_mode=STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION"),
     oracle: "oracle://#{ oracle_settings[:host] }:#{ oracle_settings[:port] }/" \
             "#{ oracle_settings[:db_name] }?username=rom_sql&password=rom_sql&autosequence=true"
   }
