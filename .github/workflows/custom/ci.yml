@@ -1,18 +1,5 @@
-name: Tests
-
-on:
-  push:
-    paths:
-      - .github/workflows/custom_ci.yml
-      - lib/**
-      - spec/**
-      - Gemfile
-      - "*.gemspec"
-      - .rubocop.yml
-
 jobs:
-  main:
-    runs-on: ubuntu-latest
+  tests:
     services:
       mysql:
         image: mysql:5.7
@@ -30,7 +17,6 @@ jobs:
           POSTGRES_PASSWORD: password
           POSTGRES_USER: rom-sql
     strategy:
-      fail-fast: false
       matrix:
         ruby:
           - "2.7"
@@ -53,29 +39,7 @@ jobs:
       POSTGRES_DSN: "${{matrix.postgres_dsn}}"
       MYSQL_PORT: 3307
       MYSQL_DSN: "${{matrix.mysql_dsn}}"
-      COVERAGE: ${{matrix.coverage}}
-      CODACY_RUN_LOCAL: ${{matrix.coverage}}
-      CODACY_PROJECT_TOKEN: ${{secrets.CODACY_PROJECT_TOKEN}}
       FAIL_ON_WARNINGS: ${{matrix.fail_on_warnings}}
       DRY_TYPES_FROM_MASTER: ${{matrix.dry_types_from_master}}
       ROM_CORE_FROM_MASTER: ${{matrix.rom_core_from_master}}
       SEQUEL_FROM_MASTER: ${{matrix.sequel_from_master}}
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Stop default MySQL
-        run: sudo service mysql stop
-      - name: Install dependencies
-        run: sudo apt-get install -y --no-install-recommends $APT_DEPS
-      - name: Set up Ruby
-        uses: eregon/use-ruby-action@master
-        with:
-          ruby-version: ${{matrix.ruby}}
-      - name: Install bundler
-        run: gem install bundler --no-document
-      - name: Bundle
-        run: |
-          bundle config set without 'tools docs benchmarks'
-          bundle install --jobs 4 --retry 3
-      - name: Run all tests
-        run: bundle exec rake
