@@ -1,12 +1,15 @@
 ## 3.2.0 2020-01-11
 
+
 ### Fixed
 
 - Keyword warnings on Ruby 2.7 (@flash-gordon)
 
+
 [Compare v3.1.0...v3.2.0](https://github.com/rom-rb/rom-sql/compare/v3.1.0...v3.2.0)
 
 ## 3.1.0 2019-12-16
+
 
 ### Added
 
@@ -29,17 +32,21 @@
 - Properly qualify relations when in `Relation#union` (@ianks)
 - `Relation#query` no longer removes order in the relation (@DNNX)
 
+
 [Compare v3.0.1...v3.1.0](https://github.com/rom-rb/rom-sql/compare/v3.0.1...v3.1.0)
 
 ## 3.0.1 2019-05-05
+
 
 ### Fixed
 
 - Using joins with a relation object as the target and a block-based conditions produces correct query now (issue #331) (solnic)
 
+
 [Compare v3.0.0...v3.0.1](https://github.com/rom-rb/rom-sql/compare/v3.0.0...v3.0.1)
 
 ## 3.0.0 2019-04-24
+
 
 ### Added
 
@@ -66,7 +73,6 @@
   # searching for `true` result
   users.select_append { string::case(id.is(1) => 'one', else: 'else').as(:one_or_else) }
   ```
-
 - Relations can be accessed in DSLs with keyword arguments (flash-gordon)
   ```ruby
   users.join(posts).select_append { |posts: | posts[:title] }
@@ -79,30 +85,29 @@
   ```
 - `Relation#unfiltered` returns an unrestricted relation (removes restrictions from `WHERE` and `HAVING`) (flash-gordon)
 - Support for `WITHIN GROUP` in the function DSL has been enhanced with block syntax (flash-gordon)
-
-```ruby
- # previously available version
- households.project { float::percentile_cont(0.5).within_group(income).as(:percentile) }
- # using the new syntax
- households.project { float::percentile_cont(0.5).within_group { income }.as(:percentile) }
-```
-
+- ```ruby
+- # previously available version
+- households.project { float::percentile_cont(0.5).within_group(income).as(:percentile) }
+- # using the new syntax
+- households.project { float::percentile_cont(0.5).within_group { income }.as(:percentile) }
+- ```
 - Support for migrator options ie `ROM::Configuration.new(:sql, migrator: { path: "my_migrations" })` (rawburt)
 - `Relation#pluck` works with multiple args too (timriley)
-
-### Changed
-
-- [BREAKING] Updated to work with `dry-types 1.0.0` (flash-gordon)
-- [BREAKING] `Types::Int` is now `Types::Integer` (GustavoCaso)
 
 ### Fixed
 
 - Using `Relation#inner_join` with has-many-through produces correct query (issue #279) (doriantaylor + solnic)
 - Aliased attributes are handled correctly in `Relation#where` (waiting-for-dev)
 
+### Changed
+
+- [BREAKING] Updated to work with `dry-types 1.0.0` (flash-gordon)
+- [BREAKING] `Types::Int` is now `Types::Integer` (GustavoCaso)
+
 [Compare v2.5.0...v3.0.0](https://github.com/rom-rb/rom-sql/compare/v2.5.0...v3.0.0)
 
-## v2.5.0 2018-06-08
+## 2.5.0 2018-06-08
+
 
 ### Added
 
@@ -115,18 +120,22 @@
   users.select_append(tasks_count.as(:tasks_count))
   ```
 
+
 [Compare v2.4.0...v2.5.0](https://github.com/rom-rb/rom-sql/compare/v2.4.0...v2.5.0)
 
-## v2.4.0 2018-02-18
+## 2.4.0 2018-02-18
+
 
 ### Added
 
 - Support for functions with `Any` return type (GustavoCaso)
 - New `Relation#as_hash` method (GustavoCaso)
 
+
 [Compare v2.3.0...v2.4.0](https://github.com/rom-rb/rom-sql/compare/v2.3.0...v2.4.0)
 
-## v2.3.0 2017-11-17
+## 2.3.0 2017-11-17
+
 
 ### Added
 
@@ -138,23 +147,22 @@
 - Aliased attributes are handled correctly in PG's commands (cflipse)
 - Command extensions are properly applied in multi-adapter setups (solnic)
 
-### Internal
-
-- Custom SQL-specific mapper compiler was added, which is used starting from rom-core 4.1.0 (solnic)
-- Command's `:timestamp` plugin was removed, as it was moved to rom-core (GustavoCaso)
 
 [Compare v2.2.1...v2.3.0](https://github.com/rom-rb/rom-sql/compare/v2.2.1...v2.3.0)
 
-## v2.2.1 2017-11-10
+## 2.2.1 2017-11-10
+
 
 ### Fixed
 
 - Instrumentation works with all db interactions (not just queries that materialize relations) (solnic)
 - Typo in `MissingEnv` exception message (romatr)
 
+
 [Compare v2.2.0...v2.2.1](https://github.com/rom-rb/rom-sql/compare/v2.2.0...v2.2.1)
 
-## v2.2.0 2017-11-02
+## 2.2.0 2017-11-02
+
 
 ### Added
 
@@ -167,9 +175,11 @@
 - Custom schema is used correctly in command results (solnic)
 - Schemas no longer finalize PKs (this is done in core schema already) (solnic)
 
+
 [Compare v2.1.0...v2.2.0](https://github.com/rom-rb/rom-sql/compare/v2.1.0...v2.2.0)
 
-## v2.1.0 2017-10-23
+## 2.1.0 2017-10-23
+
 
 ### Added
 
@@ -183,9 +193,11 @@
 - Schema inference works with primary keys that have custom types (ie an enum PK column) (v-kolesnikov)
 - Ruby warnings are gone (solnic)
 
+
 [Compare v2.0.0...v2.1.0](https://github.com/rom-rb/rom-sql/compare/v2.0.0...v2.1.0)
 
-## v2.0.0 2017-10-18
+## 2.0.0 2017-10-18
+
 
 ### Added
 
@@ -203,7 +215,6 @@
       end
     end
   ```
-
 - Support for composite indexes in the auto-restrictions plugin (flash-gordon)
 - `SQL::Gateway#call` calls a SQL function (flash-gordon)
 
@@ -211,19 +222,16 @@
     gateway.(:upper, 'foo') # => "FOO"
     gateway.(:pg_advisory_xact_lock, 1234) # => nil
   ```
-
 - `SQL::Gateway#run` executes a SQL string, e.g. a DDL statement (flash-gordon)
 
   ```ruby
     gateway.run('set session IntervalStyle to default')
   ```
-
 - `SQL::Relation#exists` joins a relation with the `EXISTS` operator (flash-gordon)
 
   ```ruby
     users.exists(posts) # => users with posts
   ```
-
 - Support for processing a relation in batches (flash-gordon)
 
   ```ruby
@@ -233,32 +241,35 @@
         call(name: users[:first_name].concat(users[:last_name])
     end
   ```
-
 - `SQL::Relation#import` inserts data from another relation using the `INSERT ... AS SELECT` syntax which is often far more effective than row-by-row processing and an ordinary multi-insert. Relations defined on another gateway are also supported, and in this case, the implementation falls back to the multi-insert strategy (flash-gordon)
 
   ```ruby
     users.import(authors.select { first_name.concat(last_name).as(:name) })
   ```
-
 - Support for `tinytext`, `text`, `mediumtext`, and `longtext data types in MySQL (panthomakos)
 - The new `pg_explain` plugin for getting query plans on PostgreSQL (flash-gordon)
 
   ```ruby
     users.by_pk(1).explain(format: :json, analyze: true)
   ```
-
 - Support for window function calls
 
   ```ruby
     employees.select { [dep_no, salary, integer::avg(salary).over(partition: dep_no, order: id).as(:avg_salary)] }
   ```
-
 - Function result can be negated, also `ROM::SQL::Function#not` was added (flash-gordon)
 
   ```ruby
      users.where { !lower(name).is('John') }
      users.where { lower(name).not('John') }
   ```
+
+### Fixed
+
+- Self-ref associations work correctly with custom FKs (solnic)
+- Aliased associations with custom FKs work correctly (solnic)
+- Defining a custom dataset block no longer prevents default views like `by_pk` to be defined (solnic)
+- `Relation#group` uses canonical schema now (solnic)
 
 ### Changed
 
@@ -273,16 +284,10 @@
 - Schemas are qualified by default (solnic)
 - `PG::JSON`, `PG::JSONB`, and `PG::Array` now all have read types so that they return plain Hash/Array values instead of Sequel's wrappers (flash-gordon)
 
-### Fixed
+[Compare v1.3.3...v2.0.0](https://github.com/rom-rb/rom-sql/compare/v1.3.3...v2.0.0)
 
-- Self-ref associations work correctly with custom FKs (solnic)
-- Aliased associations with custom FKs work correctly (solnic)
-- Defining a custom dataset block no longer prevents default views like `by_pk` to be defined (solnic)
-- `Relation#group` uses canonical schema now (solnic)
+## 1.3.3 2017-05-30
 
-[Compare v1.3.3...master](https://github.com/rom-rb/rom-sql/compare/v1.3.3...master)
-
-## v1.3.3 2017-05-30
 
 ### Added
 
@@ -293,7 +298,6 @@
   ```ruby
     users.select { string::cast(id, 'varchar').as(:id_str) }
   ```
-
 - Support for`EXISTS` (v-kolesnikov)
 
   ```ruby
@@ -305,9 +309,11 @@
 
 - Fixed a regression introduced in v1.3.2 caused by doing way more work processing the default dataset (flash-gordon)
 
+
 [Compare v1.3.2...v1.3.3](https://github.com/rom-rb/rom-sql/compare/v1.3.2...v1.3.3)
 
-## v1.3.2 2017-05-13
+## 1.3.2 2017-05-13
+
 
 ### Added
 
@@ -319,9 +325,11 @@
 
 - A bunch of warnings from Sequel 4.46
 
+
 [Compare v1.3.1...v1.3.2](https://github.com/rom-rb/rom-sql/compare/v1.3.1...v1.3.2)
 
-## v1.3.1 2017-05-05
+## 1.3.1 2017-05-05
+
 
 ### Changed
 
@@ -329,7 +337,8 @@
 
 [Compare v1.3.0...v1.3.1](https://github.com/rom-rb/rom-sql/compare/v1.3.0...v1.3.1)
 
-## v1.3.0 2017-05-02
+## 1.3.0 2017-05-02
+
 
 ### Added
 
@@ -361,7 +370,8 @@
 
 [Compare v1.2.2...v1.3.0](https://github.com/rom-rb/rom-sql/compare/v1.2.2...v1.3.0)
 
-## v1.2.2 2017-03-25
+## 1.2.2 2017-03-25
+
 
 ### Changed
 
@@ -369,15 +379,18 @@
 
 [Compare v1.2.1...v1.2.2](https://github.com/rom-rb/rom-sql/compare/v1.2.1...v1.2.2)
 
-## v1.2.1 2017-03-09
+## 1.2.1 2017-03-09
+
 
 ### Fixed
 
 - Allow for joining by a `RelationProxy` instance from `rom-repository` (davydovanton)
 
+
 [Compare v1.2.0...v1.2.1](https://github.com/rom-rb/rom-sql/compare/v1.2.0...v1.2.1)
 
-## v1.2.0 2017-03-07
+## 1.2.0 2017-03-07
+
 
 ### Added
 
@@ -385,25 +398,31 @@
 - Support for passing parent tuple(s) as `parent` option in `Command#with_association` (solnic)
 - Support for join using assocation name (flash-gordon)
 
+
 [Compare v1.1.2...v1.2.0](https://github.com/rom-rb/rom-sql/compare/v1.1.2...v1.2.0)
 
-## v1.1.2 2017-03-02
+## 1.1.2 2017-03-02
+
 
 ### Fixed
 
 - Fix grouping by a function in the block DSL (flash-gordon)
 
+
 [Compare v1.1.1...v1.1.2](https://github.com/rom-rb/rom-sql/compare/v1.1.1...v1.1.2)
 
-## v1.1.1 2017-03-01
+## 1.1.1 2017-03-01
+
 
 ### Fixed
 
 - Restriction conditions with an array as a value are handled correctly by attribute types (solnic)
 
+
 [Compare v1.1.0...v1.1.1](https://github.com/rom-rb/rom-sql/compare/v1.1.0...v1.1.1)
 
-## v1.1.0 2017-03-01
+## 1.1.0 2017-03-01
+
 
 ### Added
 
@@ -417,29 +436,34 @@
 - Missing `group` method was added to legacy `SequelAPI` module (solnic)
 - Associations properly maintain `order` if it was set (solnic)
 
+
 [Compare v1.0.3...v1.1.0](https://github.com/rom-rb/rom-sql/compare/v1.0.3...v1.1.0)
 
-## v1.0.3 2017-02-23
+## 1.0.3 2017-02-23
 
-### Changed
-
-- `AutoCombine#preload` uses better restriction for `ManyToOne` association which greatly speeds up loading bigger amounts of data (solnic + flash-gordon)
 
 ### Fixed
 
 - Fix the usage of timestamp in command chains (cflipse)
 
+### Changed
+
+- `AutoCombine#preload` uses better restriction for `ManyToOne` association which greatly speeds up loading bigger amounts of data (solnic + flash-gordon)
+
 [Compare v1.0.2...v1.0.3](https://github.com/rom-rb/rom-sql/compare/v1.0.2...v1.0.3)
 
-## v1.0.2 2017-02-16
+## 1.0.2 2017-02-16
+
 
 ### Added
 
 - Support for selecting literal strings via `` select { `'foo'`.as(:bar) } `` (solnic)
 
+
 [Compare v1.0.1...v1.0.2](https://github.com/rom-rb/rom-sql/compare/v1.0.1...v1.0.2)
 
-## v1.0.1 2017-02-09
+## 1.0.1 2017-02-09
+
 
 ### Added
 
@@ -452,13 +476,13 @@
 
 - Missing primary key now leads to a more meaningful error (flash-gordon)
 
+
 [Compare v1.0.0...v1.0.1](https://github.com/rom-rb/rom-sql/compare/v1.0.0...v1.0.1)
 
-## v1.0.0 2017-01-29
-
-This release is based on rom core 3.0.0 with its improved Schema API, which is extended with SQL-specific features.
+## 1.0.0 2017-01-29
 
 Please refer to [the upgrading guide](https://github.com/rom-rb/rom-sql/wiki/Upgrading-from-0.9.x-to-1.0.0) if you're moving from 0.9.x to 1.0.0.
+
 
 ### Added
 
@@ -496,16 +520,19 @@ Please refer to [the upgrading guide](https://github.com/rom-rb/rom-sql/wiki/Upg
 
 [Compare v0.9.1...v1.0.0](https://github.com/rom-rb/rom-sql/compare/v0.9.1...v1.0.0)
 
-## v0.9.1 2016-12-23
+## 0.9.1 2016-12-23
+
 
 ### Added
 
 - Support for PG enums in schema inferrer (flash-gordon)
 - `ROM::SQL::Relation#read` method which accepts an SQL string and returns a new relation (solnic)
 
+
 [Compare v0.9.0...v0.9.1](https://github.com/rom-rb/rom-sql/compare/v0.9.0...v0.9.1)
 
-## v0.9.0 2016-11-08
+## 0.9.0 2016-11-08
+
 
 ### Added
 
@@ -515,6 +542,10 @@ Please refer to [the upgrading guide](https://github.com/rom-rb/rom-sql/wiki/Upg
 - Automatically infer PG arrays and JSON(B) types (jodosha + flash-gordon)
 - Support for `Relation#having` (cflipse)
 
+### Fixed
+
+- Floats are inferred by schemas (cflipse)
+
 ### Changed
 
 - Inferred types in schemas **are no longer strict** (flash-gordon)
@@ -522,13 +553,10 @@ Please refer to [the upgrading guide](https://github.com/rom-rb/rom-sql/wiki/Upg
 - Make `OneToOne` inherit from `OneToMany` (beauby)
 - Default dataset will use column names from schema if it's available (solnic)
 
-### Fixed
-
-- Floats are inferred by schemas (cflipse)
-
 [Compare v0.8.0...v0.9.0](https://github.com/rom-rb/rom-sql/compare/v0.8.0...v0.9.0)
 
-## v0.8.0 2016-07-27
+## 0.8.0 2016-07-27
+
 
 ### Added
 
@@ -544,19 +572,20 @@ Please refer to [the upgrading guide](https://github.com/rom-rb/rom-sql/wiki/Upg
 - Support for arbitrary dataset and FK names in schemas (flash-gordon)
 - Support for native upserts in PostgreSQL >= 9.5 via `Commands::Postgres::Upsert` (gotar + flash-gordon)
 
+### Fixed
+
+- `Create` command properly materialize result when `:one` is set (AMHOL)
+
 ### Changed
 
 - `Create` and `Update` commands have `:schema` plugin enabled by default which sets input handler based on schema definition automatically (solnic)
 - `associates` command plugin uses schema associations now (solnic)
 - Dropped MRI 2.0.x support
 
-### Fixed
-
-- `Create` command properly materialize result when `:one` is set (AMHOL)
-
 [Compare v0.7.0...v0.8.0](https://github.com/rom-rb/rom-sql/compare/v0.7.0...v0.8.0)
 
-## v0.7.0 2016-01-06
+## 0.7.0 2016-01-06
+
 
 ### Added
 
@@ -583,37 +612,43 @@ Please refer to [the upgrading guide](https://github.com/rom-rb/rom-sql/wiki/Upg
 
 [Compare v0.6.1...v0.7.0](https://github.com/rom-rb/rom-sql/compare/v0.6.1...v0.7.0)
 
-## v0.6.1 2015-09-23
+## 0.6.1 2015-09-23
+
 
 ### Added
 
 - `Gateway` accepts `:extensions` as an option (c0)
 
+
 [Compare v0.6.0...v0.6.1](https://github.com/rom-rb/rom-sql/compare/v0.6.0...v0.6.1)
 
-## v0.6.0 2015-08-19
+## 0.6.0 2015-08-19
 
 Internal updates to fix deprecation warnings from ROM 0.9.0.
 
+
+
 [Compare v0.5.3...v0.6.0](https://github.com/rom-rb/rom-sql/compare/v0.5.3...v0.6.0)
 
-## v0.5.3 2015-07-23
+## 0.5.3 2015-07-23
+
 
 ### Added
 
 - `Relation#multi_insert` (draxxxeus)
 
-### Changed
-
-- Command that receives many tuples will use `multi_insert` now (draxxxeus)
-
 ### Fixed
 
 - Relation name and join key fixes for `many_to_one` macro (jamesmoriarty)
 
+### Changed
+
+- Command that receives many tuples will use `multi_insert` now (draxxxeus)
+
 [Compare v0.5.2...v0.5.3](https://github.com/rom-rb/rom-sql/compare/v0.5.2...v0.5.3)
 
-## v0.5.2 2015-06-22
+## 0.5.2 2015-06-22
+
 
 ### Added
 
@@ -626,19 +661,21 @@ Internal updates to fix deprecation warnings from ROM 0.9.0.
 
 [Compare v0.5.1...v0.5.2](https://github.com/rom-rb/rom-sql/compare/v0.5.1...v0.5.2)
 
-## v0.5.1 2015-05-25
+## 0.5.1 2015-05-25
 
-### Changed
-
-- Relations won't be finalized when table(s) is/are missing (solnic)
 
 ### Fixed
 
 - Wrap errors when calling commands with `[]`-syntax (kwando)
 
+### Changed
+
+- Relations won't be finalized when table(s) is/are missing (solnic)
+
 [Compare v0.5.0...v0.5.1](https://github.com/rom-rb/rom-sql/compare/v0.5.0...v0.5.1)
 
-## v0.5.0 2015-05-22
+## 0.5.0 2015-05-22
+
 
 ### Added
 
@@ -657,17 +694,20 @@ Internal updates to fix deprecation warnings from ROM 0.9.0.
 - `Commands::Update#set` has been deprecated (solnic)
 - `Commands::Update#to` has been deprecated (solnic)
 
-[Compare v0.4.3...v0.5.0](https://github.com/rom-rb/rom-sql/compare/v0.4.2...v0.5.0)
+[Compare v0.4.3...v0.5.0](https://github.com/rom-rb/rom-sql/compare/v0.4.3...v0.5.0)
 
-## v0.4.3 2015-05-17
+## 0.4.3 2015-05-17
+
 
 ### Fixed
 
 - `transaction` doesn't swallow errors now other than CommandError (solnic)
 
+
 [Compare v0.4.2...v0.4.3](https://github.com/rom-rb/rom-sql/compare/v0.4.2...v0.4.3)
 
-## v0.4.2 2015-05-17
+## 0.4.2 2015-05-17
+
 
 ### Added
 
@@ -687,16 +727,19 @@ Internal updates to fix deprecation warnings from ROM 0.9.0.
 
 [Compare v0.4.1...v0.4.2](https://github.com/rom-rb/rom-sql/compare/v0.4.1...v0.4.2)
 
-## v0.4.1 2015-04-04
+## 0.4.1 2015-04-04
+
 
 ### Added
 
 - Database error handling for update and delete commands (kwando + solnic)
 - Migration interface as a repository plugin (gotar + solnic)
 
+
 [Compare v0.4.0...v0.4.1](https://github.com/rom-rb/rom-sql/compare/v0.4.0...v0.4.1)
 
-## v0.4.0 2015-03-22
+## 0.4.0 2015-03-22
+
 
 ### Added
 
@@ -707,34 +750,39 @@ Internal updates to fix deprecation warnings from ROM 0.9.0.
 - Pagination plugin (solnic)
 - Allow reuse of established Sequel connections (splattael)
 
-### Changed
-
-- Use ROM's own inflector which uses either ActiveSupport or Inflecto backends (mjtko)
-
 ### Fixed
 
 - Indentation in Rails logger (morgoth)
 
+### Changed
+
+- Use ROM's own inflector which uses either ActiveSupport or Inflecto backends (mjtko)
+
 [Compare v0.3.2...v0.4.0](https://github.com/rom-rb/rom-sql/compare/v0.3.2...v0.4.0)
 
-## v0.3.2 2015-01-01
+## 0.3.2 2015-01-01
+
 
 ### Fixed
 
 - Checking tuple count in commands (solnic)
 
+
 [Compare v0.3.1...v0.3.2](https://github.com/rom-rb/rom-sql/compare/v0.3.1...v0.3.2)
 
-## v0.3.1 2014-12-31
+## 0.3.1 2014-12-31
+
 
 ### Added
 
 - `Adapter#disconnect` (solnic)
 - Support for extra connection options (solnic)
 
+
 [Compare v0.3.0...v0.3.1](https://github.com/rom-rb/rom-sql/compare/v0.3.0...v0.3.1)
 
-## v0.3.0 2014-12-19
+## 0.3.0 2014-12-19
+
 
 ### Changed
 
@@ -743,7 +791,8 @@ Internal updates to fix deprecation warnings from ROM 0.9.0.
 
 [Compare v0.2.0...v0.3.0](https://github.com/rom-rb/rom-sql/compare/v0.2.0...v0.3.0)
 
-## v0.2.0 2014-12-06
+## 0.2.0 2014-12-06
+
 
 ### Added
 
@@ -751,9 +800,11 @@ Internal updates to fix deprecation warnings from ROM 0.9.0.
 - Support for ActiveSupport::Notifications with a log subscriber (solnic)
 - New `ROM::SQL::Adapter#dataset?(name)` checking if a given table exists (solnic)
 
+
 [Compare v0.1.1...v0.2.0](https://github.com/rom-rb/rom-sql/compare/v0.1.1...v0.2.0)
 
-## v0.1.1 2014-11-24
+## 0.1.1 2014-11-24
+
 
 ### Fixed
 
@@ -765,6 +816,6 @@ Internal updates to fix deprecation warnings from ROM 0.9.0.
 
 [Compare v0.1.0...v0.1.1](https://github.com/rom-rb/rom-sql/compare/v0.1.0...v0.1.1)
 
-## v0.1.0 2014-11-24
+## 0.1.0 2014-11-24
 
 First release powered by Sequel
