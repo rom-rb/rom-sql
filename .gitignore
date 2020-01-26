@@ -16,3 +16,4 @@
 mkmf.log
 log/*.log
 gemfiles/*.lock
+.env

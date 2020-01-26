@@ -27,4 +27,5 @@ group :test do
   gem 'sqlite3', platforms: :ruby
   gem 'jdbc-sqlite3', platforms: :jruby
   gem 'ruby-oci8', platforms: :ruby if ENV['ROM_USE_ORACLE']
+  gem 'dotenv', require: false
 end

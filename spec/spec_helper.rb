@@ -1,10 +1,4 @@
-require 'bundler'
-Bundler.setup
-
-if ENV['COVERAGE'] == 'true'
-  require 'codacy-coverage'
-  Codacy::Reporter.start
-end
+require_relative 'support/coverage'
 
 require 'warning'
 
@@ -17,6 +11,18 @@ Warning.ignore(/__FILE__/)
 Warning.ignore(/__LINE__/)
 Warning.ignore(/codacy/)
 Warning.process { |w| raise RuntimeError, w } if ENV['FAIL_ON_WARNINGS'].eql?('true')
+
+require 'fileutils'
+
+is_jruby = defined?(JRUBY_VERSION)
+
+unless File.exist?('.env')
+  env_file = is_jruby ? '.env.jdbc' : '.env.default'
+  puts "Copying #{env_file} => .env"
+  FileUtils.cp(env_file, '.env')
+end
+
+require 'dotenv/load'
 
 require 'rom-sql'
 require 'rom/sql/rake_task'
@@ -31,38 +37,65 @@ rescue LoadError
 end
 
 LOGGER = Logger.new(File.open('./log/test.log', 'a'))
+
 ENV['TZ'] ||= 'UTC'
 
-oracle_settings = {
-  db_name: ENV.fetch('ROM_ORACLE_DATABASE', 'xe'),
-  host: ENV.fetch('ROM_ORACLE_HOST', 'localhost'),
-  port: Integer(ENV.fetch('ROM_ORACLE_PORT', '1521'))
+DB_URIS = {
+  sqlite: is_jruby ? 'jdbc:sqlite:' : 'sqlite::memory',
+  postgres: ENV['POSTGRES_DSN'],
+  mysql: ENV['MYSQL_DSN']
 }
 
-def env_or(key, value)
-  (v = ENV[key]).to_s.empty? ? value : v
+if (oracle_dsn = ENV['ORACLE_DSN'])
+  DB_URIS[:oracle] = oracle_dsn
 end
 
-mysql_port = env_or('MYSQL_PORT', 3306)
+require 'pp'
 
-if defined? JRUBY_VERSION
-  DB_URIS = {
-    sqlite: 'jdbc:sqlite:',
-    postgres: env_or('POSTGRES_DSN', 'jdbc:postgresql://127.0.0.1/rom_sql'),
-    mysql: env_or('MYSQL_DSN', "jdbc:mysql://127.0.0.1:#{mysql_port}/rom_sql?user=root&sql_mode=STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION&useSSL=false"),
-    oracle: ENV['ROM_USE_ORACLE'] ? fail('Setup Oracle for JRuby!') : nil
-  }
+puts "\n"
+puts "*"*80
+puts "\n"
+puts "Running tests with the following database config:\n"
+puts "\n"
+pp DB_URIS
+puts "\n"
+puts "*"*80
+puts "\n"
+
+puts "Connections check...\n\n"
+
+conn_test = DB_URIS.map do |type, uri|
+  result =
+    begin
+      [Sequel.connect(uri).test_connection]
+    rescue => e
+      [false, e.message]
+    end
+
+  is_ok, err = result
+
+  if is_ok
+    puts "[#{type}] success!"
+  else
+    puts "[#{type}] failure! Error: #{err}"
+  end
+
+  is_ok
+end
+
+puts "\n"
+
+if conn_test.all?
+  puts "All connections successful"
 else
-  DB_URIS = {
-    sqlite: 'sqlite::memory',
-    postgres: env_or('POSTGRES_DSN', 'postgres://rom-sql:password@127.0.0.1/rom_sql'),
-    mysql: env_or('MYSQL_DSN', "mysql2://root:password@127.0.0.1:#{mysql_port}/rom_sql?sql_mode=STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION"),
-    oracle: "oracle://#{ oracle_settings[:host] }:#{ oracle_settings[:port] }/" \
-            "#{ oracle_settings[:db_name] }?username=rom_sql&password=rom_sql&autosequence=true"
-  }
+  puts "Some connections failed. Make sure you started database containers via `docker-compose up`!"
+  puts "*"*80
+  puts "\n"
+
+  exit(1)
 end
 
-ADAPTERS = ENV['ROM_USE_ORACLE'] ? DB_URIS.keys : DB_URIS.keys - %i(oracle)
+ADAPTERS = DB_URIS.keys
 PG_LTE_95 = ENV.fetch('PG_LTE_95', 'true') == 'true'
 
 SPEC_ROOT = root = Pathname(__FILE__).dirname
