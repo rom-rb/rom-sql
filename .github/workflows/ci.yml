@@ -1,0 +1,104 @@
+---
+name: Tests
+'on':
+  push:
+    paths:
+    - ".github/workflows/ci.yml"
+    - lib/**
+    - spec/**
+    - Rakefile
+    - Gemfile
+    - Gemfile.devtools
+    - ".rubocop.yml"
+    - project.yml
+  pull_request:
+    branches:
+    - master
+  create: 
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby:
+        - '2.7'
+        - '2.6'
+        - '2.5'
+        - '2.4'
+        - jruby
+        include:
+        - ruby: '2.6'
+          coverage: 'true'
+        - ruby: '2.7'
+          fail_on_warnings: 'true'
+          dry_types_from_master: 'true'
+          rom_core_from_master: 'true'
+          sequel_from_master: 'true'
+        - ruby: jruby
+          mysql_dsn: jdbc:mysql://127.0.0.1:3307/rom_sql?user=root&password=password&sql_mode=STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION&useSSL=false
+          postgres_dsn: jdbc:postgresql://127.0.0.1:5432/rom_sql?user=rom-sql&password=password
+    env:
+      CLASSPATH: ''
+      COVERAGE: "${{matrix.coverage}}"
+      CODACY_RUN_LOCAL: true
+      CODACY_PROJECT_TOKEN: "${{secrets.CODACY_PROJECT_TOKEN}}"
+      APT_DEPS: libpq-dev libmysqlclient-dev libsqlite3-dev
+      POSTGRES_DSN: "${{matrix.postgres_dsn}}"
+      MYSQL_PORT: 3307
+      MYSQL_DSN: "${{matrix.mysql_dsn}}"
+      FAIL_ON_WARNINGS: "${{matrix.fail_on_warnings}}"
+      DRY_TYPES_FROM_MASTER: "${{matrix.dry_types_from_master}}"
+      ROM_CORE_FROM_MASTER: "${{matrix.rom_core_from_master}}"
+      SEQUEL_FROM_MASTER: "${{matrix.sequel_from_master}}"
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install dependencies
+      run: "[ -e $APT_DEPS ] || sudo apt-get install -y --no-install-recommends $APT_DEPS"
+    - name: Set up Ruby
+      uses: eregon/use-ruby-action@master
+      with:
+        ruby-version: "${{matrix.ruby}}"
+    - name: Install latest bundler
+      run: |
+        gem install bundler --no-document
+        bundle config set without 'tools benchmarks docs'
+    - name: Bundle install
+      run: bundle install --jobs 4 --retry 3
+    - name: Run all tests
+      run: bundle exec rake
+    services:
+      mysql:
+        image: mysql:5.7
+        ports:
+        - 3307:3306
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: rom_sql
+      postgres:
+        image: postgres:11
+        ports:
+        - 5432:5432
+        env:
+          POSTGRES_DB: rom_sql
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: rom-sql
+  release:
+    runs-on: ubuntu-latest
+    if: contains(github.ref, 'tags') && github.event_name == 'create'
+    needs: tests
+    env:
+      GITHUB_LOGIN: rom-bot
+      GITHUB_TOKEN: "${{secrets.GH_PAT}}"
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Ruby
+      uses: eregon/use-ruby-action@master
+      with:
+        ruby-version: 2.6
+    - name: Install dependencies
+      run: gem install ossy --no-document
+    - name: Trigger release workflow
+      run: |
+        tag=$(echo $GITHUB_REF | cut -d / -f 3)
+        ossy gh w rom-rb/devtools release --payload "{\"tag\":\"$tag\",\"tag_creator\":\"$GITHUB_ACTOR\",\"repo\":\"$GITHUB_REPOSITORY\"}"

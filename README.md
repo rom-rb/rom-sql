@@ -1,70 +1,28 @@
 [gem]: https://rubygems.org/gems/rom-sql
 [actions]: https://github.com/rom-rb/rom-sql/actions
-[codeclimate]: https://codeclimate.com/github/rom-rb/rom-sql
-[inchpages]: http://inch-ci.org/github/rom-rb/rom-sql
+[codacy]: https://www.codacy.com/gh/rom-rb/rom-sql
 [chat]: https://rom-rb.zulipchat.com
+[inchpages]: http://inch-ci.org/github/rom-rb/rom-sql
 
-# rom-sql [![Join the chat at https://rom-rb.zulipchat.com](https://img.shields.io/badge/rom--rb-join%20chat-942283.svg)][chat]
+# rom-sql [![Join the chat at https://rom-rb.zulipchat.com](https://img.shields.io/badge/dry--rb-join%20chat-%23346b7a.svg)][chat]
 
 [![Gem Version](https://badge.fury.io/rb/rom-sql.svg)][gem]
 [![CI Status](https://github.com/rom-rb/rom-sql/workflows/ci/badge.svg)][actions]
-[![Code Climate](https://codeclimate.com/github/rom-rb/rom-sql/badges/gpa.svg)][codeclimate]
-[![Test Coverage](https://codeclimate.com/github/rom-rb/rom-sql/badges/coverage.svg)][codeclimate]
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8e2cbaf78af44185876c8fa41540d7ea)][codacy]
+[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/8e2cbaf78af44185876c8fa41540d7ea)][codacy]
 [![Inline docs](http://inch-ci.org/github/rom-rb/rom-sql.svg?branch=master)][inchpages]
 
-SQL support for [rom-rb](https://github.com/rom-rb/rom).
+## Links
 
-Resources:
+* [User documentation](http://rom-rb.org/learn/rom-sql)
+* [API documentation](http://rubydoc.info/gems/rom-sql)
 
-- [User Documentation](http://rom-rb.org/learn/sql/)
-- [API Documentation](http://rubydoc.info/gems/rom-sql)
+## Supported Ruby versions
 
-## Installation
+This library officially supports the following Ruby versions:
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'rom-sql'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install rom-sql
-
-## Docker
-
-### Development
-
-In order to have reproducible environment for development, Docker can be used. Provided it's installed, in order to start developing, one can simply execute:
-
-```bash
-docker-compose run --rm gem "bash"
-```
-
-If this is the first time this command is executed, it will take some time to set up the dependencies and build the rom-sql container. This should happen only on first execution and in case dependency images are removed.
-
-After dependencies are set container will be started in a bash shell.
-
-### Testing
-
-In order to test the changes, execute:
-
-```bash
-docker-compose build gem
-bin/run-specs
-```
-
-### Stopping the dependencies
-
-In order to stop the dependencies, execute:
-
-```bash
-docker-compose down --remove-orphans --volumes
-```
+* MRI >= `2.4`
+* jruby >= `9.2`
 
 ## License
 

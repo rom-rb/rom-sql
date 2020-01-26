@@ -483,7 +483,6 @@
 
 Please refer to [the upgrading guide](https://github.com/rom-rb/rom-sql/wiki/Upgrading-from-0.9.x-to-1.0.0) if you're moving from 0.9.x to 1.0.0.
 
-
 ### Added
 
 - [BREAKING] All relations have schemas (inferred by default, but still possible to override and/or extend) (solnic)
@@ -625,7 +624,6 @@ Please refer to [the upgrading guide](https://github.com/rom-rb/rom-sql/wiki/Upg
 ## 0.6.0 2015-08-19
 
 Internal updates to fix deprecation warnings from ROM 0.9.0.
-
 
 
 [Compare v0.5.3...v0.6.0](https://github.com/rom-rb/rom-sql/compare/v0.5.3...v0.6.0)
