@@ -62,7 +62,7 @@ module ROM
           #
           # @api public
           def total
-            dataset.unlimited.count
+            dataset.unlimited.order(nil).count
           end
 
           # Return total number of pages
