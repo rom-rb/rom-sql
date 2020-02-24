@@ -101,7 +101,7 @@
       tasks = relations[:tasks]
       users = relations[:users]
       user_tasks = tasks.where(tasks[:user_id].is(users[:id])
-      tasks_count = user_tasks.select { integer::count(id) }
+      tasks_count = user_tasks.select { integer::count(id) }.query
       users.select_append(tasks_count.as(:tasks_count))
       ```
 - version: 2.4.0
