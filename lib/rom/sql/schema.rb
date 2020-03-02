@@ -141,6 +141,15 @@ module ROM
         new(EMPTY_ARRAY)
       end
 
+      # Return the canonical schema which is carried in all schema instances
+      #
+      # @return [Schema]
+      #
+      # @api public
+      def canonical
+        new(super.map(&:canonical))
+      end
+
       # Finalize all attributes by qualifying them and initializing primary key names
       #
       # @api private
