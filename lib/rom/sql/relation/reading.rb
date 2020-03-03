@@ -1080,7 +1080,7 @@ module ROM
             elsif block
               __join__(type, other, JoinDSL.new(schema).(&block), opts)
             else
-              new(dataset.__send__(type, other.to_sym, join_cond, opts, &block))
+              new(dataset.__send__(type, other.to_sym, canonicalize_args(join_cond), opts, &block))
             end
           elsif other.is_a?(Sequel::SQL::AliasedExpression)
             new(dataset.__send__(type, other, join_cond, opts, &block))
@@ -1112,14 +1112,20 @@ module ROM
         # @api private
         def canonicalize_args(args)
           if args.is_a?(Array)
-            args.map do |arg|
+            args.map {|arg|
               next arg unless arg.is_a?(ROM::SQL::Attribute)
               arg.canonical
-            end
+            }
+          elsif args.is_a?(Hash)
+            args.each_with_object({}) {|(k, v), h|
+              key = k.is_a?(ROM::SQL::Attribute) ? k.canonical : k
+              value = v.is_a?(ROM::SQL::Attribute) ? v.canonical : v
+              h[key] = value
+            }
           elsif args.is_a?(ROM::SQL::Attribute)
-            arg.canonical
+            args.canonical
           else
-            arg
+            args
           end
         end
       end
