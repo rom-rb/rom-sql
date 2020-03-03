@@ -477,7 +477,7 @@ module ROM
           if block
             new(dataset.order(*args, *schema.canonical.order(&block)))
           else
-            new(dataset.__send__(__method__, *args, &block))
+            new(dataset.__send__(__method__, *canonicalize_args(args), &block))
           end
         end
 
@@ -1100,6 +1100,26 @@ module ROM
             end
           else
             raise ArgumentError, "+other+ must be either a symbol or a relation, #{other.class} given"
+          end
+        end
+
+        # Coerces {ROM::SQL::Attribute} arguments into their
+        # canonical form
+        #
+        # Used by relation functions that accept attributes but don't
+        # want aliased attributes to generate invalid sql
+        #
+        # @api private
+        def canonicalize_args(args)
+          if args.is_a?(Array)
+            args.map do |arg|
+              next arg unless arg.is_a?(ROM::SQL::Attribute)
+              arg.canonical
+            end
+          elsif args.is_a?(ROM::SQL::Attribute)
+            arg.canonical
+          else
+            arg
           end
         end
       end
