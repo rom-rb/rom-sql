@@ -1094,7 +1094,7 @@ module ROM
                 join_opts = EMPTY_HASH
               end
 
-              new(dataset.__send__(type, other.name.to_sym, join_cond, join_opts))
+              new(dataset.__send__(type, other.name.dataset.to_sym, join_cond, join_opts))
             else
               associations[other.name.key].join(type, self, other)
             end

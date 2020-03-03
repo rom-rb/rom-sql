@@ -80,6 +80,13 @@ RSpec.describe ROM::Relation, '#join_dsl', relations: false do
       end
     end
 
+    context 'using relation object with aliased dataset as the join relation' do
+      include_context 'valid joined relation' do
+        let(:users_arg) { users.with(name: ROM::Relation::Name.new(:my_users, :users)) }
+        let(:tasks_arg) { tasks }
+      end
+    end
+
     it 'can join using alias' do
       authors = users.as(:authors).qualified(:authors)
 
