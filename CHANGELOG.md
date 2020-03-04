@@ -1,3 +1,13 @@
+## unreleased 
+
+
+### Fixed
+
+- `Relation#join` no longer crashes when aliased relation is used with a block (issue #369) (@abrthel)
+
+
+[Compare v3.2.0...master](https://github.com/rom-rb/rom-sql/compare/v3.2.0...master)
+
 ## 3.2.0 2020-01-11
 
 
