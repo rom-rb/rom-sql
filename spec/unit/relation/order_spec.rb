@@ -15,6 +15,14 @@ RSpec.describe ROM::Relation, '#order' do
         to eql([{ id: 3, name: 'Jade' }, { id: 1, name: 'Jane' }, { id: 2, name: 'Joe' }])
     end
 
+    it 'orders by provided attributes with alias set' do
+      attribs = [relation.schema[:name].with(alias: :user_name), :id]
+      ordered = relation.order(*attribs)
+
+      expect(ordered.to_a).
+        to eql([{ id: 3, name: 'Jade' }, { id: 1, name: 'Jane' }, { id: 2, name: 'Joe' }])
+    end
+
     it 'orders by provided attribute using a block' do
       ordered = relation.
                   qualified.
@@ -24,6 +32,17 @@ RSpec.describe ROM::Relation, '#order' do
 
       expect(ordered.to_a).
         to eql([{ id: 2, name: 'Joe' }, { id: 1, name: 'Jane' }, { id: 3, name: 'Jade' }])
+    end
+
+    it 'orders by provided attribute when aliased using a block' do
+      ordered = relation.
+                  qualified.
+                  rename(name: :user_name).
+                  select(:id, :name).
+                  order { name.qualified.desc }
+
+      expect(ordered.to_a).
+        to eql([{ id: 2, user_name: 'Joe' }, { id: 1, user_name: 'Jane' }, { id: 3, user_name: 'Jade' }])
     end
 
     it 'orders by provided attribute from another relation' do

@@ -78,6 +78,15 @@ module ROM
         )
       end
 
+      # @see Attribute#qualified_projection
+      #
+      # @api private
+      def qualified_projection(table_alias = nil)
+        meta(
+          func: ::Sequel::SQL::Function.new(func.name, *func.args.map { |arg| arg.respond_to?(:qualified_projection) ? arg.qualified_projection(table_alias) : arg })
+        )
+      end
+
       # @see Attribute#qualified?
       #
       # @api private
