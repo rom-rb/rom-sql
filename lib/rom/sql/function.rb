@@ -186,7 +186,7 @@ module ROM
       #   users.project { integer::count(:id).filter(name.is("Jack")).as(:jacks) }.order(nil)
       #   users.project { integer::count(:id).filter { name.is("John") }).as(:johns) }.order(nil)
       #
-      # @param [Hash,SQL::Attribute] Conditions
+      # @param condition [Hash,SQL::Attribute] Conditions
       # @yield [block] A block with restrictions
       #
       # @return [SQL::Function]
@@ -211,7 +211,7 @@ module ROM
       # @example
       #   households.project { fload::percentile_cont(0.5).within_group(income).as(:percentile) }
       #
-      # @param [Array] A list of expressions for sorting within a group
+      # @param args [Array] A list of expressions for sorting within a group
       # @yield [block] A block for getting the expressions using the Order DSL
       #
       # @return [SQL::Function]
