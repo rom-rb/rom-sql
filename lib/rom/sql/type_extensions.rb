@@ -9,7 +9,7 @@ module ROM
       class << self
         # Gets extensions for a type
         #
-        # @param [Dry::Types::Type] wrapped
+        # @param type [Dry::Types::Type] wrapped
         #
         # @return [Hash]
         #

@@ -31,7 +31,7 @@ module ROM
       #   users.select { function(:count, :id).as(:total) }
       #
       # @param [Symbol] name SQL function
-      # @param [Symbol] attr
+      # @param [Symbol] attrs
       #
       # @return [Rom::SQL::Function]
       #
