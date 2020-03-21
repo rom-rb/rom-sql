@@ -4,7 +4,7 @@
 [chat]: https://rom-rb.zulipchat.com
 [inchpages]: http://inch-ci.org/github/rom-rb/rom-sql
 
-# rom-sql [![Join the chat at https://rom-rb.zulipchat.com](https://img.shields.io/badge/dry--rb-join%20chat-%23346b7a.svg)][chat]
+# rom-sql [![Join the chat at https://rom-rb.zulipchat.com](https://img.shields.io/badge/rom--rb-join%20chat-%23346b7a.svg)][chat]
 
 [![Gem Version](https://badge.fury.io/rb/rom-sql.svg)][gem]
 [![CI Status](https://github.com/rom-rb/rom-sql/workflows/ci/badge.svg)][actions]
