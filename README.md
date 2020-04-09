@@ -14,7 +14,7 @@
 
 ## Links
 
-* [User documentation](http://rom-rb.org/learn/rom-sql)
+* [User documentation](http://rom-rb.org/learn/sql)
 * [API documentation](http://rubydoc.info/gems/rom-sql)
 
 ## Supported Ruby versions
