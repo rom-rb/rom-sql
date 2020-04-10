@@ -1,5 +1,15 @@
-## unreleased 
+## Unreleased
 
+### Added
+
+- `Relation#full_text_search` that provides an API for [PostgreSQL's Full Text Search](https://www.postgresql.org/docs/9.5/textsearch.html) (@ianks)
+
+  ```ruby
+  # Don't forget to activate the plugin
+  conf.plugin(:sql, relations: :pg_full_text_search)
+
+  posts.full_text_search([:title], 'tutorials', language: 'english') # => [{ title: 'A Tutorial about SQL', ... }]
+  ```
 
 ### Fixed
 
@@ -7,6 +17,7 @@
 
 
 [Compare v3.2.0...master](https://github.com/rom-rb/rom-sql/compare/v3.2.0...master)
+
 
 ## 3.2.0 2020-01-11
 
