@@ -28,7 +28,7 @@ jobs:
         include:
           - ruby: "2.6"
             coverage: "true"
-          - ruby: "2.7"
+          - ruby: "2.7.0"
             fail_on_warnings: "true"
             dry_types_from_master: "true"
             rom_core_from_master: "true"
