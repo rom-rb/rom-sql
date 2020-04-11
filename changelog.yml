@@ -5,7 +5,17 @@
   fixed:
   - "`Relation#join` no longer crashes when aliased relation is used with a block
     (issue #369) (@abrthel)"
-  added: 
+  added:
+  - |-
+    `Relation#full_text_search` that provides an API for [PostgreSQL's Full Text Search](https://www.postgresql.org/docs/9.5/textsearch.html) (@ianks)
+
+    ```ruby
+    # Don't forget to activate the plugin
+    conf.plugin(:sql, relations: :pg_full_text_search)
+
+    posts.full_text_search([:title], 'tutorials', language: 'english')
+    # => [{ title: 'A Tutorial about SQL', ... }]
+    ```
   changed: 
 - version: 3.2.0
   date: '2020-01-11'
