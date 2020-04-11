@@ -21,7 +21,7 @@ jobs:
     strategy:
       matrix:
         ruby:
-          - "2.7"
+          - "2.7.0"
           - "2.6"
           - "2.4"
           - "jruby"
