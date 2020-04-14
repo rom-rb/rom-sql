@@ -5,6 +5,8 @@
   fixed:
   - "`Relation#join` no longer crashes when aliased relation is used with a block
     (issue #369) (@abrthel)"
+  - 'Attributes aliases are properly handled when constructing queries with SQL functions
+    (issue #370 fixed via #373) (@abrthel)'
   added:
   - |-
     `Relation#full_text_search` that provides an API for [PostgreSQL's Full Text Search](https://www.postgresql.org/docs/9.5/textsearch.html) (@ianks)
