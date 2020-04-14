@@ -16,6 +16,7 @@ posts.full_text_search([:title], 'tutorials', language: 'english')
 ### Fixed
 
 - `Relation#join` no longer crashes when aliased relation is used with a block (issue #369) (@abrthel)
+- Attributes aliases are properly handled when constructing queries with SQL functions (issue #370 fixed via #373) (@abrthel)
 
 
 [Compare v3.2.0...master](https://github.com/rom-rb/rom-sql/compare/v3.2.0...master)
