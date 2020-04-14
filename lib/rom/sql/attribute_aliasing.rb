@@ -21,6 +21,34 @@ module ROM
       end
       alias as aliased
 
+
+      # Return true if this attribute is an aliased projection
+      #
+      # @example
+      #   class Tasks < ROM::Relation[:memory]
+      #     schema do
+      #       attribute :user_id, Types::Integer, alias: :id
+      #       attribute :name, Types::String
+      #     end
+      #   end
+      #
+      #   Users.schema[:user_id].aliased?
+      #   # => true
+      #   Users.schema[:user_id].aliased_projection?
+      #   # => false
+      #
+      #   Users.schema[:user_id].qualified_projection.aliased?
+      #   # => true
+      #   Users.schema[:user_id].qualified_projection.aliased_projection?
+      #   # => true
+      #
+      # @return [TrueClass,FalseClass]
+      #
+      # @api private
+      def aliased_projection?
+        self.meta[:sql_expr].is_a?(Sequel::SQL::AliasedExpression)
+      end
+
       private
 
       # @api private

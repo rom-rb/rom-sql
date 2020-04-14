@@ -67,6 +67,21 @@ module ROM
         end
       end
 
+      # Return a new attribute that is aliased and marked as qualified
+      #
+      # Intended to be used when passing attributes to `dataset#select`
+      #
+      # @return [SQL::Attribute]
+      #
+      # @api public
+      def qualified_projection(table_alias = nil)
+        if aliased?
+          qualified(table_alias).aliased(self.alias)
+        else
+          qualified(table_alias)
+        end
+      end
+
       # Return a new attribute marked as joined
       #
       # Whenever you join two schemas, the right schema's attribute
@@ -285,11 +300,11 @@ module ROM
       # @api private
       def to_sql_name
         @_to_sql_name ||=
-          if qualified? && aliased?
+          if qualified? && aliased_projection?
             Sequel.qualify(table_name, name).as(self.alias)
           elsif qualified?
             Sequel.qualify(table_name, name)
-          elsif aliased?
+          elsif aliased_projection?
             Sequel.as(name, self.alias)
           else
             Sequel[name]

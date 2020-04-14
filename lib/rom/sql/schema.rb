@@ -67,6 +67,18 @@ module ROM
         new(map { |attr| attr.qualified(table_alias) })
       end
 
+      # Return a new schema with attributes that are aliased
+      # and marked as qualified
+      #
+      # Intended to be used when passing attributes to `dataset#select`
+      #
+      # @return [Schema]
+      #
+      # @api public
+      def qualified_projection(table_alias = nil)
+        new(map { |attr| attr.qualified_projection(table_alias) })
+      end
+
       # Project a schema
       #
       # @see ROM::Schema#project
@@ -129,7 +141,7 @@ module ROM
       #
       # @api public
       def call(relation)
-        relation.new(relation.dataset.select(*self), schema: self)
+        relation.new(relation.dataset.select(*self.qualified_projection), schema: self)
       end
 
       # Return an empty schema

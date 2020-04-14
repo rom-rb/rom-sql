@@ -17,7 +17,7 @@ module ROM
           #
           # @api private
           def returning_dataset
-            relation.dataset.returning(*relation.qualified_columns)
+            relation.dataset.returning(*relation.schema.qualified_projection)
           end
         end
 
