@@ -34,7 +34,6 @@ jobs:
         - ruby: 2.7.0
           fail_on_warnings: 'true'
           dry_types_from_master: 'true'
-          rom_core_from_master: 'true'
           sequel_from_master: 'true'
     env:
       COVERAGE: "${{matrix.coverage}}"
@@ -42,7 +41,6 @@ jobs:
       APT_DEPS: libpq-dev libmysqlclient-dev libsqlite3-dev
       FAIL_ON_WARNINGS: "${{matrix.fail_on_warnings}}"
       DRY_TYPES_FROM_MASTER: "${{matrix.dry_types_from_master}}"
-      ROM_CORE_FROM_MASTER: "${{matrix.rom_core_from_master}}"
       SEQUEL_FROM_MASTER: "${{matrix.sequel_from_master}}"
     steps:
     - uses: actions/checkout@v1
