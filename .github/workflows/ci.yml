@@ -37,10 +37,8 @@ jobs:
           rom_core_from_master: 'true'
           sequel_from_master: 'true'
     env:
-      CLASSPATH: ''
       COVERAGE: "${{matrix.coverage}}"
-      CODACY_RUN_LOCAL: true
-      CODACY_PROJECT_TOKEN: "${{secrets.CODACY_PROJECT_TOKEN}}"
+      COVERAGE_TOKEN: "${{secrets.CODACY_PROJECT_TOKEN}}"
       APT_DEPS: libpq-dev libmysqlclient-dev libsqlite3-dev
       FAIL_ON_WARNINGS: "${{matrix.fail_on_warnings}}"
       DRY_TYPES_FROM_MASTER: "${{matrix.dry_types_from_master}}"
@@ -62,6 +60,12 @@ jobs:
       run: bundle install --jobs 4 --retry 3
     - name: Run all tests
       run: bundle exec rake
+    - name: Run codacy-coverage-reporter
+      uses: codacy/codacy-coverage-reporter-action@master
+      if: env.COVERAGE == 'true' && env.COVERAGE_TOKEN != ''
+      with:
+        project-token: "${{secrets.CODACY_PROJECT_TOKEN}}"
+        coverage-reports: coverage/coverage.xml
     services:
       mysql:
         image: mysql:5.7
