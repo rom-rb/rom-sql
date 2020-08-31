@@ -47,14 +47,14 @@ tracker](https://github.com/rom-rb/rom-rb.org/issues).
 
 ## Installing
 
-*Depends on:* `ruby v2.3.0` or greater
+*Depends on:* `ruby v2.4.0` or greater
 
 To install <mark>rom-sql</mark> add the following to your
 <mark>Gemfile</mark>.
 
 ```ruby
-gem 'rom',     '~> 4.0'
-gem 'rom-sql', '~> 2.0'
+gem 'rom',     '~> 5.2'
+gem 'rom-sql', '~> 3.2'
 ```
 
 Afterwards either load `rom-sql` through your bundler setup or manually in your custom
