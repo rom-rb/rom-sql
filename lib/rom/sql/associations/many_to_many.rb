@@ -20,7 +20,7 @@ module ROM
               if target != self.target
                 target.schema.merge(join_schema)
               else
-                left.schema.project(*columns)
+                left.schema.uniq.project(*columns)
               end
             else
               target_schema
