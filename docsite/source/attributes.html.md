@@ -74,7 +74,7 @@ class Users < ROM::Relation[:sql]
   schema(infer: true)
 
   def index
-    select(:id, :name, tasks[:id].func { int::count(id).as(:task_count) }).
+    select(:id, :name, tasks[:id].func { integer::count(id).as(:task_count) }).
       left_join(tasks).
       group(:id)
   end
