@@ -69,7 +69,7 @@ namespace :db do
     end
   end
 
-  desc 'Perform migration down (erase all data)'
+  desc 'Perform migration down (removes all tables)'
   task clean: :rom_configuration do
     ROM::SQL::RakeSupport.run_migrations(target: 0)
     puts '<= db:clean executed'
