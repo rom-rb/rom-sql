@@ -21,10 +21,10 @@ group :test do
   gem 'pry', '~> 0.12.2', '<= 0.13'
   gem 'activesupport', '~> 5.0'
   gem 'pg', '~> 1.1', platforms: :ruby
-  gem 'mysql2', platforms: :ruby
+  gem 'mysql2', '~> 0.5', platforms: :ruby
   gem 'jdbc-postgres', '>= 9.4.1212', platforms: :jruby
   gem 'jdbc-mysql', platforms: :jruby
-  gem 'sqlite3', platforms: :ruby
+  gem 'sqlite3', '~> 1.4', platforms: :ruby
   gem 'jdbc-sqlite3', platforms: :jruby
   gem 'ruby-oci8', platforms: :ruby if ENV['ROM_USE_ORACLE']
   gem 'dotenv', require: false
