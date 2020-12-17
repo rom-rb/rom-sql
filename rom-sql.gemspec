@@ -24,9 +24,8 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= 2.4.0"
 
   spec.add_runtime_dependency 'sequel', '>= 4.49'
-  spec.add_runtime_dependency 'dry-equalizer', '~> 0.2'
   spec.add_runtime_dependency 'dry-types', '~> 1.0'
-  spec.add_runtime_dependency 'dry-core', '~> 0.4'
+  spec.add_runtime_dependency 'dry-core', '~> 0.5', '>= 0.5'
   spec.add_runtime_dependency 'rom', '~> 5.2', '>= 5.2.1'
 
   spec.add_development_dependency 'bundler'
