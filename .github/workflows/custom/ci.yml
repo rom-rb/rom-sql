@@ -20,15 +20,9 @@ jobs:
           POSTGRES_DB: rom-sql
     strategy:
       matrix:
-        ruby:
-          - "2.7.0"
-          - "2.6"
-          - "2.4"
-          - "jruby"
         include:
-          - ruby: "2.6"
+          - ruby: "2.7"
             coverage: "true"
-          - ruby: "2.7.0"
             fail_on_warnings: "true"
             dry_types_from_master: "true"
             sequel_from_master: "true"
