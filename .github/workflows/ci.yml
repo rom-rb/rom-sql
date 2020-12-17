@@ -27,12 +27,11 @@ jobs:
         - '2.6'
         - '2.5'
         - jruby
-        - 2.7.0
-        - '2.4'
         include:
         - ruby: '2.6'
           coverage: 'true'
-        - ruby: 2.7.0
+        - ruby: '2.7'
+          coverage: 'true'
           fail_on_warnings: 'true'
           dry_types_from_master: 'true'
           sequel_from_master: 'true'
