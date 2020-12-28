@@ -14,6 +14,7 @@ conf.plugin(:sql, relations: :pg_full_text_search)
 posts.full_text_search([:title], 'tutorials', language: 'english')
 # => [{ title: 'A Tutorial about SQL', ... }]
 ```
+- Support for `:pg_streaming` extension (@ianks)
 
 ### Fixed
 
