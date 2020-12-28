@@ -18,6 +18,7 @@
     posts.full_text_search([:title], 'tutorials', language: 'english')
     # => [{ title: 'A Tutorial about SQL', ... }]
     ```
+  - Support for `:pg_streaming` extension (@ianks)
   changed: 
 - version: 3.2.0
   date: '2020-01-11'
