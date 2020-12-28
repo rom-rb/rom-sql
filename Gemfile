@@ -28,4 +28,5 @@ group :test do
   gem 'jdbc-sqlite3', platforms: :jruby
   gem 'ruby-oci8', platforms: :ruby if ENV['ROM_USE_ORACLE']
   gem 'dotenv', require: false
+  gem 'sequel_pg', require: false, platforms: :ruby
 end

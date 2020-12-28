@@ -81,6 +81,7 @@ module ROM
       def initialize(uri, options = EMPTY_HASH)
         @connection = connect(uri, options)
         load_extensions(Array(options[:extensions]))
+        Notifications.trigger("configuration.gateway.connected", connection: @connection)
 
         @options = options
 
@@ -247,4 +248,6 @@ module ROM
       end
     end
   end
+
+  Configuration.register_event("configuration.gateway.connected")
 end
