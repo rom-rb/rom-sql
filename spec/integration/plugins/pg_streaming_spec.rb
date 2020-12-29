@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rom/plugins/relation/sql/postgres/streaming"
+
 RSpec.describe "Plugins / :pg_streaming", seeds: true do
   with_adapters(:postgres) do
     include_context "users and tasks"
