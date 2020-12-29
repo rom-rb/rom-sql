@@ -26,10 +26,17 @@ johns = users.where { properties.contain(name: 'John') }
 
 ## Streaming
 
-If you are using PostgreSQL 9.2+ on the client, then you can enable streaming
-support. This allows you to stream returned tuples one at a time, instead of
-collecting the entire result set in memory (which is how PostgreSQL works by
-default). 
+If you are using PostgreSQL 9.2+ on the client, then you can enable streaming support. This allows you to stream returned tuples one at a time, instead of collecting the entire result set in memory (which is how PostgreSQL works by default).
+
+To enable the plugin, do the following in your setup code:
+
+```ruby
+# you need to explicitly require the plugin because it hooks into setup process automatically
+require "rom/plugins/relation/sql/postgres/streaming"
+
+# this assumes that config is a ROM::Configuration object
+config.plugin(:sql, relations: :pg_streaming)
+```
 
 Imagine you have a large relation that you would like to stream as a CSV:
 
