@@ -91,6 +91,11 @@ RSpec.describe ROM::SQL::Function, :postgres do
         to eql('ROW_NUMBER() OVER (PARTITION BY "name")')
     end
 
+    example 'with the PARTITION BY clause which is aliased' do
+      expect(func.row_number.over(partition: :name, order: :name).as(:row_numbers).sql_literal(ds)).
+        to eql('ROW_NUMBER() OVER (PARTITION BY "name" ORDER BY "name") AS "row_numbers"')
+    end
+
     example 'with the frame clause' do
       expect(func.row_number.over(frame: :all).sql_literal(ds)).
         to eql('ROW_NUMBER() OVER (ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)')
