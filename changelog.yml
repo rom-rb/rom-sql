@@ -1,11 +1,20 @@
 ---
-- version: 3.3.1
-  date: "2020-12-29"
+- version: unreleased
+  summary: 
+  date: 
   fixed:
-  - "`:pg_streaming` plugin no longer crashes when there's no sequel_pg and now you need to require the plugin explicitly (@solnic)"
+  - 'Function qualification methods no longer lose options (issue #390 fixed via #391)
+    (@solnic)'
+  added: 
+  changed: 
+- version: 3.3.1
+  date: '2020-12-29'
+  fixed:
+  - "`:pg_streaming` plugin no longer crashes when there's no sequel_pg and now you
+    need to require the plugin explicitly (@solnic)"
 - version: 3.3.0
-  summary:
-  date: "2020-12-28"
+  summary: 
+  date: '2020-12-28'
   fixed:
   - "`Relation#join` no longer crashes when aliased relation is used with a block
     (issue #369) (@abrthel)"
@@ -23,7 +32,7 @@
     # => [{ title: 'A Tutorial about SQL', ... }]
     ```
   - Support for `:pg_streaming` extension (@ianks)
-  changed:
+  changed: 
 - version: 3.2.0
   date: '2020-01-11'
   fixed:
