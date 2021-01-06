@@ -1,7 +1,7 @@
 ---
 - version: 3.3.2
   summary:
-  date: '2020-01-06'
+  date: '2021-01-06'
   fixed:
   - 'Function qualification methods no longer lose options (issue #390 fixed via #391)
     (@solnic)'
