@@ -243,7 +243,7 @@ module ROM
       end
 
       # @api private
-      def transaction_runner(_)
+      def transaction_runner(**)
         ROM::SQL::Transaction.new(connection)
       end
     end

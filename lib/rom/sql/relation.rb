@@ -139,8 +139,8 @@ module ROM
       # @return [Mixed]
       #
       # @api public
-      def transaction(opts = EMPTY_HASH, &block)
-        Transaction.new(dataset.db).run(opts, &block)
+      def transaction(**opts, &block)
+        Transaction.new(dataset.db).run(**opts, &block)
       end
 
       # Return raw column names
