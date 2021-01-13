@@ -11,8 +11,8 @@ module ROM
         @connection = connection
       end
 
-      def run(opts = EMPTY_HASH)
-        connection.transaction(opts) { yield(self) }
+      def run(**options)
+        connection.transaction(options) { yield(self) }
       rescue ::ROM::Transaction::Rollback
         # noop
       end
