@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'sequel', '>= 4.49'
   spec.add_runtime_dependency 'dry-types', '~> 1.0'
   spec.add_runtime_dependency 'dry-core', '~> 0.5', '>= 0.5'
-  spec.add_runtime_dependency 'rom', '~> 5.2', '>= 5.2.1'
+  spec.add_runtime_dependency 'rom', '~> 6.0'
 
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'rake', '~> 13.0'

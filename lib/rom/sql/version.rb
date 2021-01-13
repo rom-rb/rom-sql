@@ -2,6 +2,6 @@
 
 module ROM
   module SQL
-    VERSION = '3.3.2'.freeze
+    VERSION = '4.0.0'
   end
 end
