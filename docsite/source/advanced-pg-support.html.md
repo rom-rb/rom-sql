@@ -53,7 +53,7 @@ class SomeHTTPController
   def call(*)
     # Stream the CSV to avoid keeping the entire dataset in memory
     self.body = Enumerator.new do |yielder|
-      posts.steam_each { |p| yielder << CSV.generate_line([p.id, p.title, p.body]) }
+      posts.stream_each { |p| yielder << CSV.generate_line([p.id, p.title, p.body]) }
     end
 
     self.status = 200
