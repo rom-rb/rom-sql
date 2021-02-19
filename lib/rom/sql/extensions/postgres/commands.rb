@@ -85,7 +85,7 @@ module ROM
         class Upsert < SQL::Commands::Create
           adapter :sql
 
-          defines :constraint, :conflict_target, :update_statement, :update_where
+          defines :constraint, :conflict_target, :conflict_where, :update_statement, :update_where
 
           # @!attribute [r] constraint
           #  @return [Symbol] the name of the constraint expected to be violated
@@ -94,6 +94,10 @@ module ROM
           # @!attribute [r] conflict_target
           #  @return [Object] the column or expression to handle a violation on
           option :conflict_target, default: -> { self.class.conflict_target }
+
+          # @!attribute [r] conflict_where
+          #  @return [Object] the index filter, when using a partial index to determine uniqueness
+          option :conflict_where, default: -> { self.class.conflict_where }
 
           # @!attribute [r] update_statement
           #  @return [Object] the update statement which will be executed in case of a violation
@@ -123,6 +127,7 @@ module ROM
             @upsert_options ||= {
               constraint: constraint,
               target: conflict_target,
+              conflict_where: conflict_where,
               update_where: update_where,
               update: update_statement
             }

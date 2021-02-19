@@ -50,6 +50,41 @@ RSpec.describe 'Commands / Postgres / Upsert', :postgres, seeds: false do
         it 'returns updated data' do
           expect(command.call(excluded)).to eql(id: 1, user_id: 2, title: 'task 1')
         end
+
+        context 'with index predicate' do
+          before do
+            conn.execute <<~SQL
+              ALTER TABLE tasks DROP CONSTRAINT tasks_title_key;
+
+              CREATE UNIQUE INDEX tasks_title_partial_index ON tasks (title)
+                            WHERE user_id = 1;
+            SQL
+          end
+
+          let(:command_config) do
+            -> do
+              conflict_target :title
+              conflict_where user_id: 1
+              update_statement user_id: 2
+            end
+          end
+
+          context 'when predicate matches' do
+            let(:excluded) { task }
+
+            it 'returns updated data', :aggregate_failures do
+              expect(command.call(excluded)).to eql(id: 1, user_id: 2, title: 'task 1')
+            end
+          end
+
+          context 'when predicate does not match' do
+            let(:excluded) { task.update(user_id: 2) }
+
+            it 'creates new task', :aggregate_failures do
+              expect(command.call(excluded)).to eql(id: 2, user_id: 2, title: 'task 1')
+            end
+          end
+        end
       end
 
       context 'with constraint name' do
