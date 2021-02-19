@@ -45,11 +45,11 @@ module ROM
               # @see https://github.com/jeremyevans/sequel_pg#streaming- sequel_pg docs
               #
               # @example
-              #   posts.steam_each { |post| puts CSV.generate_line(post) }
+              #   posts.stream_each { |post| puts CSV.generate_line(post) }
               #
               # @return [Relation]
               #
-              # @api publicY_VERSION
+              # @api public
               def stream_each
                 raise StreamingNotSupportedError, "not supported on jruby"
               end
@@ -60,7 +60,7 @@ module ROM
               # @see https://github.com/jeremyevans/sequel_pg#streaming- sequel_pg docs
               #
               # @example
-              #   posts.steam_each { |post| puts CSV.generate_line(post) }
+              #   posts.stream_each { |post| puts CSV.generate_line(post) }
               #
               # @return [Relation]
               #
