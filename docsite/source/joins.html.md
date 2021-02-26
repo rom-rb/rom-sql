@@ -40,11 +40,11 @@ class Users < ROM::Relation[:sql]
   end
 
   def with_tasks
-    join(:tasks, user_id: :id, priority: 1)
+    join(:tasks, id: :user_id, priority: 1)
   end
 
   def with_posts
-    left_join(:posts, user_id: :id)
+    left_join(:posts, id: :user_id)
   end
 end
 ```
@@ -63,11 +63,11 @@ class Users < ROM::Relation[:sql]
   end
 
   def with_tasks
-    join(:tasks, { user_id: :id }, table_alias: :user_tasks)
+    join(:tasks, { id: :user_id }, table_alias: :user_tasks)
   end
 
   def with_posts
-    left_join(posts, { user_id: :id }, table_alias: :user_posts)
+    left_join(posts, { id: :user_id }, table_alias: :user_posts)
   end
 end
 ```
