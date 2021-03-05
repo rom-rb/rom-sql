@@ -11,38 +11,79 @@ RSpec.describe "Plugins / :pg_streaming", seeds: true do
       conf.plugin(:sql, relations: :pg_streaming)
     end
 
-    it "can stream relations" do
-      result = []
+    context "when given a plain old relation" do
+      it "can stream relations" do
+        result = []
 
-      tasks.stream_each { |task| result << task }
+        tasks.stream_each { |task| result << task }
 
-      expect(result).to eql(tasks.dataset.to_a)
-    end
+        expect(result).to eql(tasks.dataset.to_a)
+      end
 
-    it "can stream relations when auto_struct: true is set" do
-      result = []
+      it "can stream relations when auto_struct: true is set" do
+        result = []
 
-      tasks.with(auto_struct: true).stream_each { |task| result << task }
+        tasks.with(auto_struct: true).stream_each { |task| result << task }
 
-      aggregate_failures do
-        tasks.dataset.to_a.each_with_index do |task_attrs, i|
-          expect(result[i]).to have_attributes(task_attrs)
+        aggregate_failures do
+          tasks.dataset.to_a.each_with_index do |task_attrs, i|
+            expect(result[i]).to have_attributes(task_attrs)
+          end
         end
+      end
+
+      it "can be lazily streamed" do
+        result = tasks.stream_each.lazy.take(1)
+
+        expect(result.to_a).to contain_exactly(tasks.first)
       end
     end
 
-    it "can be lazily streamed" do
-      result = tasks.stream_each.lazy.take(1)
+    context "when given a combined relation" do
+      let(:relation) { users.combine(:tasks) }
 
-      expect(result.to_a).to contain_exactly(tasks.first)
+      it "raises an error" do
+        combined_relation = users.combine(tasks)
+
+        expect { combined_relation.stream_each }.to raise_error(
+          ROM::Plugins::Relation::SQL::Postgres::Streaming::StreamingNotSupportedError
+        )
+      end
     end
 
-    it "is does not work on combined relations" do
-      combined_relation = users.combine(tasks)
+    context "when given a composite relation" do
+      let(:relation) { tasks >> mapper }
 
-      expect { combined_relation.stream_each }.to raise_error(
-        ROM::Plugins::Relation::SQL::Postgres::Streaming::StreamingNotSupportedError
-      )
+      let(:mapper) do
+        double(:mapper).tap do |mapper|
+          allow(mapper).to receive(:call) do |task_list|
+            task_list.map { |t| t.merge(foo: :bar) }
+          end
+        end
+      end
+
+      it "properly calls the mapper" do
+        result = []
+
+        relation.stream_each { |task| result << task }
+
+        expect(result.length).to eql(tasks.count)
+        expect(result).to all(include(foo: :bar))
+      end
+
+      it "calls the mapper once for each tuple" do
+        result = []
+
+        relation.stream_each { |task| result << task }
+
+        expect(mapper).to have_received(:call).exactly(2).times
+      end
+
+      it "can be lazily streamed" do
+        relation.stream_each.lazy.take(1).to_a
+
+        expect(mapper).to have_received(:call).once
+      end
     end
   end
 end

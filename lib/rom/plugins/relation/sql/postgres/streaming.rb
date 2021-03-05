@@ -36,6 +36,7 @@ module ROM
             def self.included(klass)
               super
               ROM::Relation::Graph.include(Combined)
+              ROM::Relation::Composite.include(Composite)
             end
 
             if defined?(JRUBY_VERSION)
@@ -80,6 +81,16 @@ module ROM
               module Combined
                 def stream_each
                   raise StreamingNotSupportedError, "not supported on combined relations"
+                end
+              end
+
+              module Composite
+                def stream_each
+                  return to_enum unless block_given?
+
+                  left.stream_each do |tuple|
+                    yield right.call([tuple]).first
+                  end
                 end
               end
             end
