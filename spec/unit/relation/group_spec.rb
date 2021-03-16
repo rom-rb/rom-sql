@@ -61,7 +61,7 @@ RSpec.describe ROM::Relation, '#group' do
       grouped = notes
                   .select { [integer::count(id).as(:count), time::date_trunc('day', created_at).as(:date)] }
                   .group { date_trunc('day', created_at) }
-                  .order(nil)
+                  .unordered
 
       expect(grouped.to_a).to eql([ count: 1, date: Date.today.to_time ])
     end

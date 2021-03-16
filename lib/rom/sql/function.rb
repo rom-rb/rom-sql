@@ -192,8 +192,8 @@ module ROM
       # Filter aggregate using the specified conditions
       #
       # @example
-      #   users.project { integer::count(:id).filter(name.is("Jack")).as(:jacks) }.order(nil)
-      #   users.project { integer::count(:id).filter { name.is("John") }).as(:johns) }.order(nil)
+      #   users.project { integer::count(:id).filter(name.is("Jack")).as(:jacks) }.unordered
+      #   users.project { integer::count(:id).filter { name.is("John") }).as(:johns) }.ordered
       #
       # @param condition [Hash,SQL::Attribute] Conditions
       # @yield [block] A block with restrictions
