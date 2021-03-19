@@ -4,8 +4,6 @@ gemspec
 
 eval_gemfile 'Gemfile.devtools'
 
-gem 'rom', git: 'https://github.com/rom-rb/rom.git', branch: 'master'
-
 if ENV['DRY_TYPES_FROM_MASTER'].eql?('true')
   gem 'dry-types', git: 'https://github.com/dry-rb/dry-types.git', branch: 'master'
 end

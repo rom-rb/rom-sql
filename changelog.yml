@@ -1,4 +1,9 @@
 ---
+- version: 3.4.0
+  summary:
+  date: 2021-03-19
+  added:
+  - `Relation#unordered` (@radar)
 - version: 3.3.3
   summary:
   date: 2021-03-05
