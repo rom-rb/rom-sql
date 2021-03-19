@@ -481,6 +481,18 @@ module ROM
           end
         end
 
+        # Removes ordering for the relation
+        #
+        # @example
+        #   users.unordered
+        #
+        # @return [Relation]
+        #
+        # @api public
+        def unordered
+          new(dataset.unordered)
+        end
+
         # Reverse the order of the relation
         #
         # @example
