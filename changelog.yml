@@ -1,7 +1,9 @@
 ---
 - version: 3.5.0
   summary:
-  date: unreleased
+  date: 2021-03-26
+  fixed:
+  - "Restore the fix for #390 that was lost by an accident in 3.3.3 and 3.4.0 (@solnic)"
   added:
   - "Support for using partial indixes in PG upsert commands (issue #394 fixed via #395) (@smaximov)"
 - version: 3.4.0
