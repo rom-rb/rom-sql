@@ -192,7 +192,25 @@ There are 2 requirements that every overridden association view must meet:
   to merge data into nested structures. Typically, combine keys are simply the same
   as join keys. See `Combine keys vs join keys` sub-section to learn more
 
-## Using associations to manually preload relations
+## Using associations to explicitly preload relations
+
+You can have a query that also returns assocation data by using the `combine` method:
+
+``` ruby
+class Users < ROM::Relation[:sql]
+  schema(infer: true) do
+    associations do
+      has_many :tasks
+    end
+  end
+
+  def with_tasks
+    combine(:tasks)
+  end
+end
+```
+
+## Querying associations
 
 You can reuse queries that associations use in your own methods too via `assoc`
 shortcut method:
