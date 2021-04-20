@@ -20,6 +20,7 @@ end
 
 group :test do
   gem 'pry-byebug', platforms: :ruby
+  gem 'pry', platforms: :jruby
   gem 'activesupport', '~> 5.0'
   gem 'pg', '~> 1.2', platforms: :ruby
   gem 'mysql2', '~> 0.5', platforms: :ruby
