@@ -43,6 +43,7 @@ jobs:
       APT_DEPS: libpq-dev libmysqlclient-dev libsqlite3-dev
       FAIL_ON_WARNINGS: "${{matrix.fail_on_warnings}}"
       DRY_TYPES_FROM_MASTER: "${{matrix.dry_types_from_master}}"
+      ROM_FROM_MASTER: 'true'
       SEQUEL_FROM_MASTER: "${{matrix.sequel_from_master}}"
     steps:
     - name: Checkout
