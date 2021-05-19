@@ -3,7 +3,7 @@ sources:
     sync:
       - "*"
       - ".github/*"
-      - "spec/*
+      - "spec/*"
   - repo: action-hero/workflows
     sync:
       - ".github/workflows/*.yml"
