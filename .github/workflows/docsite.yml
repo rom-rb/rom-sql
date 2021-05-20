@@ -1,4 +1,4 @@
-# This file is synced from rom-rb/template-gem repo
+# this file is managed by rom-rb/devtools project
 
 name: docsite
 
@@ -60,4 +60,3 @@ jobs:
           GITHUB_LOGIN: rom-bot
           GITHUB_TOKEN: ${{secrets.GH_PAT}}
         run: ossy github workflow rom-rb/rom-rb.org ci
-  
