@@ -1,6 +1,7 @@
 sources:
   - repo: rom-rb/template-gem
     sync:
+      - "!.github/workflows/ci.yml"
       - "*"
       - ".github/*"
       - "spec/*"
