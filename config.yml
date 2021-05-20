@@ -4,7 +4,6 @@ sources:
   - repo: rom-rb/template-gem
     sync:
       - "config.yml:.action_hero.yml"
-      - "!.github/workflows/ci.yml"
       - ".github/**/*.*"
       - "spec/*"
       - "*"
