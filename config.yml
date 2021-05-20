@@ -1,9 +1,10 @@
-# this is a config that other rom-rb shares
+# This is a config that other rom-rb repositories use
 
 sources:
   - repo: rom-rb/template-gem
     sync:
       - "config.yml:.action_hero.yml"
+      - ".devtools/templates/*.sync:${{dir}}/${{name}}"
       - ".github/**/*.*"
       - "spec/*"
       - "*"
