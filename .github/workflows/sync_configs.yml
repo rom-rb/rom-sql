@@ -27,6 +27,12 @@ jobs:
         run: |
           git config --local user.email "rom-bot@rom-rb.org"
           git config --local user.name "rom-bot"
+      - name: Set up Ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: "2.6"
+      - name: Install dependencies
+        run: gem install ossy --no-document
       - name: Update changelog.yml from commit
         run: tmp/devtools/bin/update-changelog-from-commit $GITHUB_SHA
       - name: Compile CHANGELOG.md
