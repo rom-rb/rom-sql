@@ -1,7 +1,13 @@
+
+# This is customized for now because we need to maintain its own ci.yml here
+
 sources:
   - repo: rom-rb/template-gem
     sync:
+      - "!config.yml"
       - "!.github/workflows/ci.yml"
+      - "config.yml:.action_hero.yml"
+      - ".devtools/templates/*.sync:${{dir}}/${{name}}"
       - ".github/**/*.*"
       - "spec/*"
       - "*"
