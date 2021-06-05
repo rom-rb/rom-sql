@@ -6,6 +6,7 @@ on:
     paths:
     - ".github/workflows/ci.yml"
     - ".github/workflows/custom/ci.yml"
+    - ".env*"
     - lib/**
     - "*.gemspec"
     - spec/**
