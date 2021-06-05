@@ -15,13 +15,13 @@ services:
   mysql:
     image: mysql:5.7
     ports:
-      - "3306:3306"
+      - "3307:3306"
     env_file: .env
 
   postgres:
     image: postgres:11
     ports:
-      - "5432:5432"
+      - "5433:5432"
     env_file: .env
 
 volumes:
