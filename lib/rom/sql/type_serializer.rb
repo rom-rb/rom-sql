@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry/core/class_attributes'
+require "dry/core/class_attributes"
 
 module ROM
   module SQL
@@ -23,13 +23,13 @@ module ROM
       defines :mapping
 
       mapping(
-        Types::Integer => 'integer',
-        Types::String => 'varchar',
-        Types::Time => 'timestamp',
-        Types::Date => 'date',
-        Types::Bool => 'boolean',
-        Types::Decimal => 'numeric',
-        Types::Float => 'float',
+        Types::Integer => "integer",
+        Types::String => "varchar",
+        Types::Time => "timestamp",
+        Types::Date => "date",
+        Types::Bool => "boolean",
+        Types::Decimal => "numeric",
+        Types::Float => "float",
       )
 
       def call(type)

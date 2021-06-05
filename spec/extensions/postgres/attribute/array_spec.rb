@@ -1,7 +1,7 @@
-RSpec.describe 'ROM::SQL::Attribute / PG array', :postgres do
+RSpec.describe "ROM::SQL::Attribute / PG array", :postgres do
   subject(:relation) { relations[:pg_arrays] }
 
-  include_context 'database setup'
+  include_context "database setup"
 
   before do
     conf.relation(:pg_arrays) do
@@ -13,14 +13,14 @@ RSpec.describe 'ROM::SQL::Attribute / PG array', :postgres do
     conn.drop_table(:pg_arrays)
   end
 
-  context 'with a primitive type' do
+  context "with a primitive type" do
     before do
       conn.create_table :pg_arrays do
-        column :numbers, 'int[]'
+        column :numbers, "int[]"
       end
     end
 
-    it 'loads an array with integers' do
+    it "loads an array with integers" do
       relation.command(:create).call(numbers: [3, 1, 2])
 
       tuples = relation.to_a
@@ -31,19 +31,19 @@ RSpec.describe 'ROM::SQL::Attribute / PG array', :postgres do
     end
   end
 
-  context 'with a custom json type' do
+  context "with a custom json type" do
     before do
       conn.create_table :pg_arrays do
-        column :meta, 'json[]'
+        column :meta, "json[]"
       end
     end
 
-    it 'loads an array with json hashes' do
-      relation.command(:create).call(meta: [{ one: '1', two: '2' }])
+    it "loads an array with json hashes" do
+      relation.command(:create).call(meta: [{ one: "1", two: "2" }])
 
       tuples = relation.to_a
 
-      expect(tuples).to eql([{ meta: [{ 'one' => '1', 'two' => '2' }] }])
+      expect(tuples).to eql([{ meta: [{ "one" => "1", "two" => "2" }] }])
 
       expect(tuples[0][:meta]).to be_instance_of(Array)
       expect(tuples[0][:meta][0]).to be_instance_of(Hash)

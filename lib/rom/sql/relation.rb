@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require 'rom/sql/types'
-require 'rom/sql/schema'
-require 'rom/sql/attribute'
-require 'rom/sql/wrap'
-require 'rom/sql/transaction'
+require "rom/sql/types"
+require "rom/sql/schema"
+require "rom/sql/attribute"
+require "rom/sql/wrap"
+require "rom/sql/transaction"
 
-require 'rom/sql/relation/reading'
-require 'rom/sql/relation/writing'
+require "rom/sql/relation/reading"
+require "rom/sql/relation/writing"
 
 module ROM
   module SQL
@@ -29,7 +29,7 @@ module ROM
       schema_dsl SQL::Schema::DSL
       wrap_class SQL::Wrap
 
-      subscribe('configuration.relations.schema.set', adapter: :sql) do |event|
+      subscribe("configuration.relations.schema.set", adapter: :sql) do |event|
         schema = event[:schema]
         relation = event[:relation]
 
@@ -44,7 +44,7 @@ module ROM
         end
       end
 
-      subscribe('configuration.relations.dataset.allocated', adapter: :sql) do |event|
+      subscribe("configuration.relations.dataset.allocated", adapter: :sql) do |event|
         event[:relation].define_default_views!
       end
 

@@ -1,18 +1,18 @@
-require 'rom/sql/commands/create'
+require "rom/sql/commands/create"
 
 RSpec.describe ROM::SQL::Commands::Create do
   subject(:command) do
     relations[:books].command(:create)
   end
 
-  include_context 'database setup'
+  include_context "database setup"
 
   with_adapters do
     after do
       conn.drop_table?(:books)
     end
 
-    describe '#call' do
+    describe "#call" do
       before do
         conn.create_table :books do
           primary_key :id
@@ -28,8 +28,8 @@ RSpec.describe ROM::SQL::Commands::Create do
         end
       end
 
-      it 'returns a tuple matching custom schema' do
-        expect(command.call(title: 'Hello World')).to eql(id: 1, title: 'Hello World')
+      it "returns a tuple matching custom schema" do
+        expect(command.call(title: "Hello World")).to eql(id: 1, title: "Hello World")
       end
     end
   end

@@ -1,4 +1,4 @@
-RSpec.shared_context 'accounts' do
+RSpec.shared_context "accounts" do
   let(:accounts) { container.relations[:accounts] }
   let(:cards) { container.relations[:cards] }
 
@@ -41,8 +41,8 @@ RSpec.shared_context 'accounts' do
   before do |example|
     next if example.metadata[:seeds] == false
 
-    conn[:accounts].insert user_id: 1, number: '42', balance: 10_000.to_d
-    conn[:cards].insert id: 1, account_id: 1, pan: '*6789'
-    conn[:subscriptions].insert id: 1, card_id: 1, service: 'aws'
+    conn[:accounts].insert user_id: 1, number: "42", balance: 10_000.to_d
+    conn[:cards].insert id: 1, account_id: 1, pan: "*6789"
+    conn[:subscriptions].insert id: 1, card_id: 1, service: "aws"
   end
 end

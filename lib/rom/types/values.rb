@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'rom/sql/types'
+require "rom/sql/types"
 
 module ROM
   module Types
     module Values
       class TreePath < ::Struct.new(:value, :separator)
-        DEFAULT_SEPARATOR = '.'.freeze
+        DEFAULT_SEPARATOR = ".".freeze
 
         # @api public
         def self.new(value, separator = DEFAULT_SEPARATOR)

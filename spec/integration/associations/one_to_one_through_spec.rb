@@ -1,6 +1,6 @@
 RSpec.describe ROM::SQL::Associations::OneToOneThrough, helpers: true do
-  include_context 'users'
-  include_context 'accounts'
+  include_context "users"
+  include_context "accounts"
 
   subject(:assoc) do
     build_assoc(:one_to_one_through, :users, :cards, through: :accounts)
@@ -47,24 +47,24 @@ RSpec.describe ROM::SQL::Associations::OneToOneThrough, helpers: true do
       end
     end
 
-    describe '#result' do
+    describe "#result" do
       specify { expect(assoc.result).to be(:one) }
     end
 
-    describe '#combine_keys' do
+    describe "#combine_keys" do
       specify { expect(assoc.combine_keys).to eql(id: :user_id) }
     end
 
-    describe '#call' do
-      it 'prepares joined relations' do
+    describe "#call" do
+      it "prepares joined relations" do
         relation = assoc.()
 
         expect(relation.schema.map(&:name)).to eql(%i[id account_id pan user_id])
-        expect(relation.to_a).to eql([id: 1, account_id: 1, pan: '*6789', user_id: 1])
+        expect(relation.to_a).to eql([id: 1, account_id: 1, pan: "*6789", user_id: 1])
       end
     end
 
-    describe ':through another assoc' do
+    describe ":through another assoc" do
       subject(:assoc) do
         build_assoc(:one_to_one_through, :users, :subscriptions, through: :accounts)
       end
@@ -73,19 +73,19 @@ RSpec.describe ROM::SQL::Associations::OneToOneThrough, helpers: true do
         build_assoc(:one_to_one_through, :accounts, :subscriptions, through: :cards)
       end
 
-      it 'prepares joined relations through other association' do
+      it "prepares joined relations through other association" do
         relation = assoc.()
 
         expect(relation.schema.map(&:name)).to eql(%i[id card_id service user_id])
-        expect(relation.to_a).to eql([id: 1, card_id: 1, service: 'aws', user_id: 1])
+        expect(relation.to_a).to eql([id: 1, card_id: 1, service: "aws", user_id: 1])
       end
     end
 
-    describe '#eager_load' do
-      it 'preloads relation based on association' do
+    describe "#eager_load" do
+      it "preloads relation based on association" do
         relation = cards.eager_load(assoc).call(users.call)
 
-        expect(relation.to_a).to eql([id: 1, account_id: 1, pan: '*6789', user_id: 1])
+        expect(relation.to_a).to eql([id: 1, account_id: 1, pan: "*6789", user_id: 1])
       end
     end
   end

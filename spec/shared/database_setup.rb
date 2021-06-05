@@ -1,4 +1,4 @@
-RSpec.shared_context 'database setup' do
+RSpec.shared_context "database setup" do
   all_tables = %i(users tasks users_tasks tags task_tags posts puppies
                   accounts cards subscriptions notes
                   destinations flights categories user_group
@@ -20,7 +20,7 @@ RSpec.shared_context 'database setup' do
 
     case adapters.size
     when 1 then DB_URIS.fetch(adapters.first)
-    when 0 then raise 'No adapter specified'
+    when 0 then raise "No adapter specified"
     else
       raise "Ambiguous adapter configuration, got #{adapters.inspect}"
     end
@@ -54,7 +54,7 @@ RSpec.shared_context 'database setup' do
 
   def db_true
     if database_type == :oracle
-      'Y'
+      "Y"
     else
       true
     end
@@ -62,7 +62,7 @@ RSpec.shared_context 'database setup' do
 
   def db_false
     if database_type == :oracle
-      'N'
+      "N"
     else
       false
     end

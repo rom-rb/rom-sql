@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require 'pathname'
+require "pathname"
 
-require 'rom/types'
-require 'rom/initializer'
+require "rom/types"
+require "rom/initializer"
 
-require 'rom/sql/migration/runner'
-require 'rom/sql/migration/inline_runner'
-require 'rom/sql/migration/writer'
+require "rom/sql/migration/runner"
+require "rom/sql/migration/inline_runner"
+require "rom/sql/migration/writer"
 
 module ROM
   module SQL
@@ -16,8 +16,8 @@ module ROM
       class Migrator
         extend Initializer
 
-        DEFAULT_PATH = 'db/migrate'.freeze
-        VERSION_FORMAT = '%Y%m%d%H%M%S'.freeze
+        DEFAULT_PATH = "db/migrate".freeze
+        VERSION_FORMAT = "%Y%m%d%H%M%S".freeze
         DEFAULT_INFERRER = Schema::Inferrer.new.suppress_errors.freeze
 
         param :connection
@@ -43,7 +43,7 @@ module ROM
 
         # @api private
         def create_file(name, version = generate_version, **options)
-          sequence = options[:sequence] ? '%03d' % options[:sequence] : nil
+          sequence = options[:sequence] ? "%03d" % options[:sequence] : nil
           filename = "#{ version }#{ sequence }_#{ name }.rb"
           content = options[:content] || migration_file_content
           path = options[:path] || self.path
@@ -63,7 +63,7 @@ module ROM
 
         # @api private
         def migration_file_content
-          File.read(Pathname(__FILE__).dirname.join('template.rb').realpath)
+          File.read(Pathname(__FILE__).dirname.join("template.rb").realpath)
         end
 
         # @api private

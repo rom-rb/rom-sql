@@ -1,5 +1,5 @@
-RSpec.describe ROM::SQL::Relation, '#instrument', :sqlite do
-  include_context 'database setup'
+RSpec.describe ROM::SQL::Relation, "#instrument", :sqlite do
+  include_context "database setup"
 
   subject(:relation) do
     relations[:users]
@@ -39,14 +39,14 @@ RSpec.describe ROM::SQL::Relation, '#instrument', :sqlite do
     conn.drop_table(:users)
   end
 
-  it 'instruments relation materialization' do
+  it "instruments relation materialization" do
     relation.to_a
 
     expect(notifications.logs).
       to include([:sql, name: :sqlite, query: relation.dataset.sql])
   end
 
-  it 'instruments methods that return a single tuple' do
+  it "instruments methods that return a single tuple" do
     relation.first
 
     expect(notifications.logs).
@@ -58,7 +58,7 @@ RSpec.describe ROM::SQL::Relation, '#instrument', :sqlite do
       to include([:sql, name: :sqlite, query: relation.reverse.limit(1).dataset.sql])
   end
 
-  it 'instruments aggregation methods' do
+  it "instruments aggregation methods" do
     relation.count
 
     expect(notifications.logs).

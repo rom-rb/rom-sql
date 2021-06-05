@@ -1,11 +1,11 @@
 RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
-  include_context 'database setup'
+  include_context "database setup"
 
   before do
     conn.drop_table?(:test_pg_types)
 
-    conn.execute('create extension if not exists hstore')
-    conn.execute('create extension if not exists ltree')
+    conn.execute("create extension if not exists hstore")
+    conn.execute("create extension if not exists ltree")
   end
 
   let(:table_name) { :test_pg_types }
@@ -21,7 +21,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
     empty.with(**inferrer.(empty, gateway))
   end
 
-  describe 'common types' do
+  describe "common types" do
     before do
       conf.relation(:test_pg_types) do
         schema do
@@ -34,7 +34,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
           attribute :string_nullable, ROM::SQL::Types::String.optional
           attribute :jsonb,           ROM::SQL::Types::PG::JSONB
           attribute :json,            ROM::SQL::Types::PG::JSON
-          attribute :tags,            ROM::SQL::Types::PG::Array('text')
+          attribute :tags,            ROM::SQL::Types::PG::Array("text")
           attribute :money,           ROM::SQL::Types::PG::Money
           attribute :uuid,            ROM::SQL::Types::PG::UUID
           attribute :bytea,           ROM::SQL::Types::PG::Bytea
@@ -59,7 +59,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
       end
     end
 
-    it 'has support for PG data types' do
+    it "has support for PG data types" do
       gateway.auto_migrate!(conf, inline: true)
 
       expect(migrated_schema.to_h).to eql(
@@ -73,7 +73,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
           string_nullable: ROM::SQL::Types::String.optional,
           jsonb: ROM::SQL::Types::PG::JSONB,
           json: ROM::SQL::Types::PG::JSON,
-          tags: ROM::SQL::Types::PG::Array('text'),
+          tags: ROM::SQL::Types::PG::Array("text"),
           money: ROM::SQL::Types::PG::Money,
           uuid: ROM::SQL::Types::PG::UUID,
           bytea: ROM::SQL::Types::PG::Bytea,

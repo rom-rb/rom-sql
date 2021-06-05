@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'rom/support/inflector'
-require 'rom/sql/join_dsl'
+require "rom/support/inflector"
+require "rom/sql/join_dsl"
 
 module ROM
   module SQL
@@ -11,18 +11,18 @@ module ROM
       # @api public
       module Reading
         # Row-level lock modes
-        ROW_LOCK_MODES = Hash.new(update: 'FOR UPDATE'.freeze).update(
+        ROW_LOCK_MODES = Hash.new(update: "FOR UPDATE".freeze).update(
           # https://www.postgresql.org/docs/current/static/sql-select.html#SQL-FOR-UPDATE-SHARE
           postgres: {
-            update: 'FOR UPDATE'.freeze,
-            no_key_update: 'FOR NO KEY UPDATE'.freeze,
-            share: 'FOR SHARE'.freeze,
-            key_share: 'FOR KEY SHARE'.freeze
+            update: "FOR UPDATE".freeze,
+            no_key_update: "FOR NO KEY UPDATE".freeze,
+            share: "FOR SHARE".freeze,
+            key_share: "FOR KEY SHARE".freeze
           },
           # https://dev.mysql.com/doc/refman/5.7/en/innodb-locking-reads.html
           mysql: {
-            update: 'FOR UPDATE'.freeze,
-            share: 'LOCK IN SHARE MODE'.freeze
+            update: "FOR UPDATE".freeze,
+            share: "LOCK IN SHARE MODE".freeze
           }
         ).freeze
 
@@ -958,7 +958,7 @@ module ROM
           pks = schema.primary_key
 
           if pks.size > 1
-            raise ArgumentError, 'Composite primary keys are not supported yet'
+            raise ArgumentError, "Composite primary keys are not supported yet"
           end
 
           source = order(pks[0]).limit(size)
@@ -1047,18 +1047,18 @@ module ROM
         # @api private
         def lock_clause(mode: :update, skip_locked: false, of: nil, wait: nil)
           stmt = ROW_LOCK_MODES[dataset.db.database_type].fetch(mode).dup
-          stmt << ' OF ' << Array(of).join(', ') if of
+          stmt << " OF " << Array(of).join(", ") if of
 
           if skip_locked
-            raise ArgumentError, 'SKIP LOCKED cannot be used with (NO)WAIT clause' if !wait.nil?
+            raise ArgumentError, "SKIP LOCKED cannot be used with (NO)WAIT clause" if !wait.nil?
 
-            stmt << ' SKIP LOCKED'
+            stmt << " SKIP LOCKED"
           else
             case wait
             when Integer
-              stmt << ' WAIT ' << wait.to_s
+              stmt << " WAIT " << wait.to_s
             when false
-              stmt << ' NOWAIT'
+              stmt << " NOWAIT"
             else
               stmt
             end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'rom/sql/migration/migrator'
-require 'rom/sql/migration/schema_diff'
+require "rom/sql/migration/migrator"
+require "rom/sql/migration/schema_diff"
 
 module ROM
   module SQL

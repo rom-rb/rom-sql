@@ -1,5 +1,5 @@
-RSpec.shared_context 'users' do
-  include_context 'database setup'
+RSpec.shared_context "users" do
+  include_context "database setup"
 
   before do
     inferrable_relations.concat %i(users)
@@ -28,7 +28,7 @@ RSpec.shared_context 'users' do
   before do |example|
     next if example.metadata[:seeds] == false
 
-    conn[:users].insert name: 'Jane'
-    conn[:users].insert name: 'Joe'
+    conn[:users].insert name: "Jane"
+    conn[:users].insert name: "Joe"
   end
 end

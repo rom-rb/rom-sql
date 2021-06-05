@@ -1,12 +1,12 @@
-RSpec.describe ROM::Relation, '#right_join' do
+RSpec.describe ROM::Relation, "#right_join" do
   subject(:relation) { relations[:tasks] }
 
-  include_context 'users and tasks'
+  include_context "users and tasks"
 
   with_adapters :postgres, :mysql do
-    it 'joins relations using right outer join' do
-      users.insert id: 3, name: 'Jade'
-      relation.insert id: 3, title: 'Unassigned'
+    it "joins relations using right outer join" do
+      users.insert id: 3, name: "Jade"
+      relation.insert id: 3, title: "Unassigned"
 
       result = relation.
                  right_join(:users, id: :user_id).
@@ -15,13 +15,13 @@ RSpec.describe ROM::Relation, '#right_join' do
       expect(result.schema.map(&:name)).to eql(%i[title name])
 
       expect(result.to_a).to match_array([
-        { name: 'Joe', title: "Joe's task" },
-        { name: 'Jane', title: "Jane's task" },
-        { name: 'Jade', title: nil }
+        { name: "Joe", title: "Joe's task" },
+        { name: "Jane", title: "Jane's task" },
+        { name: "Jade", title: nil }
       ])
     end
 
-    context 'with associations' do
+    context "with associations" do
       before do
         conf.relation(:users) do
           schema(infer: true) do
@@ -36,9 +36,9 @@ RSpec.describe ROM::Relation, '#right_join' do
         end
       end
 
-      it 'joins relation with join keys inferred' do
-        users.insert id: 3, name: 'Jade'
-        relation.insert id: 3, title: 'Unassigned'
+      it "joins relation with join keys inferred" do
+        users.insert id: 3, name: "Jade"
+        relation.insert id: 3, title: "Unassigned"
 
         result = relation.
                    right_join(users).
@@ -47,9 +47,9 @@ RSpec.describe ROM::Relation, '#right_join' do
         expect(result.schema.map(&:name)).to eql(%i[title name])
 
         expect(result.to_a).to match_array([
-                                             { name: 'Joe', title: "Joe's task" },
-                                             { name: 'Jane', title: "Jane's task" },
-                                             { name: 'Jade', title: nil }
+                                             { name: "Joe", title: "Joe's task" },
+                                             { name: "Jane", title: "Jane's task" },
+                                             { name: "Jade", title: nil }
                                            ])
       end
     end

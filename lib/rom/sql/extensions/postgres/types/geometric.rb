@@ -34,47 +34,47 @@ module ROM
         # The list of geometric data types supported by PostgreSQL
         # @see https://www.postgresql.org/docs/current/static/datatype-geometric.html
 
-        Point = Type('point') do
+        Point = Type("point") do
           SQL::Types.define(Values::Point) do
             input do |point|
               "(#{ point.x },#{ point.y })"
             end
 
             output do |point|
-              x, y = point.to_s[1...-1].split(',', 2)
+              x, y = point.to_s[1...-1].split(",", 2)
               Values::Point.new(Float(x), Float(y))
             end
           end
         end
 
-        Line = Type('line') do
+        Line = Type("line") do
           SQL::Types.define(Values::Line) do
             input do |line|
               "{#{ line.a },#{ line.b },#{line.c}}"
             end
 
             output do |line|
-              a, b, c = line.to_s[1..-2].split(',', 3)
+              a, b, c = line.to_s[1..-2].split(",", 3)
               Values::Line.new(Float(a), Float(b), Float(c))
             end
           end
         end
 
-        Circle = Type('circle') do
+        Circle = Type("circle") do
           SQL::Types.define(Values::Circle) do
             input do |circle|
               "<(#{ circle.center.x },#{ circle.center.y }),#{ circle.radius }>"
             end
 
             output do |circle|
-              x, y, r = circle.to_s.tr('()<>', '').split(',', 3)
+              x, y, r = circle.to_s.tr("()<>", "").split(",", 3)
               center = Values::Point.new(Float(x), Float(y))
               Values::Circle.new(center, Float(r))
             end
           end
         end
 
-        Box = Type('box') do
+        Box = Type("box") do
           SQL::Types.define(Values::Box) do
             input do |box|
               "((#{ box.upper_right.x },#{ box.upper_right.y }),"\
@@ -82,7 +82,7 @@ module ROM
             end
 
             output do |box|
-              x_right, y_right, x_left, y_left = box.to_s.tr('()', '').split(',', 4)
+              x_right, y_right, x_left, y_left = box.to_s.tr("()", "").split(",", 4)
               upper_right = Values::Point.new(Float(x_right), Float(y_right))
               lower_left = Values::Point.new(Float(x_left), Float(y_left))
               Values::Box.new(upper_right, lower_left)
@@ -90,7 +90,7 @@ module ROM
           end
         end
 
-        LineSegment = Type('lseg') do
+        LineSegment = Type("lseg") do
           SQL::Types.define(Values::LineSegment) do
             input do |segment|
               "[(#{ segment.begin.x },#{ segment.begin.y }),"\
@@ -98,7 +98,7 @@ module ROM
             end
 
             output do |segment|
-              x_begin, y_begin, x_end, y_end = segment.to_s.tr('()[]', '').split(',', 4)
+              x_begin, y_begin, x_end, y_end = segment.to_s.tr("()[]", "").split(",", 4)
               point_begin = Values::Point.new(Float(x_begin), Float(y_begin))
               point_end = Values::Point.new(Float(x_end), Float(y_end))
               Values::LineSegment.new(point_begin, point_end)
@@ -106,24 +106,24 @@ module ROM
           end
         end
 
-        Polygon = Type('polygon') do
+        Polygon = Type("polygon") do
           SQL::Types.define(::Array) do
             input do |points|
-              points_joined = points.map { |p| "(#{ p.x },#{ p.y })" }.join(',')
+              points_joined = points.map { |p| "(#{ p.x },#{ p.y })" }.join(",")
               "(#{ points_joined })"
             end
 
             output do |polygon|
-              coordinates = polygon.to_s.tr('()', '').split(',').each_slice(2)
+              coordinates = polygon.to_s.tr("()", "").split(",").each_slice(2)
               coordinates.map { |x, y| Values::Point.new(Float(x), Float(y)) }
             end
           end
         end
 
-        Path = Type('path') do
+        Path = Type("path") do
           SQL::Types.define(Values::Path) do
             input do |path|
-              points_joined = path.to_a.map { |p| "(#{ p.x },#{ p.y })" }.join(',')
+              points_joined = path.to_a.map { |p| "(#{ p.x },#{ p.y })" }.join(",")
 
               if path.open?
                 "[#{ points_joined }]"
@@ -133,8 +133,8 @@ module ROM
             end
 
             output do |path|
-              open = path.to_s.start_with?('[') && path.to_s.end_with?(']')
-              coordinates = path.to_s.tr('()[]', '').split(',').each_slice(2)
+              open = path.to_s.start_with?("[") && path.to_s.end_with?("]")
+              coordinates = path.to_s.tr("()[]", "").split(",").each_slice(2)
               points = coordinates.map { |x, y| Values::Point.new(Float(x), Float(y)) }
 
               if open

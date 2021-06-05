@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'sequel/deprecated'
-require 'sequel/exceptions'
+require "sequel/deprecated"
+require "sequel/exceptions"
 
-require 'rom/sql/error'
+require "rom/sql/error"
 
 module ROM
   module SQL

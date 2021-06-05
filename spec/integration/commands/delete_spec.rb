@@ -1,5 +1,5 @@
-RSpec.describe 'Commands / Delete' do
-  include_context 'users and tasks'
+RSpec.describe "Commands / Delete" do
+  include_context "users and tasks"
 
   let(:delete_user) { user_commands.delete }
 
@@ -17,41 +17,41 @@ RSpec.describe 'Commands / Delete' do
         end
       end
 
-      users.insert(id: 3, name: 'Jade')
-      users.insert(id: 4, name: 'John')
+      users.insert(id: 3, name: "Jade")
+      users.insert(id: 4, name: "John")
     end
 
-    describe '#transaction' do
-      it 'deletes in normal way if no error raised' do
+    describe "#transaction" do
+      it "deletes in normal way if no error raised" do
         expect {
           users.transaction do
-            delete_user.by_name('Jade').call
+            delete_user.by_name("Jade").call
           end
         }.to change { users.count }.by(-1)
       end
 
-      it 'deletes nothing if error was raised' do
+      it "deletes nothing if error was raised" do
         expect {
           users.transaction do |t|
-            delete_user.by_name('Jade').call
+            delete_user.by_name("Jade").call
             t.rollback!
           end
         }.to_not change { users.count }
       end
     end
 
-    describe '#call' do
-      it 'deletes all tuples in a restricted relation' do
-        result = delete_user.by_name('Jade').call
+    describe "#call" do
+      it "deletes all tuples in a restricted relation" do
+        result = delete_user.by_name("Jade").call
 
-        expect(result).to eql(id: 3, name: 'Jade')
+        expect(result).to eql(id: 3, name: "Jade")
       end
 
-      it 're-raises database error' do
-        command = delete_user.by_name('Jade')
+      it "re-raises database error" do
+        command = delete_user.by_name("Jade")
 
         expect(command.relation).to receive(:delete).and_raise(
-          Sequel::DatabaseError, 'totally wrong'
+          Sequel::DatabaseError, "totally wrong"
         )
 
         expect {
@@ -60,22 +60,22 @@ RSpec.describe 'Commands / Delete' do
       end
     end
 
-    describe '#execute' do
-      context 'with a single record' do
-        it 'materializes the result' do
+    describe "#execute" do
+      context "with a single record" do
+        it "materializes the result" do
           result = container.commands[:users].delete.by_name(%w(Jade)).execute
           expect(result).to eq([
-            { id: 3, name: 'Jade' }
+            { id: 3, name: "Jade" }
           ])
         end
       end
 
-      context 'with multiple records' do
-        it 'materializes the results' do
+      context "with multiple records" do
+        it "materializes the results" do
           result = container.commands[:users].delete.by_name(%w(Jade John)).execute
           expect(result).to eq([
-            { id: 3, name: 'Jade' },
-            { id: 4, name: 'John' }
+            { id: 3, name: "Jade" },
+            { id: 4, name: "John" }
           ])
         end
       end

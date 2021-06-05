@@ -1,6 +1,6 @@
-RSpec.describe 'Inferring schema from database' do
-  include_context 'users'
-  include_context 'posts'
+RSpec.describe "Inferring schema from database" do
+  include_context "users"
+  include_context "posts"
 
   with_adapters do
     context "when database schema exists" do
@@ -18,7 +18,7 @@ RSpec.describe 'Inferring schema from database' do
       end
     end
 
-    context 'defining associations', seeds: false do
+    context "defining associations", seeds: false do
       let(:config) { TestConfiguration.new(:sql, conn) }
       let(:container) { ROM.container(config) }
 
@@ -231,8 +231,8 @@ RSpec.describe 'Inferring schema from database' do
       end
     end
 
-    context 'defining indexes', :helpers do |ctx|
-      it 'allows defining indexes' do
+    context "defining indexes", :helpers do |ctx|
+      it "allows defining indexes" do
         class Test::Tags < ROM::Relation[:sql]
           schema(:tags) do
             attribute :id,         Types::Serial
@@ -272,7 +272,7 @@ RSpec.describe 'Inferring schema from database' do
       end
 
       if metadata[:postgres]
-        it 'can provide index type' do
+        it "can provide index type" do
           class Test::Tags < ROM::Relation[:sql]
             schema(:tags) do
               attribute :id, Types::Serial

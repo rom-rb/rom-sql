@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rom/relation/wrap'
+require "rom/relation/wrap"
 
 module ROM
   module SQL

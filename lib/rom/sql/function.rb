@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'rom/attribute'
-require 'rom/sql/attribute_wrapping'
+require "rom/attribute"
+require "rom/sql/attribute_wrapping"
 
 module ROM
   module SQL
@@ -15,9 +15,9 @@ module ROM
         # @api private
         def frame_limit(value)
           case value
-          when :current then 'CURRENT ROW'
-          when :start then 'UNBOUNDED PRECEDING'
-          when :end then 'UNBOUNDED FOLLOWING'
+          when :current then "CURRENT ROW"
+          when :start then "UNBOUNDED PRECEDING"
+          when :end then "UNBOUNDED FOLLOWING"
           else
             if value > 0
               "#{ value } FOLLOWING"
@@ -32,7 +32,7 @@ module ROM
 
       # @api private
       WINDOW_FRAMES = Hash.new do |cache, frame|
-        type = frame.key?(:rows) ? 'ROWS' : 'RANGE'
+        type = frame.key?(:rows) ? "ROWS" : "RANGE"
         bounds = frame[:rows] || frame[:range]
         cache[frame] = "#{ type } BETWEEN #{ frame_limit(bounds[0]) } AND #{ frame_limit(bounds[1])  }"
       end
@@ -185,7 +185,7 @@ module ROM
       def case(mapping)
         mapping = mapping.dup
         otherwise = mapping.delete(:else) do
-          raise ArgumentError, 'provide the default case using the :else keyword'
+          raise ArgumentError, "provide the default case using the :else keyword"
         end
 
         Attribute[type].meta(sql_expr: ::Sequel.case(mapping, otherwise))

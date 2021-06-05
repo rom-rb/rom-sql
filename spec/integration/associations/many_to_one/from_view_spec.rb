@@ -1,7 +1,7 @@
-require 'spec_helper'
+require "spec_helper"
 
-RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
-  include_context 'database setup'
+RSpec.describe ROM::SQL::Associations::ManyToOne, "#call" do
+  include_context "database setup"
 
   before do
     inferrable_relations.concat %i(destinations flights)
@@ -45,11 +45,11 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
         end
       end
 
-      final_id = relations[:destinations].insert(name: 'Final')
-      inter_id = relations[:destinations].insert(name: 'Intermediate', intermediate: true)
+      final_id = relations[:destinations].insert(name: "Final")
+      inter_id = relations[:destinations].insert(name: "Intermediate", intermediate: true)
 
-      relations[:flights].insert(code: 'F1', destination_id: inter_id)
-      relations[:flights].insert(code: 'F2', destination_id: final_id)
+      relations[:flights].insert(code: "F1", destination_id: inter_id)
+      relations[:flights].insert(code: "F2", destination_id: final_id)
     end
 
     after do
@@ -57,7 +57,7 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
       conn.drop_table(:destinations)
     end
 
-    it 'prepares joined relations using custom view in target relation' do
+    it "prepares joined relations using custom view in target relation" do
       relation = assoc_inter.()
 
       expect(relation.schema.map(&:to_sql_name)).
@@ -66,7 +66,7 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
                 Sequel.qualify(:destinations, :intermediate),
                 Sequel.qualify(:flights, :id).as(:flight_id)])
 
-      expect(relation.first).to eql(id: 2, intermediate: db_true, name: 'Intermediate', flight_id: 1)
+      expect(relation.first).to eql(id: 2, intermediate: db_true, name: "Intermediate", flight_id: 1)
       expect(relation.count).to be(1)
 
       relation = assoc_final.()
@@ -77,7 +77,7 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
                 Sequel.qualify(:destinations, :intermediate),
                 Sequel.qualify(:flights, :id).as(:flight_id)])
 
-      expect(relation.first).to eql(id: 1, intermediate: db_false, name: 'Final', flight_id: 2)
+      expect(relation.first).to eql(id: 1, intermediate: db_false, name: "Final", flight_id: 2)
       expect(relation.count).to be(1)
     end
   end

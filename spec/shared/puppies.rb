@@ -1,4 +1,4 @@
-RSpec.shared_context 'puppies' do
+RSpec.shared_context "puppies" do
   before do
     inferrable_relations.concat %i(puppies)
   end

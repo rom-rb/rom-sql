@@ -1,25 +1,25 @@
-require 'rom/sql/types'
+require "rom/sql/types"
 
 RSpec.describe ROM::SQL::Types, :postgres do
   describe ROM::SQL::Types::Blob do
-    it 'coerces strings to Sequel::SQL::Blob' do
-      input = 'sutin'
+    it "coerces strings to Sequel::SQL::Blob" do
+      input = "sutin"
       output = described_class[input]
 
       expect(output).to be_instance_of(Sequel::SQL::Blob)
-      expect(output).to eql('sutin')
+      expect(output).to eql("sutin")
     end
   end
 
-  describe '#sql_literal', helpers: true do
+  describe "#sql_literal", helpers: true do
     subject(:base) { define_attribute(:age, :Integer, source: ROM::Relation::Name.new(:users)) }
 
-    include_context 'database setup'
+    include_context "database setup"
 
     let(:ds) { container.gateways[:default][:users] }
     let(:sql_literal) { type.sql_literal(ds) }
 
-    context 'when qualified' do
+    context "when qualified" do
       subject(:type) { base.qualified }
 
       specify do
@@ -27,7 +27,7 @@ RSpec.describe ROM::SQL::Types, :postgres do
       end
     end
 
-    context 'when aliased' do
+    context "when aliased" do
       subject(:type) { base.as(:user_age) }
 
       specify do
@@ -35,7 +35,7 @@ RSpec.describe ROM::SQL::Types, :postgres do
       end
     end
 
-    context 'when qualified and aliased' do
+    context "when qualified and aliased" do
       subject(:type) { base.qualified.as(:user_age) }
 
       specify do
@@ -43,7 +43,7 @@ RSpec.describe ROM::SQL::Types, :postgres do
       end
     end
 
-    context 'when aliased and qualified' do
+    context "when aliased and qualified" do
       subject(:type) { base.as(:user_age).qualified }
 
       specify do
@@ -51,7 +51,7 @@ RSpec.describe ROM::SQL::Types, :postgres do
       end
     end
 
-    context 'when qualified with a function expr' do
+    context "when qualified with a function expr" do
       subject(:type) { base.meta(sql_expr: func).qualified }
 
       let(:func) { Sequel::SQL::Function.new(:count, :age) }

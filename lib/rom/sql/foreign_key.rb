@@ -11,7 +11,7 @@ module ROM
 
       param :attributes
 
-      param :parent_table, type: Dry::Types['strict.symbol']
+      param :parent_table, type: Dry::Types["strict.symbol"]
 
       option :parent_keys, default: -> { DEFAULT_PARENT_KEYS }
     end

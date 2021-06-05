@@ -1,12 +1,12 @@
-RSpec.describe ROM::Relation, '#dataset' do
+RSpec.describe ROM::Relation, "#dataset" do
   subject(:relation) { container.relations.users }
 
-  include_context 'users and tasks'
+  include_context "users and tasks"
 
   let(:dataset) { container.gateways[:default].dataset(:users) }
 
   with_adapters do
-    context 'with schema' do
+    context "with schema" do
       before do
         conf.relation(:users) do
           schema do
@@ -16,13 +16,13 @@ RSpec.describe ROM::Relation, '#dataset' do
         end
       end
 
-      it 'uses schema to infer default dataset' do
+      it "uses schema to infer default dataset" do
         expect(relation.dataset.sql).
           to eql(dataset.select(Sequel.qualify(:users, :id), Sequel.qualify(:users, :name)).order(Sequel.qualify(:users, :id)).sql)
       end
     end
 
-    context 'with cherry-picked attributes in schema' do
+    context "with cherry-picked attributes in schema" do
       before do
         conf.relation(:users) do
           schema do
@@ -31,18 +31,18 @@ RSpec.describe ROM::Relation, '#dataset' do
         end
       end
 
-      it 'uses schema to infer default dataset' do
+      it "uses schema to infer default dataset" do
         expect(relation.dataset.sql).
           to eql(dataset.select(Sequel.qualify(:users, :id)).order(Sequel.qualify(:users, :id)).sql)
       end
     end
 
-    context 'with inferred schema' do
+    context "with inferred schema" do
       before do
         conf.relation(:users) { schema(infer: true) }
       end
 
-      it 'selects all qualified columns and sorts by pk' do
+      it "selects all qualified columns and sorts by pk" do
         expect(relation.dataset.sql).to eql(dataset.select(*relation.schema.qualified).order(Sequel.qualify(:users, :id)).sql)
       end
     end

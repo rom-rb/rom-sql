@@ -1,5 +1,5 @@
-RSpec.describe 'Schema inference for common datatypes', seeds: false do
-  include_context 'users and tasks'
+RSpec.describe "Schema inference for common datatypes", seeds: false do
+  include_context "users and tasks"
 
   before do
     inferrable_relations.concat %i(test_characters test_inferrence test_numeric)
@@ -17,7 +17,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
   end
 
   with_adapters do |adapter|
-    describe 'inferring attributes' do
+    describe "inferring attributes" do
       before do
         dataset = self.dataset
         conf.relation(dataset) do
@@ -25,11 +25,11 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         end
       end
 
-      context 'for simple table' do
+      context "for simple table" do
         let(:dataset) { :users }
         let(:source) { ROM::Relation::Name[dataset] }
 
-        it 'can infer attributes for dataset' do
+        it "can infer attributes for dataset" do
           expect(schema[:id].source).to eql(source)
           expect(schema[:id].type.primitive).to be(Integer)
 
@@ -39,11 +39,11 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         end
       end
 
-      context 'for a table with FKs' do
+      context "for a table with FKs" do
         let(:dataset) { :tasks }
         let(:source) { ROM::Relation::Name[:tasks] }
 
-        it 'can infer attributes for dataset' do |ex|
+        it "can infer attributes for dataset" do |ex|
           expect(schema[:id].source).to eql(source)
           expect(schema[:id].type.primitive).to be(Integer)
 
@@ -60,7 +60,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         end
       end
 
-      context 'for complex table' do
+      context "for complex table" do
         before do |example|
           ctx = self
 
@@ -91,7 +91,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         let(:dataset) { :test_inferrence }
         let(:source) { ROM::Relation::Name[dataset] }
 
-        it 'can infer attributes for dataset' do |ex|
+        it "can infer attributes for dataset" do |ex|
           date_primitive = oracle?(ex) ? Time : Date
 
           expect(schema[:id].source).to eql(source)
@@ -115,14 +115,14 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         end
       end
 
-      context 'character datatypes' do
+      context "character datatypes" do
         before do
           conn.create_table :test_characters do
             String :text1, text: false, null: false
             String :text2, size: 100, null: false
-            column :text3, 'char(100)', null: false
-            column :text4, 'varchar', null: false
-            column :text5, 'varchar(100)', null: false
+            column :text3, "char(100)", null: false
+            column :text4, "varchar", null: false
+            column :text5, "varchar(100)", null: false
             String :text6, size: 100
           end
         end
@@ -132,7 +132,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
 
         let(:char_t) { ROM::SQL::Types::String.meta(source: source) }
 
-        it 'infers attributes with limit' do
+        it "infers attributes with limit" do
           expect(schema[:text1].source).to eql(source)
           expect(schema[:text1].meta[:limit]).to be(255)
           expect(schema[:text1].unwrap.type.primitive).to be(String)
@@ -160,7 +160,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         end
       end
 
-      context 'numeric datatypes' do
+      context "numeric datatypes" do
         before do
           conn.create_table :test_numeric do
             primary_key :id
@@ -180,8 +180,8 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         let(:integer) { ROM::SQL::Types::Integer.meta(source: source) }
         let(:decimal) { ROM::SQL::Types::Decimal.meta(source: source) }
 
-        it 'infers attributes with precision' do |example|
-          pending 'Add precision inferrence for Oracle' if oracle?(example)
+        it "infers attributes with precision" do |example|
+          pending "Add precision inferrence for Oracle" if oracle?(example)
 
           expect(schema[:id].source).to eql(source)
           expect(schema[:id].type.primitive).to be(Integer)
@@ -212,7 +212,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
       end
     end
 
-    describe 'using commands with inferred schema' do
+    describe "using commands with inferred schema" do
       before do
         inferrable_relations.concat %i(people)
       end
@@ -231,7 +231,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         end
       end
 
-      describe 'inserting' do
+      describe "inserting" do
         let(:create) { commands[:people].create }
 
         context "Sequel's types" do
@@ -243,13 +243,13 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
           end
 
           it "doesn't coerce or check types on insert by default" do
-            result = create.call(name: Sequel.function(:upper, 'Jade'))
+            result = create.call(name: Sequel.function(:upper, "Jade"))
 
-            expect(result).to eql(id: 1, name: 'JADE')
+            expect(result).to eql(id: 1, name: "JADE")
           end
         end
 
-        context 'nullable columns' do
+        context "nullable columns" do
           before do
             conn.create_table :people do
               primary_key :id
@@ -258,20 +258,20 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
             end
           end
 
-          it 'allows to insert records with nil value' do
-            result = create.call(name: 'Jade', age: nil)
+          it "allows to insert records with nil value" do
+            result = create.call(name: "Jade", age: nil)
 
-            expect(result).to eql(id: 1, name: 'Jade', age: nil)
+            expect(result).to eql(id: 1, name: "Jade", age: nil)
           end
 
-          it 'allows to omit nullable columns' do
-            result = create.call(name: 'Jade')
+          it "allows to omit nullable columns" do
+            result = create.call(name: "Jade")
 
-            expect(result).to eql(id: 1, name: 'Jade', age: nil)
+            expect(result).to eql(id: 1, name: "Jade", age: nil)
           end
         end
 
-        context 'columns with default value' do
+        context "columns with default value" do
           before do
             conn.create_table :people do
               primary_key :id
@@ -280,19 +280,19 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
             end
           end
 
-          it 'sets default value on missing key' do
-            result = create.call(name: 'Jade')
+          it "sets default value on missing key" do
+            result = create.call(name: "Jade")
 
-            expect(result).to eql(id: 1, name: 'Jade', age: 18)
+            expect(result).to eql(id: 1, name: "Jade", age: 18)
           end
 
-          it 'raises an error on inserting nil value' do
-            expect { create.call(name: 'Jade', age: nil) }.to raise_error(ROM::SQL::NotNullConstraintError)
+          it "raises an error on inserting nil value" do
+            expect { create.call(name: "Jade", age: nil) }.to raise_error(ROM::SQL::NotNullConstraintError)
           end
         end
 
-        context 'coercions' do
-          context 'date' do
+        context "coercions" do
+          context "date" do
             before do
               conn.create_table :people do
                 primary_key :id
@@ -301,18 +301,18 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
               end
             end
 
-            it 'accetps Time' do |ex|
-              time = Time.iso8601('1970-01-01T06:00:00')
-              result = create.call(name: 'Jade', birth_date: time)
+            it "accetps Time" do |ex|
+              time = Time.iso8601("1970-01-01T06:00:00")
+              result = create.call(name: "Jade", birth_date: time)
               # Oracle's Date type stores time
-              expected_date = oracle?(ex) ? time : Date.iso8601('1970-01-01T00:00:00')
+              expected_date = oracle?(ex) ? time : Date.iso8601("1970-01-01T00:00:00")
 
-              expect(result).to eql(id: 1, name: 'Jade', birth_date: expected_date)
+              expect(result).to eql(id: 1, name: "Jade", birth_date: expected_date)
             end
           end
 
           unless metadata[:sqlite] && defined? JRUBY_VERSION
-            context 'timestamp' do
+            context "timestamp" do
               before do |ex|
                 ctx = self
 
@@ -324,43 +324,43 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
                 end
               end
 
-              it 'accepts Date' do
+              it "accepts Date" do
                 date = Date.today
-                result = create.call(name: 'Jade', created_at: date)
+                result = create.call(name: "Jade", created_at: date)
 
-                expect(result).to eql(id: 1, name: 'Jade', created_at: date.to_time)
+                expect(result).to eql(id: 1, name: "Jade", created_at: date.to_time)
               end
 
-              it 'accepts Time' do |ex|
+              it "accepts Time" do |ex|
                 now = Time.now
-                result = create.call(name: 'Jade', created_at: now)
+                result = create.call(name: "Jade", created_at: now)
 
                 expected_time = trunc_ts(now, drop_usec: mysql?(ex))
-                expect(result).to eql(id: 1, name: 'Jade', created_at: expected_time)
+                expect(result).to eql(id: 1, name: "Jade", created_at: expected_time)
               end
 
-              it 'accepts DateTime' do |ex|
+              it "accepts DateTime" do |ex|
                 now = DateTime.now
-                result = create.call(name: 'Jade', created_at: now)
+                result = create.call(name: "Jade", created_at: now)
 
                 expected_time = trunc_ts(now, drop_usec: mysql?(ex))
-                expect(result).to eql(id: 1, name: 'Jade', created_at: expected_time)
+                expect(result).to eql(id: 1, name: "Jade", created_at: expected_time)
               end
 
               # TODO: Find out if Oracle's adapter really doesn't support RFCs
               if !metadata[:mysql] && !metadata[:oracle]
-                it 'accepts strings in RFC 2822' do
+                it "accepts strings in RFC 2822" do
                   now = Time.now
-                  result = create.call(name: 'Jade', created_at: now.rfc822)
+                  result = create.call(name: "Jade", created_at: now.rfc822)
 
-                  expect(result).to eql(id: 1, name: 'Jade', created_at: trunc_ts(now, drop_usec: true))
+                  expect(result).to eql(id: 1, name: "Jade", created_at: trunc_ts(now, drop_usec: true))
                 end
 
-                it 'accepts strings in RFC 3339' do
+                it "accepts strings in RFC 3339" do
                   now = DateTime.now
-                  result = create.call(name: 'Jade', created_at: now.rfc3339)
+                  result = create.call(name: "Jade", created_at: now.rfc3339)
 
-                  expect(result).to eql(id: 1, name: 'Jade', created_at: trunc_ts(now, drop_usec: true))
+                  expect(result).to eql(id: 1, name: "Jade", created_at: trunc_ts(now, drop_usec: true))
                 end
               end
             end
@@ -369,11 +369,11 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
       end
     end
 
-    describe 'inferring indices', oracle: false do
+    describe "inferring indices", oracle: false do
       let(:dataset) { :test_inferrence }
       let(:source) { ROM::Relation::Name[dataset] }
 
-      it 'infers types with indices' do
+      it "infers types with indices" do
         conn.create_table :test_inferrence do
           primary_key :id
           Integer :foo
@@ -400,8 +400,8 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
       end
 
       if metadata[:postgres]
-        it 'infers cutsom index types' do
-          pending 'Sequel not returning index type'
+        it "infers cutsom index types" do
+          pending "Sequel not returning index type"
           conn.create_table :test_inferrence do
             primary_key :id
             Integer :foo

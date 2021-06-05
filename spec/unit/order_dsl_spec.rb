@@ -1,7 +1,7 @@
-require 'spec_helper'
+require "spec_helper"
 
 RSpec.describe ROM::SQL::OrderDSL, :postgres, helpers: true do
-  include_context 'database setup'
+  include_context "database setup"
 
   subject(:dsl) do
     ROM::SQL::OrderDSL.new(schema)
@@ -15,30 +15,30 @@ RSpec.describe ROM::SQL::OrderDSL, :postgres, helpers: true do
     conn[:users]
   end
 
-  describe '#call' do
-    it 'returns an array with ordered expressions' do
+  describe "#call" do
+    it "returns an array with ordered expressions" do
       expect(ds.literal(dsl.call { id }.first)).to eql('"id"')
     end
   end
 
-  describe '#`' do
-    it 'produces a string literal' do
+  describe "#`" do
+    it "produces a string literal" do
       expect(ds.literal(dsl.call { `foo` }.first)).to eql("foo")
     end
   end
 
-  describe '#method_missing' do
-    it 'responds to methods matching attribute names' do
+  describe "#method_missing" do
+    it "responds to methods matching attribute names" do
       expect(dsl.id.name).to be(:id)
       expect(dsl.name.name).to be(:name)
     end
 
-    it 'delegates to sequel virtual row' do
+    it "delegates to sequel virtual row" do
       expect(ds.literal(dsl.call { nullif(id.qualified, Sequel.lit("''")).desc }.first)).
         to eql(%(NULLIF("users"."id", '') DESC))
     end
 
-    it 'allows to set nulls first/last' do
+    it "allows to set nulls first/last" do
       expect(ds.literal(dsl.call { id.desc(nulls: :first) }.first)).
         to eql(%("id" DESC NULLS FIRST))
 

@@ -1,5 +1,5 @@
-RSpec.shared_context 'users and tasks' do
-  include_context 'users'
+RSpec.shared_context "users and tasks" do
+  include_context "users"
 
   let(:tasks) { container.relations[:tasks] }
   let(:tags) { container.relations[:tags] }
@@ -47,7 +47,7 @@ RSpec.shared_context 'users and tasks' do
     conn[:tasks].insert id: 1, user_id: 2, title: "Joe's task"
     conn[:tasks].insert id: 2, user_id: 1, title: "Jane's task"
 
-    conn[:tags].insert id: 1, name: 'important'
+    conn[:tags].insert id: 1, name: "important"
     conn[:task_tags].insert(tag_id: 1, task_id: 1)
   end
 end

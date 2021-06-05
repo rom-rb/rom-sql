@@ -1,15 +1,15 @@
-RSpec.describe 'Plugins / :associates / with many-to-many', :sqlite, seeds: false do
-  include_context 'users and tasks'
+RSpec.describe "Plugins / :associates / with many-to-many", :sqlite, seeds: false do
+  include_context "users and tasks"
 
   let(:create_tag) { tag_commands.create }
   let(:create_task) { task_commands.create }
 
   let(:jane) do
-    users.by_pk(users.insert(name: 'Jane')).one
+    users.by_pk(users.insert(name: "Jane")).one
   end
 
   let(:john) do
-    users.by_pk(users.insert(name: 'John')).one
+    users.by_pk(users.insert(name: "John")).one
   end
 
   before do
@@ -52,8 +52,8 @@ RSpec.describe 'Plugins / :associates / with many-to-many', :sqlite, seeds: fals
     end
   end
 
-  it 'associates a child with many parents' do
-    add_tags = create_tag.curry([{ name: 'red' }, { name: 'blue' }])
+  it "associates a child with many parents" do
+    add_tags = create_tag.curry([{ name: "red" }, { name: "blue" }])
     add_task = create_task.curry(user_id: jane[:id], title: "Jade's task")
 
     command = add_tags >> add_task

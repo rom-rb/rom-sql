@@ -66,9 +66,9 @@ module ROM
         def map_type(ruby_type, db_type, **kw)
           type = self.class.ruby_type_mapping[ruby_type]
 
-          if db_type.is_a?(String) && db_type.include?('numeric') || db_type.include?('decimal')
+          if db_type.is_a?(String) && db_type.include?("numeric") || db_type.include?("decimal")
             map_decimal_type(db_type)
-          elsif db_type.is_a?(String) && db_type.include?('char') && kw[:max_length]
+          elsif db_type.is_a?(String) && db_type.include?("char") && kw[:max_length]
             type.meta(limit: kw[:max_length])
           else
             type

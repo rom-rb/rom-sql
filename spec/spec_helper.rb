@@ -1,6 +1,6 @@
-require_relative 'support/coverage'
+require_relative "support/coverage"
 
-require 'warning'
+require "warning"
 
 Warning.ignore(/\$SAFE/)
 Warning.ignore(/sequel/)
@@ -12,47 +12,47 @@ Warning.ignore(/__LINE__/)
 Warning.ignore(/codacy/)
 Warning.ignore(/dry\/core\/equalizer/)
 Warning.ignore(/dry\/equalizer/)
-Warning.process { |w| raise RuntimeError, w } if ENV['FAIL_ON_WARNINGS'].eql?('true')
+Warning.process { |w| raise RuntimeError, w } if ENV["FAIL_ON_WARNINGS"].eql?("true")
 
-require 'fileutils'
+require "fileutils"
 
 is_jruby = defined?(JRUBY_VERSION)
 
-unless File.exist?('.env')
-  env_file = is_jruby ? '.env.jdbc' : '.env.default'
+unless File.exist?(".env")
+  env_file = is_jruby ? ".env.jdbc" : ".env.default"
   puts "Copying #{env_file} => .env"
-  FileUtils.cp(env_file, '.env')
+  FileUtils.cp(env_file, ".env")
 end
 
-require 'dotenv/load'
+require "dotenv/load"
 
-require 'rom-sql'
-require 'rom/sql/rake_task'
+require "rom-sql"
+require "rom/sql/rake_task"
 
-require 'logger'
-require 'tempfile'
+require "logger"
+require "tempfile"
 
 begin
-  require ENV['DEBUGGER'] || 'byebug'
+  require ENV["DEBUGGER"] || "byebug"
 rescue LoadError
-  require 'pry'
+  require "pry"
 end
 
-LOGGER = Logger.new(File.open('./log/test.log', 'a'))
+LOGGER = Logger.new(File.open("./log/test.log", "a"))
 
-ENV['TZ'] ||= 'UTC'
+ENV["TZ"] ||= "UTC"
 
 DB_URIS = {
-  sqlite: is_jruby ? 'jdbc:sqlite:' : 'sqlite::memory',
-  postgres: ENV['POSTGRES_DSN'],
-  mysql: ENV['MYSQL_DSN']
+  sqlite: is_jruby ? "jdbc:sqlite:" : "sqlite::memory",
+  postgres: ENV["POSTGRES_DSN"],
+  mysql: ENV["MYSQL_DSN"]
 }
 
-if (oracle_dsn = ENV['ORACLE_DSN'])
+if (oracle_dsn = ENV["ORACLE_DSN"])
   DB_URIS[:oracle] = oracle_dsn
 end
 
-require 'pp'
+require "pp"
 
 puts "\n"
 puts "*"*80
@@ -98,21 +98,21 @@ else
 end
 
 ADAPTERS = DB_URIS.keys
-PG_LTE_95 = ENV.fetch('PG_LTE_95', 'true') == 'true'
+PG_LTE_95 = ENV.fetch("PG_LTE_95", "true") == "true"
 
 SPEC_ROOT = root = Pathname(__FILE__).dirname
 
-TMP_PATH = root.join('../tmp')
+TMP_PATH = root.join("../tmp")
 
 # quiet in specs
 ROM::SQL::Relation.tap { |r| r.schema_inferrer(r.schema_inferrer.suppress_errors) }
 
-require 'dry/core/deprecations'
-Dry::Core::Deprecations.set_logger!(root.join('../log/deprecations.log'))
+require "dry/core/deprecations"
+Dry::Core::Deprecations.set_logger!(root.join("../log/deprecations.log"))
 
 ROM::SQL.load_extensions(:postgres, :sqlite)
 
-require 'dry-types'
+require "dry-types"
 module Types
   include Dry.Types(default: :strict)
 end
@@ -132,7 +132,7 @@ RSpec.configure do |config|
   config.filter_run_when_matching :focus
 
   config.before(:suite) do
-    tmp_test_dir = TMP_PATH.join('test')
+    tmp_test_dir = TMP_PATH.join("test")
     FileUtils.rm_r(tmp_test_dir) if File.exist?(tmp_test_dir)
     FileUtils.mkdir_p(tmp_test_dir)
   end
@@ -146,8 +146,8 @@ RSpec.configure do |config|
     Object.send(:remove_const, :Test)
   end
 
-  Dir[root.join('shared/**/*.rb')].each { |f| require f }
-  Dir[root.join('support/**/*.rb')].each { |f| require f }
+  Dir[root.join("shared/**/*.rb")].each { |f| require f }
+  Dir[root.join("support/**/*.rb")].each { |f| require f }
 
   config.include(Helpers, helpers: true)
   config.include ENVHelper

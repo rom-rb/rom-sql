@@ -1,5 +1,5 @@
-RSpec.describe ROM::SQL, '.migration' do
-  include_context 'database setup'
+RSpec.describe ROM::SQL, ".migration" do
+  include_context "database setup"
 
   before do
     inferrable_relations.concat %i(dragons schema_migrations)
@@ -8,7 +8,7 @@ RSpec.describe ROM::SQL, '.migration' do
   with_adapters do
     before { conf }
 
-    it 'creates a migration for a specific gateway' do
+    it "creates a migration for a specific gateway" do
       migration = ROM::SQL.migration(container) do
         change do
           create_table :dragons do
@@ -24,7 +24,7 @@ RSpec.describe ROM::SQL, '.migration' do
     end
   end
 
-  context 'with non-default gateway' do
+  context "with non-default gateway" do
     with_adapters(:postgres) do
       let(:conf) do
         ROM::Configuration.new(
@@ -35,7 +35,7 @@ RSpec.describe ROM::SQL, '.migration' do
 
       let(:in_memory_connection) { container.gateways[:in_memory].connection }
 
-      it 'creates a migration for a specific gateway' do
+      it "creates a migration for a specific gateway" do
         in_memory_migration = ROM::SQL.migration(container, :in_memory) do
           change do
             create_table :turtles do

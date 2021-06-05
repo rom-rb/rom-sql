@@ -1,4 +1,4 @@
-require 'rom/configuration'
+require "rom/configuration"
 
 class TestConfiguration < ROM::Configuration
   def relation(name, *, &block)

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rom/sql/schema/attributes_inferrer'
+require "rom/sql/schema/attributes_inferrer"
 
 module ROM
   module SQL
@@ -9,10 +9,10 @@ module ROM
         defines :db_type_mapping
 
         db_type_mapping(
-          'tinytext' => Types::String,
-          'text' => Types::String,
-          'mediumtext' => Types::String,
-          'longtext' => Types::String
+          "tinytext" => Types::String,
+          "text" => Types::String,
+          "mediumtext" => Types::String,
+          "longtext" => Types::String
         ).freeze
 
         def map_type(ruby_type, db_type, **_)

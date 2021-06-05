@@ -1,5 +1,5 @@
-RSpec.describe 'ROM::SQL::Schema::SqliteInferrer', :sqlite, helpers: true do
-  include_context 'database setup'
+RSpec.describe "ROM::SQL::Schema::SqliteInferrer", :sqlite, helpers: true do
+  include_context "database setup"
 
   before do
     inferrable_relations.concat %i(test_inferrence)
@@ -24,7 +24,7 @@ RSpec.describe 'ROM::SQL::Schema::SqliteInferrer', :sqlite, helpers: true do
   let(:schema) { container.relations[:test_inferrence].schema }
   let(:source) { container.relations[:test_inferrence].name }
 
-  it 'can infer attributes for dataset' do
+  it "can infer attributes for dataset" do
     expect(schema[:tiny]).to be_qualified
     expect(schema[:tiny].source).to be(source)
     expect(schema[:tiny].unwrap.type.primitive).to be(Integer)

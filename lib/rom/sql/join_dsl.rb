@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rom/sql/restriction_dsl'
+require "rom/sql/restriction_dsl"
 
 module ROM
   module SQL

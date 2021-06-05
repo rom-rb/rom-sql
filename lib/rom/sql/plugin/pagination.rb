@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rom/initializer'
+require "rom/initializer"
 
 module ROM
   module SQL

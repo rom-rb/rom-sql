@@ -1,5 +1,5 @@
 RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
-  include_context 'database setup'
+  include_context "database setup"
 
   before do
     conn.drop_table?(:users)
@@ -27,8 +27,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
     SQL
   end
 
-  describe 'create table' do
-    describe 'one-column indexes' do
+  describe "create table" do
+    describe "one-column indexes" do
       before do
         conf.relation(:users) do
           schema do
@@ -42,7 +42,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
         end
       end
 
-      it 'creates ordinary b-tree indexes' do
+      it "creates ordinary b-tree indexes" do
         gateway.auto_migrate!(conf, inline: true)
 
         expect(attributes.map(&:to_ast))
@@ -68,13 +68,13 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
     end
   end
 
-  describe 'alter table' do
-    describe 'one-column indexes' do
-      context 'adding' do
+  describe "alter table" do
+    describe "one-column indexes" do
+      context "adding" do
         before do
         end
 
-        it 'adds indexed column' do
+        it "adds indexed column" do
           conn.create_table :users do
             primary_key :id
           end
@@ -96,7 +96,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
           expect(name_index.attributes.map(&:name)).to eql(%i(name))
         end
 
-        it 'supports custom names' do
+        it "supports custom names" do
           conn.create_table :users do
             primary_key :id
           end
@@ -122,7 +122,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
           expect(name_index.attributes.map(&:name)).to eql(%i(name))
         end
 
-        it 'adds index to existing column' do
+        it "adds index to existing column" do
           conn.create_table :users do
             primary_key :id
             column :name, String
@@ -148,7 +148,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
           expect(name_index).not_to be_unique
         end
 
-        it 'supports unique indexes' do
+        it "supports unique indexes" do
           conn.create_table :users do
             primary_key :id
             column :name, String
@@ -175,7 +175,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
         end
 
         if metadata[:postgres]
-          it 'uses index method' do
+          it "uses index method" do
             conn.create_table :users do
               primary_key :id
               column :props, :jsonb, null: false
@@ -194,11 +194,11 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
             gateway.auto_migrate!(conf, inline: true)
 
-            expect(indexdef('users_props_index')).
-              to eql('CREATE INDEX users_props_index ON public.users USING gin (props)')
+            expect(indexdef("users_props_index")).
+              to eql("CREATE INDEX users_props_index ON public.users USING gin (props)")
           end
 
-          it 'supports partial indexes' do
+          it "supports partial indexes" do
             conn.create_table :users do
               primary_key :id
               column :name, String
@@ -210,20 +210,20 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
                 attribute :name,   ROM::SQL::Types::String
 
                 indexes do
-                  index :name, name: :long_names_only, predicate: 'length(name) > 10'
+                  index :name, name: :long_names_only, predicate: "length(name) > 10"
                 end
               end
             end
 
             gateway.auto_migrate!(conf, inline: true)
 
-            expect(indexdef('long_names_only')).
-              to eql('CREATE INDEX long_names_only ON public.users USING btree (name) WHERE (length(name) > 10)')
+            expect(indexdef("long_names_only")).
+              to eql("CREATE INDEX long_names_only ON public.users USING btree (name) WHERE (length(name) > 10)")
           end
         end
       end
 
-      context 'removing' do
+      context "removing" do
         before do
           conf.relation(:users) do
             schema do
@@ -243,7 +243,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
           end
         end
 
-        it 'removes index' do
+        it "removes index" do
           gateway.auto_migrate!(conf, inline: true)
 
           expect(migrated_schema.indexes).to be_empty

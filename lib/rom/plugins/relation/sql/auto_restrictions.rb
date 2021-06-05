@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rom/support/notifications'
+require "rom/support/notifications"
 
 module ROM
   module Plugins
@@ -29,7 +29,7 @@ module ROM
         module AutoRestrictions
           extend Notifications::Listener
 
-          subscribe('configuration.relations.schema.set', adapter: :sql) do |event|
+          subscribe("configuration.relations.schema.set", adapter: :sql) do |event|
             schema = event[:schema]
             relation = event[:relation]
 
@@ -46,7 +46,7 @@ module ROM
               next if index.partial?
 
               attributes = index.to_a
-              meth_name = :"by_#{ attributes.map(&:name).join('_and_') }"
+              meth_name = :"by_#{ attributes.map(&:name).join("_and_") }"
 
               next if generated.include?(meth_name)
 

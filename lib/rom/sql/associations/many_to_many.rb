@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'rom/associations/many_to_many'
-require 'rom/sql/associations/core'
-require 'rom/sql/associations/self_ref'
+require "rom/associations/many_to_many"
+require "rom/sql/associations/core"
+require "rom/sql/associations/self_ref"
 
 module ROM
   module SQL

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'sequel/core'
-require 'singleton'
+require "sequel/core"
+require "singleton"
 
 Sequel.extension(:pg_json, :pg_json_ops)
 
@@ -23,11 +23,11 @@ module ROM
           include ::Singleton
 
           def to_s
-            'null'
+            "null"
           end
 
           def inspect
-            'null'
+            "null"
           end
         end
 
@@ -44,7 +44,7 @@ module ROM
             SQL::Types::False
           ]
 
-          JSON = Type('json') do
+          JSON = Type("json") do
             casts = ::Hash.new(-> v { ::Sequel.pg_json(v) })
             json_null = ::Sequel.pg_json_wrap(nil)
             casts[JSONNullType] = -> _ { json_null }
@@ -60,7 +60,7 @@ module ROM
               .meta(read: JSONRead)
           end
 
-          JSONB = Type('jsonb') do
+          JSONB = Type("jsonb") do
             casts = ::Hash.new(-> v { ::Sequel.pg_jsonb(v) })
             jsonb_null = ::Sequel.pg_jsonb_wrap(nil)
             casts[JSONNullType] = -> _ { jsonb_null }
@@ -76,11 +76,11 @@ module ROM
               .meta(read: JSONRead)
           end
         else
-          JSON = Type('json') do
+          JSON = Type("json") do
             (SQL::Types::Array | SQL::Types::Hash).constructor(Sequel.method(:pg_json)).meta(read: JSONRead)
           end
 
-          JSONB = Type('jsonb') do
+          JSONB = Type("jsonb") do
             (SQL::Types::Array | SQL::Types::Hash).constructor(Sequel.method(:pg_jsonb)).meta(read: JSONRead)
           end
         end
@@ -242,7 +242,7 @@ module ROM
 
           def path_args(path)
             case path.size
-            when 0 then raise ArgumentError, 'wrong number of arguments (given 0, expected 1+)'
+            when 0 then raise ArgumentError, "wrong number of arguments (given 0, expected 1+)"
             when 1 then path[0]
             else path
             end

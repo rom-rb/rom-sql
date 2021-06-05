@@ -1,7 +1,7 @@
-require 'rom/sql/plugin/pagination'
+require "rom/sql/plugin/pagination"
 
-RSpec.describe 'Plugin / Pagination', seeds: false do
-  include_context 'users'
+RSpec.describe "Plugin / Pagination", seeds: false do
+  include_context "users"
 
   with_adapters do
     before do
@@ -14,28 +14,28 @@ RSpec.describe 'Plugin / Pagination', seeds: false do
       end
     end
 
-    describe '#page' do
-      it 'allow to call with stringify number' do
+    describe "#page" do
+      it "allow to call with stringify number" do
         expect {
-          container.relations[:users].page('5')
+          container.relations[:users].page("5")
         }.to_not raise_error
       end
 
-      it 'preserves existing modifiers' do
+      it "preserves existing modifiers" do
         expect(
-          container.relations[:users].send(:where, name: 'User 2').page(1).to_a.size
+          container.relations[:users].send(:where, name: "User 2").page(1).to_a.size
         ).to be(1)
       end
     end
 
-    describe '#per_page' do
-      it 'allow to call with stringify number' do
+    describe "#per_page" do
+      it "allow to call with stringify number" do
         expect {
-          container.relations[:users].per_page('5')
+          container.relations[:users].per_page("5")
         }.to_not raise_error
       end
 
-      it 'returns paginated relation with provided limit' do
+      it "returns paginated relation with provided limit" do
         users = container.relations[:users].page(2).per_page(5)
 
         expect(users.dataset.opts[:offset]).to eql(5)
@@ -52,20 +52,20 @@ RSpec.describe 'Plugin / Pagination', seeds: false do
       end
     end
 
-    describe '#total_pages' do
-      it 'returns a single page when elements are a perfect fit' do
+    describe "#total_pages" do
+      it "returns a single page when elements are a perfect fit" do
         users = container.relations[:users].page(1).per_page(3)
         expect(users.pager.total_pages).to eql(3)
       end
 
-      it 'returns the exact number of pages to accommodate all elements' do
+      it "returns the exact number of pages to accommodate all elements" do
         users = container.relations[:users].per_page(9)
         expect(users.pager.total_pages).to eql(1)
       end
     end
 
-    describe '#pager' do
-      it 'returns a pager with pagination meta-info' do
+    describe "#pager" do
+      it "returns a pager with pagination meta-info" do
         users = container.relations[:users].page(1)
 
         expect(users.pager.total).to be(9)

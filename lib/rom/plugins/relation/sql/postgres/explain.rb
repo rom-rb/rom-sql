@@ -28,7 +28,7 @@ module ROM
             def explain(format: :text, **options)
               bool_options = options.map { |opt, value| "#{opt.to_s.upcase} #{!!value}" }
               format_option = "FORMAT #{format.to_s.upcase}"
-              explain_value = [format_option, *bool_options].join(', ')
+              explain_value = [format_option, *bool_options].join(", ")
 
               query = "EXPLAIN (#{explain_value}) #{dataset.sql}"
 
@@ -36,7 +36,7 @@ module ROM
 
               case format
               when :json
-                rows[0][0]['Plan']
+                rows[0][0]["Plan"]
               else
                 rows.join("\n")
               end

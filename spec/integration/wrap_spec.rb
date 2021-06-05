@@ -1,10 +1,10 @@
 RSpec.describe ROM::SQL::Wrap do
   with_adapters do
-    include_context 'users and tasks'
+    include_context "users and tasks"
 
-    describe '#wrap' do
-      shared_context 'joined tuple' do
-        it 'returns nested tuples' do
+    describe "#wrap" do
+      shared_context "joined tuple" do
+        it "returns nested tuples" do
           task_with_user = tasks
             .wrap(name)
             .where { id.qualified.is(2) }
@@ -15,7 +15,7 @@ RSpec.describe ROM::SQL::Wrap do
           )
         end
 
-        it 'works with by_pk' do
+        it "works with by_pk" do
           task_with_user = tasks
                              .wrap(name)
                              .by_pk(1)
@@ -26,7 +26,7 @@ RSpec.describe ROM::SQL::Wrap do
         end
       end
 
-      context 'using association with inferred relation name' do
+      context "using association with inferred relation name" do
         before do
           conf.relation(:tasks) do
             auto_map false
@@ -39,12 +39,12 @@ RSpec.describe ROM::SQL::Wrap do
           end
         end
 
-        include_context 'joined tuple' do
+        include_context "joined tuple" do
           let(:name) { :user }
         end
       end
 
-      context 'using association with an alias' do
+      context "using association with an alias" do
         before do
           conf.relation(:tasks) do
             auto_map false
@@ -57,12 +57,12 @@ RSpec.describe ROM::SQL::Wrap do
           end
         end
 
-        include_context 'joined tuple' do
+        include_context "joined tuple" do
           let(:name) { :assignee }
         end
       end
 
-      context 'using association with an aliased relation' do
+      context "using association with an aliased relation" do
         before do
           conf.relation(:tasks) do
             auto_map false
@@ -81,13 +81,13 @@ RSpec.describe ROM::SQL::Wrap do
           end
         end
 
-        include_context 'joined tuple' do
+        include_context "joined tuple" do
           let(:users) { relations[:people] }
           let(:name) { :assignee }
         end
       end
 
-      context 'using association with a view' do
+      context "using association with a view" do
         before do
           conf.relation(:users) do
             auto_map false
@@ -120,27 +120,27 @@ RSpec.describe ROM::SQL::Wrap do
           end
         end
 
-        it 'includes the extra attributes' do
+        it "includes the extra attributes" do
           result = tasks.wrap(:enhanced_user).to_a
 
           expect(result.length).to be > 0
 
           result.each do |task|
-            expect(task[:enhanced_user]).to eql(extra_attribute: 'testing')
+            expect(task[:enhanced_user]).to eql(extra_attribute: "testing")
           end
         end
 
-        it 'works with functions' do
+        it "works with functions" do
           result = tasks.wrap(:enhanced_user_func).to_a
 
           expect(result.length).to be > 0
 
           result.each do |task|
-            expect(task[:enhanced_user_func]).to eql(extra_attribute: 'testing')
+            expect(task[:enhanced_user_func]).to eql(extra_attribute: "testing")
           end
         end
 
-        it 'allows aliasing attributes' do
+        it "allows aliasing attributes" do
           result = tasks.wrap(:with_renamed_attribute).to_a
           values = result.map { |item| item[:with_renamed_attribute][:new_name] }
 

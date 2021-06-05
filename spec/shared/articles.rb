@@ -1,4 +1,4 @@
-RSpec.shared_context 'articles' do
+RSpec.shared_context "articles" do
   before do
     inferrable_relations.concat %i(articles)
   end
@@ -19,29 +19,29 @@ RSpec.shared_context 'articles' do
   end
 
   before do |example| next if example.metadata[:seeds] == false
-    conn[:users].insert(name: 'John')
+    conn[:users].insert(name: "John")
 
     conn[:articles].insert(
       article_id: 1,
-      author_name:  'Joe',
+      author_name:  "Joe",
       title: "Joe's post",
-      body: 'Joe wrote sutin',
+      body: "Joe wrote sutin",
       status: "draft"
     )
 
     conn[:articles].insert(
       article_id: 2,
-      author_name: 'Jane',
+      author_name: "Jane",
       title: "Jane's post",
-      body: 'Jane wrote sutin',
+      body: "Jane wrote sutin",
       status: "published"
     )
 
     conn[:articles].insert(
       article_id: 3,
-      author_name:  'John',
+      author_name:  "John",
       title: "John's post",
-      body: 'John wrote sutin else',
+      body: "John wrote sutin else",
       status: "published"
     )
   end

@@ -1,13 +1,13 @@
-RSpec.describe ROM::Relation, '#inner_join' do
+RSpec.describe ROM::Relation, "#inner_join" do
   subject(:relation) { relations[:users] }
 
   let(:puzzles) { relations[:puzzles] }
 
-  include_context 'users and tasks'
+  include_context "users and tasks"
 
   with_adapters do
-    it 'joins relations using inner join' do
-      relation.insert id: 3, name: 'Jade'
+    it "joins relations using inner join" do
+      relation.insert id: 3, name: "Jade"
 
       result = relation
                .inner_join(:tasks, user_id: :id)
@@ -16,13 +16,13 @@ RSpec.describe ROM::Relation, '#inner_join' do
       expect(result.schema.map(&:name)).to eql(%i[name title])
 
       expect(result.to_a).to eql([
-                                   { name: 'Jane', title: "Jane's task" },
-                                   { name: 'Joe', title: "Joe's task" }
+                                   { name: "Jane", title: "Jane's task" },
+                                   { name: "Joe", title: "Joe's task" }
                                  ])
     end
 
-    it 'joins relations using inner join and attributes with alias set' do
-      relation.insert id: 3, name: 'Jade'
+    it "joins relations using inner join and attributes with alias set" do
+      relation.insert id: 3, name: "Jade"
       user_id = users[:id].with(alias: :key)
       id = tasks[:user_id].with(alias: :user_key)
 
@@ -33,13 +33,13 @@ RSpec.describe ROM::Relation, '#inner_join' do
       expect(result.schema.map(&:name)).to eql(%i[name title])
 
       expect(result.to_a).to eql([
-                                   { name: 'Jane', title: "Jane's task" },
-                                   { name: 'Joe', title: "Joe's task" }
+                                   { name: "Jane", title: "Jane's task" },
+                                   { name: "Joe", title: "Joe's task" }
                                  ])
     end
 
-    it 'allows specifying table_aliases' do
-      relation.insert id: 3, name: 'Jade'
+    it "allows specifying table_aliases" do
+      relation.insert id: 3, name: "Jade"
 
       result = relation
                .inner_join(:tasks, { user_id: :id }, table_alias: :t1)
@@ -48,12 +48,12 @@ RSpec.describe ROM::Relation, '#inner_join' do
       expect(result.schema.map(&:name)).to eql(%i[name title])
 
       expect(result.to_a).to eql([
-                                   { name: 'Jane', title: "Jane's task" },
-                                   { name: 'Joe', title: "Joe's task" }
+                                   { name: "Jane", title: "Jane's task" },
+                                   { name: "Joe", title: "Joe's task" }
                                  ])
     end
 
-    context 'with associations' do
+    context "with associations" do
       before do
         inferrable_relations.concat %i[puzzles]
       end
@@ -101,11 +101,11 @@ RSpec.describe ROM::Relation, '#inner_join' do
           end
         end
 
-        relation.insert id: 3, name: 'Jade'
-        puzzles.insert id: 1, author_id: 1, text: 'solved by Jane'
+        relation.insert id: 3, name: "Jade"
+        puzzles.insert id: 1, author_id: 1, text: "solved by Jane"
       end
 
-      it 'joins relation with join keys inferred' do
+      it "joins relation with join keys inferred" do
         result = relation
                  .inner_join(tasks)
                  .select(:name, tasks[:title])
@@ -113,8 +113,8 @@ RSpec.describe ROM::Relation, '#inner_join' do
         expect(result.schema.map(&:name)).to eql(%i[name title])
 
         expect(result.to_a).to eql([
-                                     { name: 'Jane', title: "Jane's task" },
-                                     { name: 'Joe', title: "Joe's task" }
+                                     { name: "Jane", title: "Jane's task" },
+                                     { name: "Joe", title: "Joe's task" }
                                    ])
       end
 
@@ -126,7 +126,7 @@ RSpec.describe ROM::Relation, '#inner_join' do
         }.new
       }
 
-      it 'joins relation with relation proxy objects' do
+      it "joins relation with relation proxy objects" do
         result = relation
                  .inner_join(task_relation_proxy)
                  .select(:name, tasks[:title])
@@ -134,14 +134,14 @@ RSpec.describe ROM::Relation, '#inner_join' do
         expect(result.schema.map(&:name)).to eql(%i[name title])
 
         expect(result.to_a).to eql([
-                                     { name: 'Jane', title: "Jane's task" },
-                                     { name: 'Joe', title: "Joe's task" }
+                                     { name: "Jane", title: "Jane's task" },
+                                     { name: "Joe", title: "Joe's task" }
                                    ])
       end
 
-      describe 'joined relation with join keys inferred for m:m-through' do
+      describe "joined relation with join keys inferred for m:m-through" do
         before do
-          tags.insert(id: 2, name: 'postponed')
+          tags.insert(id: 2, name: "postponed")
           tasks.task_tags.insert(tag_id: 2, task_id: 2)
         end
 
@@ -149,20 +149,20 @@ RSpec.describe ROM::Relation, '#inner_join' do
           [{ id: 1, user_id: 2, title: "Joe's task" }, { id: 2, user_id: 1, title: "Jane's task" }]
         end
 
-        it 'using target relation' do
+        it "using target relation" do
           result = tasks.inner_join(tags)
 
           expect(result.to_a).to eql(expected_result)
         end
 
-        it 'using target relation' do
+        it "using target relation" do
           result = tasks.inner_join(:tags)
 
           expect(result.to_a).to eql(expected_result)
         end
       end
 
-      it 'joins by association name if no condition provided' do
+      it "joins by association name if no condition provided" do
         result = relation
                  .inner_join(:tasks)
                  .select(:name, tasks[:title])
@@ -170,12 +170,12 @@ RSpec.describe ROM::Relation, '#inner_join' do
         expect(result.schema.map(&:name)).to eql(%i[name title])
 
         expect(result.to_a).to eql([
-                                     { name: 'Jane', title: "Jane's task" },
-                                     { name: 'Joe', title: "Joe's task" }
+                                     { name: "Jane", title: "Jane's task" },
+                                     { name: "Joe", title: "Joe's task" }
                                    ])
       end
 
-      it 'joins if association name differs from relation name' do
+      it "joins if association name differs from relation name" do
         result = relation
                  .inner_join(:todos)
                  .select(:name, tasks[:title])
@@ -183,15 +183,15 @@ RSpec.describe ROM::Relation, '#inner_join' do
         expect(result.schema.map(&:name)).to eql(%i[name title])
 
         expect(result.to_a).to eql([
-                                     { name: 'Jane', title: "Jane's task" },
-                                     { name: 'Joe', title: "Joe's task" }
+                                     { name: "Jane", title: "Jane's task" },
+                                     { name: "Joe", title: "Joe's task" }
                                    ])
       end
 
-      it 'joins by relation if association name differs from relation name' do
+      it "joins by relation if association name differs from relation name" do
         result = puzzles.inner_join(users).select(users[:name], puzzles[:text])
 
-        expect(result.to_a).to eql([name: 'Jane', text: 'solved by Jane'])
+        expect(result.to_a).to eql([name: "Jane", text: "solved by Jane"])
       end
     end
   end

@@ -1,5 +1,5 @@
-require 'ostruct'
-require 'rom/sql/commands'
+require "ostruct"
+require "rom/sql/commands"
 
 RSpec.describe ROM::SQL::Plugin::Associates do
   subject(:command) do
@@ -41,8 +41,8 @@ RSpec.describe ROM::SQL::Plugin::Associates do
     allow(tags_assoc).to receive(:join_keys).and_return({})
   end
 
-  shared_context 'associates result' do
-    it 'inserts join tuples and returns child tuples with combine keys' do
+  shared_context "associates result" do
+    it "inserts join tuples and returns child tuples with combine keys" do
       expect(tags_assoc).to receive(:persist).with(post_tuples, tag_tuples)
       expect(tags_assoc).to receive(:parent_combine_keys).and_return(%i[name tag])
 
@@ -50,26 +50,26 @@ RSpec.describe ROM::SQL::Plugin::Associates do
 
       expect(result).
         to match_array([
-                         { title: 'post 1', tag: 'red' }, { title: 'post 1', tag: 'green'},
-                         { title: 'post 2', tag: 'red' }, { title: 'post 2', tag: 'green'}
+                         { title: "post 1", tag: "red" }, { title: "post 1", tag: "green"},
+                         { title: "post 2", tag: "red" }, { title: "post 2", tag: "green"}
                        ])
     end
   end
 
-  describe '#associate' do
-    context 'with plain hash tuples' do
+  describe "#associate" do
+    context "with plain hash tuples" do
       let(:post_tuples) do
-        [{ title: 'post 1' }, { title: 'post 2' }]
+        [{ title: "post 1" }, { title: "post 2" }]
       end
 
       let(:tag_tuples) do
-        [{ name: 'red' }, { name: 'green' }]
+        [{ name: "red" }, { name: "green" }]
       end
 
-      include_context 'associates result'
+      include_context "associates result"
     end
 
-    context 'with tuples coercible to a hash' do
+    context "with tuples coercible to a hash" do
       before do
         module Test
           class Post < OpenStruct
@@ -81,14 +81,14 @@ RSpec.describe ROM::SQL::Plugin::Associates do
       end
 
       let(:post_tuples) do
-        [Test::Post.new(title: 'post 1'), Test::Post.new(title: 'post 2')]
+        [Test::Post.new(title: "post 1"), Test::Post.new(title: "post 2")]
       end
 
       let(:tag_tuples) do
-        [{ name: 'red' }, { name: 'green' }]
+        [{ name: "red" }, { name: "green" }]
       end
 
-      include_context 'associates result'
+      include_context "associates result"
     end
   end
 end

@@ -1,5 +1,5 @@
-RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
-  include_context 'database setup'
+RSpec.describe "ROM::SQL::Schema::PostgresInferrer", :postgres, :helpers do
+  include_context "database setup"
 
   before do
     inferrable_relations.concat %i(test_inferrence)
@@ -8,8 +8,8 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
   colors = %w(red orange yellow green blue purple)
 
   before do
-    conn.execute('create extension if not exists hstore')
-    conn.execute('create extension if not exists ltree')
+    conn.execute("create extension if not exists hstore")
+    conn.execute("create extension if not exists ltree")
 
     conn.extension :pg_enum
     conn.extension :pg_hstore
@@ -65,7 +65,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
     empty.with(**inferrer.(empty, gateway))
   end
 
-  context 'when pg_enum in primary key' do
+  context "when pg_enum in primary key" do
     before do
       conn.drop_table?(:test_inferrence)
       conn.create_table(:test_inferrence) do
@@ -74,14 +74,14 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
       end
     end
 
-    it 'can infer primary key on enum column' do
+    it "can infer primary key on enum column" do
       expect(schema.to_h).to eql(attributes(
         colours: ROM::SQL::Types::String.enum(*colors).meta(primary_key: true)
       ))
     end
   end
 
-  context 'inferring db-specific attributes' do
+  context "inferring db-specific attributes" do
     let(:expected) do
       attributes(
         id: define_attribute(:id, ROM::SQL::Types::PG::UUID, primary_key: true),
@@ -90,8 +90,8 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
         jsonb_data: define_attribute(:jsonb_data, ROM::SQL::Types::PG::JSONB.optional, source: source),
         money: define_attribute(:money, ROM::SQL::Types::PG::Money, source: source),
         decimal: define_attribute(:decimal, ROM::SQL::Types::Decimal, source: source),
-        tags: define_attribute(:tags, ROM::SQL::Types::PG::Array('text').optional, source: source),
-        tag_ids: define_attribute(:tag_ids, ROM::SQL::Types::PG::Array('bigint').optional, source: source),
+        tags: define_attribute(:tags, ROM::SQL::Types::PG::Array("text").optional, source: source),
+        tag_ids: define_attribute(:tag_ids, ROM::SQL::Types::PG::Array("bigint").optional, source: source),
         ip: define_attribute(:ip, ROM::SQL::Types::PG::IPAddress.optional, source: source),
         color: define_attribute(:color, ROM::SQL::Types::String.enum(*colors).optional, source: source),
         subnet: define_attribute(:subnet, ROM::SQL::Types::PG::IPAddress.optional, source: source),
@@ -119,28 +119,28 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
       )
     end
 
-    it 'can infer attributes for dataset' do
+    it "can infer attributes for dataset" do
       expected.each do |name, attribute|
         expect(schema[name]).to eql(attribute)
       end
     end
   end
 
-  context 'with a table without columns' do
+  context "with a table without columns" do
     before do
       conn.create_table(:dummy) unless conn.table_exists?(:dummy)
       conf.relation(:dummy) { schema(infer: true) }
     end
 
-    it 'does not fail with a weird error when a relation does not have attributes' do
+    it "does not fail with a weird error when a relation does not have attributes" do
       expect(container.relations[:dummy].schema).to be_empty
     end
   end
 
-  context 'with a column with bi-directional mapping' do
+  context "with a column with bi-directional mapping" do
     before do
-      conn.execute('create extension if not exists hstore')
-      conn.execute('create extension if not exists ltree')
+      conn.execute("create extension if not exists hstore")
+      conn.execute("create extension if not exists ltree")
 
       conn.create_table(:test_bidirectional) do
         primary_key :id
@@ -177,8 +177,8 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
     let(:point) { ROM::SQL::Postgres::Values::Point.new(7.5, 30.5) }
     let(:point_2) { ROM::SQL::Postgres::Values::Point.new(8.5, 35.5) }
     let(:line) { ROM::SQL::Postgres::Values::Line.new(2.3, 4.9, 3.1415) }
-    let(:dns) { IPAddr.new('8.8.8.8') }
-    let(:mapping) { Hash['hot' => 'cold'] }
+    let(:dns) { IPAddr.new("8.8.8.8") }
+    let(:mapping) { Hash["hot" => "cold"] }
     let(:circle) { ROM::SQL::Postgres::Values::Circle.new(point, 1.0) }
     let(:lseg) { ROM::SQL::Postgres::Values::LineSegment.new(point, point_2) }
     let(:box_corrected) { ROM::SQL::Postgres::Values::Box.new(point_2, point) }
@@ -191,19 +191,19 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
     let(:polygon) { [point, point_2] }
     let(:closed_path) { ROM::SQL::Postgres::Values::Path.new([point, point_2], :closed) }
     let(:open_path) { ROM::SQL::Postgres::Values::Path.new([point, point_2], :open) }
-    let(:ltree) { ROM::Types::Values::TreePath.new('Top.Countries.Europe.Russia') }
+    let(:ltree) { ROM::Types::Values::TreePath.new("Top.Countries.Europe.Russia") }
 
     let(:int4range) { values::Range.new(0, 2, :'[)') }
     let(:int8range) { values::Range.new(5, 7, :'[)') }
     let(:numrange)  { values::Range.new(3, 9, :'[)') }
 
     let(:tsrange)   do
-      timestamp = Time.parse('2017-09-25 07:00:00')
+      timestamp = Time.parse("2017-09-25 07:00:00")
       values::Range.new(timestamp, timestamp + 3600 * 8, :'[)')
     end
 
     let(:tstzrange) do
-      timestamp = Time.parse('2017-09-25 07:00:00 +0000')
+      timestamp = Time.parse("2017-09-25 07:00:00 +0000")
       values::Range.new(timestamp, timestamp + 3600 * 8, :'[)')
     end
 
@@ -214,7 +214,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
     let(:relation) { container.relations[:test_bidirectional] }
     let(:create) { commands[:test_bidirectional].create }
 
-    it 'writes and reads data & corrects data' do
+    it "writes and reads data & corrects data" do
       # Box coordinates are reordered if necessary
       inserted = create.(
         id: 1, center: point, ip: dns, mapping: mapping,

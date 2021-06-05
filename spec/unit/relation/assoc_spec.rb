@@ -1,9 +1,9 @@
-require 'spec_helper'
+require "spec_helper"
 
 RSpec.describe ROM::SQL::Relation do
-  include_context 'users and tasks'
+  include_context "users and tasks"
 
-  context 'with has_many' do
+  context "with has_many" do
     subject(:users) { relations[:users] }
 
     let(:tasks) { relations[:tasks] }
@@ -19,14 +19,14 @@ RSpec.describe ROM::SQL::Relation do
     end
 
     with_adapters do
-      it 'returns child tuples for a relation' do
-        expect(users.assoc(:tasks).where(name: 'Jane').to_a).
+      it "returns child tuples for a relation" do
+        expect(users.assoc(:tasks).where(name: "Jane").to_a).
           to eql([{ id: 2, user_id: 1, title: "Jane's task" }])
       end
     end
   end
 
-  context 'with has_many-through' do
+  context "with has_many-through" do
     subject(:tasks) { relations[:tasks] }
 
     before do
@@ -47,24 +47,24 @@ RSpec.describe ROM::SQL::Relation do
         end
       end
 
-      conn[:tags].insert id: 2, name: 'whatevah'
+      conn[:tags].insert id: 2, name: "whatevah"
       conn[:task_tags].insert(tag_id: 2, task_id: 2)
     end
 
     with_adapters do
-      it 'returns child tuples for a relation' do
+      it "returns child tuples for a relation" do
         expect(tasks.assoc(:tags).to_a).
-          to eql([{ id: 1, name: 'important', task_id: 1 }, { id: 2, name: 'whatevah', task_id: 2 }])
+          to eql([{ id: 1, name: "important", task_id: 1 }, { id: 2, name: "whatevah", task_id: 2 }])
       end
 
-      it 'returns child tuples for a restricted relation' do
+      it "returns child tuples for a restricted relation" do
         expect(tasks.assoc(:tags).where(title: "Jane's task").to_a).
-          to eql([{ id: 2, name: 'whatevah', task_id: 2 }])
+          to eql([{ id: 2, name: "whatevah", task_id: 2 }])
       end
     end
   end
 
-  context 'with belongs_to' do
+  context "with belongs_to" do
     subject(:tasks) { relations[:tasks] }
 
     before do
@@ -78,9 +78,9 @@ RSpec.describe ROM::SQL::Relation do
     end
 
     with_adapters do
-      it 'returns parent tuples for a relation' do
+      it "returns parent tuples for a relation" do
         expect(tasks.assoc(:user).where(title: "Jane's task").to_a).
-          to eql([{ id: 1, task_id: 2, name: 'Jane' }])
+          to eql([{ id: 1, task_id: 2, name: "Jane" }])
       end
     end
   end

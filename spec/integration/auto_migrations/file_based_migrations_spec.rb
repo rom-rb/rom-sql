@@ -1,9 +1,9 @@
 RSpec.describe ROM::SQL::Gateway, :postgres, :helpers, skip_tables: true do
-  include_context 'database setup'
+  include_context "database setup"
 
   subject(:gateway) { container.gateways[:default] }
 
-  let(:path) { TMP_PATH.join('test/migrations') }
+  let(:path) { TMP_PATH.join("test/migrations") }
 
   before { FileUtils.rm_rf(path) }
   after { FileUtils.rm_rf(path) }
@@ -22,7 +22,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers, skip_tables: true do
     end
   end
 
-  context 'creating from scratch' do
+  context "creating from scratch" do
     before do
       conf.relation(:users) do
         schema do
@@ -36,7 +36,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers, skip_tables: true do
       end
     end
 
-    it 'creates migration files by schema definitions' do
+    it "creates migration files by schema definitions" do
       gateway.auto_migrate!(conf, options)
       expect(migrations.size).to eql(1)
 
@@ -57,8 +57,8 @@ end
     end
   end
 
-  context 'alter table' do
-    context 'changing columns' do
+  context "alter table" do
+    context "changing columns" do
       before do
         conn.create_table(:users) do
           primary_key :id
@@ -80,7 +80,7 @@ end
         end
       end
 
-      it 'creates migration files by schema definitions' do
+      it "creates migration files by schema definitions" do
         gateway.auto_migrate!(conf, options)
         expect(migrations.size).to eql(1)
 
@@ -102,7 +102,7 @@ end
       end
     end
 
-    context 'managing foreign keys' do
+    context "managing foreign keys" do
       before do
         conn.create_table(:users) do
           primary_key :id
@@ -125,7 +125,7 @@ end
         end
       end
 
-      it 'creates a table then a FK constraint' do
+      it "creates a table then a FK constraint" do
         gateway.auto_migrate!(conf, options)
         expect(migrations.size).to eql(2)
 

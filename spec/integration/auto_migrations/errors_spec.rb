@@ -1,5 +1,5 @@
 RSpec.describe ROM::SQL::Gateway, :postgres do
-  include_context 'database setup'
+  include_context "database setup"
 
   subject(:gateway) { container.gateways[:default] }
 
@@ -7,7 +7,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
     conn.drop_table?(:users)
   end
 
-  describe 'unsupported conversions' do
+  describe "unsupported conversions" do
     before do
       conf.relation(:users) do
         schema do
@@ -17,7 +17,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
       end
     end
 
-    it 'raises an error' do
+    it "raises an error" do
       conn.create_table :users do
         primary_key :id
         column :name, Integer, null: false

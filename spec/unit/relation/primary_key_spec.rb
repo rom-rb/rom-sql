@@ -1,11 +1,11 @@
-RSpec.describe ROM::Relation, '#primary_key' do
+RSpec.describe ROM::Relation, "#primary_key" do
   subject(:relation) { container.relations.users }
 
-  include_context 'users and tasks'
+  include_context "users and tasks"
 
   with_adapters do
-    context 'with schema' do
-      it 'returns configured primary key from the schema' do
+    context "with schema" do
+      it "returns configured primary key from the schema" do
         conf.relation(:users) do
           schema do
             attribute :name, ROM::SQL::Types::String.meta(primary_key: true)
@@ -16,8 +16,8 @@ RSpec.describe ROM::Relation, '#primary_key' do
       end
     end
 
-    context 'without schema' do
-      it 'returns :id by default' do
+    context "without schema" do
+      it "returns :id by default" do
         conf.relation(:users) { schema(infer: true) }
 
         expect(relation.primary_key).to be(:id)

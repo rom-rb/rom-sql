@@ -1,5 +1,5 @@
-RSpec.describe 'ROM.container' do
-  include_context 'database setup'
+RSpec.describe "ROM.container" do
+  include_context "database setup"
 
   with_adapters do
     let(:rom) do
@@ -19,7 +19,7 @@ RSpec.describe 'ROM.container' do
       rom.gateways[:default].connection.drop_table(:dragons)
     end
 
-    it 'creates tables within the setup block' do
+    it "creates tables within the setup block" do
       expect(rom.relations[:dragons]).to be_kind_of(ROM::SQL::Relation)
     end
   end

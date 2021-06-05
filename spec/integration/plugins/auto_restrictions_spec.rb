@@ -1,30 +1,30 @@
-RSpec.describe 'Plugins / :auto_restrictions', seeds: true do
-  include_context 'users and tasks'
+RSpec.describe "Plugins / :auto_restrictions", seeds: true do
+  include_context "users and tasks"
 
   with_adapters do
     before do
       conn.add_index :tasks, :title, unique: true
     end
 
-    shared_context 'auto-generated restriction view' do
-      it 'defines restriction views for all indexed attributes' do
+    shared_context "auto-generated restriction view" do
+      it "defines restriction views for all indexed attributes" do
         expect(tasks.select(:id).by_title("Jane's task").one).to eql(id: 2)
       end
 
-      it 'defines curried methods' do
+      it "defines curried methods" do
         expect(tasks.by_title.("Jane's task").first).to eql(id: 2, user_id: 1, title: "Jane's task")
       end
     end
 
-    context 'with an inferred schema' do
+    context "with an inferred schema" do
       before do
         conf.plugin(:sql, relations: :auto_restrictions)
       end
 
-      include_context 'auto-generated restriction view'
+      include_context "auto-generated restriction view"
     end
 
-    context 'with two containers' do
+    context "with two containers" do
       let(:confs) do
         { one: ROM::Configuration.new(:sql, conn),
           two: ROM::Configuration.new(:sql, conn) }
@@ -49,13 +49,13 @@ RSpec.describe 'Plugins / :auto_restrictions', seeds: true do
         confs[:two].register_relation(Test::Tasks)
       end
 
-      it 'works fine' do
+      it "works fine" do
         expect(containers[:one].relations[:tasks].select(:id).by_title("Jane's task").one).to eql(id: 2)
         expect(containers[:two].relations[:tasks].select(:id).by_title("Jane's task").one).to eql(id: 2)
       end
     end
 
-    context 'with explicit schema' do
+    context "with explicit schema" do
       before do
         conf.relation(:tasks) do
           schema do
@@ -72,9 +72,9 @@ RSpec.describe 'Plugins / :auto_restrictions', seeds: true do
         end
       end
 
-      include_context 'auto-generated restriction view'
+      include_context "auto-generated restriction view"
 
-      it 'generates restrictrions by a composite index' do
+      it "generates restrictrions by a composite index" do
         expect(tasks.by_user_id_and_title(1, "Jane's task").first).to eql(id: 2, user_id: 1, title: "Jane's task")
       end
     end
@@ -83,7 +83,7 @@ RSpec.describe 'Plugins / :auto_restrictions', seeds: true do
       # An auto-generated restriction should include the prediate from the index definition
       # but it seems to be too much from my POV, better leave it to the user
       # Note that this can be enabled later
-      it 'skips partial indexes' do
+      it "skips partial indexes" do
         conf.relation(:tasks) do
           schema do
             attribute :id, ROM::SQL::Types::Serial
@@ -91,7 +91,7 @@ RSpec.describe 'Plugins / :auto_restrictions', seeds: true do
             attribute :title, ROM::SQL::Types::String
 
             indexes do
-              index :title, predicate: 'title is not null'
+              index :title, predicate: "title is not null"
             end
           end
 

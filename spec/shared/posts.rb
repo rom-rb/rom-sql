@@ -1,4 +1,4 @@
-RSpec.shared_context 'posts' do
+RSpec.shared_context "posts" do
   before do
     inferrable_relations.concat %i(posts)
   end
@@ -21,14 +21,14 @@ RSpec.shared_context 'posts' do
       post_id: 1,
       author_id: 2,
       title: "Joe's post",
-      body: 'Joe wrote sutin'
+      body: "Joe wrote sutin"
     )
 
     conn[:posts].insert(
       post_id: 2,
       author_id: 1,
       title: "Jane's post",
-      body: 'Jane wrote sutin'
+      body: "Jane wrote sutin"
     )
   end
 end

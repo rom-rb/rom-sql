@@ -1,11 +1,11 @@
-RSpec.describe ROM::Relation, '#associations' do
+RSpec.describe ROM::Relation, "#associations" do
   subject(:relation) { container.relations.users }
 
-  include_context 'users and tasks'
+  include_context "users and tasks"
 
   with_adapters do
-    context 'with schema' do
-      it 'returns configured primary key from the schema' do
+    context "with schema" do
+      it "returns configured primary key from the schema" do
         conf.relation(:users) do
           schema(infer: true) do
             associations do
@@ -18,8 +18,8 @@ RSpec.describe ROM::Relation, '#associations' do
       end
     end
 
-    context 'without schema' do
-      it 'returns an empty association set' do
+    context "without schema" do
+      it "returns an empty association set" do
         expect(relation.associations.elements).to be_empty
       end
     end

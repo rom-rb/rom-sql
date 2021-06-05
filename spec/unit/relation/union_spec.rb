@@ -1,7 +1,7 @@
-RSpec.describe ROM::Relation, '#union' do
+RSpec.describe ROM::Relation, "#union" do
   subject(:relation) { container.relations.users }
 
-  include_context 'users and tasks'
+  include_context "users and tasks"
 
   before do
     conf.relation(:tasks) do
@@ -25,20 +25,20 @@ RSpec.describe ROM::Relation, '#union' do
     let(:tasks) { container.relations.tasks}
     let(:task_tags) { container.relations.task_tags}
 
-    context 'when the relations unioned have the same name' do
+    context "when the relations unioned have the same name" do
       let(:relation1) { relation.where(id: 1).select(:id, :name) }
       let(:relation2) { relation.where(id: 2).select(:id, :name) }
 
-      it 'unions two relations and returns a new relation' do
+      it "unions two relations and returns a new relation" do
         result = relation1.union(relation2)
 
         expect(result.to_a).to match_array([
-          { id: 1, name: 'Jane' },
-          { id: 2, name: 'Joe' }
+          { id: 1, name: "Jane" },
+          { id: 2, name: "Joe" }
         ])
       end
 
-      it 'correctly handles Sequels aliasing' do
+      it "correctly handles Sequels aliasing" do
         tags1 = tasks
           .left_join(task_tags, task_tags[:task_id] => tasks[:id], tasks[:title] => "Jane's Task")
 
@@ -54,17 +54,17 @@ RSpec.describe ROM::Relation, '#union' do
         ])
       end
 
-      it 'qualifies the table original relation name' do
+      it "qualifies the table original relation name" do
         result = relation1.union(relation2)
         expect_to_have_qualified_name(result, :users)
       end
     end
 
-    context 'when the relations unioned have different names' do
+    context "when the relations unioned have different names" do
       let(:relation1) { relation.where(id: 1).select(:id, :name) }
       let(:relation2) { tasks }
 
-      it 'qualifies the table as the concatenated relation names' do
+      it "qualifies the table as the concatenated relation names" do
         result = relation1.union(relation2)
         expect_to_have_qualified_name(result, :users__tasks)
       end

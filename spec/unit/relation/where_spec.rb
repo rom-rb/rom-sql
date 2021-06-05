@@ -1,49 +1,49 @@
-RSpec.describe ROM::Relation, '#where' do
+RSpec.describe ROM::Relation, "#where" do
   subject(:relation) { relations[:tasks].select(:id, :title) }
 
-  include_context 'users and tasks'
+  include_context "users and tasks"
 
   with_adapters do
-    context 'without :read types' do
-      it 'restricts relation using provided conditions' do
+    context "without :read types" do
+      it "restricts relation using provided conditions" do
         expect(relation.where(id: 1).to_a).
           to eql([{ id: 1, title: "Joe's task" }])
       end
 
-      it 'restricts relation using provided conditions and block' do
+      it "restricts relation using provided conditions and block" do
         expect(relation.where(id: 1) { title.like("%Jane%") }.to_a).to be_empty
       end
 
-      it 'restricts relation using provided conditions in a block' do
+      it "restricts relation using provided conditions in a block" do
         expect(relation.where { (id > 2) & title.like("%Jane%") }.to_a).to be_empty
       end
 
-      it 'restricts relation using canonical attributes' do
+      it "restricts relation using canonical attributes" do
         expect(relation.rename(id: :user_id).where { id > 3 }.to_a).to be_empty
       end
 
-      it 'restricts relation using aliased attributes as hash keys' do
+      it "restricts relation using aliased attributes as hash keys" do
         aliased_relation = relation.rename(title: :task_title)
 
         expect(aliased_relation.where(aliased_relation[:title] => "Jane's task").to_a).to eql([{ id: 2, task_title: "Jane's task" }])
       end
 
-      it 'restricts relation using attributes from another relation' do
+      it "restricts relation using attributes from another relation" do
         expect(relation.join(:users, id: :user_id).where { |r| r[:users][:name].is("Jane") }.to_a).
           to eql([{ id: 2, title: "Jane's task" }])
       end
 
-      it 'supports keywords for accessing another relation' do
+      it "supports keywords for accessing another relation" do
         expect(relation.join(:users, id: :user_id).where { |r| r[:users][:name].is("Jane") }.to_a).
           to eql([{ id: 2, title: "Jane's task" }])
       end
 
-      it 'restricts with or condition' do
+      it "restricts with or condition" do
         expect(relation.where { id.is(1) | id.is(2) }.to_a).
           to eql([{ id: 1, title: "Joe's task" }, { id: 2, title: "Jane's task" }])
       end
 
-      it 'restricts with a range condition' do
+      it "restricts with a range condition" do
         expect(relation.where { id.in(-1...2) }.to_a).
           to eql([{ id: 1, title: "Joe's task" }])
 
@@ -51,43 +51,43 @@ RSpec.describe ROM::Relation, '#where' do
           to eql([{ id: 1, title: "Joe's task" }, { id: 2, title: "Jane's task" }])
       end
 
-      it 'restricts with an inclusive range' do
+      it "restricts with an inclusive range" do
         expect(relation.where { id.in(0..2) }.to_a).
           to eql([{ id: 1, title: "Joe's task" }, { id: 2, title: "Jane's task" }])
       end
 
-      it 'restricts with an ordinary enum' do
+      it "restricts with an ordinary enum" do
         expect(relation.where { id.in(2, 3) }.to_a).
           to eql([{ id: 2, title: "Jane's task" }])
       end
 
-      it 'restricts with enum using self syntax' do
+      it "restricts with enum using self syntax" do
         expect(relation.where(relation[:id].in(2, 3)).to_a).
           to eql([{ id: 2, title: "Jane's task" }])
       end
 
-      context 'using underscored symbols for qualifying' do
+      context "using underscored symbols for qualifying" do
         before { Sequel.split_symbols = true }
         after { Sequel.split_symbols = false }
 
-        it 'queries with a qualified name' do
+        it "queries with a qualified name" do
           expect(relation.where(tasks__id: 1).to_a).
             to eql([{ id: 1, title: "Joe's task" }])
         end
       end
 
-      it 'restricts with a function' do
+      it "restricts with a function" do
         expect(relation.where { string::lower(title).is("joe's task") }.to_a).
           to eql([{ id: 1, title: "Joe's task" }])
       end
 
-      it 'restricts with a function using LIKE' do
+      it "restricts with a function using LIKE" do
         expect(relation.where { string::lower(title).like("joe%") }.to_a).
           to eql([{ id: 1, title: "Joe's task" }])
       end
 
-      it 'works with subqueries' do
-        conn[:users].insert name: 'Jack'
+      it "works with subqueries" do
+        conn[:users].insert name: "Jack"
         tasks = self.tasks
         users = self.users
         rows = relation.
@@ -99,8 +99,8 @@ RSpec.describe ROM::Relation, '#where' do
         expect(rows.size).to eql(2)
       end
 
-      it 'really works with subqueries' do
-        conn[:users].insert name: 'Jane'
+      it "really works with subqueries" do
+        conn[:users].insert name: "Jane"
 
         tasks = self.tasks
         users = self.users
@@ -115,7 +115,7 @@ RSpec.describe ROM::Relation, '#where' do
       end
     end
 
-    context 'with :read types' do
+    context "with :read types" do
       before do
         conf.relation(:tasks) do
           schema(infer: true) do
@@ -139,14 +139,14 @@ RSpec.describe ROM::Relation, '#where' do
         end
       end
 
-      it 'applies write_schema to hash conditions' do
-        rel = tasks.where(id: Test::Id.new('2'), title: Test::Title.new(:"Jane's task"))
+      it "applies write_schema to hash conditions" do
+        rel = tasks.where(id: Test::Id.new("2"), title: Test::Title.new(:"Jane's task"))
 
         expect(rel.first).
           to eql(id: 2, user_id: 1, title: "Jane's task")
       end
 
-      it 'applies write_schema to hash conditions where value is an array' do
+      it "applies write_schema to hash conditions where value is an array" do
         ids = %w(1 2).map(&Test::Id.method(:new))
         rel = tasks.where(id: ids)
 
@@ -157,16 +157,16 @@ RSpec.describe ROM::Relation, '#where' do
                  ])
       end
 
-      it 'applies write_schema to conditions with operators other than equality' do
-        rel = tasks.where { id >= Test::Id.new('2') }
+      it "applies write_schema to conditions with operators other than equality" do
+        rel = tasks.where { id >= Test::Id.new("2") }
 
         expect(rel.first).
           to eql(id: 2, user_id: 1, title: "Jane's task")
       end
 
-      it 'applies write_schema to conditions in a block' do
+      it "applies write_schema to conditions in a block" do
         rel = tasks.where {
-          id.is(Test::Id.new('2')) & title.is(Test::Title.new(:"Jane's task"))
+          id.is(Test::Id.new("2")) & title.is(Test::Title.new(:"Jane's task"))
         }
 
         expect(rel.first).

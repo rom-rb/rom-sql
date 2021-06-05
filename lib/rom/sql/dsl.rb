@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'concurrent/map'
-require 'rom/support/inflector'
-require 'rom/constants'
+require "concurrent/map"
+require "rom/support/inflector"
+require "rom/constants"
 
 module ROM
   module SQL

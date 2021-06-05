@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rom/types/values'
+require "rom/types/values"
 
 module ROM
   module SQL
@@ -9,7 +9,7 @@ module ROM
       module Types
         # @see https://www.postgresql.org/docs/current/static/ltree.html
 
-        LTree = Type('ltree') do
+        LTree = Type("ltree") do
           SQL::Types.define(ROM::Types::Values::TreePath) do
             input do |label_path|
               label_path.to_s
@@ -224,14 +224,14 @@ module ROM
         #
         #   end
         module LTreeMethods
-          ASCENDANT = ['(', ' @> ', ')'].freeze
-          FIND_ASCENDANT = ['(', ' ?@> ', ')'].freeze
-          DESCENDANT = ['(', ' <@ ', ')'].freeze
-          FIND_DESCENDANT = ['(', ' ?<@ ', ')'].freeze
-          MATCH_ANY = ['(', ' ? ', ')'].freeze
-          MATCH_ANY_LQUERY = ['(', ' ?~ ', ')'].freeze
-          MATCH_LTEXTQUERY = ['(', ' @ ', ')'].freeze
-          MATCH_ANY_LTEXTQUERY = ['(', ' ?@ ', ')'].freeze
+          ASCENDANT = ["(", " @> ", ")"].freeze
+          FIND_ASCENDANT = ["(", " ?@> ", ")"].freeze
+          DESCENDANT = ["(", " <@ ", ")"].freeze
+          FIND_DESCENDANT = ["(", " ?<@ ", ")"].freeze
+          MATCH_ANY = ["(", " ? ", ")"].freeze
+          MATCH_ANY_LQUERY = ["(", " ?~ ", ")"].freeze
+          MATCH_LTEXTQUERY = ["(", " @ ", ")"].freeze
+          MATCH_ANY_LTEXTQUERY = ["(", " ?@ ", ")"].freeze
 
           def match(_type, expr, query)
             Attribute[SQL::Types::Bool].meta(sql_expr: Sequel::SQL::BooleanExpression.new(:'~', expr, query))
@@ -248,17 +248,17 @@ module ROM
             Sequel::SQL::PlaceholderLiteralString.new(string, [expr, query])
           end
 
-          def build_array_query(query, array_type = 'lquery')
+          def build_array_query(query, array_type = "lquery")
             case query
             when ::Array
               ROM::SQL::Types::PG::Array(array_type)[query]
             when ::String
-              ROM::SQL::Types::PG::Array(array_type)[query.split(',')]
+              ROM::SQL::Types::PG::Array(array_type)[query.split(",")]
             end
           end
         end
 
-        TypeExtensions.register(ROM::SQL::Types::PG::Array('ltree', LTree)) do
+        TypeExtensions.register(ROM::SQL::Types::PG::Array("ltree", LTree)) do
           include LTreeMethods
 
           def contain_any_ltextquery(_type, expr, query)
@@ -298,7 +298,7 @@ module ROM
           end
 
           def contain_descendant(_type, expr, query)
-            array = build_array_query(query, 'ltree')
+            array = build_array_query(query, "ltree")
             Attribute[SQL::Types::Bool].meta(sql_expr: custom_operator_expr(LTreeMethods::DESCENDANT, expr, array))
           end
 
@@ -307,7 +307,7 @@ module ROM
           end
 
           def contain_ascendant(_type, expr, query)
-            array = build_array_query(query, 'ltree')
+            array = build_array_query(query, "ltree")
             Attribute[SQL::Types::Bool].meta(sql_expr: custom_operator_expr(LTreeMethods::ASCENDANT, expr, array))
           end
 

@@ -1,4 +1,4 @@
-RSpec.shared_context 'notes' do
+RSpec.shared_context "notes" do
 
   before do
     inferrable_relations.concat %i(notes)

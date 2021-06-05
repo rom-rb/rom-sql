@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rom/sql/schema/index_dsl'
+require "rom/sql/schema/index_dsl"
 
 module ROM
   module SQL

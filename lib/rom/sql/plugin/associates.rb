@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rom/sql/associations'
+require "rom/sql/associations"
 
 module ROM
   module SQL

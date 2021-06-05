@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rom/sql/migration/recorder'
+require "rom/sql/migration/recorder"
 
 module ROM
   module SQL
@@ -33,13 +33,13 @@ module ROM
         def write(operations, buffer, indent)
           operations.each do |operation|
             op, args, nested = operation
-            buffer << indent << op.to_s << ' '
+            buffer << indent << op.to_s << " "
             write_arguments(buffer, args)
 
             if !nested.empty?
-              buffer << ' do'
-              write(nested, buffer, indent + '  ')
-              buffer << indent << 'end'
+              buffer << " do"
+              write(nested, buffer, indent + "  ")
+              buffer << indent << "end"
             end
           end
         end
@@ -51,9 +51,9 @@ module ROM
             options = EMPTY_HASH
           end
 
-          buffer << args.map(&:inspect).join(', ')
+          buffer << args.map(&:inspect).join(", ")
           options.each do |key, value|
-            buffer << ', ' << key.to_s << ': ' << value.inspect
+            buffer << ", " << key.to_s << ": " << value.inspect
           end
         end
 

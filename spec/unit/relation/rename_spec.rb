@@ -1,7 +1,7 @@
-RSpec.describe ROM::Relation, '#rename' do
+RSpec.describe ROM::Relation, "#rename" do
   subject(:relation) { container.relations.users }
 
-  include_context 'users and tasks'
+  include_context "users and tasks"
 
   before do
     conf.relation(:users) do
@@ -14,10 +14,10 @@ RSpec.describe ROM::Relation, '#rename' do
   end
 
   with_adapters do
-    it 'projects the dataset using new column names' do
+    it "projects the dataset using new column names" do
       renamed = relation.sorted.rename(id: :user_id, name: :user_name)
 
-      expect(renamed.first).to eql(user_id: 1, user_name: 'Jane')
+      expect(renamed.first).to eql(user_id: 1, user_name: "Jane")
     end
   end
 end

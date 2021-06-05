@@ -1,8 +1,8 @@
 RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
-  include_context 'users and tasks'
+  include_context "users and tasks"
 
   with_adapters do
-    context 'through a relation with a composite PK' do
+    context "through a relation with a composite PK" do
       subject(:assoc) do
         build_assoc(:many_to_many, :tasks, :tags, through: :task_tags)
       end
@@ -29,59 +29,59 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
         end
       end
 
-      describe '#result' do
+      describe "#result" do
         specify { expect(assoc.result).to be(:many) }
       end
 
-      describe '#combine_keys' do
+      describe "#combine_keys" do
         specify { expect(assoc.combine_keys).to eql(id: :task_id) }
       end
 
-      describe '#call' do
-        it 'prepares joined relations' do
+      describe "#call" do
+        it "prepares joined relations" do
           relation = assoc.()
 
           expect(relation.schema.map(&:to_sql_name)).
             to eql([Sequel.qualify(:tags, :id),
                     Sequel.qualify(:tags, :name),
                     Sequel.qualify(:task_tags, :task_id)])
-          expect(relation.to_a).to eql([id: 1, name: 'important', task_id: 1])
+          expect(relation.to_a).to eql([id: 1, name: "important", task_id: 1])
         end
       end
 
-      describe ':through another assoc' do
+      describe ":through another assoc" do
         subject(:assoc) do
           build_assoc(:many_to_many, :users, :tags, through: :tasks)
         end
 
-        it 'prepares joined relations through other association' do
+        it "prepares joined relations through other association" do
           relation = assoc.()
 
           expect(relation.schema.map(&:to_sql_name)).
             to eql([Sequel.qualify(:tags, :id),
                     Sequel.qualify(:tags, :name),
                     Sequel.qualify(:tasks, :user_id)])
-          expect(relation.to_a).to eql([id: 1, name: 'important', user_id: 2])
+          expect(relation.to_a).to eql([id: 1, name: "important", user_id: 2])
         end
       end
 
-      describe '#eager_load' do
-        it 'preloads relation based on association' do
+      describe "#eager_load" do
+        it "preloads relation based on association" do
           relation = tags.eager_load(assoc).call(tasks.call)
 
-          expect(relation.to_a).to eql([id: 1, name: 'important', task_id: 1])
+          expect(relation.to_a).to eql([id: 1, name: "important", task_id: 1])
         end
 
-        it 'maintains original relation' do
+        it "maintains original relation" do
           relation = tags.
                        select_append(tags[:name].as(:tag)).
                        eager_load(assoc).call(tasks.call)
 
-          expect(relation.to_a).to eql([id: 1, tag: 'important', name: 'important', task_id: 1])
+          expect(relation.to_a).to eql([id: 1, tag: "important", name: "important", task_id: 1])
         end
 
-        it 'respects custom order' do
-          conn[:tags].insert id: 2, name: 'boring'
+        it "respects custom order" do
+          conn[:tags].insert id: 2, name: "boring"
           conn[:task_tags].insert(tag_id: 2, task_id: 1)
 
           relation = tags.
@@ -90,14 +90,14 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
 
           expect(relation.to_a).
             to eql([
-                     { id: 2, name: 'boring', task_id: 1 },
-                     { id: 1, name: 'important', task_id: 1 }
+                     { id: 2, name: "boring", task_id: 1 },
+                     { id: 1, name: "important", task_id: 1 }
                    ])
         end
       end
     end
 
-    context 'with two associations pointing to the same target relation' do
+    context "with two associations pointing to the same target relation" do
       before do
         inferrable_relations.concat %i(users_tasks)
       end
@@ -138,7 +138,7 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
         end
       end
 
-      it 'does not conflict with two FKs' do
+      it "does not conflict with two FKs" do
         users = container.relations[:users]
         tasks = container.relations[:tasks]
         assoc = users.associations[:tasks]
@@ -148,7 +148,7 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
         expect(relation.to_a).to be_empty
       end
 
-      it 'preloads using FK' do
+      it "preloads using FK" do
         users = container.relations[:users]
         tasks = container.relations[:tasks]
         assoc = users.associations[:priv_tasks]

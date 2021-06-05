@@ -1,5 +1,5 @@
-RSpec.describe 'Eager loading' do
-  include_context 'users and tasks'
+RSpec.describe "Eager loading" do
+  include_context "users and tasks"
 
   with_adapters do
     before do
@@ -29,8 +29,8 @@ RSpec.describe 'Eager loading' do
       end
     end
 
-    it 'issues 3 queries for 3.graphd relations' do
-      users = container.relations[:users].by_name('Piotr')
+    it "issues 3 queries for 3.graphd relations" do
+      users = container.relations[:users].by_name("Piotr")
       tasks = container.relations[:tasks]
       tags = container.relations[:tags]
 
@@ -41,8 +41,8 @@ RSpec.describe 'Eager loading' do
     end
   end
 
-  describe 'using natural keys' do
-    include_context 'articles'
+  describe "using natural keys" do
+    include_context "articles"
 
     with_adapters do
       before do
@@ -74,26 +74,26 @@ RSpec.describe 'Eager loading' do
           end
 
           def with_drafts(_assoc, users)
-            for_users(assoc, users).where(status: 'draft')
+            for_users(assoc, users).where(status: "draft")
           end
         end
       end
 
-      it 'loads associated data' do
-        users = container.relations[:users].by_name('John')
+      it "loads associated data" do
+        users = container.relations[:users].by_name("John")
 
         authors = users.combine_with(users.node(:articles)).to_a
 
-        expect(authors.map { |a| a[:name] }).to eql(['John'])
+        expect(authors.map { |a| a[:name] }).to eql(["John"])
         expect(authors.map { |a| a[:articles].size }).to eql([1])
       end
 
-      it 'allows a left join' do
+      it "allows a left join" do
         users = container.relations[:users]
 
         authors = users.combine_with(users.node(:drafts)).to_a
 
-        expect(authors.map { |a| a[:name] }).to eql(['Jane', 'Joe', 'John'])
+        expect(authors.map { |a| a[:name] }).to eql(["Jane", "Joe", "John"])
         expect(authors.map { |a| a[:drafts].size }).to eql([0, 1, 0])
       end
     end

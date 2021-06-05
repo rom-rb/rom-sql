@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rom/sql/type_serializer'
+require "rom/sql/type_serializer"
 
 module ROM
   module SQL

@@ -1,9 +1,9 @@
-require 'spec_helper'
+require "spec_helper"
 
-RSpec.describe 'Logger', :postgres do
-  include_context 'database setup'
+RSpec.describe "Logger", :postgres do
+  include_context "database setup"
 
-  it 'sets up a logger for sequel' do
+  it "sets up a logger for sequel" do
     gateway = container.gateways[:default]
 
     gateway.use_logger(LOGGER)

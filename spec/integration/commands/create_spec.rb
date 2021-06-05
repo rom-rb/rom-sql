@@ -1,7 +1,7 @@
-require 'dry-struct'
+require "dry-struct"
 
-RSpec.describe 'Commands / Create', :postgres, seeds: false do
-  include_context 'relations'
+RSpec.describe "Commands / Create", :postgres, seeds: false do
+  include_context "relations"
 
   let(:profile_commands) { container.commands[:profiles] }
 
@@ -57,40 +57,40 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
   end
 
   with_adapters do
-    describe '#transaction' do
-      it 'creates record if nothing was raised' do
+    describe "#transaction" do
+      it "creates record if nothing was raised" do
         result = users.transaction {
-          create_user.call(name: 'Jane')
+          create_user.call(name: "Jane")
         }
 
-        expect(result).to eql(id: 1, name: 'Jane')
+        expect(result).to eql(id: 1, name: "Jane")
       end
 
-      it 'creates multiple records if nothing was raised' do
+      it "creates multiple records if nothing was raised" do
         result = users.transaction {
-          create_users.call([{ name: 'Jane' }, { name: 'Jack' }])
+          create_users.call([{ name: "Jane" }, { name: "Jack" }])
         }
 
         expect(result).to match_array([
-          { id: 1, name: 'Jane' }, { id: 2, name: 'Jack' }
+          { id: 1, name: "Jane" }, { id: 2, name: "Jack" }
         ])
       end
 
-      it 'allows for nested transactions' do
+      it "allows for nested transactions" do
         result = users.transaction {
           users.transaction {
-            create_user.call(name: 'Jane')
+            create_user.call(name: "Jane")
           }
         }
 
-        expect(result).to eql(id: 1, name: 'Jane')
+        expect(result).to eql(id: 1, name: "Jane")
       end
 
-      it 'creates nothing if command error was raised' do
+      it "creates nothing if command error was raised" do
         expect {
           begin
             users.transaction {
-              create_user.call(name: 'Jane')
+              create_user.call(name: "Jane")
               create_user.call(name: nil)
             }
           rescue ROM::SQL::Error
@@ -98,11 +98,11 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
         }.to_not change { container.relations.users.count }
       end
 
-      it 'creates nothing if rollback was raised' do
+      it "creates nothing if rollback was raised" do
         expect {
           result = users.transaction { |t|
-            create_user.call(name: 'Jane')
-            create_user.call(name: 'John')
+            create_user.call(name: "Jane")
+            create_user.call(name: "John")
             t.rollback!
           }
 
@@ -110,14 +110,14 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
         }.to_not change { container.relations.users.count }
       end
 
-      it 'creates nothing if constraint error was raised' do
+      it "creates nothing if constraint error was raised" do
         expect {
           begin
             passed = false
 
             users.transaction {
-              create_user.call(name: 'Jane')
-              create_user.call(name: 'Jane')
+              create_user.call(name: "Jane")
+              create_user.call(name: "Jane")
               passed = true
             }
           rescue => error
@@ -127,14 +127,14 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
         }.to_not change { container.relations.users.count }
       end
 
-      it 'creates nothing if anything was raised in any nested transaction' do
+      it "creates nothing if anything was raised in any nested transaction" do
         expect {
           expect {
             users.transaction {
-              create_user.call(name: 'John')
+              create_user.call(name: "John")
 
               users.transaction {
-                create_user.call(name: 'Jane')
+                create_user.call(name: "Jane")
                 raise Exception
               }
             }
@@ -143,7 +143,7 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
       end
     end
 
-    it 'uses relation schema for the default input handler' do
+    it "uses relation schema for the default input handler" do
       conf.relation(:users_with_schema) do
         schema(:users) do
           attribute :id, ROM::SQL::Types::Serial
@@ -159,26 +159,26 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
 
       create = container.commands[:users_with_schema][:create]
 
-      expect(create.input[foo: 'bar', id: 1, name: 'Jane']).to eql(
-        id: 1, name: 'Jane'
+      expect(create.input[foo: "bar", id: 1, name: "Jane"]).to eql(
+        id: 1, name: "Jane"
       )
     end
 
-    it 'returns a single tuple when result is set to :one' do
-      result = create_user.call(name: 'Jane')
+    it "returns a single tuple when result is set to :one" do
+      result = create_user.call(name: "Jane")
 
-      expect(result).to eql(id: 1, name: 'Jane')
+      expect(result).to eql(id: 1, name: "Jane")
     end
 
-    it 'returns tuples when result is set to :many' do
-      result = create_users.call([{ name: 'Jane' }, { name: 'Jack' }])
+    it "returns tuples when result is set to :many" do
+      result = create_users.call([{ name: "Jane" }, { name: "Jack" }])
 
       expect(result.to_a).to match_array([
-        { id: 1, name: 'Jane' }, { id: 2, name: 'Jack' }
+        { id: 1, name: "Jane" }, { id: 2, name: "Jack" }
       ])
     end
 
-    it 're-raises not-null constraint violation error' do
+    it "re-raises not-null constraint violation error" do
       expect {
         create_user.call(name: nil)
       }.to raise_error(ROM::SQL::NotNullConstraintError)
@@ -186,8 +186,8 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
 
     # Because Oracle doesn't have boolean in SQL
     if !metadata[:oracle]
-      context 'with puppies' do
-        include_context 'puppies'
+      context "with puppies" do
+        include_context "puppies"
 
         before do
           conf.relation(:puppies) do
@@ -200,59 +200,59 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
           end
         end
 
-        it 're-raises not-null constraint violation error with nil boolean' do
+        it "re-raises not-null constraint violation error with nil boolean" do
           puppies = commands[:puppies]
 
-          expect { puppies.create.call(name: 'Charlie', cute: nil) }.
+          expect { puppies.create.call(name: "Charlie", cute: nil) }.
             to raise_error(ROM::SQL::NotNullConstraintError)
         end
       end
     end
 
-    it 'raises uniqueness constraint violation error' do
+    it "raises uniqueness constraint violation error" do
       expect {
-        user = create_user.call(name: 'Jane')
+        user = create_user.call(name: "Jane")
         create_user.call(name: user[:name])
       }.to raise_error(ROM::SQL::UniqueConstraintError)
     end
 
-    it 're-raises fk constraint violation error' do |ex|
+    it "re-raises fk constraint violation error" do |ex|
       expect { create_task.call(user_id: 918_273_645) }.
         to raise_error(ROM::SQL::ForeignKeyConstraintError)
     end
 
-    it 're-raises database errors' do
+    it "re-raises database errors" do
       expect {
         create_user.call(name: nil)
       }.to raise_error(ROM::SQL::NotNullConstraintError)
     end
 
-    describe '#execute' do
-      context 'with a single record' do
-        it 'materializes the result' do
-          result = create_user.execute(name: 'Jane')
+    describe "#execute" do
+      context "with a single record" do
+        it "materializes the result" do
+          result = create_user.execute(name: "Jane")
 
-          expect(result).to eq([{ id: 1, name: 'Jane' }])
+          expect(result).to eq([{ id: 1, name: "Jane" }])
         end
 
-        it 'materializes aliased results' do
-          result = create_profile.execute(name: 'Joe')
-          expect(result).to eq([{id: 1, login: 'Joe'}])
+        it "materializes aliased results" do
+          result = create_profile.execute(name: "Joe")
+          expect(result).to eq([{id: 1, login: "Joe"}])
         end
       end
 
-      context 'with multiple records' do
-        it 'materializes the results' do
+      context "with multiple records" do
+        it "materializes the results" do
           result = create_user.execute([
-            { name: 'Jane' },
-            { name: 'John' }
+            { name: "Jane" },
+            { name: "John" }
           ])
 
-          expect(result).to eql([{ id: 1, name: 'Jane' }, { id: 2, name: 'John' }])
+          expect(result).to eql([{ id: 1, name: "Jane" }, { id: 2, name: "John" }])
         end
       end
 
-      context 'with a composite pk' do
+      context "with a composite pk" do
         before do
           inferrable_relations.concat %i(user_group)
         end
@@ -275,7 +275,7 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
 
         # with a composite pk sequel returns 0 when inserting for MySQL
         if !metadata[:mysql]
-          it 'materializes the result' do |ex|
+          it "materializes the result" do |ex|
             command = container.commands[:user_group][:create]
             result = command.call(user_id: 1, group_id: 2)
 
@@ -287,35 +287,35 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
     end
   end
 
-  describe '#call' do
-    it 'raises check constraint violation error' do
-      expect { create_user.call(name: 'J') }.
+  describe "#call" do
+    it "raises check constraint violation error" do
+      expect { create_user.call(name: "J") }.
         to raise_error(ROM::SQL::CheckConstraintError, /name/)
     end
 
-    it 'raises constraint violation error' do
-      expect { create_task.call(title: '') }.to raise_error(ROM::SQL::ConstraintError, /title/)
+    it "raises constraint violation error" do
+      expect { create_task.call(title: "") }.to raise_error(ROM::SQL::ConstraintError, /title/)
     end
   end
 
-  describe '#upsert' do
-    let(:task) { { title: 'task 1' } }
+  describe "#upsert" do
+    let(:task) { { title: "task 1" } }
 
     before { create_task.call(task) }
 
-    it 'raises error without upsert marker' do
+    it "raises error without upsert marker" do
       expect {
         create_task.call(task)
       }.to raise_error(ROM::SQL::UniqueConstraintError)
     end
 
-    it 'raises no error for duplicated data' do
+    it "raises no error for duplicated data" do
       expect { create_task.upsert(task) }.to_not raise_error
     end
 
-    it 'returns record data' do
+    it "returns record data" do
       expect(create_task.upsert(task, constraint: :tasks_title_key, update: { user_id: nil })).to eql([
-        id: 1, user_id: nil, title: 'task 1'
+        id: 1, user_id: nil, title: "task 1"
       ])
     end
   end if PG_LTE_95

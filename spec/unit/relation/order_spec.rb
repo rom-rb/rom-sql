@@ -1,29 +1,29 @@
-RSpec.describe ROM::Relation, '#order' do
+RSpec.describe ROM::Relation, "#order" do
   subject(:relation) { relations[:users] }
 
-  include_context 'users and tasks'
+  include_context "users and tasks"
 
   before do
-    relation.insert(id: 3, name: 'Jade')
+    relation.insert(id: 3, name: "Jade")
   end
 
   with_adapters do
-    it 'orders by provided attribute names' do
+    it "orders by provided attribute names" do
       ordered = relation.order(:name, :id)
 
       expect(ordered.to_a).
-        to eql([{ id: 3, name: 'Jade' }, { id: 1, name: 'Jane' }, { id: 2, name: 'Joe' }])
+        to eql([{ id: 3, name: "Jade" }, { id: 1, name: "Jane" }, { id: 2, name: "Joe" }])
     end
 
-    it 'orders by provided attributes with alias set' do
+    it "orders by provided attributes with alias set" do
       attribs = [relation.schema[:name].with(alias: :user_name), :id]
       ordered = relation.order(*attribs)
 
       expect(ordered.to_a).
-        to eql([{ id: 3, name: 'Jade' }, { id: 1, name: 'Jane' }, { id: 2, name: 'Joe' }])
+        to eql([{ id: 3, name: "Jade" }, { id: 1, name: "Jane" }, { id: 2, name: "Joe" }])
     end
 
-    it 'orders by provided attribute using a block' do
+    it "orders by provided attribute using a block" do
       ordered = relation.
                   qualified.
                   select(:id, :name).
@@ -31,10 +31,10 @@ RSpec.describe ROM::Relation, '#order' do
                   order { name.qualified.desc }
 
       expect(ordered.to_a).
-        to eql([{ id: 2, name: 'Joe' }, { id: 1, name: 'Jane' }, { id: 3, name: 'Jade' }])
+        to eql([{ id: 2, name: "Joe" }, { id: 1, name: "Jane" }, { id: 3, name: "Jade" }])
     end
 
-    it 'orders by provided attribute when aliased using a block' do
+    it "orders by provided attribute when aliased using a block" do
       ordered = relation.
                   qualified.
                   rename(name: :user_name).
@@ -42,10 +42,10 @@ RSpec.describe ROM::Relation, '#order' do
                   order { name.qualified.desc }
 
       expect(ordered.to_a).
-        to eql([{ id: 2, user_name: 'Joe' }, { id: 1, user_name: 'Jane' }, { id: 3, user_name: 'Jade' }])
+        to eql([{ id: 2, user_name: "Joe" }, { id: 1, user_name: "Jane" }, { id: 3, user_name: "Jade" }])
     end
 
-    it 'orders by provided attribute from another relation' do
+    it "orders by provided attribute from another relation" do
       ordered = relation.
                   select(:id).
                   left_join(:tasks, user_id: :id).
@@ -57,7 +57,7 @@ RSpec.describe ROM::Relation, '#order' do
         to eql([{ id: 2, title: "Joe's task" }, { id: 1, title: "Jane's task" }])
     end
 
-    it 'accesses other relations through keywords' do
+    it "accesses other relations through keywords" do
       ordered = relation.
                   select(:id).
                   left_join(:tasks, user_id: :id).
@@ -69,7 +69,7 @@ RSpec.describe ROM::Relation, '#order' do
         to eql([{ id: 2, title: "Joe's task" }, { id: 1, title: "Jane's task" }])
     end
 
-    it 'orders by provided attributes using a block' do
+    it "orders by provided attributes using a block" do
       ordered = relation.
                   qualified.
                   select(:id, :name).
@@ -77,18 +77,18 @@ RSpec.describe ROM::Relation, '#order' do
                   order { [name.qualified.desc, id.qualified.desc] }
 
       expect(ordered.to_a).
-        to eql([{ id: 2, name: 'Joe' }, { id: 1, name: 'Jane' }, { id: 3, name: 'Jade' }])
+        to eql([{ id: 2, name: "Joe" }, { id: 1, name: "Jane" }, { id: 3, name: "Jade" }])
     end
   end
 
   with_adapters :postgres, :mysql do
-    it 'orders by virtual attributes' do
+    it "orders by virtual attributes" do
       ordered = relation.
-                  select { string::concat(id, '-', name).as(:uid) }.
+                  select { string::concat(id, "-", name).as(:uid) }.
                   order(:uid)
 
       expect(ordered.to_a).
-        to eql([{ uid: '1-Jane' }, { uid: '2-Joe' }, { uid: '3-Jade' }])
+        to eql([{ uid: "1-Jane" }, { uid: "2-Joe" }, { uid: "3-Jade" }])
     end
   end
 end

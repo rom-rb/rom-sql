@@ -1,7 +1,7 @@
-require 'spec_helper'
+require "spec_helper"
 
-RSpec.describe ROM::SQL::Associations::OneToMany, '#call' do
-  include_context 'database setup'
+RSpec.describe ROM::SQL::Associations::OneToMany, "#call" do
+  include_context "database setup"
 
   before do
     inferrable_relations.concat %i(categories)
@@ -28,14 +28,14 @@ RSpec.describe ROM::SQL::Associations::OneToMany, '#call' do
         end
       end
 
-      p1_id = relations[:categories].insert(name: 'P1')
-      p2_id = relations[:categories].insert(name: 'P2')
-      relations[:categories].insert(name: 'C3', parent_id: p2_id)
-      relations[:categories].insert(name: 'C4', parent_id: p1_id)
-      relations[:categories].insert(name: 'C5', parent_id: p1_id)
+      p1_id = relations[:categories].insert(name: "P1")
+      p2_id = relations[:categories].insert(name: "P2")
+      relations[:categories].insert(name: "C3", parent_id: p2_id)
+      relations[:categories].insert(name: "C4", parent_id: p1_id)
+      relations[:categories].insert(name: "C5", parent_id: p1_id)
     end
 
-    it 'prepares joined relations using custom FK for a self-ref association' do
+    it "prepares joined relations using custom FK for a self-ref association" do
       relation = assoc.()
 
       expect(relation.schema.map(&:to_sql_name)).
@@ -45,9 +45,9 @@ RSpec.describe ROM::SQL::Associations::OneToMany, '#call' do
 
       expect(relation.to_a).
         to eql([
-                 { id: 3, parent_id: 2, name: 'C3' },
-                 { id: 4, parent_id: 1, name: 'C4' },
-                 { id: 5, parent_id: 1, name: 'C5' }
+                 { id: 3, parent_id: 2, name: "C3" },
+                 { id: 4, parent_id: 1, name: "C4" },
+                 { id: 5, parent_id: 1, name: "C5" }
                ])
     end
   end

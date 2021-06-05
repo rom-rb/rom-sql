@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'pathname'
-require 'fileutils'
+require "pathname"
+require "fileutils"
 
 module ROM
   module SQL
@@ -31,7 +31,7 @@ module ROM
             Gateway.instance ||
               raise(
                 MissingEnv,
-                'Set up a configuration with ROM::SQL::RakeSupport.env= in the db:setup task'
+                "Set up a configuration with ROM::SQL::RakeSupport.env= in the db:setup task"
               )
           else
             env.gateways[:default]
@@ -46,36 +46,36 @@ end
 
 namespace :db do
   task :rom_configuration do
-    Rake::Task['db:setup'].invoke
+    Rake::Task["db:setup"].invoke
   end
 
-  desc 'Perform migration reset (full erase and migration up)'
+  desc "Perform migration reset (full erase and migration up)"
   task reset: :rom_configuration do
     ROM::SQL::RakeSupport.run_migrations(target: 0)
     ROM::SQL::RakeSupport.run_migrations
-    puts '<= db:reset executed'
+    puts "<= db:reset executed"
   end
 
-  desc 'Migrate the database (options [version_number])]'
+  desc "Migrate the database (options [version_number])]"
   task :migrate, [:version] => :rom_configuration do |_, args|
     version = args[:version]
 
     if version.nil?
       ROM::SQL::RakeSupport.run_migrations
-      puts '<= db:migrate executed'
+      puts "<= db:migrate executed"
     else
       ROM::SQL::RakeSupport.run_migrations(target: version.to_i)
       puts "<= db:migrate version=[#{version}] executed"
     end
   end
 
-  desc 'Perform migration down (removes all tables)'
+  desc "Perform migration down (removes all tables)"
   task clean: :rom_configuration do
     ROM::SQL::RakeSupport.run_migrations(target: 0)
-    puts '<= db:clean executed'
+    puts "<= db:clean executed"
   end
 
-  desc 'Create a migration (parameters: NAME, VERSION)'
+  desc "Create a migration (parameters: NAME, VERSION)"
   task :create_migration, [:name, :version] => :rom_configuration do |_, args|
     name, version = args.values_at(:name, :version)
 

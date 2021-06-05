@@ -1,5 +1,5 @@
-RSpec.describe ROM::SQL::Associations::ManyToMany, '#call' do
-  include_context 'users'
+RSpec.describe ROM::SQL::Associations::ManyToMany, "#call" do
+  include_context "users"
 
   before do
     inferrable_relations.concat %i(puzzles puzzle_solvers)
@@ -45,9 +45,9 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, '#call' do
         end
       end
 
-      p1_id = relations[:puzzles].insert(text: 'P1')
-      p2_id = relations[:puzzles].insert(text: 'P2')
-      p3_id = relations[:puzzles].insert(text: 'P3')
+      p1_id = relations[:puzzles].insert(text: "P1")
+      p2_id = relations[:puzzles].insert(text: "P2")
+      p3_id = relations[:puzzles].insert(text: "P3")
 
       relations[:puzzle_solvers].insert(solver_id: joe_id, puzzle_id: p2_id)
       relations[:puzzle_solvers].insert(solver_id: jane_id, puzzle_id: p2_id)
@@ -56,7 +56,7 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, '#call' do
       relations[:puzzle_solvers].insert(solver_id: jane_id, puzzle_id: p3_id)
     end
 
-    it 'prepares joined relations using custom FK' do
+    it "prepares joined relations using custom FK" do
       relation = assoc.().order(puzzles[:text].qualified, puzzle_solvers[:solver_id].qualified)
 
       expect(relation.schema.map(&:to_sql_name)).
@@ -66,10 +66,10 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, '#call' do
 
       expect(relation.to_a).
         to eql([
-                 { id: 1, solver_id: 2, text: 'P1' },
-                 { id: 2, solver_id: 1, text: 'P2' },
-                 { id: 2, solver_id: 2, text: 'P2' },
-                 { id: 3, solver_id: 1, text: 'P3' }
+                 { id: 1, solver_id: 2, text: "P1" },
+                 { id: 2, solver_id: 1, text: "P2" },
+                 { id: 2, solver_id: 2, text: "P2" },
+                 { id: 3, solver_id: 1, text: "P3" }
                ])
     end
   end

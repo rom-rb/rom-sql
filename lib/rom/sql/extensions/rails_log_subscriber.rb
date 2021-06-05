@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'active_support/log_subscriber'
+require "active_support/log_subscriber"
 
 module ROM
   module SQL
@@ -10,8 +10,8 @@ module ROM
 
         payload = event.payload
 
-        name = format('%s (%.1fms)', payload[:name], event.duration)
-        sql  = payload[:sql].squeeze(' ')
+        name = format("%s (%.1fms)", payload[:name], event.duration)
+        sql  = payload[:sql].squeeze(" ")
         binds = payload[:binds].to_a.inspect if payload[:binds]
 
         if odd?

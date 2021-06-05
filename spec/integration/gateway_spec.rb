@@ -1,18 +1,18 @@
 RSpec.describe ROM::SQL::Gateway, :postgres do
-  include_context 'database setup'
+  include_context "database setup"
 
-  describe 'migration' do
+  describe "migration" do
     before do
       inferrable_relations.concat %i(rabbits carrots)
     end
 
-    context 'creating migrations inline' do
+    context "creating migrations inline" do
       subject(:gateway) { container.gateways[:default] }
 
       let(:conf) { ROM::Configuration.new(:sql, conn) }
       let(:container) { ROM.container(conf) }
 
-      it 'allows creating and running migrations' do
+      it "allows creating and running migrations" do
         migration = gateway.migration do
           up do
             create_table(:rabbits) do
@@ -36,52 +36,52 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
       end
     end
 
-    context 'running migrations from a file system' do
+    context "running migrations from a file system" do
       before do
         inferrable_relations.concat %i(schema_migrations)
       end
 
       let(:migration_dir) do
-        Pathname(__FILE__).dirname.join('../fixtures/migrations').realpath
+        Pathname(__FILE__).dirname.join("../fixtures/migrations").realpath
       end
 
       let(:migrator) { ROM::SQL::Migration::Migrator.new(conn, path: migration_dir) }
       let(:conf) { ROM::Configuration.new(:sql, [conn, migrator: migrator]) }
       let(:container) { ROM.container(conf) }
 
-      it 'returns true for pending migrations' do
+      it "returns true for pending migrations" do
         expect(container.gateways[:default].pending_migrations?).to be_truthy
       end
 
-      it 'returns false for non pending migrations' do
+      it "returns false for non pending migrations" do
         container.gateways[:default].run_migrations
         expect(container.gateways[:default].pending_migrations?).to be_falsy
       end
 
-      it 'runs migrations from a specified directory' do
+      it "runs migrations from a specified directory" do
         container.gateways[:default].run_migrations
       end
     end
 
-    context 'running migrations from a file system with custom path' do
+    context "running migrations from a file system with custom path" do
       before do
         inferrable_relations.concat %i(schema_migrations)
       end
 
       let(:migration_dir) do
-        Pathname(__FILE__).dirname.join('../fixtures/migrations').realpath
+        Pathname(__FILE__).dirname.join("../fixtures/migrations").realpath
       end
 
       let(:conf) { ROM::Configuration.new(:sql, [conn, migrator: { path: migration_dir }]) }
       let(:container) { ROM.container(conf) }
 
-      it 'runs migrations from a specified directory' do
+      it "runs migrations from a specified directory" do
         container.gateways[:default].run_migrations
       end
     end
   end
 
-  describe 'transactions' do
+  describe "transactions" do
     before do
       inferrable_relations.concat %i(names)
     end
@@ -95,25 +95,25 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
     let(:gw) { container.gateways[:default] }
     let(:names) { gw.dataset(:names) }
 
-    it 'can run the code inside a transaction' do
-      names.insert name: 'Jade'
+    it "can run the code inside a transaction" do
+      names.insert name: "Jade"
 
       gw.transaction do |t|
-        names.insert name: 'John'
+        names.insert name: "John"
 
         t.rollback!
-        names.insert name: 'Jack'
+        names.insert name: "Jack"
       end
 
-      expect(names.to_a).to eql([name: 'Jade'])
+      expect(names.to_a).to eql([name: "Jade"])
     end
 
-    it 'sets isolation level to read commited' do
+    it "sets isolation level to read commited" do
       gw = container.gateways[:default]
       names = gw.dataset(:names)
 
       gw.transaction do |t|
-        names.insert name: 'John'
+        names.insert name: "John"
         concurrent_names = nil
         Thread.new { concurrent_names = names.to_a }.join
 

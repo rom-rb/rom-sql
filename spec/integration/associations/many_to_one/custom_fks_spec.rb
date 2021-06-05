@@ -1,7 +1,7 @@
-require 'spec_helper'
+require "spec_helper"
 
-RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
-  include_context 'database setup'
+RSpec.describe ROM::SQL::Associations::ManyToOne, "#call" do
+  include_context "database setup"
 
   before do
     inferrable_relations.concat %i(destinations flights)
@@ -35,13 +35,13 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
         end
       end
 
-      from_id = relations[:destinations].insert(name: 'FROM')
-      to_id = relations[:destinations].insert(name: 'TO')
+      from_id = relations[:destinations].insert(name: "FROM")
+      to_id = relations[:destinations].insert(name: "TO")
 
-      relations[:flights].insert(code: 'F1', from_id: from_id, to_id: to_id)
+      relations[:flights].insert(code: "F1", from_id: from_id, to_id: to_id)
     end
 
-    it 'prepares joined relations using correct FKs based on association aliases' do
+    it "prepares joined relations using correct FKs based on association aliases" do
       relation = assoc_from.()
 
       expect(relation.schema.map(&:to_sql_name)).
@@ -49,7 +49,7 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
                 Sequel.qualify(:destinations, :name),
                 Sequel.qualify(:flights, :id).as(:flight_id)])
 
-      expect(relation.first).to eql(id: 1, name: 'FROM', flight_id: 1)
+      expect(relation.first).to eql(id: 1, name: "FROM", flight_id: 1)
 
       relation = assoc_to.()
 
@@ -58,7 +58,7 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
                 Sequel.qualify(:destinations, :name),
                 Sequel.qualify(:flights, :id).as(:flight_id)])
 
-      expect(relation.first).to eql(id: 2, name: 'TO', flight_id: 1)
+      expect(relation.first).to eql(id: 2, name: "TO", flight_id: 1)
     end
   end
 end

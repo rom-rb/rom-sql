@@ -1,8 +1,8 @@
-RSpec.describe 'Plugins / :associates', seeds: false do
-  include_context 'relations'
+RSpec.describe "Plugins / :associates", seeds: false do
+  include_context "relations"
 
   with_adapters do
-    context 'with Create command' do
+    context "with Create command" do
       let(:users) { container.commands[:users] }
       let(:tasks) { container.commands[:tasks] }
       let(:tags) { container.commands[:tags] }
@@ -24,13 +24,13 @@ RSpec.describe 'Plugins / :associates', seeds: false do
         end
       end
 
-      describe '#with_association' do
+      describe "#with_association" do
         let(:user) do
-          users[:create].call(name: 'Jane')
+          users[:create].call(name: "Jane")
         end
 
         let(:task) do
-          { title: 'Task one' }
+          { title: "Task one" }
         end
 
         before do
@@ -43,21 +43,21 @@ RSpec.describe 'Plugins / :associates', seeds: false do
           end
         end
 
-        it 'returns a command prepared for the given association' do
+        it "returns a command prepared for the given association" do
           command = tasks[:create].with_association(:user, key: %i[user_id id])
 
           expect(command.call(task, user)).
-            to eql(id: 1, title: 'Task one', user_id: user[:id])
+            to eql(id: 1, title: "Task one", user_id: user[:id])
         end
 
-        it 'allows passing a parent explicitly' do
+        it "allows passing a parent explicitly" do
           command = tasks[:create].with_association(:user, key: %i[user_id id], parent: user)
 
           expect(command.call(task)).
-            to eql(id: 1, title: 'Task one', user_id: user[:id])
+            to eql(id: 1, title: "Task one", user_id: user[:id])
         end
 
-        it 'allows setting up multiple associations' do
+        it "allows setting up multiple associations" do
           command = tasks[:create].
                       with_association(:user, key: %i[user_id id], parent: user).
                       with_association(:other, key: %i[other_id id])
@@ -66,35 +66,35 @@ RSpec.describe 'Plugins / :associates', seeds: false do
         end
       end
 
-      shared_context 'automatic FK setting' do
-        it 'sets foreign key prior execution for many tuples' do
-          create_user = users[:create].curry(name: 'Jade')
-          create_task = tasks[:create_many].curry([{ title: 'Task one' }, { title: 'Task two' }])
+      shared_context "automatic FK setting" do
+        it "sets foreign key prior execution for many tuples" do
+          create_user = users[:create].curry(name: "Jade")
+          create_task = tasks[:create_many].curry([{ title: "Task one" }, { title: "Task two" }])
 
           command = create_user >> create_task
 
           result = command.call
 
           expect(result).to match_array([
-            { id: 1, user_id: 1, title: 'Task one' },
-            { id: 2, user_id: 1, title: 'Task two' }
+            { id: 1, user_id: 1, title: "Task one" },
+            { id: 2, user_id: 1, title: "Task two" }
           ])
         end
 
-        it 'sets foreign key prior execution for one tuple' do
-          create_user = users[:create].curry(name: 'Jade')
-          create_task = tasks[:create_one].curry(title: 'Task one')
+        it "sets foreign key prior execution for one tuple" do
+          create_user = users[:create].curry(name: "Jade")
+          create_task = tasks[:create_one].curry(title: "Task one")
 
           command = create_user >> create_task
 
           result = command.call
 
-          expect(result).to match_array(id: 1, user_id: 1, title: 'Task one')
+          expect(result).to match_array(id: 1, user_id: 1, title: "Task one")
         end
       end
 
-      context 'with a schema' do
-        include_context 'automatic FK setting'
+      context "with a schema" do
+        include_context "automatic FK setting"
 
         before do
           conf.relation(:tasks) do
@@ -121,7 +121,7 @@ RSpec.describe 'Plugins / :associates', seeds: false do
           end
         end
 
-        context 'with many-to-many association' do
+        context "with many-to-many association" do
           before do
             conf.relation(:tags) do
               schema(infer: true) do
@@ -160,10 +160,10 @@ RSpec.describe 'Plugins / :associates', seeds: false do
             end
           end
 
-          it 'sets FKs for the join table' do
-            create_user = users[:create].curry(name: 'Jade')
+          it "sets FKs for the join table" do
+            create_user = users[:create].curry(name: "Jade")
             create_task = tasks[:create].curry(title: "Jade's task")
-            create_tags = tags[:create].curry([{ name: 'red' }, { name: 'blue' }])
+            create_tags = tags[:create].curry([{ name: "red" }, { name: "blue" }])
 
             command = create_user >> create_task >> create_tags
 
@@ -171,7 +171,7 @@ RSpec.describe 'Plugins / :associates', seeds: false do
             tags = relations[:tasks].associations[:tags].().to_a
 
             expect(result).to eql([
-              { id: 1, task_id: 1, name: 'red' }, { id: 2, task_id: 1, name: 'blue' }
+              { id: 1, task_id: 1, name: "red" }, { id: 2, task_id: 1, name: "blue" }
             ])
 
             expect(tags).to eql(result)
@@ -179,7 +179,7 @@ RSpec.describe 'Plugins / :associates', seeds: false do
         end
       end
 
-      it 'raises when already defined' do
+      it "raises when already defined" do
         expect {
           conf.commands(:tasks) do
             define(:create) do
@@ -194,25 +194,25 @@ RSpec.describe 'Plugins / :associates', seeds: false do
   end
 
   with_adapters :sqlite do
-    context 'with Update command' do
+    context "with Update command" do
       subject(:command) do
         container.commands[:tasks][:update].with_association(:user).by_pk(jane_task[:id])
       end
 
       let(:john) do
-        container.commands[:users][:create].call(name: 'John')
+        container.commands[:users][:create].call(name: "John")
       end
 
       let(:jane) do
-        container.commands[:users][:create].call(name: 'Jane')
+        container.commands[:users][:create].call(name: "Jane")
       end
 
       let(:jane_task) do
-        container.commands[:tasks][:create].call(user_id: jane[:id], title: 'Jane Task')
+        container.commands[:tasks][:create].call(user_id: jane[:id], title: "Jane Task")
       end
 
       let(:john_task) do
-        container.commands[:tasks][:create].call(user_id: john[:id], title: 'John Task')
+        container.commands[:tasks][:create].call(user_id: john[:id], title: "John Task")
       end
 
       before do
@@ -241,9 +241,9 @@ RSpec.describe 'Plugins / :associates', seeds: false do
         end
       end
 
-      it 'automatically sets FK prior execution' do
-        expect(command.curry(title: 'Another John task').call(john)).
-          to eql(id: jane_task[:id], user_id: john[:id], title: 'Another John task')
+      it "automatically sets FK prior execution" do
+        expect(command.curry(title: "Another John task").call(john)).
+          to eql(id: jane_task[:id], user_id: john[:id], title: "Another John task")
       end
     end
   end

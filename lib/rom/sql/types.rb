@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'sequel/core'
-require 'sequel/sql'
+require "sequel/core"
+require "sequel/sql"
 
-require 'rom/types'
-require 'rom/sql/type_dsl'
+require "rom/types"
+require "rom/sql/type_dsl"
 
 module ROM
   module SQL

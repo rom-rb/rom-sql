@@ -28,7 +28,7 @@ module ROM
         module Instrumentation
           extend Notifications::Listener
 
-          subscribe('configuration.relations.registry.created') do |event|
+          subscribe("configuration.relations.registry.created") do |event|
             registry = event[:registry]
 
             relations = registry.select { |_, r| r.adapter == :sql && r.respond_to?(:notifications) }.to_h

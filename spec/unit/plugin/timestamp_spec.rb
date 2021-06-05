@@ -1,6 +1,6 @@
-RSpec.describe 'Plugin / Timestamp' do
-  include_context 'users'
-  include_context 'notes'
+RSpec.describe "Plugin / Timestamp" do
+  include_context "users"
+  include_context "notes"
 
   with_adapters do
     before do
@@ -88,7 +88,7 @@ RSpec.describe 'Plugin / Timestamp' do
       updated = container.commands[:notes].update.call(text: "updated test", updated_at: tomorrow).first
 
       if jruby? && sqlite?(ex)
-        expect(updated[:updated_at]).to eql(tomorrow.strftime('%Y-%m-%d %H:%M:%S.%6N'))
+        expect(updated[:updated_at]).to eql(tomorrow.strftime("%Y-%m-%d %H:%M:%S.%6N"))
       else
         expect(updated[:updated_at].iso8601).to eql(tomorrow.iso8601)
       end

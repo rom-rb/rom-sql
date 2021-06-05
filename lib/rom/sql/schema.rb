@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require 'rom/schema'
+require "rom/schema"
 
-require 'rom/sql/schema/dsl'
-require 'rom/sql/order_dsl'
-require 'rom/sql/group_dsl'
-require 'rom/sql/projection_dsl'
-require 'rom/sql/restriction_dsl'
-require 'rom/sql/index'
-require 'rom/sql/foreign_key'
-require 'rom/sql/schema/inferrer'
+require "rom/sql/schema/dsl"
+require "rom/sql/order_dsl"
+require "rom/sql/group_dsl"
+require "rom/sql/projection_dsl"
+require "rom/sql/restriction_dsl"
+require "rom/sql/index"
+require "rom/sql/foreign_key"
+require "rom/sql/schema/inferrer"
 
 module ROM
   module SQL

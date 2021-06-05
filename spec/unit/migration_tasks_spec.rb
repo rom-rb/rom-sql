@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 namespace :db do
   task :setup do
@@ -6,8 +6,8 @@ namespace :db do
   end
 end
 
-RSpec.describe 'MigrationTasks', :postgres, skip_tables: true do
-  include_context 'database setup'
+RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
+  include_context "database setup"
 
   let(:migrator) { container.gateways[:default].migrator }
 
@@ -17,8 +17,8 @@ RSpec.describe 'MigrationTasks', :postgres, skip_tables: true do
     conf
   end
 
-  context 'db:reset' do
-    it 'calls proper commands' do
+  context "db:reset" do
+    it "calls proper commands" do
       expect(migrator).to receive(:run).with(target: 0)
       expect(migrator).to receive(:run)
 
@@ -28,9 +28,9 @@ RSpec.describe 'MigrationTasks', :postgres, skip_tables: true do
     end
   end
 
-  context 'db:migrate' do
-    context 'with VERSION' do
-      it 'calls proper commands' do
+  context "db:migrate" do
+    context "with VERSION" do
+      it "calls proper commands" do
         expect(migrator).to receive(:run).with(target: 1)
 
         expect {
@@ -39,8 +39,8 @@ RSpec.describe 'MigrationTasks', :postgres, skip_tables: true do
       end
     end
 
-    context 'without VERSION' do
-      it 'calls proper commands' do
+    context "without VERSION" do
+      it "calls proper commands" do
         expect(migrator).to receive(:run)
 
         expect {
@@ -49,7 +49,7 @@ RSpec.describe 'MigrationTasks', :postgres, skip_tables: true do
       end
     end
 
-    it 'raises an error on missing both env and Gateway.instance' do
+    it "raises an error on missing both env and Gateway.instance" do
       ROM::SQL::RakeSupport.env = nil
       ROM::SQL::Gateway.instance = nil
 
@@ -59,8 +59,8 @@ RSpec.describe 'MigrationTasks', :postgres, skip_tables: true do
     end
   end
 
-  context 'db:clean' do
-    it 'calls proper commands' do
+  context "db:clean" do
+    it "calls proper commands" do
       expect(migrator).to receive(:run).with(target: 0)
 
       expect {
@@ -69,9 +69,9 @@ RSpec.describe 'MigrationTasks', :postgres, skip_tables: true do
     end
   end
 
-  context 'db:create_migration' do
-    context 'without NAME' do
-      it 'exit without creating any file' do
+  context "db:create_migration" do
+    context "without NAME" do
+      it "exit without creating any file" do
         expect(File).to_not receive(:write)
 
         expect {
@@ -82,14 +82,14 @@ RSpec.describe 'MigrationTasks', :postgres, skip_tables: true do
       end
     end
 
-    context 'with NAME' do
-      let(:dirname) { 'tmp/db/migrate' }
-      let(:name) { 'foo_bar' }
-      let(:version) { '001' }
+    context "with NAME" do
+      let(:dirname) { "tmp/db/migrate" }
+      let(:name) { "foo_bar" }
+      let(:version) { "001" }
       let(:filename) { "#{version}_#{name}.rb" }
       let(:path) { File.join(dirname, filename) }
 
-      it 'calls proper commands with default VERSION' do
+      it "calls proper commands with default VERSION" do
         expect(migrator).to receive(:create_file).with(name).and_return(path)
 
         expect {
@@ -98,7 +98,7 @@ RSpec.describe 'MigrationTasks', :postgres, skip_tables: true do
         }.to output("<= migration file created #{path}\n").to_stdout
       end
 
-      it 'calls proper commands with manualy set VERSION' do
+      it "calls proper commands with manualy set VERSION" do
         expect(migrator).to receive(:create_file).with(name, version).and_return(path)
 
         expect {

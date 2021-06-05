@@ -1,7 +1,7 @@
-RSpec.describe ROM::Relation, '#each_batch', seeds: false do
-  include_context 'users and tasks'
+RSpec.describe ROM::Relation, "#each_batch", seeds: false do
+  include_context "users and tasks"
 
-  context 'single-column PK' do
+  context "single-column PK" do
     subject(:relation) { relations[:users] }
 
     before do
@@ -11,7 +11,7 @@ RSpec.describe ROM::Relation, '#each_batch', seeds: false do
     end
 
     with_adapters(:postgres) do
-      it 'runs a block on every batch' do
+      it "runs a block on every batch" do
         batches = []
 
         relation.each_batch(size: 3) do |rel|
@@ -28,14 +28,14 @@ RSpec.describe ROM::Relation, '#each_batch', seeds: false do
     end
   end
 
-  context 'multi-column PK' do
+  context "multi-column PK" do
     subject(:relation) { relations[:task_tags] }
 
     with_adapters(:postgres) do
       it "doesn't support multi-column PKs yet" do
         expect {
           relation.each_batch(size: 3) {}
-        }.to raise_error(ArgumentError, 'Composite primary keys are not supported yet')
+        }.to raise_error(ArgumentError, "Composite primary keys are not supported yet")
       end
     end
   end

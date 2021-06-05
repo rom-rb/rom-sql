@@ -13,33 +13,33 @@ module ROM
         ].to_set.freeze
 
         db_type_mapping(
-          'uuid'  => Types::UUID,
-          'money' => Types::Money,
-          'bytea' => Types::Bytea,
-          'json'  => Types::JSON,
-          'jsonb' => Types::JSONB,
-          'xml' => Types::XML,
-          'inet' => Types::IPAddress,
-          'cidr' => Types::IPAddress,
-          'macaddr' => SQL::Types::String,
-          'point' => Types::Point,
-          'hstore' => Types::HStore,
-          'line' => Types::Line,
-          'circle' => Types::Circle,
-          'box' => Types::Box,
-          'lseg' => Types::LineSegment,
-          'polygon' => Types::Polygon,
-          'path' => Types::Path,
-          'int4range' => Types::Int4Range,
-          'int8range' => Types::Int8Range,
-          'numrange' => Types::NumRange,
-          'tsrange' => Types::TsRange,
-          'tstzrange' => Types::TsTzRange,
-          'daterange' => Types::DateRange,
-          'ltree' => Types::LTree
+          "uuid"  => Types::UUID,
+          "money" => Types::Money,
+          "bytea" => Types::Bytea,
+          "json"  => Types::JSON,
+          "jsonb" => Types::JSONB,
+          "xml" => Types::XML,
+          "inet" => Types::IPAddress,
+          "cidr" => Types::IPAddress,
+          "macaddr" => SQL::Types::String,
+          "point" => Types::Point,
+          "hstore" => Types::HStore,
+          "line" => Types::Line,
+          "circle" => Types::Circle,
+          "box" => Types::Box,
+          "lseg" => Types::LineSegment,
+          "polygon" => Types::Polygon,
+          "path" => Types::Path,
+          "int4range" => Types::Int4Range,
+          "int8range" => Types::Int8Range,
+          "numrange" => Types::NumRange,
+          "tsrange" => Types::TsRange,
+          "tstzrange" => Types::TsTzRange,
+          "daterange" => Types::DateRange,
+          "ltree" => Types::LTree
         ).freeze
 
-        db_array_type_matcher '[]'.freeze
+        db_array_type_matcher "[]".freeze
 
         def map_pk_type(type, db_type, **options)
           if numeric?(type, db_type)
@@ -66,7 +66,7 @@ module ROM
 
         def map_db_type(db_type)
           self.class.db_type_mapping[db_type] ||
-            (db_type.start_with?('timestamp') ? SQL::Types::Time : nil)
+            (db_type.start_with?("timestamp") ? SQL::Types::Time : nil)
         end
 
         def numeric?(ruby_type, db_type)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'rom/sql/dsl'
-require 'rom/sql/function'
+require "rom/sql/dsl"
+require "rom/sql/function"
 
 module ROM
   module SQL

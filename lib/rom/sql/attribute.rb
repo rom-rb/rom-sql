@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require 'sequel/core'
-require 'dry/core/cache'
+require "sequel/core"
+require "dry/core/cache"
 
-require 'rom/attribute'
+require "rom/attribute"
 
-require 'rom/sql/type_extensions'
-require 'rom/sql/projection_dsl'
-require 'rom/sql/attribute_wrapping'
-require 'rom/sql/attribute_aliasing'
+require "rom/sql/type_extensions"
+require "rom/sql/projection_dsl"
+require "rom/sql/attribute_wrapping"
+require "rom/sql/attribute_aliasing"
 
 module ROM
   module SQL
@@ -280,7 +280,7 @@ module ROM
       # @return [SQL::Function]
       #
       # @api public
-      def concat(other, sep = ' ')
+      def concat(other, sep = " ")
         Function.new(type).concat(self, sep, other)
       end
 
@@ -366,7 +366,7 @@ module ROM
       def case(mapping)
         mapping = mapping.dup
         otherwise = mapping.delete(:else) do
-          raise ArgumentError, 'provide the default case using the :else keyword'
+          raise ArgumentError, "provide the default case using the :else keyword"
         end
 
         type = mapping.values[0].type

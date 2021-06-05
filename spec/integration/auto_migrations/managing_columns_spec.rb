@@ -1,5 +1,5 @@
 RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
-  include_context 'database setup'
+  include_context "database setup"
 
   before do
     conn.drop_table?(:users)
@@ -28,8 +28,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
   let(:attributes) { migrated_schema.to_a }
 
-  describe 'create a table' do
-    it 'creates a table from a relation' do
+  describe "create a table" do
+    it "creates a table from a relation" do
       gateway.auto_migrate!(conf, inline: true)
 
       expect(attributes.map(&:to_ast))
@@ -53,14 +53,14 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
     end
   end
 
-  describe 'adding columns' do
+  describe "adding columns" do
     before do
       conn.create_table :users do
         primary_key :id
       end
     end
 
-    it 'adds columns to an existing table' do
+    it "adds columns to an existing table" do
       gateway.auto_migrate!(conf, inline: true)
 
       expect(attributes[1].to_ast)
@@ -83,7 +83,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
     end
   end
 
-  describe 'removing columns' do
+  describe "removing columns" do
     before do
       conn.create_table :users do
         primary_key :id
@@ -93,14 +93,14 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
       end
     end
 
-    it 'removes columns from a table' do
+    it "removes columns from a table" do
       gateway.auto_migrate!(conf, inline: true)
 
       expect(attributes.map(&:name)).to eql(%i(id name email))
     end
   end
 
-  describe 'empty diff' do
+  describe "empty diff" do
     before do
       conn.create_table :users do
         primary_key :id
@@ -109,7 +109,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
       end
     end
 
-    it 'leaves existing schema' do
+    it "leaves existing schema" do
       current = container.relations[:users].schema
 
       gateway.auto_migrate!(conf, inline: true)
@@ -118,8 +118,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
     end
   end
 
-  describe 'changing NOTNULL' do
-    describe 'adding' do
+  describe "changing NOTNULL" do
+    describe "adding" do
       before do
         conn.create_table :users do
           primary_key :id
@@ -128,7 +128,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
         end
       end
 
-      it 'adds the constraint' do
+      it "adds the constraint" do
         gateway.auto_migrate!(conf, inline: true)
 
         expect(attributes[1].name).to eql(:name)
@@ -136,7 +136,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
       end
     end
 
-    describe 'removing' do
+    describe "removing" do
       before do
         conn.create_table :users do
           primary_key :id
@@ -145,7 +145,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
         end
       end
 
-      it 'removes the constraint' do
+      it "removes the constraint" do
         gateway.auto_migrate!(conf, inline: true)
 
         expect(attributes[2].name).to eql(:email)

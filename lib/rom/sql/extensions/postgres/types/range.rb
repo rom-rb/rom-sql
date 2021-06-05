@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'sequel/core'
+require "sequel/core"
 
 Sequel.extension(:pg_range, :pg_range_ops)
 
@@ -9,8 +9,8 @@ module ROM
     module Postgres
       module Values
         Range = ::Struct.new(:lower, :upper, :bounds) do
-          PAREN_LEFT  = '('.freeze
-          PAREN_RIGHT = ')'.freeze
+          PAREN_LEFT  = "(".freeze
+          PAREN_RIGHT = ")".freeze
 
           def initialize(lower, upper, bounds = :'[)')
             super
@@ -33,22 +33,22 @@ module ROM
 
         @range_parsers = {
           int4range: Sequel::Postgres::PGRange::Parser.new(
-            'int4range', SQL::Types::Coercible::Integer
+            "int4range", SQL::Types::Coercible::Integer
           ),
           int8range: Sequel::Postgres::PGRange::Parser.new(
-            'int8range', SQL::Types::Coercible::Integer
+            "int8range", SQL::Types::Coercible::Integer
           ),
           numrange:  Sequel::Postgres::PGRange::Parser.new(
-            'numrange', SQL::Types::Coercible::Integer
+            "numrange", SQL::Types::Coercible::Integer
           ),
           tsrange:   Sequel::Postgres::PGRange::Parser.new(
-            'tsrange', ::Time.method(:parse)
+            "tsrange", ::Time.method(:parse)
           ),
           tstzrange: Sequel::Postgres::PGRange::Parser.new(
-            'tstzrange', ::Time.method(:parse)
+            "tstzrange", ::Time.method(:parse)
           ),
           daterange: Sequel::Postgres::PGRange::Parser.new(
-            'daterange', ::Date.method(:parse)
+            "daterange", ::Date.method(:parse)
           )
         }.freeze
 
@@ -69,7 +69,7 @@ module ROM
               pg_range.end,
               [pg_range.exclude_begin? ? :'(' : :'[',
                pg_range.exclude_end? ? :')' : :']']
-              .join('').to_sym
+              .join("").to_sym
             )
           end
         end
@@ -78,7 +78,7 @@ module ROM
         def self.range(name, read_type)
           Type(name) do
             type = SQL::Types.Nominal(Values::Range).constructor do |range|
-              format('%s%s,%s%s',
+              format("%s%s,%s%s",
                      range.exclude_begin? ? :'(' : :'[',
                      range.lower,
                      range.upper,
@@ -89,12 +89,12 @@ module ROM
           end
         end
 
-        Int4Range = range('int4range', range_read_type(:int4range))
-        Int8Range = range('int8range', range_read_type(:int8range))
-        NumRange  = range('numrange',  range_read_type(:numrange))
-        TsRange   = range('tsrange',   range_read_type(:tsrange))
-        TsTzRange = range('tstzrange', range_read_type(:tstzrange))
-        DateRange = range('daterange', range_read_type(:daterange))
+        Int4Range = range("int4range", range_read_type(:int4range))
+        Int8Range = range("int8range", range_read_type(:int8range))
+        NumRange  = range("numrange",  range_read_type(:numrange))
+        TsRange   = range("tsrange",   range_read_type(:tsrange))
+        TsTzRange = range("tstzrange", range_read_type(:tstzrange))
+        DateRange = range("daterange", range_read_type(:daterange))
 
         module RangeOperators
           def contain(_type, expr, value)

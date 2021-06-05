@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rom/sql/commands/error_wrapper'
+require "rom/sql/commands/error_wrapper"
 
 module ROM
   module SQL

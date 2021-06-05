@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'sequel/core'
+require "sequel/core"
 
 Sequel.extension(:pg_array, :pg_array_ops)
 
-require 'rom/sql/extensions/postgres/types/array_types'
+require "rom/sql/extensions/postgres/types/array_types"
 
 module ROM
   module SQL
@@ -142,7 +142,7 @@ module ROM
             Attribute[type].meta(sql_expr: expr.pg_array.remove(cast(type, value)))
           end
 
-          def join(_type, expr, delimiter = '', null = nil)
+          def join(_type, expr, delimiter = "", null = nil)
             Attribute[SQL::Types::String].meta(sql_expr: expr.pg_array.join(delimiter, null))
           end
 

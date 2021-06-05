@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'rom/sql/commands/create'
-require 'rom/sql/commands/update'
+require "rom/sql/commands/create"
+require "rom/sql/commands/update"
 
 module ROM
   module SQL
@@ -138,7 +138,7 @@ module ROM
 
     Commands::Postgres = Postgres::Commands
 
-    Gateway.subscribe('configuration.commands.class.before_build') do |event|
+    Gateway.subscribe("configuration.commands.class.before_build") do |event|
       klass = event[:command]
 
       # TODO: remove this conditional in favor of `adapter: :sql` in subscribe

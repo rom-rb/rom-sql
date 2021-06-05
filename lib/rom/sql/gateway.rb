@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require 'logger'
-require 'sequel/core'
+require "logger"
+require "sequel/core"
 
-require 'dry/core/constants'
+require "dry/core/constants"
 
-require 'rom/types'
-require 'rom/gateway'
-require 'rom/sql/migration'
-require 'rom/sql/commands'
-require 'rom/sql/transaction'
+require "rom/types"
+require "rom/gateway"
+require "rom/sql/migration"
+require "rom/sql/commands"
+require "rom/sql/transaction"
 
 module ROM
   module SQL
@@ -236,7 +236,7 @@ module ROM
 
         # this will be default in Sequel 5.0.0 and since we don't rely
         # on dataset mutation it is safe to enable it already
-        connection.extension(:freeze_datasets) unless RUBY_ENGINE == 'rbx'
+        connection.extension(:freeze_datasets) unless RUBY_ENGINE == "rbx"
 
         # for ROM::SQL::Relation#nullify
         connection.extension(:null_dataset)

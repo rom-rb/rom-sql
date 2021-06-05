@@ -1,5 +1,5 @@
 RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
-  include_context 'database setup'
+  include_context "database setup"
 
   before do
     conn.drop_table?(:posts)
@@ -22,7 +22,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
   let(:attributes) { migrated_schema.to_a }
 
-  describe 'create table' do
+  describe "create table" do
     before do
       conn.create_table(:users) do
         primary_key :id
@@ -44,7 +44,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
       end
     end
 
-    it 'creates foreign key constraints based on schema' do
+    it "creates foreign key constraints based on schema" do
       gateway.auto_migrate!(conf, inline: true)
 
       expect(migrated_schema.foreign_keys.size).to eql(1)
@@ -55,8 +55,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
     end
   end
 
-  describe 'alter table' do
-    context 'adding' do
+  describe "alter table" do
+    context "adding" do
       before do
         conn.create_table(:users) do
           primary_key :id
@@ -83,7 +83,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
         end
       end
 
-      it 'creates foreign key constraints based on schema' do
+      it "creates foreign key constraints based on schema" do
         gateway.auto_migrate!(conf, inline: true)
 
         expect(migrated_schema.foreign_keys.size).to eql(1)
@@ -94,7 +94,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
     end
   end
 
-  context 'removing' do
+  context "removing" do
     before do
       conn.create_table(:users) do
         primary_key :id
@@ -121,7 +121,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
       end
     end
 
-    it 'removes a foreign key' do
+    it "removes a foreign key" do
       gateway.auto_migrate!(conf, inline: true)
 
       expect(migrated_schema.foreign_keys.size).to eql(0)
