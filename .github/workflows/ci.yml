@@ -47,7 +47,7 @@ jobs:
       mysql:
         image: mysql:5.7
         ports:
-        - 3307:3306
+        - 3306:3306
         env:
           MYSQL_USER: rom-sql
           MYSQL_PASSWORD: password
@@ -56,7 +56,7 @@ jobs:
       postgres:
         image: postgres:11
         ports:
-        - 5433:5432
+        - 5432:5432
         env:
           POSTGRES_USER: rom-sql
           POSTGRES_PASSWORD: password
