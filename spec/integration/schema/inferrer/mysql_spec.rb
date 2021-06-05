@@ -34,7 +34,7 @@ RSpec.describe 'ROM::SQL::Schema::MysqlInferrer', :mysql do
   let(:source) { container.relations[:test_inferrence].name }
 
   it 'can infer attributes for dataset' do
-    if ENV['GITHUB_WORKFLOW'] && RUBY_VERSION >= "2.7" && RUBY_VERSION < "3.0"
+    if ENV['GITHUB_WORKFLOW']
       pending 'This fails on CI with Sequel from master (possibly a regression in Sequel)'
     end
 
