@@ -52,14 +52,13 @@ module ROM
             relation:,
             rel_meta: {},
             parent_relation: nil,
-            inflector: Inflector,
             **opts,
             &block
           )
             klass = super
 
             if relation && rel_meta[:combine_type]
-              setup_associates(klass, relation, rel_meta, parent_relation, inflector)
+              setup_associates(klass, relation, rel_meta, parent_relation)
             end
 
             klass
@@ -71,12 +70,12 @@ module ROM
           # @param [Relation] relation The relation for the command
           #
           # @api private
-          def setup_associates(klass, relation, _meta, parent_relation, inflector)
+          def setup_associates(klass, relation, _meta, parent_relation)
             assoc_name =
               if relation.associations.key?(parent_relation)
                 parent_relation
               else
-                singular_name = inflector.singularize(parent_relation).to_sym
+                singular_name = relation.inflector.singularize(parent_relation).to_sym
                 singular_name if relation.associations.key?(singular_name)
               end
 
