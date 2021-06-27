@@ -4,14 +4,14 @@ gemspec
 
 eval_gemfile "Gemfile.devtools"
 
-gem "rom", git: "https://github.com/rom-rb/rom.git", branch: "master"
+gem "rom", github: "rom-rb/rom", branch: "master"
 
 if ENV["DRY_TYPES_FROM_MASTER"].eql?("true")
-  gem "dry-types", git: "https://github.com/dry-rb/dry-types.git", branch: "master"
+  gem "dry-types", github: "dry-rb/dry-types", branch: "master"
 end
 
 if ENV["SEQUEL_FROM_MASTER"].eql?("true")
-  gem "sequel", git: "https://github.com/jeremyevans/sequel.git", branch: "master"
+  gem "sequel", github: "jeremyevans/sequel", branch: "master"
 else
   gem "sequel", "~> 5.45"
 end
