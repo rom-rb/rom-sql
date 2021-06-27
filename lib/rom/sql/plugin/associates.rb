@@ -47,6 +47,47 @@ module ROM
 
         # @api public
         module ClassMethods
+          # @api private
+          def create_class(
+            name,
+            relation:,
+            rel_meta: {},
+            parent_relation: nil,
+            inflector: Inflector,
+            **opts,
+            &block
+          )
+            klass = super
+
+            if relation && rel_meta[:combine_type]
+              setup_associates(klass, relation, rel_meta, parent_relation, inflector)
+            end
+
+            klass
+          end
+
+          # Sets up `associates` plugin for a given command class and relation
+          #
+          # @param [Class] klass The command class
+          # @param [Relation] relation The relation for the command
+          #
+          # @api private
+          def setup_associates(klass, relation, _meta, parent_relation, inflector)
+            assoc_name =
+              if relation.associations.key?(parent_relation)
+                parent_relation
+              else
+                singular_name = inflector.singularize(parent_relation).to_sym
+                singular_name if relation.associations.key?(singular_name)
+              end
+
+            if assoc_name
+              klass.associates(assoc_name)
+            else
+              klass.associates(parent_relation)
+            end
+          end
+
           # @see ROM::Command::ClassInterface.build
           #
           # @api public
