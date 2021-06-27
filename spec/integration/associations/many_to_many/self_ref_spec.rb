@@ -27,19 +27,19 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, "#call" do
       end
 
       conf.relation(:employees) do
-        schema(:employees, infer: true) do
-          associations do
-            has_many :employees, as: :subordinates, through: :positions, foreign_key: :participant_id
-          end
+        schema(:employees, infer: true)
+
+        associations do
+          has_many :employees, as: :subordinates, through: :positions, foreign_key: :participant_id
         end
       end
 
       conf.relation(:positions) do
-        schema(:positions, infer: true) do
-          associations do
-            belongs_to :manager, relation: :employees
-            belongs_to :participants, relation: :employees
-          end
+        schema(:positions, infer: true)
+
+        associations do
+          belongs_to :manager, relation: :employees
+          belongs_to :participants, relation: :employees
         end
       end
     end

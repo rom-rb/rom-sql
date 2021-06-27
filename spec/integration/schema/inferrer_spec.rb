@@ -226,13 +226,13 @@ RSpec.describe "Schema inference for common datatypes", seeds: false do
 
         conf.commands(:people) do
           define(:create) do
-            result :one
+            config.result = :one
           end
         end
       end
 
       describe "inserting" do
-        let(:create) { commands[:people].create }
+        let(:create) { commands[:people][:create] }
 
         context "Sequel's types" do
           before do

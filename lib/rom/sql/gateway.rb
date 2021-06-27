@@ -5,11 +5,13 @@ require "sequel/core"
 
 require "dry/core/constants"
 
+require "rom/setup"
 require "rom/types"
 require "rom/gateway"
 require "rom/sql/migration"
 require "rom/sql/commands"
 require "rom/sql/transaction"
+require "rom/support/notifications"
 
 module ROM
   module SQL
@@ -17,6 +19,8 @@ module ROM
     #
     # @api public
     class Gateway < ROM::Gateway
+      extend Notifications
+
       include Dry::Core::Constants
       include Migration
 
@@ -81,11 +85,16 @@ module ROM
       def initialize(uri, options = EMPTY_HASH)
         @connection = connect(uri, options)
         load_extensions(Array(options[:extensions]))
-        Notifications.trigger("configuration.gateway.connected", connection: @connection)
+        notifications.trigger("sql.gateway.connected", connection: @connection)
 
         @options = options
 
         super
+      end
+
+      # @api private
+      def notifications
+        @notifications ||= Notifications.event_bus(:sql)
       end
 
       # Disconnect from the gateway's database
@@ -205,6 +214,26 @@ module ROM
         connection.run(statement)
       end
 
+      # Build an SQL-specific command
+      #
+      # @return [Command]
+      #
+      # @api public
+      def command(klass, relation:, **opts)
+        return super unless relation.dataset.db.database_type == :postgres
+
+        ext =
+          if klass < Commands::Create
+            Postgres::Commands::Create
+          elsif klass < Commands::Update
+            Postgres::Commands::Update
+          end
+
+        klass.include(ext) if ext
+
+        super
+      end
+
       private
 
       # Connect to database or reuse established connection instance
@@ -248,6 +277,4 @@ module ROM
       end
     end
   end
-
-  Configuration.register_event("configuration.gateway.connected")
 end

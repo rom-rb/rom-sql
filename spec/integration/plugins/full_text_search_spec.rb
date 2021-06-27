@@ -23,9 +23,9 @@ RSpec.describe "Plugins / :pg_full_text_search", :postgres do
 
   it "handles complex queries" do
     conf.relation(:tasks) do
-      schema(infer: true) do
-        associations { belongs_to :user }
-      end
+      schema(infer: true)
+
+      associations { belongs_to :user }
     end
 
     searched_users = users.full_text_search([:name], "Joe", language: "simple")

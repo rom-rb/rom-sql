@@ -8,6 +8,8 @@ RSpec.describe "Plugin / Pagination", seeds: false do
       9.times { |i| conn[:users].insert(name: "User #{i}") }
 
       conf.relation(:users) do
+        schema(infer: true)
+
         use :pagination
 
         per_page 4

@@ -38,9 +38,9 @@ module ROM
           else
             infer_from_attributes(gateway, schema, **super)
           end
-        rescue Sequel::Error => error
-          on_error(schema.name, error)
-          { **FALLBACK_SCHEMA, indexes: schema.indexes }
+        rescue Sequel::Error => e
+          on_error(schema.name, e)
+          {**FALLBACK_SCHEMA, indexes: schema.indexes}
         end
 
         # @api private
@@ -49,10 +49,10 @@ module ROM
           indexes = indexes_from_database(gateway, schema, idx)
           foreign_keys = foreign_keys_from_database(gateway, schema, idx)
 
-          { **rest,
+          {**rest,
             attributes: attributes.map { |attr| mark_fk(mark_indexed(attr, indexes), foreign_keys) },
             foreign_keys: foreign_keys,
-            indexes: indexes }
+            indexes: indexes}
         end
 
         # @api private
@@ -60,10 +60,10 @@ module ROM
           indexes = schema.indexes | indexes_from_attributes(attributes)
           foreign_keys = foreign_keys_from_attributes(attributes)
 
-          { **rest,
+          {**rest,
             attributes: attributes.map { |attr| mark_indexed(attr, indexes) },
             foreign_keys: foreign_keys,
-            indexes: indexes }
+            indexes: indexes}
         end
 
         # @api private

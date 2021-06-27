@@ -4,12 +4,13 @@ RSpec.describe "Commands / Update", seeds: false do
   include_context "users"
 
   let(:profile_commands) { container.commands[:profiles] }
+  let(:profiles) { container.relations[:profiles] }
 
   let(:update_user) { user_commands[:update] }
   let(:update_profile) { profile_commands[:update] }
 
   let(:piotr) { users.by_name("Piotr").one }
-  let(:peter) { { name: "Peter" } }
+  let(:peter) { {name: "Peter"} }
 
   with_adapters do
     before do
@@ -59,15 +60,16 @@ RSpec.describe "Commands / Update", seeds: false do
     context "#transaction" do
       it "update record if there was no errors" do
         result = users.transaction do
-          update_user.by_id(piotr[:id]).call(peter)
+          users.by_id(piotr[:id]).command(:update).call(peter)
         end
 
-        expect(result).to eq([{ id: 1, name: "Peter" }])
+        expect(result).to eq([{id: 1, name: "Peter"}])
       end
 
       it "updates nothing if error was raised" do
         users.transaction do |t|
-          update_user.by_id(piotr[:id]).call(peter)
+          users.by_id(piotr[:id]).command(:update).call(peter)
+
           t.rollback!
         end
 
@@ -77,36 +79,33 @@ RSpec.describe "Commands / Update", seeds: false do
 
     describe "#call" do
       it "updates relation tuples" do
-        result = update_user.by_id(piotr[:id]).call(peter)
+        result = users.by_id(piotr[:id]).command(:update).call(peter)
 
-        expect(result.to_a).to match_array([{ id: 1, name: "Peter" }])
+        expect(result.to_a).to match_array([{id: 1, name: "Peter"}])
       end
 
-      it "re-raises database errors" do |example|
+      it "re-raises database errors" do
         expect {
-          update_user.by_id(piotr[:id]).call(name: nil)
+          users.by_id(piotr[:id]).command(:update).call(name: nil)
         }.to raise_error(ROM::SQL::NotNullConstraintError, /name/i)
       end
 
       it "materializes single result" do
-        result = update_user.by_name("Piotr").call(name: "Pete")
-        expect(result).to eq([
-          { id: 1, name: "Pete" }
-        ])
+        result = users.by_name("Piotr").command(:update).call(name: "Pete")
+
+        expect(result).to eq([{id: 1, name: "Pete"}])
       end
 
       it "materializes aliased results" do
-        result = update_profile.by_name("Piotr").call(name: "Pete")
+        result = profile_commands[:update].new(profiles.by_name("Piotr")).call(name: "Pete")
 
         expect(result).to eq([{login: "Pete", id: 1}])
       end
 
       it "materializes multiple results" do
-        result = update_user.by_name(%w(Piotr Jane)).call(name: "Josie")
-        expect(result).to eq([
-          { id: 1, name: "Josie" },
-          { id: 2, name: "Josie" }
-        ])
+        result = users.by_name(%w[Piotr Jane]).command(:update).call(name: "Josie")
+
+        expect(result).to eq([{id: 1, name: "Josie"}, {id: 2, name: "Josie"}])
       end
     end
   end

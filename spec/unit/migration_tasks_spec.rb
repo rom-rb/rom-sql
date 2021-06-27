@@ -19,7 +19,7 @@ RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
 
   context "db:reset" do
     it "calls proper commands" do
-      expect(migrator).to receive(:run).with(target: 0)
+      expect(migrator).to receive(:run).with({target: 0})
       expect(migrator).to receive(:run)
 
       expect {
@@ -31,7 +31,7 @@ RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
   context "db:migrate" do
     context "with VERSION" do
       it "calls proper commands" do
-        expect(migrator).to receive(:run).with(target: 1)
+        expect(migrator).to receive(:run).with({target: 1})
 
         expect {
           Rake::Task["db:migrate"].invoke(1)
@@ -61,7 +61,7 @@ RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
 
   context "db:clean" do
     it "calls proper commands" do
-      expect(migrator).to receive(:run).with(target: 0)
+      expect(migrator).to receive(:run).with({target: 0})
 
       expect {
         Rake::Task["db:clean"].invoke

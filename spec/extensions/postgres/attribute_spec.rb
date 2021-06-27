@@ -11,7 +11,7 @@ RSpec.describe "ROM::SQL::Attribute", :postgres do
   end
 
   let(:people) { relations[:people] }
-  let(:create_person) { commands[:people].create }
+  let(:create_person) { commands[:people][:create] }
 
   %i(json jsonb).each do |type|
     describe "using arrays in #{ type }" do

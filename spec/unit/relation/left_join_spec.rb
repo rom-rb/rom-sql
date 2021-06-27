@@ -23,15 +23,15 @@ RSpec.describe ROM::Relation, "#left_join" do
     context "with associations" do
       before do
         conf.relation(:users) do
-          schema(infer: true) do
-            associations { has_many :tasks }
-          end
+          schema(infer: true)
+
+          associations { has_many :tasks }
         end
 
         conf.relation(:tasks) do
-          schema(infer: true) do
-            associations { belongs_to :user }
-          end
+          schema(infer: true)
+
+          associations { belongs_to :user }
         end
 
         relation.insert id: 3, name: "Jade"

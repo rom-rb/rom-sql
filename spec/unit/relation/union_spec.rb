@@ -1,29 +1,29 @@
 RSpec.describe ROM::Relation, "#union" do
-  subject(:relation) { container.relations.users }
+  subject(:relation) { container.relations[:users] }
 
   include_context "users and tasks"
 
   before do
     conf.relation(:tasks) do
-      schema(infer: true) do
-        associations do
-          has_many :task_tags
-        end
+      schema(infer: true)
+
+      associations do
+        has_many :task_tags
       end
     end
 
     conf.relation(:task_tags) do
-      schema(infer: true) do
-        associations do
-          belongs_to :task
-        end
+      schema(infer: true)
+
+      associations do
+        belongs_to :task
       end
     end
   end
 
   with_adapters do
-    let(:tasks) { container.relations.tasks}
-    let(:task_tags) { container.relations.task_tags}
+    let(:tasks) { container.relations[:tasks]}
+    let(:task_tags) { container.relations[:task_tags]}
 
     context "when the relations unioned have the same name" do
       let(:relation1) { relation.where(id: 1).select(:id, :name) }

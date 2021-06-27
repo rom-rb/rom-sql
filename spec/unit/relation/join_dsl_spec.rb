@@ -3,18 +3,18 @@ RSpec.describe ROM::Relation, "#join_dsl", relations: false do
 
   before do
     conf.relation(:users) do
-      schema(infer: true) do
-        associations do
-          has_many :tasks
-        end
+      schema(infer: true)
+
+      associations do
+        has_many :tasks
       end
     end
 
     conf.relation(:tasks) do
-      schema(infer: true) do
-        associations do
-          belongs_to :user
-        end
+      schema(infer: true)
+
+      associations do
+        belongs_to :user
       end
     end
   end

@@ -1,5 +1,5 @@
 RSpec.describe ROM::Relation, "#unique?" do
-  subject(:relation) { container.relations.tasks }
+  subject(:relation) { container.relations[:tasks] }
 
   include_context "users and tasks"
 

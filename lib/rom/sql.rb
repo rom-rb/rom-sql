@@ -5,8 +5,6 @@ require "rom/core"
 require "rom/sql/version"
 require "rom/sql/errors"
 
-require "rom/configuration_dsl"
-
 require "rom/sql/plugins"
 require "rom/sql/relation"
 require "rom/sql/mapper_compiler"
@@ -20,3 +18,6 @@ if defined?(Rails)
 end
 
 ROM.register_adapter(:sql, ROM::SQL)
+
+# Enable :default_view for all SQL relations
+ROM::SQL::Gateway.plugin(relations: :default_views)

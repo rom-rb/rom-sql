@@ -18,7 +18,7 @@ RSpec.describe "ROM::SQL::Attribute", :postgres do
     end
 
     values.each do |key, value|
-      commands[:pg_ranges].create.(name: key.to_s, range: value)
+      commands[:pg_ranges][:create].(name: key.to_s, range: value)
     end
   end
 

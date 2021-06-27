@@ -9,7 +9,7 @@ module ROM
       #
       # @api public
       class Delete < ROM::Commands::Delete
-        adapter :sql
+        config.component.adapter = :sql
 
         include ErrorWrapper
 

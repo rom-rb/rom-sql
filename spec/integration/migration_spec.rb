@@ -27,7 +27,7 @@ RSpec.describe ROM::SQL, ".migration" do
   context "with non-default gateway" do
     with_adapters(:postgres) do
       let(:conf) do
-        ROM::Configuration.new(
+        ROM::Setup.new(
           default: [:sql, conn, inferrable_relations: %i(schema_migrations)],
           in_memory: [:sql, DB_URIS[:sqlite], inferrable_relations: %i(schema_migrations)]
         )

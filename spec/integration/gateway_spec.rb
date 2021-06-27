@@ -9,8 +9,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
     context "creating migrations inline" do
       subject(:gateway) { container.gateways[:default] }
 
-      let(:conf) { ROM::Configuration.new(:sql, conn) }
-      let(:container) { ROM.container(conf) }
+      let(:conf) { ROM::Setup.new(:sql, conn) }
+      let(:container) { ROM.setup(conf) }
 
       it "allows creating and running migrations" do
         migration = gateway.migration do
@@ -46,8 +46,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
       end
 
       let(:migrator) { ROM::SQL::Migration::Migrator.new(conn, path: migration_dir) }
-      let(:conf) { ROM::Configuration.new(:sql, [conn, migrator: migrator]) }
-      let(:container) { ROM.container(conf) }
+      let(:conf) { ROM::Setup.new(:sql, [conn, migrator: migrator]) }
+      let(:container) { ROM.setup(conf) }
 
       it "returns true for pending migrations" do
         expect(container.gateways[:default].pending_migrations?).to be_truthy
@@ -72,8 +72,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
         Pathname(__FILE__).dirname.join("../fixtures/migrations").realpath
       end
 
-      let(:conf) { ROM::Configuration.new(:sql, [conn, migrator: { path: migration_dir }]) }
-      let(:container) { ROM.container(conf) }
+      let(:conf) { ROM::Setup.new(:sql, [conn, migrator: { path: migration_dir }]) }
+      let(:container) { ROM.setup(conf) }
 
       it "runs migrations from a specified directory" do
         container.gateways[:default].run_migrations

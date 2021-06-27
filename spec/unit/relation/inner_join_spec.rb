@@ -66,38 +66,38 @@ RSpec.describe ROM::Relation, "#inner_join" do
         end
 
         conf.relation(:users) do
-          schema(infer: true) do
-            associations do
-              has_many :tasks
-              has_many :tasks, as: :todos, relation: :tasks
-            end
+          schema(infer: true)
+
+          associations do
+            has_many :tasks
+            has_many :tasks, as: :todos, relation: :tasks
           end
         end
 
         conf.relation(:task_tags) do
-          schema(infer: true) do
-            associations do
-              belongs_to :tasks
-              belongs_to :tags
-            end
+          schema(infer: true)
+
+          associations do
+            belongs_to :tasks
+            belongs_to :tags
           end
         end
 
         conf.relation(:tasks) do
-          schema(infer: true) do
-            associations do
-              belongs_to :user
-              has_many :task_tags
-              has_many :tags, through: :task_tags
-            end
+          schema(infer: true)
+
+          associations do
+            belongs_to :user
+            has_many :task_tags
+            has_many :tags, through: :task_tags
           end
         end
 
         conf.relation(:puzzles) do
-          schema(infer: true) do
-            associations do
-              belongs_to :users, as: :author
-            end
+          schema(infer: true)
+
+          associations do
+            belongs_to :users, as: :author
           end
         end
 

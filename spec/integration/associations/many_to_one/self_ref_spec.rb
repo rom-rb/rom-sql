@@ -16,10 +16,10 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, "#call" do
       end
 
       conf.relation(:categories) do
-        schema(infer: true) do
-          associations do
-            belongs_to :categories, as: :parent, foreign_key: :parent_id
-          end
+        schema(infer: true)
+
+        associations do
+          belongs_to :categories, as: :parent, foreign_key: :parent_id
         end
       end
 
@@ -37,17 +37,17 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, "#call" do
     it "prepares joined relations using custom FK for a self-ref association" do
       relation = assoc.()
 
-      expect(relation.schema.map(&:to_sql_name)).
-        to eql([Sequel.qualify(:categories, :id),
-                Sequel.qualify(:categories, :parent_id),
-                Sequel.qualify(:categories, :name)])
+      expect(relation.schema.map(&:to_sql_name))
+        .to eql([Sequel.qualify(:categories, :id),
+                 Sequel.qualify(:categories, :parent_id),
+                 Sequel.qualify(:categories, :name)])
 
-      expect(relation.to_a).
-        to eql([
-                 { id: 1, parent_id: nil, name: "P1" },
-                 { id: 1, parent_id: nil, name: "P1" },
-                 { id: 2, parent_id: nil, name: "P2" }
-               ])
+      expect(relation.to_a)
+        .to eql([
+          {id: 1, parent_id: nil, name: "P1"},
+          {id: 1, parent_id: nil, name: "P1"},
+          {id: 2, parent_id: nil, name: "P2"}
+        ])
     end
   end
 end

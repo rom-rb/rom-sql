@@ -10,10 +10,10 @@ RSpec.describe ROM::SQL::Relation do
 
     before do
       conf.relation(:users) do
-        schema(infer: true) do
-          associations do
-            has_many :tasks
-          end
+        schema(infer: true)
+
+        associations do
+          has_many :tasks
         end
       end
     end
@@ -31,20 +31,21 @@ RSpec.describe ROM::SQL::Relation do
 
     before do
       conf.relation(:task_tags) do
-        schema(infer: true) do
-          associations do
-            belongs_to :tasks
-            belongs_to :tags
-          end
+        schema(infer: true)
+
+        associations do
+          belongs_to :tasks
+          belongs_to :tags
         end
       end
 
       conf.relation(:tasks) do
         schema(infer: true) do
+        end
+
           associations do
             has_many :tags, through: :task_tags
           end
-        end
       end
 
       conn[:tags].insert id: 2, name: "whatevah"
@@ -69,10 +70,10 @@ RSpec.describe ROM::SQL::Relation do
 
     before do
       conf.relation(:tasks) do
-        schema(infer: true) do
-          associations do
-            belongs_to :users, as: :user
-          end
+        schema(infer: true)
+
+        associations do
+          belongs_to :users, as: :user
         end
       end
     end

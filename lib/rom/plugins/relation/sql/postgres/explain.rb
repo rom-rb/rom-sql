@@ -49,7 +49,7 @@ module ROM
 end
 
 ROM.plugins do
-  adapter :sql do
+  adapter(:sql) do
     register :pg_explain, ROM::Plugins::Relation::SQL::Postgres::Explain, type: :relation
   end
 end

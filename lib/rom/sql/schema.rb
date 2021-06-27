@@ -2,7 +2,6 @@
 
 require "rom/schema"
 
-require "rom/sql/schema/dsl"
 require "rom/sql/order_dsl"
 require "rom/sql/group_dsl"
 require "rom/sql/projection_dsl"
@@ -159,17 +158,6 @@ module ROM
       def finalize_attributes!(**options)
         super do
           @attributes = map(&:qualified)
-        end
-      end
-
-      # Finalize associations
-      #
-      # @api private
-      def finalize_associations!(relations:)
-        super do
-          associations.map do |definition|
-            SQL::Associations.const_get(definition.type).new(definition, relations)
-          end
         end
       end
 

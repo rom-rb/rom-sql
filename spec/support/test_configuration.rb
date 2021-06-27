@@ -1,16 +1,21 @@
-require "rom/configuration"
+require "rom/setup"
 
-class TestConfiguration < ROM::Configuration
-  def relation(name, *, &block)
-    if registered_relation_names.include?(name)
-      setup.relation_classes.delete_if do |klass|
-        klass.relation_name.relation == name
+class TestConfiguration < ROM::Setup
+  def relation(name, **opts, &block)
+    if components.relations.map(&:id).include?(name)
+      components.relations.delete_if do |component|
+        component.id == name
+      end
+
+      components.schemas.delete_if do |component|
+        component.id == name
       end
     end
-    super
+
+    super(name, **opts, &block)
   end
 
-  def registered_relation_names
-    setup.relation_classes.map(&:relation_name).map(&:relation)
+  def gateways
+    registry.gateways
   end
 end

@@ -1,5 +1,5 @@
 RSpec.describe ROM::Relation, "#max" do
-  subject(:relation) { container.relations.users }
+  subject(:relation) { container.relations[:users] }
 
   include_context "users"
 

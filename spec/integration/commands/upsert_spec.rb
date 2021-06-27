@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe "Commands / Postgres / Upsert", :postgres, seeds: false do
   subject(:command) { task_commands[:create_or_update] }
 
@@ -12,26 +14,33 @@ RSpec.describe "Commands / Postgres / Upsert", :postgres, seeds: false do
   end
 
   describe "#call" do
-    let(:task) { { title: "task 1", user_id: 1 } }
-    let(:excluded) { task.merge(user_id: 3) }
+    let(:task) do
+      {title: "task 1", user_id: 1}
+    end
+
+    let(:excluded) do
+      task.merge(user_id: 3)
+    end
 
     before do
       command_config = self.command_config
 
       conf.commands(:tasks) do
         define("Postgres::Upsert") do
-          register_as :create_or_update
-          result :one
+          config.component.id = :create_or_update
+          config.result = :one
 
           instance_exec(&command_config)
         end
       end
     end
 
-    before { command.relation.upsert(task) }
+    before do
+      command.relation.upsert(task)
+    end
 
     context "on conflict do nothing" do
-      let(:command_config) { -> { } }
+      let(:command_config) { -> {} }
 
       it "returns nil" do
         expect(command.call(excluded)).to be nil
@@ -42,8 +51,8 @@ RSpec.describe "Commands / Postgres / Upsert", :postgres, seeds: false do
       context "with conflict target" do
         let(:command_config) do
           -> do
-            conflict_target :title
-            update_statement user_id: 2
+            config.conflict_target = :title
+            config.update_statement = {user_id: 2}
           end
         end
 
@@ -63,9 +72,9 @@ RSpec.describe "Commands / Postgres / Upsert", :postgres, seeds: false do
 
           let(:command_config) do
             -> do
-              conflict_target :title
-              conflict_where user_id: 1
-              update_statement user_id: 2
+              config.conflict_target = :title
+              config.conflict_where = {user_id: 1}
+              config.update_statement = {user_id: 2}
             end
           end
 
@@ -90,8 +99,8 @@ RSpec.describe "Commands / Postgres / Upsert", :postgres, seeds: false do
       context "with constraint name" do
         let(:command_config) do
           -> do
-            constraint :tasks_title_key
-            update_statement user_id: Sequel.qualify(:excluded, :user_id)
+            config.constraint = :tasks_title_key
+            config.update_statement = {user_id: Sequel.qualify(:excluded, :user_id)}
           end
         end
 
@@ -103,9 +112,9 @@ RSpec.describe "Commands / Postgres / Upsert", :postgres, seeds: false do
       context "with where clause" do
         let(:command_config) do
           -> do
-            conflict_target :title
-            update_statement user_id: nil
-            update_where Sequel.qualify(:tasks, :id) => 2
+            config.conflict_target = :title
+            config.update_statement = {user_id: nil}
+            config.update_where = {Sequel.qualify(:tasks, :id) => 2}
           end
         end
 
@@ -115,4 +124,4 @@ RSpec.describe "Commands / Postgres / Upsert", :postgres, seeds: false do
       end
     end
   end
-end if PG_LTE_95
+end

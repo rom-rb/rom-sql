@@ -27,21 +27,33 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, "#call" do
       conf.relation(:destinations) do
         schema(infer: true)
 
-        view(:intermediate, schema) do
-          where(intermediate: true)
+        view(:intermediate) do
+          schema do
+            self
+          end
+
+          relation do
+            where(intermediate: true)
+          end
         end
 
-        view(:final, schema) do
-          where(intermediate: false)
+        view(:final) do
+          schema do
+            self
+          end
+
+          relation do
+            where(intermediate: false)
+          end
         end
       end
 
       conf.relation(:flights) do
-        schema(infer: true) do
-          associations do
-            belongs_to :destination, as: :inter_destination, view: :intermediate
-            belongs_to :destination, as: :final_destination, view: :final
-          end
+        schema(infer: true)
+
+        associations do
+          belongs_to :destination, as: :inter_destination, view: :intermediate
+          belongs_to :destination, as: :final_destination, view: :final
         end
       end
 

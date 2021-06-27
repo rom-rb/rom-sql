@@ -9,18 +9,14 @@ RSpec.describe "Plugins / :associates", seeds: false do
 
       before do
         conf.relation(:tasks) do
-          schema(infer: true) do
-            associations do
-              many_to_one :users, as: :user
-              many_to_one :users, as: :other
-              one_to_many :task_tags
-              one_to_many :tags, through: :task_tags
-            end
-          end
-        end
+          schema(infer: true)
 
-        conf.commands(:users) do
-          define(:create) { result :one }
+          associations do
+            many_to_one :users, as: :user
+            many_to_one :users, as: :other
+            one_to_many :task_tags
+            one_to_many :tags, through: :task_tags
+          end
         end
       end
 
@@ -35,11 +31,11 @@ RSpec.describe "Plugins / :associates", seeds: false do
 
         before do
           conf.commands(:users) do
-            define(:create) { result :one }
+            define(:create) { config.result = :one }
           end
 
           conf.commands(:tasks) do
-            define(:create) { result :one }
+            define(:create) { config.result = :one }
           end
         end
 
@@ -97,25 +93,29 @@ RSpec.describe "Plugins / :associates", seeds: false do
         include_context "automatic FK setting"
 
         before do
+          conf.commands(:users) do
+            define(:create) { config.result = :one }
+          end
+
           conf.relation(:tasks) do
-            schema(infer: true) do
-              associations do
-                many_to_one :users, as: :user
-                one_to_many :task_tags
-                one_to_many :tags, through: :task_tags
-              end
+            schema(infer: true)
+
+            associations do
+              many_to_one :users, as: :user
+              one_to_many :task_tags
+              one_to_many :tags, through: :task_tags
             end
           end
 
           conf.commands(:tasks) do
             define(:create) do
-              register_as :create_many
+              config.component.id = :create_many
               associates :user
             end
 
             define(:create) do
-              register_as :create_one
-              result :one
+              config.component.id = :create_one
+              config.result = :one
               associates :user
             end
           end
@@ -124,11 +124,11 @@ RSpec.describe "Plugins / :associates", seeds: false do
         context "with many-to-many association" do
           before do
             conf.relation(:tags) do
-              schema(infer: true) do
-                associations do
-                  one_to_many :task_tags
-                  one_to_many :tasks, through: :task_tags
-                end
+              schema(infer: true)
+
+              associations do
+                one_to_many :task_tags
+                one_to_many :tasks, through: :task_tags
               end
             end
 
@@ -138,17 +138,17 @@ RSpec.describe "Plugins / :associates", seeds: false do
                 attribute :task_id, ROM::SQL::Types::ForeignKey(:tasks)
 
                 primary_key :tag_id, :task_id
+              end
 
-                associations do
-                  many_to_one :tags
-                  many_to_one :tasks
-                end
+              associations do
+                many_to_one :tags
+                many_to_one :tasks
               end
             end
 
             conf.commands(:tasks) do
               define(:create) do
-                result :one
+                config.result = :one
                 associates :user
               end
             end
@@ -183,7 +183,7 @@ RSpec.describe "Plugins / :associates", seeds: false do
         expect {
           conf.commands(:tasks) do
             define(:create) do
-              result :one
+              config.result = :one
               associates :user, key: [:user_id, :id]
               associates :user, key: [:user_id, :id]
             end
@@ -196,7 +196,7 @@ RSpec.describe "Plugins / :associates", seeds: false do
   with_adapters :sqlite do
     context "with Update command" do
       subject(:command) do
-        container.commands[:tasks][:update].with_association(:user).by_pk(jane_task[:id])
+        container.commands[:tasks][:update].with_association(:user).new(tasks.by_pk(jane_task[:id]))
       end
 
       let(:john) do
@@ -217,26 +217,26 @@ RSpec.describe "Plugins / :associates", seeds: false do
 
       before do
         conf.relation(:tasks) do
-          schema(infer: true) do
-            associations do
-              belongs_to :user
-            end
+          schema(infer: true)
+
+          associations do
+            belongs_to :user
           end
         end
 
         conf.commands(:users) do
           define(:create) do
-            result :one
+            config.result = :one
           end
         end
 
         conf.commands(:tasks) do
           define(:create) do
-            result :one
+            config.result = :one
           end
 
           define(:update) do
-            result :one
+            config.result = :one
           end
         end
       end

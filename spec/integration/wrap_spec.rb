@@ -5,10 +5,7 @@ RSpec.describe ROM::SQL::Wrap do
     describe "#wrap" do
       shared_context "joined tuple" do
         it "returns nested tuples" do
-          task_with_user = tasks
-            .wrap(name)
-            .where { id.qualified.is(2) }
-            .one
+          task_with_user = tasks.wrap(name).where { id.qualified.is(2) }.one
 
           expect(task_with_user).to eql(
             id: 2, user_id: 1, title: "Jane's task", users_name: "Jane", users_id: 1
@@ -16,10 +13,7 @@ RSpec.describe ROM::SQL::Wrap do
         end
 
         it "works with by_pk" do
-          task_with_user = tasks
-                             .wrap(name)
-                             .by_pk(1)
-                             .one
+          task_with_user = tasks.wrap(name).by_pk(1).one
 
           expect(task_with_user).
             to eql(id: 1, user_id: 2, title: "Joe's task", users_name: "Joe", users_id: 2)
@@ -29,12 +23,12 @@ RSpec.describe ROM::SQL::Wrap do
       context "using association with inferred relation name" do
         before do
           conf.relation(:tasks) do
-            auto_map false
+            config.auto_map = false
 
-            schema(infer: true) do
-              associations do
-                belongs_to :user
-              end
+            schema(infer: true)
+
+            associations do
+              belongs_to :user
             end
           end
         end
@@ -47,12 +41,12 @@ RSpec.describe ROM::SQL::Wrap do
       context "using association with an alias" do
         before do
           conf.relation(:tasks) do
-            auto_map false
+            config.auto_map = false
 
-            schema(infer: true) do
-              associations do
-                belongs_to :users, as: :assignee
-              end
+            schema(infer: true)
+
+            associations do
+              belongs_to :users, as: :assignee
             end
           end
         end
@@ -65,17 +59,17 @@ RSpec.describe ROM::SQL::Wrap do
       context "using association with an aliased relation" do
         before do
           conf.relation(:tasks) do
-            auto_map false
+            config.auto_map = false
 
-            schema(infer: true) do
-              associations do
-                belongs_to :users, as: :assignee, relation: :people
-              end
+            schema(infer: true)
+
+            associations do
+              belongs_to :users, as: :assignee, relation: :people
             end
           end
 
           conf.relation(:people) do
-            auto_map false
+            config.auto_map = false
 
             schema(:users, infer: true)
           end
@@ -90,7 +84,7 @@ RSpec.describe ROM::SQL::Wrap do
       context "using association with a view" do
         before do
           conf.relation(:users) do
-            auto_map false
+            config.auto_map = false
 
             schema(infer: true)
 
@@ -108,14 +102,14 @@ RSpec.describe ROM::SQL::Wrap do
           end
 
           conf.relation(:tasks) do
-            auto_map true
+            config.auto_map = true
 
-            schema(infer: true) do
-              associations do
-                belongs_to :users, view: :with_extra_attributes, as: :enhanced_user
-                belongs_to :users, view: :with_extra_attributes_from_function, as: :enhanced_user_func
-                belongs_to :users, view: :with_renamed_attribute, as: :with_renamed_attribute
-              end
+            schema(infer: true)
+
+            associations do
+              belongs_to :users, view: :with_extra_attributes, as: :enhanced_user
+              belongs_to :users, view: :with_extra_attributes_from_function, as: :enhanced_user_func
+              belongs_to :users, view: :with_renamed_attribute, as: :with_renamed_attribute
             end
           end
         end

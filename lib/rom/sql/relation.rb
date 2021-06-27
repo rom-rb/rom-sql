@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rom/relation"
+
 require "rom/sql/types"
 require "rom/sql/schema"
 require "rom/sql/attribute"
@@ -15,88 +17,34 @@ module ROM
     #
     # @api public
     class Relation < ROM::Relation
-      adapter :sql
+      extend Dry::Core::ClassAttributes # TODO: only needed by pagination plugin
 
       include SQL
       include Writing
       include Reading
 
-      extend Notifications::Listener
+      config.wrap_class = SQL::Wrap
 
-      schema_class SQL::Schema
-      schema_attr_class SQL::Attribute
-      schema_inferrer ROM::SQL::Schema::Inferrer.new.freeze
-      schema_dsl SQL::Schema::DSL
-      wrap_class SQL::Wrap
-
-      subscribe("configuration.relations.schema.set", adapter: :sql) do |event|
-        schema = event[:schema]
-        relation = event[:relation]
-
-        relation.dataset do
-          table = opts[:from].first
-
-          if db.table_exists?(table)
-            select(*schema.qualified_projection).order(*schema.project(*schema.primary_key_names).qualified)
-          else
-            self
-          end
-        end
+      configure(:component) do |config|
+        config.adapter = :sql
       end
 
-      subscribe("configuration.relations.dataset.allocated", adapter: :sql) do |event|
-        event[:relation].define_default_views!
+      configure(:schema) do |config|
+        config.constant = SQL::Schema
+        config.attr_class = SQL::Attribute
+        config.inferrer = ROM::SQL::Schema::Inferrer.new.freeze
+        config.plugins << :indexes
       end
 
-      # @api private
-      def self.define_default_views!
-        undef_method :by_pk if method_defined?(:by_pk)
+      dataset(abstract: true) do |schema|
+        table = opts[:from].first
 
-        if schema.primary_key.size > 1
-          # @!method by_pk(val1, val2)
-          #   Return a relation restricted by its composite primary key
-          #
-          #   @param [Array] args A list with composite pk values
-          #
-          #   @return [SQL::Relation]
-          #
-          #   @api public
-          class_eval <<-RUBY, __FILE__, __LINE__ + 1
-            def by_pk(#{schema.primary_key.map(&:name).join(', ')})
-              where(#{schema.primary_key.map { |attr| "schema.canonical[:#{attr.name}] => #{attr.name}" }.join(', ')})
-            end
-          RUBY
+        if db.table_exists?(table)
+          select(*schema.qualified_projection)
+            .order(*schema.project(*schema.primary_key_names).qualified)
         else
-          # @!method by_pk(pk)
-          #   Return a relation restricted by its primary key
-          #
-          #   @param [Object] pk The primary key value
-          #
-          #   @return [SQL::Relation]
-          #
-          #   @api public
-          class_eval <<-RUBY, __FILE__, __LINE__ + 1
-            def by_pk(pk)
-              if primary_key.nil?
-                raise MissingPrimaryKeyError.new(
-                  "Missing primary key for :\#{schema.name}"
-                )
-              end
-              where(schema.canonical[schema.canonical.primary_key_name].qualified => pk)
-            end
-          RUBY
+          self
         end
-      end
-
-      # @api private
-      def self.associations
-        schema.associations
-      end
-
-      # @api private
-      def self.primary_key_columns(db, table)
-        names = db.respond_to?(:primary_key) ? Array(db.primary_key(table)) : [:id]
-        names.map { |col| :"#{table}__#{col}" }
       end
 
       option :primary_key, default: -> { schema.primary_key_name }

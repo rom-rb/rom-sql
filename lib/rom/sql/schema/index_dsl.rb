@@ -16,10 +16,8 @@ module ROM
         # @api private
         def initialize(*, &block)
           super
-
           @registry = []
-
-          instance_exec(&block)
+          instance_exec(&block) if block
         end
         ruby2_keywords(:initialize) if respond_to?(:ruby2_keywords, true)
 

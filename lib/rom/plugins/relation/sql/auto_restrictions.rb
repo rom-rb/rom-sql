@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "rom/support/notifications"
+require "dry/effects"
 
 module ROM
   module Plugins
@@ -27,18 +27,20 @@ module ROM
         #
         # @api public
         module AutoRestrictions
-          extend Notifications::Listener
+          extend Dry::Effects.Reader(:registry)
 
-          subscribe("configuration.relations.schema.set", adapter: :sql) do |event|
-            schema = event[:schema]
-            relation = event[:relation]
+          # @api private
+          def self.apply(target, **)
+            methods, mod = AutoRestrictions.restriction_methods(registry.schemas.canonical(target))
 
-            methods, mod = AutoRestrictions.restriction_methods(schema)
-            relation.include(mod)
-            methods.each { |meth| relation.auto_curry(meth) }
+            target.class_eval do
+              include(mod)
+              methods.each { |meth| auto_curry(meth) }
+            end
           end
 
           # @api private
+          # rubocop:disable Metrics/AbcSize
           def self.restriction_methods(schema)
             mod = Module.new
 
@@ -71,6 +73,7 @@ module ROM
 
             [methods, mod]
           end
+          # rubocop:enable Metrics/AbcSize
         end
       end
     end
@@ -78,7 +81,7 @@ module ROM
 end
 
 ROM.plugins do
-  adapter :sql do
+  adapter(:sql) do
     register :auto_restrictions, ROM::Plugins::Relation::SQL::AutoRestrictions, type: :relation
   end
 end

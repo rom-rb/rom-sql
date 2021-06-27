@@ -29,8 +29,14 @@ RSpec.shared_context "database setup" do
   let(:conn) { Sequel.connect(uri) }
   let(:database_type) { conn.database_type }
   let(:inferrable_relations) { [] }
-  let(:conf) { TestConfiguration.new(:sql, conn) }
-  let(:container) { ROM.container(conf) }
+
+  let(:conf) do
+    TestConfiguration.new(:sql, conn) do |config|
+      config.plugin(:sql, relations: :auto_restrictions)
+    end
+  end
+
+  let(:container) { ROM.setup(conf) }
   let(:relations) { container.relations }
   let(:commands) { container.commands }
 
