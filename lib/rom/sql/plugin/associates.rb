@@ -49,7 +49,6 @@ module ROM
         module ClassMethods
           # @api private
           def create_class(
-            name,
             relation:,
             rel_meta: {},
             parent_relation: nil,
