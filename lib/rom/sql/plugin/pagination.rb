@@ -105,6 +105,11 @@ module ROM
             )
           end
 
+          # @api private
+          def with_dataset(dataset)
+            self.class.new(dataset, current_page: self.current_page, per_page: self.per_page)
+          end
+
           alias_method :limit_value, :per_page
         end
 
@@ -146,6 +151,15 @@ module ROM
         def per_page(num)
           next_pager = pager.at(dataset, pager.current_page, num)
           new(next_pager.dataset, pager: next_pager)
+        end
+
+        # Return a pager object updated with most up-to-date dataset
+        #
+        # @return [Pager]
+        #
+        # @api public
+        def pager
+          @pager_with_fresh_dataset ||= @pager.with_dataset(dataset)
         end
       end
     end
