@@ -105,11 +105,6 @@ module ROM
             )
           end
 
-          # @api private
-          def with_dataset(dataset)
-            self.class.new(dataset, current_page: self.current_page, per_page: self.per_page)
-          end
-
           alias_method :limit_value, :per_page
         end
 
@@ -120,7 +115,7 @@ module ROM
           klass.class_eval do
             defines :per_page
 
-            option :pager, default: -> {
+            option :_pager, default: -> {
               Pager.new(dataset, per_page: self.class.per_page)
             }
           end
@@ -136,8 +131,8 @@ module ROM
         #
         # @api public
         def page(num)
-          next_pager = pager.at(dataset, num)
-          new(next_pager.dataset, pager: next_pager)
+          next_pager = _pager.at(dataset, num)
+          new(next_pager.dataset, _pager: next_pager)
         end
 
         # Set limit for pagination
@@ -149,8 +144,8 @@ module ROM
         #
         # @api public
         def per_page(num)
-          next_pager = pager.at(dataset, pager.current_page, num)
-          new(next_pager.dataset, pager: next_pager)
+          next_pager = _pager.at(dataset, _pager.current_page, num)
+          new(next_pager.dataset, _pager: next_pager)
         end
 
         # Return a pager object updated with most up-to-date dataset
@@ -159,7 +154,7 @@ module ROM
         #
         # @api public
         def pager
-          @pager_with_fresh_dataset ||= @pager.with_dataset(dataset)
+          Pager.new(dataset, current_page: _pager.current_page, per_page: _pager.per_page)
         end
       end
     end
