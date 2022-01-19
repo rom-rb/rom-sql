@@ -1,4 +1,4 @@
-FROM ruby:3.0-alpine
+FROM ruby:3.1-alpine
 
 RUN apk update && apk add bash git gnupg build-base sqlite-dev postgresql-dev mysql-dev
 

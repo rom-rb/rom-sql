@@ -19,7 +19,7 @@ services:
     env_file: .env
 
   postgres:
-    image: postgres:11
+    image: postgres:14
     ports:
       - "5433:5432"
     env_file: .env

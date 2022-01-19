@@ -26,13 +26,11 @@ jobs:
       fail-fast: false
       matrix:
         ruby:
+        - '3.1'
         - '3.0'
         - '2.7'
-        - '2.6'
-        - '2.5'
-        - jruby
         include:
-        - ruby: '3.0'
+        - ruby: '3.1'
           coverage: 'true'
           fail_on_warnings: 'true'
           dry_types_from_master: 'true'
@@ -50,16 +48,16 @@ jobs:
         ports:
         - 3306:3306
         env:
-          MYSQL_USER: rom-sql
+          MYSQL_USER: rom
           MYSQL_PASSWORD: password
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: rom-sql
       postgres:
-        image: postgres:11
+        image: postgres:14
         ports:
         - 5432:5432
         env:
-          POSTGRES_USER: rom-sql
+          POSTGRES_USER: rom
           POSTGRES_PASSWORD: password
           POSTGRES_DB: rom-sql
     steps:
