@@ -1,5 +1,4 @@
 # This is a config synced from rom-rb/template-gem repo
-
 AllCops:
   TargetRubyVersion: 2.5
   NewCops: enable
@@ -47,8 +46,7 @@ Lint/BooleanSymbol:
   Enabled: false
 
 Lint/ConstantDefinitionInBlock:
-  Exclude:
-    - "spec/**/*_spec.rb"
+  Enabled: false
 
 Lint/RaiseException:
   Enabled: false
@@ -123,8 +121,7 @@ Style/BlockDelimiters:
   Enabled: false
 
 Style/ClassAndModuleChildren:
-  Exclude:
-    - "spec/**/*_spec.rb"
+  Enabled: false
 
 Style/ConditionalAssignment:
   Enabled: false
