@@ -10,7 +10,7 @@ module ROM
 
       class << self
         def run_migrations(options = {})
-          gateway.run_migrations(options)
+          gateway.run_migrations(migration_options.merge(options))
         end
 
         def create_migration(*args)
@@ -22,7 +22,7 @@ module ROM
         # or something similar.
         #
         # @api public
-        attr_accessor :env
+        attr_accessor :env, :migration_options
 
         private
 
@@ -40,6 +40,7 @@ module ROM
       end
 
       @env = nil
+      @migration_options = {}
     end
   end
 end
