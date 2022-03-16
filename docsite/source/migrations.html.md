@@ -33,6 +33,24 @@ The following tasks are available:
 * `rake db:clean` - removes all tables
 * `rake db:reset` - removes all tables and re-runs migrations
 
+With the help of the `migration_options` you can apply certain customizations:
+
+``` ruby
+# your rakefile
+
+require 'rom/sql/rake_task'
+
+namespace :db do
+  task :setup do
+    # ROM::SQL::RakeSupport.env = ROM.container(...)
+    ROM::SQL::RakeSupport.migration_options = {
+      table: :custom_table, # defaults to :schema_migrations,
+      column :custom_column, # defaults to :filename
+    }
+  end
+end
+```
+
 ### File-based migrations
 
 Migrations created with a command such as `rake db:create_migration[create_users]` will be placed at under the `db/migrate` folder at the root of your project.

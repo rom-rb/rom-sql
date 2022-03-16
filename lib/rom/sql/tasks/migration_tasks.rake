@@ -10,7 +10,7 @@ module ROM
 
       class << self
         def run_migrations(options = {})
-          gateway.run_migrations(options)
+          gateway.run_migrations(migration_options.merge(options))
         end
 
         def create_migration(*args)
@@ -23,6 +23,13 @@ module ROM
         #
         # @api public
         attr_accessor :env
+
+
+        # Migration options, which are passed to `ROM::SQL::RakeSupport.run_migrations`. You can 
+        # set them in the `db:setup` task with `ROM::SQL::RakeSupport.migration_options = { ... }`
+        #
+        # @api public
+        attr_accessor :migration_options
 
         private
 
@@ -40,6 +47,7 @@ module ROM
       end
 
       @env = nil
+      @migration_options = {}
     end
   end
 end
