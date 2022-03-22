@@ -62,6 +62,24 @@ RSpec.describe 'Plugin / Pagination', seeds: false do
         users = container.relations[:users].per_page(9)
         expect(users.pager.total_pages).to eql(1)
       end
+
+      it 'returns one page when relation is filtered' do
+        users = container.relations[:users].per_page(1).where(name: "User 1")
+        expect(users.pager.total_pages).to eql(1)
+
+        users = container.relations[:users].where(name: "User 1").per_page(1)
+        expect(users.pager.total_pages).to eql(1)
+      end
+    end
+
+    describe "#next_page" do
+      it "returns nil when there is no next page in filtered relation" do
+        users = container.relations[:users].per_page(1).where(name: "User 1")
+        expect(users.pager.next_page).to be(nil)
+
+        users = container.relations[:users].where(name: "User 1").per_page(1)
+        expect(users.pager.next_page).to be(nil)
+      end
     end
 
     describe '#pager' do
