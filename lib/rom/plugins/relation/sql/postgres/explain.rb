@@ -32,7 +32,7 @@ module ROM
 
               query = "EXPLAIN (#{explain_value}) #{dataset.sql}"
 
-              rows = dataset.with_sql(query).map(:'QUERY PLAN')
+              rows = dataset.with_sql(query).map(:"QUERY PLAN")
 
               case format
               when :json

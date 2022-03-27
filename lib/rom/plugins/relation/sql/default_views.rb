@@ -29,8 +29,8 @@ module ROM
               target.class_eval <<-RUBY, __FILE__, __LINE__ + 1
                 undef :by_pk if method_defined?(:by_pk)
 
-                def by_pk(#{schema.primary_key.map(&:name).join(', ')})
-                  where(#{schema.primary_key.map { |attr| "schema.canonical[:#{attr.name}] => #{attr.name}" }.join(', ')})
+                def by_pk(#{schema.primary_key.map(&:name).join(", ")})
+                  where(#{schema.primary_key.map { |attr| "schema.canonical[:#{attr.name}] => #{attr.name}" }.join(", ")})
                 end
               RUBY
             else

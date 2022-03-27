@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 RSpec.describe "ROM::SQL::Schema::MysqlInferrer", :mysql do
   include_context "database setup"
 
   before do
-    inferrable_relations.concat %i(test_inferrence)
+    inferrable_relations.concat %i[test_inferrence]
   end
 
   before do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe "Eager loading" do
   include_context "users and tasks"
 
@@ -98,7 +100,7 @@ RSpec.describe "Eager loading" do
 
         authors = users.combine_with(users.node(:drafts)).to_a
 
-        expect(authors.map { |a| a[:name] }).to eql(["Jane", "Joe", "John"])
+        expect(authors.map { |a| a[:name] }).to eql(%w[Jane Joe John])
         expect(authors.map { |a| a[:drafts].size }).to eql([0, 1, 0])
       end
     end

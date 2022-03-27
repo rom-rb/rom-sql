@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "securerandom"
 
 RSpec.describe "ROM::SQL::Postgres::Types" do
@@ -5,7 +7,7 @@ RSpec.describe "ROM::SQL::Postgres::Types" do
 
   describe "ROM::SQL::Types::PG::JSON" do
     it "coerces to pg json hash" do
-      input = { foo: "bar" }
+      input = {foo: "bar"}
 
       expect(ROM::SQL::Types::PG::JSON[input]).to eql(Sequel.pg_json(input))
     end
@@ -58,7 +60,7 @@ RSpec.describe "ROM::SQL::Postgres::Types" do
 
   describe ROM::SQL::Types::PG::JSON do
     it "coerces to pg json hash" do
-      input  = { foo: "bar" }
+      input  = {foo: "bar"}
       output = described_class[input]
 
       expect(output).to be_instance_of(Sequel::Postgres::JSONHash)
@@ -99,7 +101,7 @@ RSpec.describe "ROM::SQL::Postgres::Types" do
 
   describe ROM::SQL::Types::PG::JSONB do
     it "coerces to pg jsonb hash" do
-      input  = { foo: "bar" }
+      input  = {foo: "bar"}
       output = described_class[input]
 
       expect(output).to be_instance_of(Sequel::Postgres::JSONBHash)
@@ -170,7 +172,7 @@ RSpec.describe "ROM::SQL::Postgres::Types" do
   end
 
   describe ROM::SQL::Types::PG::HStore do
-    let(:mapping) { Hash["hot" => "cold"] }
+    let(:mapping) { {"hot" => "cold"} }
     let(:read_type) { described_class.meta[:read] }
 
     it "covertss data to Sequel::Postgres::HStore" do
@@ -241,7 +243,7 @@ RSpec.describe "ROM::SQL::Postgres::Types" do
 
   describe ROM::SQL::Types::PG::Polygon do
     let(:first) { values::Point.new(8.5, 30.5) }
-    let(:second) {values::Point.new(7.5, 20.5) }
+    let(:second) { values::Point.new(7.5, 20.5) }
     let(:third) { values::Point.new(6.5, 10.5) }
 
     let(:polygon) { [first, second, third] }
@@ -278,7 +280,7 @@ RSpec.describe "ROM::SQL::Postgres::Types" do
   end
 
   describe ROM::SQL::Types::PG::Int4Range do
-    let(:range) { values::Range.new(1, 4, :'[)') }
+    let(:range) { values::Range.new(1, 4, :"[)") }
 
     it "serialize a range to a string" do
       expect(described_class[range]).to eql "[1,4)"
@@ -286,19 +288,19 @@ RSpec.describe "ROM::SQL::Postgres::Types" do
 
     it "read serialized format" do
       expect(described_class.meta[:read]["(42, 64]"]).to eql(
-        values::Range.new(42, 64, :'(]')
+        values::Range.new(42, 64, :"(]")
       )
     end
 
     it "read an empty value" do
       expect(described_class.meta[:read]["empty"]).to eql(
-        values::Range.new(nil, nil, :'[]')
+        values::Range.new(nil, nil, :[])
       )
     end
 
     it "read an unbounded range" do
       expect(described_class.meta[:read]["(,)"]).to eql(
-        values::Range.new(nil, nil, :'()')
+        values::Range.new(nil, nil, :"()")
       )
     end
   end

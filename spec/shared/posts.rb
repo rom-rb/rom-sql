@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 RSpec.shared_context "posts" do
   before do
-    inferrable_relations.concat %i(posts)
+    inferrable_relations.concat %i[posts]
   end
 
-  before do |example|
+  before do |_example|
     conn.create_table :posts do
       primary_key :post_id
       foreign_key :author_id, :users

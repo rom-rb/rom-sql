@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::SQL::Associations::ManyToMany, "#call" do
   include_context "database setup"
 
@@ -55,7 +57,7 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, "#call" do
 
       positions.insert(manager_id: jane, participant_id: fred)
 
-      expect(assoc.().to_a).to eql([{ id: 1, name: "Jane", participant_id: 2}])
+      expect(assoc.().to_a).to eql([{id: 1, name: "Jane", participant_id: 2}])
     end
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rom/memory"
 
 RSpec.describe ROM::Relation, "#import" do
@@ -28,18 +30,18 @@ RSpec.describe ROM::Relation, "#import" do
       it "inserts data from another relation" do
         relation.import(source.project { [(id + 10).as(:id), full_name.as(:name)] })
 
-        expect(relation.to_a).
-          to eql([ { id: 1, name: "Jane" },
-                   { id: 2, name: "Joe" },
-                   { id: 11, name: "Jack" },
-                   { id: 12, name: "John" }])
+        expect(relation.to_a)
+          .to eql([{id: 1, name: "Jane"},
+                   {id: 2, name: "Joe"},
+                   {id: 11, name: "Jack"},
+                   {id: 12, name: "John"}])
       end
     end
 
     context "with a different gateway" do
       let(:conf) { TestConfiguration.new(default: [:sql, conn], other: [:memory]) }
       let(:source_dataset) do
-        data = [{ id: 11, name: "Jack", age: 30 }, { id: 12, name: "John", age: 40 }]
+        data = [{id: 11, name: "Jack", age: 30}, {id: 12, name: "John", age: 40}]
         ROM::Memory::Dataset.new(data)
       end
 
@@ -58,11 +60,11 @@ RSpec.describe ROM::Relation, "#import" do
       it "inserts data" do
         relation.import(source.new(source_dataset).project(source[:id], source[:name]))
 
-        expect(relation.to_a).
-          to eql([ { id: 1, name: "Jane" },
-                   { id: 2, name: "Joe" },
-                   { id: 11, name: "Jack" },
-                   { id: 12, name: "John" }])
+        expect(relation.to_a)
+          .to eql([{id: 1, name: "Jane"},
+                   {id: 2, name: "Joe"},
+                   {id: 11, name: "Jack"},
+                   {id: 12, name: "John"}])
       end
     end
   end

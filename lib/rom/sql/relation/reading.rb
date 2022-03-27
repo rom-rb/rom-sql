@@ -11,18 +11,18 @@ module ROM
       # @api public
       module Reading
         # Row-level lock modes
-        ROW_LOCK_MODES = Hash.new(update: "FOR UPDATE".freeze).update(
+        ROW_LOCK_MODES = Hash.new(update: "FOR UPDATE").update(
           # https://www.postgresql.org/docs/current/static/sql-select.html#SQL-FOR-UPDATE-SHARE
           postgres: {
-            update: "FOR UPDATE".freeze,
-            no_key_update: "FOR NO KEY UPDATE".freeze,
-            share: "FOR SHARE".freeze,
-            key_share: "FOR KEY SHARE".freeze
+            update: "FOR UPDATE",
+            no_key_update: "FOR NO KEY UPDATE",
+            share: "FOR SHARE",
+            key_share: "FOR KEY SHARE"
           },
           # https://dev.mysql.com/doc/refman/5.7/en/innodb-locking-reads.html
           mysql: {
-            update: "FOR UPDATE".freeze,
-            share: "LOCK IN SHARE MODE".freeze
+            update: "FOR UPDATE",
+            share: "LOCK IN SHARE MODE"
           }
         ).freeze
 
@@ -235,8 +235,8 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def select(*args, &block)
-          schema.project(*args, &block).(self)
+        def select(...)
+          schema.project(...).(self)
         end
         alias_method :project, :select
 
@@ -247,8 +247,8 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def select_append(*args, &block)
-          schema.merge(schema.canonical.project(*args, &block)).(self)
+        def select_append(...)
+          schema.merge(schema.canonical.project(...)).(self)
         end
 
         # Returns a copy of the relation with a SQL DISTINCT clause.
@@ -814,8 +814,10 @@ module ROM
         #
         # @param [Hash] options Options for union
         # @option options [Symbol] :alias Use the given value as the #from_self alias
-        # @option options [TrueClass, FalseClass] :all Set to true to use UNION ALL instead of UNION, so duplicate rows can occur
-        # @option options [TrueClass, FalseClass] :from_self Set to false to not wrap the returned dataset in a #from_self, use with care.
+        # @option options [TrueClass, FalseClass] :all Set to true to use UNION ALL instead of UNION, so duplicate rows
+        #   can occur
+        # @option options [TrueClass, FalseClass] :from_self Set to false to not wrap the returned dataset in a
+        #   #from_self, use with care.
         #
         # @returRelation]
         #
@@ -827,7 +829,7 @@ module ROM
           # confusing ways.
           same_relation = name == relation.name
           alias_name =  same_relation ? name : "#{name.to_sym}__#{relation.name.to_sym}"
-          opts = { alias: alias_name.to_sym, **options }
+          opts = {alias: alias_name.to_sym, **options}
 
           new_schema = schema.qualified(opts[:alias])
           new_schema.(new(dataset.__send__(__method__, relation.dataset, opts, &block)))
@@ -848,8 +850,8 @@ module ROM
         # @return [TrueClass, FalseClass]
         #
         # @api public
-        def exist?(*args, &block)
-          !where(*args, &block).limit(1).count.zero?
+        def exist?(...)
+          !where(...).limit(1).count.zero?
         end
 
         # Return if a restricted relation has 0 tuples
@@ -1050,7 +1052,7 @@ module ROM
           stmt << " OF " << Array(of).join(", ") if of
 
           if skip_locked
-            raise ArgumentError, "SKIP LOCKED cannot be used with (NO)WAIT clause" if !wait.nil?
+            raise ArgumentError, "SKIP LOCKED cannot be used with (NO)WAIT clause" unless wait.nil?
 
             stmt << " SKIP LOCKED"
           else
@@ -1101,7 +1103,7 @@ module ROM
               join_cond = JoinDSL.new(schema).(&block)
 
               if other.name.aliaz
-                join_opts = { table_alias: other.name.aliaz }
+                join_opts = {table_alias: other.name.aliaz}
               else
                 join_opts = EMPTY_HASH
               end
@@ -1111,7 +1113,8 @@ module ROM
               associations[other.name.key].join(type, self, other)
             end
           else
-            raise ArgumentError, "+other+ must be either a symbol or a relation, #{other.class} given"
+            raise ArgumentError,
+"+other+ must be either a symbol or a relation, #{other.class} given"
           end
         end
       end

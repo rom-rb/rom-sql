@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe "Inferring schema from database" do
   include_context "users"
   include_context "posts"

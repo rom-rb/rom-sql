@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
   include_context "users and tasks"
 
@@ -41,10 +43,10 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
         it "prepares joined relations" do
           relation = assoc.()
 
-          expect(relation.schema.map(&:to_sql_name)).
-            to eql([Sequel.qualify(:tags, :id),
-                    Sequel.qualify(:tags, :name),
-                    Sequel.qualify(:task_tags, :task_id)])
+          expect(relation.schema.map(&:to_sql_name))
+            .to eql([Sequel.qualify(:tags, :id),
+                     Sequel.qualify(:tags, :name),
+                     Sequel.qualify(:task_tags, :task_id)])
           expect(relation.to_a).to eql([id: 1, name: "important", task_id: 1])
         end
       end
@@ -57,10 +59,10 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
         it "prepares joined relations through other association" do
           relation = assoc.()
 
-          expect(relation.schema.map(&:to_sql_name)).
-            to eql([Sequel.qualify(:tags, :id),
-                    Sequel.qualify(:tags, :name),
-                    Sequel.qualify(:tasks, :user_id)])
+          expect(relation.schema.map(&:to_sql_name))
+            .to eql([Sequel.qualify(:tags, :id),
+                     Sequel.qualify(:tags, :name),
+                     Sequel.qualify(:tasks, :user_id)])
           expect(relation.to_a).to eql([id: 1, name: "important", user_id: 2])
         end
       end
@@ -73,9 +75,9 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
         end
 
         it "maintains original relation" do
-          relation = tags.
-                       select_append(tags[:name].as(:tag)).
-                       eager_load(assoc).call(tasks.call)
+          relation = tags
+            .select_append(tags[:name].as(:tag))
+            .eager_load(assoc).call(tasks.call)
 
           expect(relation.to_a).to eql([id: 1, tag: "important", name: "important", task_id: 1])
         end
@@ -84,22 +86,22 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
           conn[:tags].insert id: 2, name: "boring"
           conn[:task_tags].insert(tag_id: 2, task_id: 1)
 
-          relation = tags.
-                       order(tags[:name].qualified).
-                       eager_load(assoc).call(tasks.call)
+          relation = tags
+            .order(tags[:name].qualified)
+            .eager_load(assoc).call(tasks.call)
 
-          expect(relation.to_a).
-            to eql([
-                     { id: 2, name: "boring", task_id: 1 },
-                     { id: 1, name: "important", task_id: 1 }
-                   ])
+          expect(relation.to_a)
+            .to eql([
+              {id: 2, name: "boring", task_id: 1},
+              {id: 1, name: "important", task_id: 1}
+            ])
         end
       end
     end
 
     context "with two associations pointing to the same target relation" do
       before do
-        inferrable_relations.concat %i(users_tasks)
+        inferrable_relations.concat %i[users_tasks]
       end
 
       before do

@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 RSpec.describe "ROM::SQL::Schema::PostgresInferrer", :postgres, :helpers do
   include_context "database setup"
 
   before do
-    inferrable_relations.concat %i(test_inferrence)
+    inferrable_relations.concat %i[test_inferrence]
   end
 
-  colors = %w(red orange yellow green blue purple)
+  colors = %w[red orange yellow green blue purple]
 
   before do
     conn.execute("create extension if not exists hstore")
@@ -76,8 +78,8 @@ RSpec.describe "ROM::SQL::Schema::PostgresInferrer", :postgres, :helpers do
 
     it "can infer primary key on enum column" do
       expect(schema.to_h).to eql(attributes(
-        colours: ROM::SQL::Types::String.enum(*colors).meta(primary_key: true)
-      ))
+                                   colours: ROM::SQL::Types::String.enum(*colors).meta(primary_key: true)
+                                 ))
     end
   end
 
@@ -178,7 +180,7 @@ RSpec.describe "ROM::SQL::Schema::PostgresInferrer", :postgres, :helpers do
     let(:point_2) { ROM::SQL::Postgres::Values::Point.new(8.5, 35.5) }
     let(:line) { ROM::SQL::Postgres::Values::Line.new(2.3, 4.9, 3.1415) }
     let(:dns) { IPAddr.new("8.8.8.8") }
-    let(:mapping) { Hash["hot" => "cold"] }
+    let(:mapping) { {"hot" => "cold"} }
     let(:circle) { ROM::SQL::Postgres::Values::Circle.new(point, 1.0) }
     let(:lseg) { ROM::SQL::Postgres::Values::LineSegment.new(point, point_2) }
     let(:box_corrected) { ROM::SQL::Postgres::Values::Box.new(point_2, point) }
@@ -193,22 +195,22 @@ RSpec.describe "ROM::SQL::Schema::PostgresInferrer", :postgres, :helpers do
     let(:open_path) { ROM::SQL::Postgres::Values::Path.new([point, point_2], :open) }
     let(:ltree) { ROM::Types::Values::TreePath.new("Top.Countries.Europe.Russia") }
 
-    let(:int4range) { values::Range.new(0, 2, :'[)') }
-    let(:int8range) { values::Range.new(5, 7, :'[)') }
-    let(:numrange)  { values::Range.new(3, 9, :'[)') }
+    let(:int4range) { values::Range.new(0, 2, :"[)") }
+    let(:int8range) { values::Range.new(5, 7, :"[)") }
+    let(:numrange)  { values::Range.new(3, 9, :"[)") }
 
     let(:tsrange)   do
       timestamp = Time.parse("2017-09-25 07:00:00")
-      values::Range.new(timestamp, timestamp + 3600 * 8, :'[)')
+      values::Range.new(timestamp, timestamp + (3600 * 8), :"[)")
     end
 
     let(:tstzrange) do
       timestamp = Time.parse("2017-09-25 07:00:00 +0000")
-      values::Range.new(timestamp, timestamp + 3600 * 8, :'[)')
+      values::Range.new(timestamp, timestamp + (3600 * 8), :"[)")
     end
 
     let(:daterange) do
-      values::Range.new(Date.today, Date.today.next_day, :'[)')
+      values::Range.new(Date.today, Date.today.next_day, :"[)")
     end
 
     let(:relation) { container.relations[:test_bidirectional] }

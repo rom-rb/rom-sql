@@ -12,7 +12,7 @@ module ROM
 
         defines :type_builders
 
-        CONSTRAINT_DB_TYPE = "add_constraint".freeze
+        CONSTRAINT_DB_TYPE = "add_constraint"
 
         option :type_builder
 

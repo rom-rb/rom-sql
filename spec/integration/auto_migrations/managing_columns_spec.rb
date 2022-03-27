@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
   include_context "database setup"
 
@@ -34,22 +36,21 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
       expect(attributes.map(&:to_ast))
         .to eql([
-                  [:attribute,
-                   [:id,
-                    [:nominal, [Integer, {}]],
-                    primary_key: true, source: :users, alias: nil]],
-                  [:attribute, [:name, [:nominal, [String, {}]], source: :users, alias: nil]],
-                  [:attribute,
-                   [:email,
-                    [:sum,
-                     [[:constrained,
-                       [[:nominal, [NilClass, {}]],
-                        [:predicate, [:type?, [[:type, NilClass], [:input, ROM::Undefined]]]],
-                        ]],
-                      [:nominal, [String, {}]],
-                      {}]],
-                    source: :users, alias: nil]]
-                ])
+          [:attribute,
+           [:id,
+            [:nominal, [Integer, {}]],
+            {primary_key: true, source: :users, alias: nil}]],
+          [:attribute, [:name, [:nominal, [String, {}]], {source: :users, alias: nil}]],
+          [:attribute,
+           [:email,
+            [:sum,
+             [[:constrained,
+               [[:nominal, [NilClass, {}]],
+                [:predicate, [:type?, [[:type, NilClass], [:input, ROM::Undefined]]]]]],
+              [:nominal, [String, {}]],
+              {}]],
+            {source: :users, alias: nil}]]
+        ])
     end
   end
 
@@ -65,21 +66,20 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
       expect(attributes[1].to_ast)
         .to eql(
-              [:attribute, [:name, [:nominal, [String, {}]], source: :users, alias: nil]]
-            )
+          [:attribute, [:name, [:nominal, [String, {}]], {source: :users, alias: nil}]]
+        )
       expect(attributes[2].to_ast)
         .to eql(
-              [:attribute,
-               [:email,
-                [:sum,
-                 [[:constrained,
-                   [[:nominal, [NilClass, {}]],
-                    [:predicate, [:type?, [[:type, NilClass], [:input, ROM::Undefined]]]],
-                    ]],
-                  [:nominal, [String, {}]],
-                  {}]],
-                source: :users, alias: nil]]
-            )
+          [:attribute,
+           [:email,
+            [:sum,
+             [[:constrained,
+               [[:nominal, [NilClass, {}]],
+                [:predicate, [:type?, [[:type, NilClass], [:input, ROM::Undefined]]]]]],
+              [:nominal, [String, {}]],
+              {}]],
+            {source: :users, alias: nil}]]
+        )
     end
   end
 
@@ -96,7 +96,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
     it "removes columns from a table" do
       gateway.auto_migrate!(conf, inline: true)
 
-      expect(attributes.map(&:name)).to eql(%i(id name email))
+      expect(attributes.map(&:name)).to eql(%i[id name email])
     end
   end
 

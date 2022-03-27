@@ -50,7 +50,9 @@ module ROM
           foreign_keys = foreign_keys_from_database(gateway, schema, idx)
 
           {**rest,
-            attributes: attributes.map { |attr| mark_fk(mark_indexed(attr, indexes), foreign_keys) },
+            attributes: attributes.map { |attr|
+                          mark_fk(mark_indexed(attr, indexes), foreign_keys)
+                        },
             foreign_keys: foreign_keys,
             indexes: indexes}
         end
@@ -96,18 +98,18 @@ module ROM
 
         # @api private
         def indexes_from_attributes(attributes)
-          attributes.
-            select(&:indexed?).
-            map { |attr| SQL::Index.new([attr.unwrap]) }.
-            to_set
+          attributes
+            .select(&:indexed?)
+            .map { |attr| SQL::Index.new([attr.unwrap]) }
+            .to_set
         end
 
         # @api private
         def foreign_keys_from_attributes(attributes)
-          attributes.
-            select(&:foreign_key?).
-            map { |attr| SQL::ForeignKey.new([attr.unwrap], attr.target) }.
-            to_set
+          attributes
+            .select(&:foreign_key?)
+            .map { |attr| SQL::ForeignKey.new([attr.unwrap], attr.target) }
+            .to_set
         end
 
         # @api private

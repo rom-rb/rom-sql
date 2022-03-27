@@ -123,7 +123,7 @@ module ROM
           end
 
           def any(_type, expr, value)
-            Attribute[SQL::Types::Bool].meta(sql_expr: { value => expr.pg_array.any })
+            Attribute[SQL::Types::Bool].meta(sql_expr: {value => expr.pg_array.any})
           end
 
           def contained_by(type, expr, other)

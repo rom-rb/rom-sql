@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe "Commands / Delete" do
   include_context "users and tasks"
 

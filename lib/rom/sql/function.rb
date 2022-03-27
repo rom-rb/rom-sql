@@ -20,9 +20,9 @@ module ROM
           when :end then "UNBOUNDED FOLLOWING"
           else
             if value > 0
-              "#{ value } FOLLOWING"
+              "#{value} FOLLOWING"
             else
-              "#{ value.abs } PRECEDING"
+              "#{value.abs} PRECEDING"
             end
           end
         end
@@ -34,13 +34,14 @@ module ROM
       WINDOW_FRAMES = Hash.new do |cache, frame|
         type = frame.key?(:rows) ? "ROWS" : "RANGE"
         bounds = frame[:rows] || frame[:range]
-        cache[frame] = "#{ type } BETWEEN #{ frame_limit(bounds[0]) } AND #{ frame_limit(bounds[1])  }"
+        cache[frame] =
+          "#{type} BETWEEN #{frame_limit(bounds[0])} AND #{frame_limit(bounds[1])}"
       end
 
       WINDOW_FRAMES[nil] = nil
-      WINDOW_FRAMES[:all] = WINDOW_FRAMES[rows: [:start, :end]]
-      WINDOW_FRAMES[:rows] = WINDOW_FRAMES[rows: [:start, :current]]
-      WINDOW_FRAMES[range: :current] = WINDOW_FRAMES[range: [:current, :current]]
+      WINDOW_FRAMES[:all] = WINDOW_FRAMES[rows: %i[start end]]
+      WINDOW_FRAMES[:rows] = WINDOW_FRAMES[rows: %i[start current]]
+      WINDOW_FRAMES[range: :current] = WINDOW_FRAMES[range: %i[current current]]
 
       # Return a new attribute with an alias
       #
@@ -104,7 +105,7 @@ module ROM
       # @api public
       def is(other)
         ::ROM::SQL::Attribute[::ROM::SQL::Types::Bool].meta(
-          sql_expr: ::Sequel::SQL::BooleanExpression.new(:'=', func, other)
+          sql_expr: ::Sequel::SQL::BooleanExpression.new(:"=", func, other)
         )
       end
 
@@ -209,7 +210,7 @@ module ROM
       def filter(condition = Undefined, &block)
         if block
           conditions = schema.restriction(&block)
-          conditions = conditions & condition unless condition.equal?(Undefined)
+          conditions &= condition unless condition.equal?(Undefined)
         else
           conditions = condition
         end

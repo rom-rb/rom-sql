@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rom/sql/gateway"
 
 RSpec.describe ROM::SQL::Gateway, "#initialize" do
@@ -7,8 +9,8 @@ RSpec.describe ROM::SQL::Gateway, "#initialize" do
 
   context "with option hash" do
     let(:uri) do
-      { adapter: "sqlite",
-        database: ":memory:" }
+      {adapter: "sqlite",
+       database: ":memory:"}
     end
 
     it "establishes connection" do

@@ -48,7 +48,7 @@ module ROM
               next if index.partial?
 
               attributes = index.to_a
-              meth_name = :"by_#{ attributes.map(&:name).join("_and_") }"
+              meth_name = :"by_#{attributes.map(&:name).join("_and_")}"
 
               next if generated.include?(meth_name)
 

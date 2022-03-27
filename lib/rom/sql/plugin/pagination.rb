@@ -102,7 +102,7 @@ module ROM
             per_page = per_page.to_i
 
             self.class.new(
-              dataset.offset((current_page-1)*per_page).limit(per_page),
+              dataset.offset((current_page - 1) * per_page).limit(per_page),
               current_page: current_page, per_page: per_page
             )
           end

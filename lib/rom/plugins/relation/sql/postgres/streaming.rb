@@ -13,7 +13,7 @@ module ROM
 
             class StreamingNotSupportedError < StandardError; end
 
-            def self.apply(target, **opts)
+            def self.apply(target, **_opts)
               conn = registry.gateways[target.config.component.gateway].connection
 
               return unless conn.database_type.to_sym == :postgres

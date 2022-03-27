@@ -29,18 +29,18 @@ module ROM
         Types::Date => "date",
         Types::Bool => "boolean",
         Types::Decimal => "numeric",
-        Types::Float => "float",
+        Types::Float => "float"
       )
 
       def call(type)
         return type.meta[:db_type] if type.meta[:db_type]
 
-        meta = type.meta[:read] ? { read: type.meta[:read] } : EMPTY_HASH
+        meta = type.meta[:read] ? {read: type.meta[:read]} : EMPTY_HASH
 
         self.class.mapping.fetch(type.with(meta: meta)) {
           if block_given?
             yield(type)
-          end or raise "Cannot serialize #{ type }"
+          end or raise "Cannot serialize #{type}"
         }
       end
     end

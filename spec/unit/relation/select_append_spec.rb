@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::Relation, "#select_append" do
   subject(:relation) { relations[:tasks] }
 
@@ -12,7 +14,7 @@ RSpec.describe ROM::Relation, "#select_append" do
     end
 
     it "supports blocks" do
-      selected = relation.select(:id).select_append { string::upper(title).as(:title) }
+      selected = relation.select(:id).select_append { string.upper(title).as(:title) }
 
       expect(selected.schema.map(&:name)).to eql(%i[id title])
       expect(selected.first).to eql(id: 1, title: "JOE'S TASK")
@@ -22,7 +24,7 @@ RSpec.describe ROM::Relation, "#select_append" do
       with_adapters(:postgres) do
         example "row_number" do
           selected = relation.select(:id).select_append {
-            [integer::row_number().over(partition: title).as(:row_numbers)]
+            [integer.row_number.over(partition: title).as(:row_numbers)]
           }
 
           expect(selected.dataset.sql).to eql(<<~SQL.strip.gsub("\n", " "))

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::Relation, "#rename" do
   subject(:relation) { container.relations[:users] }
 

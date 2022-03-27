@@ -1,7 +1,8 @@
-RSpec.shared_context "notes" do
+# frozen_string_literal: true
 
+RSpec.shared_context "notes" do
   before do
-    inferrable_relations.concat %i(notes)
+    inferrable_relations.concat %i[notes]
   end
 
   before do |example|

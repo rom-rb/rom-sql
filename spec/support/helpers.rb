@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Helpers
   def assoc_name(*args)
     ROM::Relation::Name[*args]

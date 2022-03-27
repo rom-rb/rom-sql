@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "concurrent/atomic/count_down_latch"
 
 RSpec.describe ROM::Relation, "#lock" do
@@ -23,7 +25,7 @@ RSpec.describe ROM::Relation, "#lock" do
     with_adapters :postgres, :mysql, :oracle do
       it "locks rows for update" do
         Thread.new do
-          relation.lock do |rel|
+          relation.lock do |_rel|
             latch.count_down
 
             sleep timeout
@@ -87,7 +89,7 @@ RSpec.describe ROM::Relation, "#lock" do
 
     it "locks with UPDATE OF" do
       expect(lock_style(relation.lock(of: :name))).to eql("FOR UPDATE OF name")
-      expect(lock_style(relation.lock(of: %i(id name)))).to eql("FOR UPDATE OF id, name")
+      expect(lock_style(relation.lock(of: %i[id name]))).to eql("FOR UPDATE OF id, name")
     end
   end
 end

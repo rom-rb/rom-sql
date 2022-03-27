@@ -19,8 +19,7 @@ module ROM
           sql_expr: alias_sql_expr(sql_expr, new_alias_name)
         )
       end
-      alias as aliased
-
+      alias_method :as, :aliased
 
       # Return true if this attribute is an aliased projection
       #
@@ -46,7 +45,7 @@ module ROM
       #
       # @api private
       def aliased_projection?
-        self.meta[:sql_expr].is_a?(Sequel::SQL::AliasedExpression)
+        meta[:sql_expr].is_a?(Sequel::SQL::AliasedExpression)
       end
 
       private

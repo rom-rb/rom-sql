@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::Relation, "#having" do
   subject(:relation) do
     relations[:users]
       .inner_join(:tasks, user_id: :id)
       .qualified
       .select_group(:id, :name)
-      .select_append { integer::count(:tasks).as(:task_count) }
+      .select_append { integer.count(:tasks).as(:task_count) }
   end
 
   include_context "users and tasks"
@@ -15,8 +17,8 @@ RSpec.describe ROM::Relation, "#having" do
     end
 
     it "restricts a relation using HAVING clause" do
-      expect(relation.having { count(id.qualified) >= 2 }.to_a).
-        to eq([{ id: 2, name: "Joe", task_count: 2 }])
+      expect(relation.having { count(id.qualified) >= 2 }.to_a)
+        .to eq([{id: 2, name: "Joe", task_count: 2}])
     end
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 RSpec.describe ROM::SQL::Attribute, :postgres do
@@ -77,8 +79,8 @@ RSpec.describe ROM::SQL::Attribute, :postgres do
 
   describe "#concat" do
     it "returns a concat function attribute" do
-      expect(users[:id].concat(users[:name]).as(:uid).sql_literal(ds)).
-        to eql(%(CONCAT("users"."id", ' ', "users"."name") AS "uid"))
+      expect(users[:id].concat(users[:name]).as(:uid).sql_literal(ds))
+        .to eql(%(CONCAT("users"."id", ' ', "users"."name") AS "uid"))
     end
   end
 
@@ -89,15 +91,15 @@ RSpec.describe ROM::SQL::Attribute, :postgres do
         1 => string_type.value("first"),
         else: string_type.value("second")
       }
-      expect(users[:id].case(mapping).as(:mapped_id).sql_literal(ds)).
-        to eql(%[(CASE "users"."id" WHEN 1 THEN 'first' ELSE 'second' END) AS "mapped_id"])
+      expect(users[:id].case(mapping).as(:mapped_id).sql_literal(ds))
+        .to eql(%[(CASE "users"."id" WHEN 1 THEN 'first' ELSE 'second' END) AS "mapped_id"])
     end
   end
 
   describe "#aliased" do
     it "can alias a previously aliased attribute" do
-      expect(users[:id].as(:uid).as(:uuid).sql_literal(ds)).
-        to eql(%("users"."id" AS "uuid"))
+      expect(users[:id].as(:uid).as(:uuid).sql_literal(ds))
+        .to eql(%("users"."id" AS "uuid"))
     end
   end
 
@@ -107,18 +109,18 @@ RSpec.describe ROM::SQL::Attribute, :postgres do
 
       ROM::SQL::TypeExtensions.register(type) do
         def custom(_type, _expr, value)
-          ROM::SQL::Attribute[ROM::SQL::Types::Bool].
-            meta(sql_expr: Sequel::SQL::BooleanExpression.new(:'=', 1, value))
+          ROM::SQL::Attribute[ROM::SQL::Types::Bool]
+            .meta(sql_expr: Sequel::SQL::BooleanExpression.new(:"=", 1, value))
         end
       end
     end
 
-    let(:equality_expr) { Sequel::SQL::BooleanExpression.new(:'=', 1, 2) }
+    let(:equality_expr) { Sequel::SQL::BooleanExpression.new(:"=", 1, 2) }
 
     shared_context "type methods" do
       it "successfully invokes type-specific methods" do
-        expect(attribute.custom(2)).
-          to eql(ROM::SQL::Attribute[ROM::SQL::Types::Bool].meta(sql_expr: equality_expr))
+        expect(attribute.custom(2))
+          .to eql(ROM::SQL::Attribute[ROM::SQL::Types::Bool].meta(sql_expr: equality_expr))
       end
     end
 

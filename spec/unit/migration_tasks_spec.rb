@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 namespace :db do
   task :setup do
-    #noop
+    # noop
   end
 end
 
@@ -94,7 +96,8 @@ RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
 
         expect {
           Rake::Task["db:create_migration"].execute(
-            Rake::TaskArguments.new([:name], [name]))
+            Rake::TaskArguments.new([:name], [name])
+          )
         }.to output("<= migration file created #{path}\n").to_stdout
       end
 
@@ -103,7 +106,8 @@ RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
 
         expect {
           Rake::Task["db:create_migration"].execute(
-            Rake::TaskArguments.new([:name, :version], [name, version]))
+            Rake::TaskArguments.new([:name, :version], [name, version])
+          )
         }.to output("<= migration file created #{path}\n").to_stdout
       end
     end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
@@ -23,80 +25,80 @@ RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
   describe "#call" do
     it "evaluates the block and returns an array with attribute types" do
       literals = dsl
-                   .call { integer::count(id).as(:count) }
-                   .map { |attr| attr.sql_literal(ds) }
+        .call { integer.count(id).as(:count) }
+        .map { |attr| attr.sql_literal(ds) }
 
       expect(literals).to eql([%(COUNT("id") AS "count")])
     end
 
     it "supports chaining attribute db functions" do
       literals = dsl
-                   .call { meta.pg_jsonb.get_text("name").as(:name) }
-                   .map { |attr| attr.sql_literal(ds) }
+        .call { meta.pg_jsonb.get_text("name").as(:name) }
+        .map { |attr| attr.sql_literal(ds) }
 
       expect(literals).to eql([%{("meta" ->> 'name') AS "name"}])
     end
 
     it "supports functions with args and chaining with other functions" do
       literals = dsl
-                   .call { integer::count(id.qualified).distinct }
-                   .map { |attr| attr.sql_literal(ds) }
+        .call { integer.count(id.qualified).distinct }
+        .map { |attr| attr.sql_literal(ds) }
 
       expect(literals).to eql([%(COUNT(DISTINCT "users"."id"))])
     end
 
     it "supports functions with args and chaining with other functions and an alias" do
       literals = dsl
-                   .call { integer::count(id.qualified).distinct.as(:count) }
-                   .map { |attr| attr.sql_literal(ds) }
+        .call { integer.count(id.qualified).distinct.as(:count) }
+        .map { |attr| attr.sql_literal(ds) }
 
       expect(literals).to eql([%(COUNT(DISTINCT "users"."id") AS "count")])
     end
 
     it "supports functions with arg being an attribute" do
       literals = dsl
-                   .call { integer::count(id).as(:count) }
-                   .map { |attr| attr.sql_literal(ds) }
+        .call { integer.count(id).as(:count) }
+        .map { |attr| attr.sql_literal(ds) }
 
       expect(literals).to eql([%(COUNT("id") AS "count")])
     end
 
     it "supports functions with any as return type" do
       literals = dsl
-                   .call { function(:count, :id).as(:count) }
-                   .map { |attr| attr.sql_literal(ds) }
+        .call { function(:count, :id).as(:count) }
+        .map { |attr| attr.sql_literal(ds) }
 
       expect(literals).to eql([%(COUNT("id") AS "count")])
     end
 
     it "supports multi-agrs functions with any as return type" do
       literals = dsl
-                   .call { function(:if, id > 0, id, nil).as(:id) }
-                   .map { |attr| attr.sql_literal(ds) }
+        .call { function(:if, id > 0, id, nil).as(:id) }
+        .map { |attr| attr.sql_literal(ds) }
 
       expect(literals).to eql([%(IF(("id" > 0), "id", NULL) AS "id")])
     end
 
     it "supports functions with arg being a qualified attribute" do
       literals = dsl
-                   .call { integer::count(id.qualified).as(:count) }
-                   .map { |attr| attr.sql_literal(ds) }
+        .call { integer.count(id.qualified).as(:count) }
+        .map { |attr| attr.sql_literal(ds) }
 
       expect(literals).to eql([%(COUNT("users"."id") AS "count")])
     end
 
     it "supports selecting literal strings" do
       literals = dsl
-                   .call { `'event'`.as(:type) }
-                   .map { |attr| attr.sql_literal(ds) }
+        .call { `'event'`.as(:type) }
+        .map { |attr| attr.sql_literal(ds) }
 
       expect(literals).to eql([%('event' AS "type")])
     end
 
     it "supports functions without return value" do
       literals = dsl
-                   .call { void::pg_advisory_lock(1).as(:lock) }
-                   .map { |attr| attr.sql_literal(ds) }
+        .call { void.pg_advisory_lock(1).as(:lock) }
+        .map { |attr| attr.sql_literal(ds) }
 
       expect(literals).to eql([%(PG_ADVISORY_LOCK(1) AS "lock")])
     end
@@ -112,7 +114,7 @@ RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
 
     it "supports exists operator" do
       rel = double(dataset: ds)
-      schema = dsl.call { |r| exists(rel).as(:subq) }
+      schema = dsl.call { |_r| exists(rel).as(:subq) }
       literals = schema.map { |attr| attr.sql_literal(ds) }
       attr = schema.to_a[0]
 
@@ -140,7 +142,7 @@ RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
     it "returns sql functions with return type specified" do
       function = ROM::SQL::Function.new(ROM::SQL::Types::String).upper(schema[:name])
 
-      expect(dsl.string::upper(schema[:name])).to eql(function)
+      expect(dsl.string.upper(schema[:name])).to eql(function)
     end
 
     it "raises NoMethodError when there is no matching attribute or type" do

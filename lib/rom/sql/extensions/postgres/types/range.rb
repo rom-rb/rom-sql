@@ -9,10 +9,10 @@ module ROM
     module Postgres
       module Values
         Range = ::Struct.new(:lower, :upper, :bounds) do
-          PAREN_LEFT  = "(".freeze
-          PAREN_RIGHT = ")".freeze
+          PAREN_LEFT  = "("
+          PAREN_RIGHT = ")"
 
-          def initialize(lower, upper, bounds = :'[)')
+          def initialize(lower, upper, bounds = :"[)")
             super
           end
 
@@ -38,10 +38,10 @@ module ROM
           int8range: Sequel::Postgres::PGRange::Parser.new(
             "int8range", SQL::Types::Coercible::Integer
           ),
-          numrange:  Sequel::Postgres::PGRange::Parser.new(
+          numrange: Sequel::Postgres::PGRange::Parser.new(
             "numrange", SQL::Types::Coercible::Integer
           ),
-          tsrange:   Sequel::Postgres::PGRange::Parser.new(
+          tsrange: Sequel::Postgres::PGRange::Parser.new(
             "tsrange", ::Time.method(:parse)
           ),
           tstzrange: Sequel::Postgres::PGRange::Parser.new(
@@ -67,8 +67,8 @@ module ROM
             Values::Range.new(
               pg_range.begin,
               pg_range.end,
-              [pg_range.exclude_begin? ? :'(' : :'[',
-               pg_range.exclude_end? ? :')' : :']']
+              [pg_range.exclude_begin? ? :"(" : :"[",
+               pg_range.exclude_end? ? :")" : :"]"]
               .join("").to_sym
             )
           end
@@ -79,10 +79,10 @@ module ROM
           Type(name) do
             type = SQL::Types.Nominal(Values::Range).constructor do |range|
               format("%s%s,%s%s",
-                     range.exclude_begin? ? :'(' : :'[',
+                     range.exclude_begin? ? :"(" : :"[",
                      range.lower,
                      range.upper,
-                     range.exclude_end? ? :')' : :']')
+                     range.exclude_end? ? :")" : :"]")
             end
 
             type.meta(read: read_type)

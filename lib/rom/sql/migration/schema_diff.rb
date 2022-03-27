@@ -46,7 +46,6 @@ module ROM
         end
 
         class TableAltered < TableDiff
-
           option :attribute_changes, default: -> { EMPTY_ARRAY }
 
           option :index_changes, default: -> { EMPTY_ARRAY }
@@ -135,10 +134,10 @@ module ROM
         class IndexAdded < IndexDiff
           def options
             options = {}
-            options[:name] = index.name if !index.name.nil?
+            options[:name] = index.name unless index.name.nil?
             options[:unique] = true if index.unique?
-            options[:type] = index.type if !index.type.nil?
-            options[:where] = index.predicate if !index.predicate.nil?
+            options[:type] = index.type unless index.type.nil?
+            options[:where] = index.predicate unless index.predicate.nil?
             options
           end
         end
@@ -146,7 +145,7 @@ module ROM
         class IndexRemoved < IndexDiff
           def options
             options = {}
-            options[:name] = index.name if !index.name.nil?
+            options[:name] = index.name unless index.name.nil?
             options
           end
         end

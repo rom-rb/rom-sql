@@ -9,7 +9,7 @@ module ROM
         name, _, meta_options = node
 
         if meta_options[:wrapped]
-          [extract_wrapped_name(node), from: meta_options[:alias]]
+          [extract_wrapped_name(node), {from: meta_options[:alias]}]
         else
           [name]
         end

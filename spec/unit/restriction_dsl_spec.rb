@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 RSpec.describe ROM::SQL::RestrictionDSL, :sqlite, helpers: true do

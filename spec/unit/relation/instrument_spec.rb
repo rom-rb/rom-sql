@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::SQL::Relation, "#instrument", :sqlite do
   include_context "database setup"
 

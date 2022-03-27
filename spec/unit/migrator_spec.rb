@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::SQL::Migration::Migrator, :postgres, skip_tables: true do
   include_context "database setup"
 
   subject(:migrator) { ROM::SQL::Migration::Migrator.new(conn, **options) }
 
-  let(:options) { { path: TMP_PATH.join("test/migrations") } }
+  let(:options) { {path: TMP_PATH.join("test/migrations")} }
 
   describe "#create_file" do
     it "creates a migration file under configured path with specified version and name" do

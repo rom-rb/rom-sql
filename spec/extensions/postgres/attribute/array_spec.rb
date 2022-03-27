@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe "ROM::SQL::Attribute / PG array", :postgres do
   subject(:relation) { relations[:pg_arrays] }
 
@@ -25,7 +27,7 @@ RSpec.describe "ROM::SQL::Attribute / PG array", :postgres do
 
       tuples = relation.to_a
 
-      expect(tuples).to eql([{ numbers: [3, 1, 2] }])
+      expect(tuples).to eql([{numbers: [3, 1, 2]}])
 
       expect(tuples[0][:numbers]).to be_instance_of(Array)
     end
@@ -39,11 +41,11 @@ RSpec.describe "ROM::SQL::Attribute / PG array", :postgres do
     end
 
     it "loads an array with json hashes" do
-      relation.command(:create).call(meta: [{ one: "1", two: "2" }])
+      relation.command(:create).call(meta: [{one: "1", two: "2"}])
 
       tuples = relation.to_a
 
-      expect(tuples).to eql([{ meta: [{ "one" => "1", "two" => "2" }] }])
+      expect(tuples).to eql([{meta: [{"one" => "1", "two" => "2"}]}])
 
       expect(tuples[0][:meta]).to be_instance_of(Array)
       expect(tuples[0][:meta][0]).to be_instance_of(Hash)

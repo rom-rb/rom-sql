@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::Relation, "#exists", relations: false do
   include_context "users and tasks"
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::Relation, "#union" do
   subject(:relation) { container.relations[:users] }
 
@@ -22,8 +24,8 @@ RSpec.describe ROM::Relation, "#union" do
   end
 
   with_adapters do
-    let(:tasks) { container.relations[:tasks]}
-    let(:task_tags) { container.relations[:task_tags]}
+    let(:tasks) { container.relations[:tasks] }
+    let(:task_tags) { container.relations[:task_tags] }
 
     context "when the relations unioned have the same name" do
       let(:relation1) { relation.where(id: 1).select(:id, :name) }
@@ -33,8 +35,8 @@ RSpec.describe ROM::Relation, "#union" do
         result = relation1.union(relation2)
 
         expect(result.to_a).to match_array([
-          { id: 1, name: "Jane" },
-          { id: 2, name: "Joe" }
+          {id: 1, name: "Jane"},
+          {id: 2, name: "Joe"}
         ])
       end
 
@@ -49,8 +51,8 @@ RSpec.describe ROM::Relation, "#union" do
         result = unioned.select_append(unioned[:title].as(:task_title))
 
         expect(result.to_a).to match_array([
-          {:id=>1, :task_title=>"Joe's task", :title=>"Joe's task", :user_id=>2},
-          {:id=>2, :task_title=>"Jane's task", :title=>"Jane's task", :user_id=>1},
+          {id: 1, task_title: "Joe's task", title: "Joe's task", user_id: 2},
+          {id: 2, task_title: "Jane's task", title: "Jane's task", user_id: 1}
         ])
       end
 

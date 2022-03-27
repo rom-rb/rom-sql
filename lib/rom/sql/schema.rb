@@ -140,7 +140,7 @@ module ROM
       #
       # @api public
       def call(relation)
-        relation.new(relation.dataset.select(*self.qualified_projection), schema: self)
+        relation.new(relation.dataset.select(*qualified_projection), schema: self)
       end
 
       # Return an empty schema

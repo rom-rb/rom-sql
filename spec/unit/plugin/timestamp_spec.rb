@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe "Plugin / Timestamp" do
   include_context "users"
   include_context "notes"
@@ -73,8 +75,8 @@ RSpec.describe "Plugin / Timestamp" do
 
     it "only updates specified timestamps" do
       initial = container.commands[:notes][:create].call(text: "testing")
-      sleep 1  # Unfortunate, but unless I start injecting clocks into the
-               # command, this is needed to make sure the time actually changes
+      sleep 1 # Unfortunate, but unless I start injecting clocks into the
+      # command, this is needed to make sure the time actually changes
       updated = container.commands[:notes][:update].call(text: "updated test").first
 
       expect(updated[:created_at]).to eq initial[:created_at]
@@ -98,7 +100,7 @@ RSpec.describe "Plugin / Timestamp" do
       create_user = container.commands[:users][:create].curry(name: "John Doe")
       create_note = container.commands[:notes][:create_with_user].curry(text: "new note")
 
-      time   = DateTime.now
+      time = DateTime.now
       command = create_user >> create_note
 
       result = command.call
@@ -109,7 +111,6 @@ RSpec.describe "Plugin / Timestamp" do
       expect(result[:user_id]).not_to be_nil
       expect(created).to be_within(1).of(time)
       expect(updated).to eq created
-   end
-
+    end
   end
 end

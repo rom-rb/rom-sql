@@ -60,10 +60,11 @@ module ROM
         # Yields tuples for insertion or return an enumerator
         #
         # @api private
-        def with_input_tuples(tuples)
+        def with_input_tuples(tuples, &block)
           input_tuples = Array([tuples]).flatten(1).map
           return input_tuples unless block_given?
-          input_tuples.each { |tuple| yield(tuple) }
+
+          input_tuples.each(&block)
         end
       end
     end

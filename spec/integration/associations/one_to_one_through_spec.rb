@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::SQL::Associations::OneToOneThrough, helpers: true do
   include_context "users"
   include_context "accounts"

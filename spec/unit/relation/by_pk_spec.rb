@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::Relation, "#by_pk" do
   include_context "users and tasks"
 
@@ -26,7 +28,7 @@ RSpec.describe ROM::Relation, "#by_pk" do
       subject(:relation) { relations[:task_tags] }
 
       it "restricts a relation by is PK" do
-        expect(relation.by_pk(1, 1).to_a).to eql([{ tag_id: 1, task_id: 1 }])
+        expect(relation.by_pk(1, 1).to_a).to eql([{tag_id: 1, task_id: 1}])
       end
 
       it "works even when PK is not projected" do
@@ -55,7 +57,8 @@ RSpec.describe ROM::Relation, "#by_pk" do
         expect { relation.by_pk(1) }.to \
           raise_error(
             ROM::SQL::MissingPrimaryKeyError,
-            "Missing primary key for :people")
+            "Missing primary key for :people"
+          )
       end
     end
   end
