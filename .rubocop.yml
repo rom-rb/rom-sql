@@ -1,6 +1,6 @@
 # This is a config synced from rom-rb/template-gem repo
 AllCops:
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 3.0
   NewCops: enable
   Exclude:
     - spec/support/coverage.rb
