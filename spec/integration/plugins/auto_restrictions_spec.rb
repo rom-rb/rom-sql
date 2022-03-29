@@ -17,22 +17,18 @@ RSpec.describe "Plugins / :auto_restrictions", seeds: true do
     end
 
     context "with an inferred schema" do
-      before do
-        conf.plugin(:sql, relations: :auto_restrictions)
-      end
-
       include_context "auto-generated restriction view"
     end
 
     context "with two containers" do
       let(:confs) do
-        { one: ROM::Configuration.new(:sql, conn),
-          two: ROM::Configuration.new(:sql, conn) }
+        { one: ROM::Setup.new(:sql, conn),
+          two: ROM::Setup.new(:sql, conn) }
       end
 
       let(:containers) do
-        { one: ROM.container(confs[:one]),
-          two: ROM.container(confs[:two]) }
+        { one: ROM.setup(confs[:one]),
+          two: ROM.setup(confs[:two]) }
       end
 
       before do
@@ -67,8 +63,6 @@ RSpec.describe "Plugins / :auto_restrictions", seeds: true do
               index :user_id, :title
             end
           end
-
-          use :auto_restrictions
         end
       end
 
@@ -94,8 +88,6 @@ RSpec.describe "Plugins / :auto_restrictions", seeds: true do
               index :title, predicate: "title is not null"
             end
           end
-
-          use :auto_restrictions
         end
 
         expect(tasks).not_to respond_to(:by_title)

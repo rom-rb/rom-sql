@@ -11,20 +11,20 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
 
       before do
         conf.relation(:task_tags) do
-          schema(infer: true) do
-            associations do
-              belongs_to :task
-              belongs_to :tag
-            end
+          schema(infer: true)
+
+          associations do
+            belongs_to :task
+            belongs_to :tag
           end
         end
 
         conf.relation(:tasks) do
-          schema(infer: true) do
-            associations do
-              has_many :task_tags
-              has_many :tags, through: :task_tags
-            end
+          schema(infer: true)
+
+          associations do
+            has_many :task_tags
+            has_many :tags, through: :task_tags
           end
         end
       end
@@ -110,30 +110,31 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
         end
 
         conf.relation(:users) do
-          schema(infer: true) do
-            associations do
-              has_many :users_tasks
-              has_many :tasks, through: :users_tasks
-              has_many :tasks, as: :priv_tasks
-            end
+          schema(infer: true)
+
+          associations do
+            has_many :users_tasks
+            has_many :tasks, through: :users_tasks
+            has_many :tasks, as: :priv_tasks
           end
         end
 
         conf.relation(:users_tasks) do
-          schema(infer: true) do
-            associations do
-              belongs_to :user
-              belongs_to :task
-            end
+          schema(infer: true)
+
+          associations do
+            belongs_to :user
+            belongs_to :task
           end
         end
 
         conf.relation(:tasks) do
           schema(infer: true) do
-            associations do
-              has_many :users_tasks
-              has_many :users, through: :users_tasks
-            end
+          end
+
+          associations do
+            has_many :users_tasks
+            has_many :users, through: :users_tasks
           end
         end
       end

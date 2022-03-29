@@ -9,7 +9,7 @@ module ROM
       #
       # @api public
       class Create < ROM::Commands::Create
-        adapter :sql
+        config.component.adapter = :sql
 
         include ErrorWrapper
 

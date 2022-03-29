@@ -47,7 +47,7 @@ module ROM
 end
 
 ROM.plugins do
-  adapter :sql do
+  adapter(:sql) do
     register :pg_full_text_search, ROM::Plugins::Relation::SQL::Postgres::FullTextSearch, type: :relation
   end
 end

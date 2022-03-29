@@ -9,16 +9,16 @@ module ROM
           #
           # @api public
           module Streaming
-            extend Notifications::Listener
+            extend Dry::Effects.Reader(:registry)
 
             class StreamingNotSupportedError < StandardError; end
 
-            subscribe("configuration.gateway.connected") do |opts|
-              conn = opts[:connection]
+            def self.apply(target, **opts)
+              conn = registry.gateways[target.config.component.gateway].connection
 
-              next unless conn.database_type.to_sym == :postgres
+              return unless conn.database_type.to_sym == :postgres
 
-              next if defined?(JRUBY_VERSION)
+              return if defined?(JRUBY_VERSION)
 
               begin
                 require "sequel_pg"
@@ -31,8 +31,11 @@ module ROM
               end
 
               conn.extension(:pg_streaming)
+
+              target.include(Streaming)
             end
 
+            # @api private
             def self.included(klass)
               super
               ROM::Relation::Graph.include(Combined)
@@ -102,7 +105,7 @@ module ROM
 end
 
 ROM.plugins do
-  adapter :sql do
+  adapter(:sql) do
     register :pg_streaming, ROM::Plugins::Relation::SQL::Postgres::Streaming, type: :relation
   end
 end

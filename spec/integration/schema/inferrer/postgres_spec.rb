@@ -167,7 +167,7 @@ RSpec.describe "ROM::SQL::Schema::PostgresInferrer", :postgres, :helpers do
 
       conf.commands(:test_bidirectional) do
         define(:create) do
-          result :one
+          config.result = :one
         end
       end
     end
@@ -212,7 +212,7 @@ RSpec.describe "ROM::SQL::Schema::PostgresInferrer", :postgres, :helpers do
     end
 
     let(:relation) { container.relations[:test_bidirectional] }
-    let(:create) { commands[:test_bidirectional].create }
+    let(:create) { commands[:test_bidirectional][:create] }
 
     it "writes and reads data & corrects data" do
       # Box coordinates are reordered if necessary

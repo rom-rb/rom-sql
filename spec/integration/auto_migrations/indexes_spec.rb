@@ -46,17 +46,19 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
         gateway.auto_migrate!(conf, inline: true)
 
         expect(attributes.map(&:to_ast))
-          .to eql([
-                    [:attribute,
-                     [:id,
-                      [:nominal, [Integer, {}]],
-                      primary_key: true, source: :users, alias: nil]],
-                    [:attribute,
-                     [:name,
-                      [:nominal, [String, {}]],
-                      index: true,
-                      source: :users, alias: nil]],
-                  ])
+          .to eql(
+            [
+              [:attribute,
+               [:id,
+                [:nominal, [Integer, {}]],
+                {primary_key: true, source: :users, alias: nil}]],
+              [:attribute,
+               [:name,
+                [:nominal, [String, {}]],
+                {index: true,
+                 source: :users, alias: nil}]]
+            ]
+          )
 
         expect(migrated_schema.indexes.first).
           to eql(ROM::SQL::Index.new(
@@ -71,9 +73,6 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
   describe "alter table" do
     describe "one-column indexes" do
       context "adding" do
-        before do
-        end
-
         it "adds indexed column" do
           conn.create_table :users do
             primary_key :id
@@ -81,8 +80,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
           conf.relation(:users) do
             schema do
-              attribute :id,    ROM::SQL::Types::Serial
-              attribute :name,  ROM::SQL::Types::String.meta(index: true)
+              attribute :id, ROM::SQL::Types::Serial
+              attribute :name, ROM::SQL::Types::String.meta(index: true)
             end
           end
 
@@ -103,8 +102,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
           conf.relation(:users) do
             schema do
-              attribute :id,    ROM::SQL::Types::Serial
-              attribute :name,  ROM::SQL::Types::String
+              attribute :id, ROM::SQL::Types::Serial
+              attribute :name, ROM::SQL::Types::String
 
               indexes do
                 index :name, name: :custom_idx
@@ -130,8 +129,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
           conf.relation(:users) do
             schema do
-              attribute :id,    ROM::SQL::Types::Serial
-              attribute :name,  ROM::SQL::Types::String
+              attribute :id, ROM::SQL::Types::Serial
+              attribute :name, ROM::SQL::Types::String
 
               indexes do
                 index :name
@@ -156,8 +155,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
           conf.relation(:users) do
             schema do
-              attribute :id,    ROM::SQL::Types::Serial
-              attribute :name,  ROM::SQL::Types::String
+              attribute :id, ROM::SQL::Types::Serial
+              attribute :name, ROM::SQL::Types::String
 
               indexes do
                 index :name, unique: true
@@ -183,8 +182,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
             conf.relation(:users) do
               schema do
-                attribute :id,     ROM::SQL::Types::Serial
-                attribute :props,  ROM::SQL::Types::PG::JSONB
+                attribute :id, ROM::SQL::Types::Serial
+                attribute :props, ROM::SQL::Types::PG::JSONB
 
                 indexes do
                   index :props, type: :gin
@@ -206,8 +205,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
             conf.relation(:users) do
               schema do
-                attribute :id,     ROM::SQL::Types::Serial
-                attribute :name,   ROM::SQL::Types::String
+                attribute :id, ROM::SQL::Types::Serial
+                attribute :name, ROM::SQL::Types::String
 
                 indexes do
                   index :name, name: :long_names_only, predicate: "length(name) > 10"
@@ -227,8 +226,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
         before do
           conf.relation(:users) do
             schema do
-              attribute :id,    ROM::SQL::Types::Serial
-              attribute :name,  ROM::SQL::Types::String
+              attribute :id, ROM::SQL::Types::Serial
+              attribute :name, ROM::SQL::Types::String
               attribute :email, ROM::SQL::Types::String
             end
           end

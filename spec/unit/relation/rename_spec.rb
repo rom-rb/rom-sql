@@ -1,5 +1,5 @@
 RSpec.describe ROM::Relation, "#rename" do
-  subject(:relation) { container.relations.users }
+  subject(:relation) { container.relations[:users] }
 
   include_context "users and tasks"
 

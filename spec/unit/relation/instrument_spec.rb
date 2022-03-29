@@ -42,26 +42,26 @@ RSpec.describe ROM::SQL::Relation, "#instrument", :sqlite do
   it "instruments relation materialization" do
     relation.to_a
 
-    expect(notifications.logs).
-      to include([:sql, name: :sqlite, query: relation.dataset.sql])
+    expect(notifications.logs)
+      .to include([:sql, {name: :sqlite, query: relation.dataset.sql}])
   end
 
   it "instruments methods that return a single tuple" do
     relation.first
 
-    expect(notifications.logs).
-      to include([:sql, name: :sqlite, query: relation.limit(1).dataset.sql])
+    expect(notifications.logs)
+      .to include([:sql, {name: :sqlite, query: relation.limit(1).dataset.sql}])
 
     relation.last
 
-    expect(notifications.logs).
-      to include([:sql, name: :sqlite, query: relation.reverse.limit(1).dataset.sql])
+    expect(notifications.logs)
+      .to include([:sql, {name: :sqlite, query: relation.reverse.limit(1).dataset.sql}])
   end
 
   it "instruments aggregation methods" do
     relation.count
 
-    expect(notifications.logs).
-      to include([:sql, name: :sqlite, query: "SELECT count(*) AS 'count' FROM `users` LIMIT 1"])
+    expect(notifications.logs)
+      .to include([:sql, {name: :sqlite, query: "SELECT count(*) AS 'count' FROM `users` LIMIT 1"}])
   end
 end

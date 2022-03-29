@@ -20,11 +20,11 @@ RSpec.describe ROM::SQL::Associations::OneToMany, "#call" do
       end
 
       conf.relation(:categories) do
-        schema(infer: true) do
-          associations do
-            belongs_to :categories, as: :parent, foreign_key: :parent_id
-            has_many :categories, as: :children, foreign_key: :parent_id
-          end
+        schema(infer: true)
+
+        associations do
+          belongs_to :categories, as: :parent, foreign_key: :parent_id
+          has_many :categories, as: :children, foreign_key: :parent_id
         end
       end
 

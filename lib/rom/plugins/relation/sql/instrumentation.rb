@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "dry/effects"
+
 module ROM
   module Plugins
     module Relation
@@ -26,18 +28,14 @@ module ROM
         #
         # @api public
         module Instrumentation
-          extend Notifications::Listener
+          extend Dry::Effects.Reader(:registry)
 
-          subscribe("configuration.relations.registry.created") do |event|
-            registry = event[:registry]
+          def self.apply(target, notifications:, **)
+            db = registry.gateways[target.config.component.gateway].connection
 
-            relations = registry.select { |_, r| r.adapter == :sql && r.respond_to?(:notifications) }.to_h
-            db_notifications = relations.values.map { |r| [r.dataset.db, r.notifications] }.uniq.to_h
+            return if db.respond_to?(:rom_instrumentation?)
 
-            db_notifications.each do |db, notifications|
-              instrumenter = Instrumenter.new(db.database_type, notifications)
-              db.extend(instrumenter)
-            end
+            db.extend(Instrumenter.new(db.database_type, notifications))
           end
 
           # This stateful module is used to extend database connection objects
@@ -56,6 +54,7 @@ module ROM
 
             # @api private
             def initialize(name, notifications)
+              super()
               @name = name
               @notifications = notifications
               define_log_connection_yield
@@ -67,6 +66,8 @@ module ROM
             def define_log_connection_yield
               name = self.name
               notifications = self.notifications
+
+              define_method(:rom_instrumentation?) { true }
 
               define_method(:log_connection_yield) do |*args, &block|
                 notifications.instrument(:sql, name: name, query: args[0]) do
@@ -90,7 +91,7 @@ module ROM
 end
 
 ROM.plugins do
-  adapter :sql do
+  adapter(:sql) do
     register :instrumentation, ROM::Plugins::Relation::SQL::Instrumentation, type: :relation
   end
 end

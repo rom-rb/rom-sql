@@ -1,3 +1,5 @@
+require "rom/memory"
+
 RSpec.describe ROM::Relation, "#import" do
   subject(:relation) { relations[:users] }
 
@@ -43,7 +45,7 @@ RSpec.describe ROM::Relation, "#import" do
 
       before do
         conf.relation(:users_for_loading, adapter: :memory) do
-          gateway :other
+          config.component.gateway = :other
 
           schema(:users_for_loading) do
             attribute :id,   ROM::Types::Integer

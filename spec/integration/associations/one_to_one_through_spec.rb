@@ -14,11 +14,11 @@ RSpec.describe ROM::SQL::Associations::OneToOneThrough, helpers: true do
           attribute :user_id, ROM::SQL::Types::ForeignKey(:users)
           attribute :number, ROM::SQL::Types::String
           attribute :balance, ROM::SQL::Types::Decimal
+        end
 
-          associations do
-            one_to_many :cards
-            one_to_many :subscriptions, through: :cards
-          end
+        associations do
+          one_to_many :cards
+          one_to_many :subscriptions, through: :cards
         end
       end
 
@@ -27,10 +27,10 @@ RSpec.describe ROM::SQL::Associations::OneToOneThrough, helpers: true do
           attribute :id, ROM::SQL::Types::Serial
           attribute :account_id, ROM::SQL::Types::ForeignKey(:accounts)
           attribute :pan, ROM::SQL::Types::String
+        end
 
-          associations do
-            one_to_many :subscriptions
-          end
+        associations do
+          one_to_many :subscriptions
         end
       end
 
@@ -39,10 +39,10 @@ RSpec.describe ROM::SQL::Associations::OneToOneThrough, helpers: true do
           attribute :id, ROM::SQL::Types::Serial
           attribute :card_id, ROM::SQL::Types::ForeignKey(:cards)
           attribute :service, ROM::SQL::Types::String
+        end
 
-          associations do
-            many_to_one :cards
-          end
+        associations do
+          many_to_one :cards
         end
       end
     end

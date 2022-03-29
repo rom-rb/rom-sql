@@ -5,6 +5,8 @@ RSpec.describe ROM::Relation, "#nullify" do
 
   before do
     conf.relation(:users) do
+      schema(infer: true)
+
       use :nullify
     end
   end

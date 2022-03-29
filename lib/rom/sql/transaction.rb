@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rom/transaction"
+
 module ROM
   module SQL
     # @api private
