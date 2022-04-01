@@ -1,7 +1,8 @@
 # This is a config synced from rom-rb/template-gem repo
 AllCops:
-  TargetRubyVersion: 3.0
-  NewCops: enable
+  TargetRubyVersion: 2.7
+  NewCops: disable
+  SuggestExtensions: false
   Exclude:
     - spec/support/coverage.rb
     - spec/support/warnings.rb
@@ -45,8 +46,19 @@ Lint/AmbiguousBlockAssociation:
 Lint/BooleanSymbol:
   Enabled: false
 
+Lint/MissingSuper:
+  Enabled: false
+
 Lint/ConstantDefinitionInBlock:
   Enabled: false
+
+Lint/EmptyBlock:
+  Exclude:
+  - "spec/**/*.rb"
+
+Lint/EmptyClass:
+  Exclude:
+  - "spec/**/*.rb"
 
 Lint/RaiseException:
   Enabled: false
@@ -56,7 +68,27 @@ Lint/StructNewOverride:
 
 Lint/SuppressedException:
   Exclude:
-    - "spec/spec_helper.rb"
+    - "spec/**/*.rb"
+
+Lint/UselessMethodDefinition:
+  Exclude:
+    - "lib/rom/struct.rb"
+
+Lint/UnderscorePrefixedVariableName:
+  Enabled: false
+
+Lint/ToEnumArguments:
+  Exclude:
+    - "lib/rom/command.rb"
+
+Naming/MethodParameterName:
+  Enabled: false
+
+Naming/AccessorMethodName:
+  Enabled: false
+
+Naming/VariableNumber:
+  Enabled: false
 
 Naming/PredicateName:
   Enabled: false
@@ -68,15 +100,13 @@ Naming/FileName:
 Naming/MethodName:
   Enabled: false
 
-Naming/MethodParameterName:
-  Enabled: true
-  Exclude:
-    - "spec/**/*.rb"
-
 Naming/MemoizedInstanceVariableName:
   Enabled: false
 
 Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ModuleLength:
   Enabled: false
 
 Metrics/ClassLength:
@@ -86,11 +116,17 @@ Metrics/BlockLength:
   Enabled: false
 
 Metrics/AbcSize:
-  Max: 25
+  Max: 36
 
 Metrics/CyclomaticComplexity:
   Enabled: true
   Max: 12
+
+Metrics/PerceivedComplexity:
+  Max: 14
+
+Metrics/ParameterLists:
+  Enabled: false
 
 Style/AccessorGrouping:
   Enabled: false
@@ -166,11 +202,46 @@ Style/StringLiteralsInInterpolation:
   EnforcedStyle: double_quotes
 
 Style/SymbolArray:
-  Exclude:
-    - "spec/**/*_spec.rb"
+  Enabled: false
+
+Style/OptionalBooleanParameter:
+  Enabled: false
+
+Style/MultilineBlockChain:
+  Enabled: false
+
+Style/DocumentDynamicEvalDefinition:
+  Enabled: false
 
 Style/TrailingUnderscoreVariable:
   Enabled: false
 
 Style/MultipleComparison:
+  Enabled: false
+
+Style/StringConcatenation:
+  Enabled: false
+
+Style/OpenStructUse:
+  Enabled: false
+
+Style/MapToHash:
+  Enabled: false
+
+Style/FormatStringToken:
+  Enabled: false
+
+Style/StructInheritance:
+  Enabled: false
+
+Style/PreferredHashMethods:
+  Enabled: false
+
+Style/DoubleNegation:
+  Enabled: false
+
+Style/MissingRespondToMissing:
+  Enabled: false
+
+Style/CombinableLoops:
   Enabled: false

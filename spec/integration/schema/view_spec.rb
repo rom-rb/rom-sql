@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 RSpec.describe "Defining a view using schemas", seeds: false do
@@ -22,7 +24,7 @@ RSpec.describe "Defining a view using schemas", seeds: false do
 
       it "automatically projects a relation view" do
         expect(relations[:users].names.to_a)
-          .to eql([{ name: "Jade" }, { name: "Jane" }, { name: "Joe" }])
+          .to eql([{name: "Jade"}, {name: "Jane"}, {name: "Joe"}])
       end
     end
   end

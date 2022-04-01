@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::Relation, "#each_batch", seeds: false do
   include_context "users and tasks"
 
@@ -6,7 +8,7 @@ RSpec.describe ROM::Relation, "#each_batch", seeds: false do
 
     before do
       7.times do |i|
-        conn[:users].insert name: "User #{ i + 1 }"
+        conn[:users].insert name: "User #{i + 1}"
       end
     end
 
@@ -18,12 +20,12 @@ RSpec.describe ROM::Relation, "#each_batch", seeds: false do
           batches << rel
         end
 
-        expect(batches).
-          to eql([
-                   relation.limit(3),
-                   relation.where { id > 3 }.limit(3),
-                   relation.where { id > 6 }.limit(3)
-                 ])
+        expect(batches)
+          .to eql([
+            relation.limit(3),
+            relation.where { id > 3 }.limit(3),
+            relation.where { id > 6 }.limit(3)
+          ])
       end
     end
   end

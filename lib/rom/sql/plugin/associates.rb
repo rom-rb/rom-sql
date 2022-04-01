@@ -16,7 +16,7 @@ module ROM
           def initialize(name, relation, opts)
             @name = name
             @assoc = relation.associations[name]
-            @opts = { assoc: assoc, keys: assoc.join_keys }
+            @opts = {assoc: assoc, keys: assoc.join_keys}
             @opts.update(parent: opts[:parent]) if opts[:parent]
           end
 
@@ -25,7 +25,7 @@ module ROM
           end
 
           def to_hash
-            { associate: opts }
+            {associate: opts}
           end
         end
 
@@ -35,7 +35,7 @@ module ROM
             extend ClassMethods
             include InstanceMethods
 
-            setting :associations, default: Hash.new, reader: true
+            setting :associations, default: {}, reader: true
 
             option :associations, default: -> { self.class.associations }
 
@@ -89,16 +89,17 @@ module ROM
 
             associate_options = command.associations.map { |(name, opts)|
               next if configured_assocs.include?(name)
+
               AssociateOptions.new(name, relation, opts)
             }.compact
 
             before_hooks = associate_options.reject(&:after?).map(&:to_hash)
             after_hooks = associate_options.select(&:after?).map(&:to_hash)
 
-            command.
-              with(configured_associations: configured_assocs + associate_options.map(&:name)).
-              before(*before_hooks).
-              after(*after_hooks)
+            command
+              .with(configured_associations: configured_assocs + associate_options.map(&:name))
+              .before(*before_hooks)
+              .after(*after_hooks)
           end
 
           # Set command to associate tuples with a parent tuple using provided keys
@@ -143,6 +144,8 @@ module ROM
           # @return [Array<Hash>]
           #
           # @api public
+          #
+          # rubocop:disable Lint/UnusedMethodArgument
           def associate(tuples, curried_parent = nil, assoc:, keys:, parent: curried_parent)
             result_type = result
 
@@ -171,6 +174,7 @@ module ROM
 
             result_type == :one ? output_tuples[0] : output_tuples
           end
+          # rubocop:enable Lint/UnusedMethodArgument
 
           # Return a new command with the provided association
           #

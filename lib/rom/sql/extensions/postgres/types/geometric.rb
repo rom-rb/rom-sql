@@ -37,7 +37,7 @@ module ROM
         Point = Type("point") do
           SQL::Types.define(Values::Point) do
             input do |point|
-              "(#{ point.x },#{ point.y })"
+              "(#{point.x},#{point.y})"
             end
 
             output do |point|
@@ -50,7 +50,7 @@ module ROM
         Line = Type("line") do
           SQL::Types.define(Values::Line) do
             input do |line|
-              "{#{ line.a },#{ line.b },#{line.c}}"
+              "{#{line.a},#{line.b},#{line.c}}"
             end
 
             output do |line|
@@ -63,7 +63,7 @@ module ROM
         Circle = Type("circle") do
           SQL::Types.define(Values::Circle) do
             input do |circle|
-              "<(#{ circle.center.x },#{ circle.center.y }),#{ circle.radius }>"
+              "<(#{circle.center.x},#{circle.center.y}),#{circle.radius}>"
             end
 
             output do |circle|
@@ -77,8 +77,8 @@ module ROM
         Box = Type("box") do
           SQL::Types.define(Values::Box) do
             input do |box|
-              "((#{ box.upper_right.x },#{ box.upper_right.y }),"\
-              "(#{ box.lower_left.x },#{ box.lower_left.y }))"
+              "((#{box.upper_right.x},#{box.upper_right.y}),"\
+                "(#{box.lower_left.x},#{box.lower_left.y}))"
             end
 
             output do |box|
@@ -93,8 +93,8 @@ module ROM
         LineSegment = Type("lseg") do
           SQL::Types.define(Values::LineSegment) do
             input do |segment|
-              "[(#{ segment.begin.x },#{ segment.begin.y }),"\
-              "(#{ segment.end.x },#{ segment.end.y })]"
+              "[(#{segment.begin.x},#{segment.begin.y}),"\
+                "(#{segment.end.x},#{segment.end.y})]"
             end
 
             output do |segment|
@@ -109,8 +109,8 @@ module ROM
         Polygon = Type("polygon") do
           SQL::Types.define(::Array) do
             input do |points|
-              points_joined = points.map { |p| "(#{ p.x },#{ p.y })" }.join(",")
-              "(#{ points_joined })"
+              points_joined = points.map { |p| "(#{p.x},#{p.y})" }.join(",")
+              "(#{points_joined})"
             end
 
             output do |polygon|
@@ -123,12 +123,12 @@ module ROM
         Path = Type("path") do
           SQL::Types.define(Values::Path) do
             input do |path|
-              points_joined = path.to_a.map { |p| "(#{ p.x },#{ p.y })" }.join(",")
+              points_joined = path.to_a.map { |p| "(#{p.x},#{p.y})" }.join(",")
 
               if path.open?
-                "[#{ points_joined }]"
+                "[#{points_joined}]"
               else
-                "(#{ points_joined })"
+                "(#{points_joined})"
               end
             end
 

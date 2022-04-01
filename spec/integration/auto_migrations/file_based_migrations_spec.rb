@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::SQL::Gateway, :postgres, :helpers, skip_tables: true do
   include_context "database setup"
 
@@ -8,7 +10,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers, skip_tables: true do
   before { FileUtils.rm_rf(path) }
   after { FileUtils.rm_rf(path) }
 
-  let(:options) { { path: path } }
+  let(:options) { {path: path} }
 
   before do
     conn.drop_table?(:posts)
@@ -17,7 +19,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers, skip_tables: true do
   end
 
   def migrations
-    Dir["#{ path }/*.rb"].sort.map do |path|
+    Dir["#{path}/*.rb"].sort.map do |path|
       [File.basename(path), File.read(path)]
     end
   end
@@ -42,17 +44,17 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers, skip_tables: true do
 
       name, content = migrations[0]
       expect(name).to match(/\A\d+_create_users\.rb$/)
-      expect(content).to eql(<<-RUBY)
-ROM::SQL.migration do
-  change do
-    create_table :users do
-      primary_key :id
-      column :name, "text", null: false
-      index :name, name: :unique_name, unique: true
-      index :name
-    end
-  end
-end
+      expect(content).to eql(<<~RUBY)
+        ROM::SQL.migration do
+          change do
+            create_table :users do
+              primary_key :id
+              column :name, "text", null: false
+              index :name, name: :unique_name, unique: true
+              index :name
+            end
+          end
+        end
       RUBY
     end
   end
@@ -86,19 +88,19 @@ end
 
         name, content = migrations[0]
         expect(name).to match(/\A\d+_alter_users\.rb$/)
-        expect(content).to eql(<<-RUBY)
-ROM::SQL.migration do
-  change do
-    alter_table :users do
-      drop_column :name
-      add_column :first_name, "text", null: false
-      add_column :last_name, "text", null: false
-      set_column_not_null :age
-      add_index [:first_name, :last_name], name: :unique_name, unique: true
-    end
-  end
-end
-          RUBY
+        expect(content).to eql(<<~RUBY)
+          ROM::SQL.migration do
+            change do
+              alter_table :users do
+                drop_column :name
+                add_column :first_name, "text", null: false
+                add_column :last_name, "text", null: false
+                set_column_not_null :age
+                add_index [:first_name, :last_name], name: :unique_name, unique: true
+              end
+            end
+          end
+        RUBY
       end
     end
 
@@ -131,15 +133,15 @@ end
 
         name, content = migrations[1]
         expect(name).to match(/\A\d+_alter_posts\.rb$/)
-        expect(content).to eql(<<-RUBY)
-ROM::SQL.migration do
-  change do
-    alter_table :posts do
-      add_foreign_key [:user_id], :users
-    end
-  end
-end
-          RUBY
+        expect(content).to eql(<<~RUBY)
+          ROM::SQL.migration do
+            change do
+              alter_table :posts do
+                add_foreign_key [:user_id], :users
+              end
+            end
+          end
+        RUBY
       end
     end
   end

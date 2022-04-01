@@ -54,6 +54,7 @@ module ROM
           end
         end
 
+        # rubocop:disable Metrics/AbcSize
         def alter_table(diff)
           return if diff.meta?
 
@@ -68,9 +69,7 @@ module ROM
                 when SchemaDiff::AttributeChanged
                   if attribute.type_changed?
                     from, to = attribute.current.unwrap, attribute.target.unwrap
-                    raise UnsupportedConversion.new(
-                      "Don't know how to convert #{from.inspect} to #{to.inspect}"
-                    )
+                    raise UnsupportedConversion, "Don't know how to convert #{from.inspect} to #{to.inspect}"
                   end
 
                   if attribute.nullability_changed?
@@ -94,6 +93,7 @@ module ROM
             end
           end
         end
+        # rubocop:enable Metrics/AbcSize
 
         def alter_foreign_keys(diff, foreign_key_changes)
           return if foreign_key_changes.empty?

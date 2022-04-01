@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::SQL::Wrap do
   with_adapters do
     include_context "users and tasks"
@@ -15,8 +17,8 @@ RSpec.describe ROM::SQL::Wrap do
         it "works with by_pk" do
           task_with_user = tasks.wrap(name).by_pk(1).one
 
-          expect(task_with_user).
-            to eql(id: 1, user_id: 2, title: "Joe's task", users_name: "Joe", users_id: 2)
+          expect(task_with_user)
+            .to eql(id: 1, user_id: 2, title: "Joe's task", users_name: "Joe", users_id: 2)
         end
       end
 

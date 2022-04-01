@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe "Plugins / :auto_restrictions", seeds: true do
   include_context "users and tasks"
 
@@ -22,13 +24,13 @@ RSpec.describe "Plugins / :auto_restrictions", seeds: true do
 
     context "with two containers" do
       let(:confs) do
-        { one: ROM::Setup.new(:sql, conn),
-          two: ROM::Setup.new(:sql, conn) }
+        {one: ROM::Setup.new(:sql, conn),
+         two: ROM::Setup.new(:sql, conn)}
       end
 
       let(:containers) do
-        { one: ROM.setup(confs[:one]),
-          two: ROM.setup(confs[:two]) }
+        {one: ROM.setup(confs[:one]),
+         two: ROM.setup(confs[:two])}
       end
 
       before do

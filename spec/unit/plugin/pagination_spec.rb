@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rom/sql/plugin/pagination"
 
 RSpec.describe "Plugin / Pagination", seeds: false do

@@ -7,8 +7,8 @@ module ROM
     module Migration
       # @api private
       class Writer
-        MIGRATION_BEGIN = "ROM::SQL.migration do\n  change do".freeze
-        MIGRATION_END = "\n  end\nend\n".freeze
+        MIGRATION_BEGIN = "ROM::SQL.migration do\n  change do"
+        MIGRATION_END = "\n  end\nend\n"
 
         attr_reader :yield_migration
 
@@ -36,11 +36,11 @@ module ROM
             buffer << indent << op.to_s << " "
             write_arguments(buffer, args)
 
-            if !nested.empty?
-              buffer << " do"
-              write(nested, buffer, indent + "  ")
-              buffer << indent << "end"
-            end
+            next if nested.empty?
+
+            buffer << " do"
+            write(nested, buffer, indent + "  ")
+            buffer << indent << "end"
           end
         end
 
@@ -61,7 +61,7 @@ module ROM
           create_or_alter, args = op
           table_name = args[0]
 
-          "#{create_or_alter.to_s.sub('_table', '')}_#{table_name}"
+          "#{create_or_alter.to_s.sub("_table", "")}_#{table_name}"
         end
       end
     end

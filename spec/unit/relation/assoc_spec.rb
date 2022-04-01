@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 RSpec.describe ROM::SQL::Relation do
@@ -20,8 +22,8 @@ RSpec.describe ROM::SQL::Relation do
 
     with_adapters do
       it "returns child tuples for a relation" do
-        expect(users.assoc(:tasks).where(name: "Jane").to_a).
-          to eql([{ id: 2, user_id: 1, title: "Jane's task" }])
+        expect(users.assoc(:tasks).where(name: "Jane").to_a)
+          .to eql([{id: 2, user_id: 1, title: "Jane's task"}])
       end
     end
   end
@@ -43,9 +45,9 @@ RSpec.describe ROM::SQL::Relation do
         schema(infer: true) do
         end
 
-          associations do
-            has_many :tags, through: :task_tags
-          end
+        associations do
+          has_many :tags, through: :task_tags
+        end
       end
 
       conn[:tags].insert id: 2, name: "whatevah"
@@ -54,13 +56,13 @@ RSpec.describe ROM::SQL::Relation do
 
     with_adapters do
       it "returns child tuples for a relation" do
-        expect(tasks.assoc(:tags).to_a).
-          to eql([{ id: 1, name: "important", task_id: 1 }, { id: 2, name: "whatevah", task_id: 2 }])
+        expect(tasks.assoc(:tags).to_a)
+          .to eql([{id: 1, name: "important", task_id: 1}, {id: 2, name: "whatevah", task_id: 2}])
       end
 
       it "returns child tuples for a restricted relation" do
-        expect(tasks.assoc(:tags).where(title: "Jane's task").to_a).
-          to eql([{ id: 2, name: "whatevah", task_id: 2 }])
+        expect(tasks.assoc(:tags).where(title: "Jane's task").to_a)
+          .to eql([{id: 2, name: "whatevah", task_id: 2}])
       end
     end
   end
@@ -80,8 +82,8 @@ RSpec.describe ROM::SQL::Relation do
 
     with_adapters do
       it "returns parent tuples for a relation" do
-        expect(tasks.assoc(:user).where(title: "Jane's task").to_a).
-          to eql([{ id: 1, task_id: 2, name: "Jane" }])
+        expect(tasks.assoc(:user).where(title: "Jane's task").to_a)
+          .to eql([{id: 1, task_id: 2, name: "Jane"}])
       end
     end
   end

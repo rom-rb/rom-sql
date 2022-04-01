@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "ostruct"
 require "rom/sql/commands"
 
@@ -48,22 +50,22 @@ RSpec.describe ROM::SQL::Plugin::Associates do
 
       result = command.associate(post_tuples, tag_tuples, assoc: tags_assoc, keys: {})
 
-      expect(result).
-        to match_array([
-                         { title: "post 1", tag: "red" }, { title: "post 1", tag: "green"},
-                         { title: "post 2", tag: "red" }, { title: "post 2", tag: "green"}
-                       ])
+      expect(result)
+        .to match_array([
+          {title: "post 1", tag: "red"}, {title: "post 1", tag: "green"},
+          {title: "post 2", tag: "red"}, {title: "post 2", tag: "green"}
+        ])
     end
   end
 
   describe "#associate" do
     context "with plain hash tuples" do
       let(:post_tuples) do
-        [{ title: "post 1" }, { title: "post 2" }]
+        [{title: "post 1"}, {title: "post 2"}]
       end
 
       let(:tag_tuples) do
-        [{ name: "red" }, { name: "green" }]
+        [{name: "red"}, {name: "green"}]
       end
 
       include_context "associates result"
@@ -74,7 +76,7 @@ RSpec.describe ROM::SQL::Plugin::Associates do
         module Test
           class Post < OpenStruct
             def to_hash
-              { title: title }
+              {title: title}
             end
           end
         end
@@ -85,7 +87,7 @@ RSpec.describe ROM::SQL::Plugin::Associates do
       end
 
       let(:tag_tuples) do
-        [{ name: "red" }, { name: "green" }]
+        [{name: "red"}, {name: "green"}]
       end
 
       include_context "associates result"

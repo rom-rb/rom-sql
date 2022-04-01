@@ -36,7 +36,9 @@ module ROM
 
           mod = Module.new(&block)
           ctx = Object.new.extend(mod)
-          functions = mod.public_instance_methods.each_with_object({}) { |m, ms| ms[m] = ctx.method(m) }
+          functions = mod.public_instance_methods.each_with_object({}) { |m, ms|
+            ms[m] = ctx.method(m)
+          }
           extensions[db_type] = (extensions[db_type] || {}).merge(functions)
         end
       end

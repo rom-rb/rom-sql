@@ -37,8 +37,8 @@ module ROM
         # @return [Hash] Inserted tuple
         #
         # @api public
-        def insert(*args, &block)
-          dataset.insert(*args, &block)
+        def insert(...)
+          dataset.insert(...)
         end
 
         # Multi insert tuples into relation
@@ -51,8 +51,8 @@ module ROM
         # @return [Array<String>] A list of executed SQL statements
         #
         # @api public
-        def multi_insert(*args, &block)
-          dataset.multi_insert(*args, &block)
+        def multi_insert(...)
+          dataset.multi_insert(...)
         end
 
         # Update tuples in the relation
@@ -64,8 +64,8 @@ module ROM
         # @return [Integer] Number of updated rows
         #
         # @api public
-        def update(*args, &block)
-          dataset.update(*args, &block)
+        def update(...)
+          dataset.update(...)
         end
 
         # Delete tuples from the relation
@@ -78,8 +78,8 @@ module ROM
         # @return [Integer] Number of deleted tuples
         #
         # @api public
-        def delete(*args, &block)
-          dataset.delete(*args, &block)
+        def delete(...)
+          dataset.delete(...)
         end
 
         # Insert tuples from other relation
@@ -113,12 +113,13 @@ module ROM
         #
         # @api public
         def import(other, options = EMPTY_HASH)
+          columns = other.schema.map { |a| a.alias || a.name }
+
           if other.gateway.eql?(gateway)
-            columns = other.schema.map { |a| a.alias || a.name }
             dataset.import(columns, other.dataset, options)
           else
-            columns = other.schema.map { |a| a.alias || a.name }
             keys = columns.map(&:to_sym)
+
             dataset.import(columns, other.to_a.map { |record| record.to_h.values_at(*keys) }, options)
           end
         end

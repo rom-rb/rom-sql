@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 RSpec.describe ROM::SQL::OrderDSL, :postgres, helpers: true do
@@ -34,16 +36,16 @@ RSpec.describe ROM::SQL::OrderDSL, :postgres, helpers: true do
     end
 
     it "delegates to sequel virtual row" do
-      expect(ds.literal(dsl.call { nullif(id.qualified, Sequel.lit("''")).desc }.first)).
-        to eql(%(NULLIF("users"."id", '') DESC))
+      expect(ds.literal(dsl.call { nullif(id.qualified, Sequel.lit("''")).desc }.first))
+        .to eql(%(NULLIF("users"."id", '') DESC))
     end
 
     it "allows to set nulls first/last" do
-      expect(ds.literal(dsl.call { id.desc(nulls: :first) }.first)).
-        to eql(%("id" DESC NULLS FIRST))
+      expect(ds.literal(dsl.call { id.desc(nulls: :first) }.first))
+        .to eql(%("id" DESC NULLS FIRST))
 
-      expect(ds.literal(dsl.call { id.desc(nulls: :last) }.first)).
-        to eql(%("id" DESC NULLS LAST))
+      expect(ds.literal(dsl.call { id.desc(nulls: :last) }.first))
+        .to eql(%("id" DESC NULLS LAST))
     end
   end
 end

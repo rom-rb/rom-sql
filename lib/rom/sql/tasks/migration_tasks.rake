@@ -76,7 +76,7 @@ namespace :db do
   end
 
   desc "Create a migration (parameters: NAME, VERSION)"
-  task :create_migration, [:name, :version] => :rom_configuration do |_, args|
+  task :create_migration, %i[name version] => :rom_configuration do |_, args|
     name, version = args.values_at(:name, :version)
 
     if name.nil?

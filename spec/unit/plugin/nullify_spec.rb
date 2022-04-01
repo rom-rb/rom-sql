@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rom/sql/plugin/nullify"
 
 RSpec.describe ROM::Relation, "#nullify" do

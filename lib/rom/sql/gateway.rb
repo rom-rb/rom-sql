@@ -161,15 +161,15 @@ module ROM
       # Create a table using the configured connection
       #
       # @api public
-      def create_table(*args, &block)
-        connection.create_table(*args, &block)
+      def create_table(...)
+        connection.create_table(...)
       end
 
       # Drops a table
       #
       # @api public
-      def drop_table(*args, &block)
-        connection.drop_table(*args, &block)
+      def drop_table(...)
+        connection.drop_table(...)
       end
 
       # Returns a list of datasets inferred from table names

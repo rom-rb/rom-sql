@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 RSpec.shared_context "database setup" do
-  all_tables = %i(users tasks users_tasks tags task_tags posts puppies
+  all_tables = %i[users tasks users_tasks tags task_tags posts puppies
                   accounts cards subscriptions notes
                   destinations flights categories user_group
                   test_inferrence test_bidirectional people dragons
-                  rabbits carrots names schema_migrations)
+                  rabbits carrots names schema_migrations]
 
   cleared_dbs = []
 

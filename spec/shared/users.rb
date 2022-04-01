@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.shared_context "users" do
   include_context "database setup"
 

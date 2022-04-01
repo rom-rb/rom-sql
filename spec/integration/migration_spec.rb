@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::SQL, ".migration" do
   include_context "database setup"
 
   before do
-    inferrable_relations.concat %i(dragons schema_migrations)
+    inferrable_relations.concat %i[dragons schema_migrations]
   end
 
   with_adapters do
@@ -28,8 +30,8 @@ RSpec.describe ROM::SQL, ".migration" do
     with_adapters(:postgres) do
       let(:conf) do
         ROM::Setup.new(
-          default: [:sql, conn, inferrable_relations: %i(schema_migrations)],
-          in_memory: [:sql, DB_URIS[:sqlite], inferrable_relations: %i(schema_migrations)]
+          default: [:sql, conn, {inferrable_relations: %i[schema_migrations]}],
+          in_memory: [:sql, DB_URIS[:sqlite], {inferrable_relations: %i[schema_migrations]}]
         )
       end
 

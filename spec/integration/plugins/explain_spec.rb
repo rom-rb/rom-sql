@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "yaml"
 
 RSpec.describe "Plugins / :explain", :postgres do
@@ -19,7 +21,7 @@ RSpec.describe "Plugins / :explain", :postgres do
   end
 
   it "supports YAML format" do
-    yaml = YAML.load(users.explain(format: :yaml))[0]
+    yaml = YAML.safe_load(users.explain(format: :yaml))[0]
     expect(yaml["Plan"]["Node Type"]).to match(/(Index|Seq Scan)|Sort/)
   end
 

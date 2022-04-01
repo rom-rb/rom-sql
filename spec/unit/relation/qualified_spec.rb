@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::Relation, "#qualified" do
   subject(:relation) { relations[:users] }
 
@@ -11,15 +13,15 @@ RSpec.describe ROM::Relation, "#qualified" do
     end
 
     it "qualifies virtual attributes" do
-      qualified = relation.
-                    left_join(:tasks, tasks[:user_id].qualified => relation[:id].qualified).
-                    select(:id, tasks[:id].func { integer::count(id).as(:count) }).
-                    qualified.
-                    group(:id)
+      qualified = relation
+        .left_join(:tasks, tasks[:user_id].qualified => relation[:id].qualified)
+        .select(:id, tasks[:id].func { integer.count(id).as(:count) })
+        .qualified
+        .group(:id)
 
       expect(qualified.schema.all?(&:qualified?)).to be(true)
 
-      expect(qualified.to_a).to eql([{ id: 1, count: 1 }, { id: 2, count: 1 }])
+      expect(qualified.to_a).to eql([{id: 1, count: 1}, {id: 2, count: 1}])
     end
 
     it "does not qualify attribute without dataset" do

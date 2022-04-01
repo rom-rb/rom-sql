@@ -12,7 +12,7 @@ module ROM
 
         defines :type_builders
 
-        CONSTRAINT_DB_TYPE = "add_constraint".freeze
+        CONSTRAINT_DB_TYPE = "add_constraint"
 
         option :type_builder
 
@@ -30,7 +30,7 @@ module ROM
             attr_class.new(type.meta(source: schema.name), name: name) if type
           end.compact
 
-          missing = columns.map(&:first) - inferred.map { |attr| attr.name }
+          missing = columns.map(&:first) - inferred.map(&:name)
 
           [inferred, missing]
         end

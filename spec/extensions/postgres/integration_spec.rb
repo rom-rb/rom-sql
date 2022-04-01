@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe "PostgreSQL extension", :postgres do
   include_context "database setup"
 
@@ -49,7 +51,7 @@ RSpec.describe "PostgreSQL extension", :postgres do
     describe "using retrurning" do
       let(:create_person) { commands[:people][:create] }
       let(:update_person) { commands[:people][:update] }
-      let(:composite_relation) { people_relation >> -> r { r.map { |x| { name: x.fetch(:name).upcase } } } }
+      let(:composite_relation) { people_relation >> -> r { r.map { |x| {name: x.fetch(:name).upcase} } } }
 
       context "with pipeline" do
         it "works with create" do
@@ -90,8 +92,8 @@ RSpec.describe "PostgreSQL extension", :postgres do
     let(:people) { commands[:people] }
 
     it "reads jsonb values as plain hashes" do
-      people[:create].call(name: "John Doe", attributes: { foo: "bar" })
-      expect(people_relation.to_a).to eql([id: 1, name: "John Doe", attributes: { "foo" => "bar" }])
+      people[:create].call(name: "John Doe", attributes: {foo: "bar"})
+      expect(people_relation.to_a).to eql([id: 1, name: "John Doe", attributes: {"foo" => "bar"}])
       expect(people_relation.to_a[0][:attributes].class).to be(Hash)
     end
 

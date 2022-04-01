@@ -36,7 +36,7 @@ module ROM
         def call(type)
           super do
             if type.respond_to?(:primitive) && type.primitive.equal?(Array)
-              "#{ type.meta[:type] }[]"
+              "#{type.meta[:type]}[]"
             end
           end
         end

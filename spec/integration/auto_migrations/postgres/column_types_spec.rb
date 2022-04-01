@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
   include_context "database setup"
 

@@ -11,7 +11,7 @@ module ROM
 
         # @api public
         def join_keys
-          { source_attr => target_attr }
+          {source_attr => target_attr}
         end
 
         # @api public

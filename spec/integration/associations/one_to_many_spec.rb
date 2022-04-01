@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::SQL::Associations::OneToMany, helpers: true do
   include_context "users and tasks"
 
@@ -26,8 +28,8 @@ RSpec.describe ROM::SQL::Associations::OneToMany, helpers: true do
 
     describe "#associate" do
       it "merges FKs into tuples" do
-        child = { name: "Child" }
-        parent = { id: 312, name: "Parent "}
+        child = {name: "Child"}
+        parent = {id: 312, name: "Parent "}
 
         expect(assoc.associate(child, parent)).to eql(user_id: 312, name: "Child")
       end
@@ -40,16 +42,16 @@ RSpec.describe ROM::SQL::Associations::OneToMany, helpers: true do
         expect(relation.schema.map(&:name)).to eql(%i[id user_id title])
 
         expect(relation.order(tasks[:id].qualified).to_a).to eql([
-          { id: 1, user_id: 2, title: "Joe's task" },
-          { id: 2, user_id: 1, title: "Jane's task" }
+          {id: 1, user_id: 2, title: "Joe's task"},
+          {id: 2, user_id: 1, title: "Jane's task"}
         ])
 
         expect(relation.where(user_id: 1).to_a).to eql([
-          { id: 2, user_id: 1, title: "Jane's task" }
+          {id: 2, user_id: 1, title: "Jane's task"}
         ])
 
         expect(relation.where(user_id: 2).to_a).to eql([
-          { id: 1, user_id: 2, title: "Joe's task" }
+          {id: 1, user_id: 2, title: "Joe's task"}
         ])
       end
     end
@@ -59,27 +61,27 @@ RSpec.describe ROM::SQL::Associations::OneToMany, helpers: true do
         relation = tasks.eager_load(assoc).call(users.call)
 
         expect(relation.to_a).to eql([
-          { id: 1, user_id: 2, title: "Joe's task" },
-          { id: 2, user_id: 1, title: "Jane's task" }
+          {id: 1, user_id: 2, title: "Joe's task"},
+          {id: 2, user_id: 1, title: "Jane's task"}
         ])
       end
 
       it "maintains original relation" do
-        relation = tasks.
-                     join(:task_tags, tag_id: :id).
-                     select_append(tasks.task_tags[:tag_id].qualified).
-                     eager_load(assoc).call(users.call)
+        relation = tasks
+          .join(:task_tags, tag_id: :id)
+          .select_append(tasks.task_tags[:tag_id].qualified)
+          .eager_load(assoc).call(users.call)
 
-        expect(relation.to_a).to eql([{ id: 1, user_id: 2, title: "Joe's task", tag_id: 1 }])
+        expect(relation.to_a).to eql([{id: 1, user_id: 2, title: "Joe's task", tag_id: 1}])
       end
 
       it "respects custom order" do
-        relation = tasks.
-                     order(tasks[:title].qualified).
-                     eager_load(assoc).call(users.call)
+        relation = tasks
+          .order(tasks[:title].qualified)
+          .eager_load(assoc).call(users.call)
 
-        expect(relation.to_a).
-          to eql([{ id: 2, user_id: 1, title: "Jane's task" }, { id: 1, user_id: 2, title: "Joe's task" }])
+        expect(relation.to_a)
+          .to eql([{id: 2, user_id: 1, title: "Jane's task"}, {id: 1, user_id: 2, title: "Joe's task"}])
       end
     end
   end
