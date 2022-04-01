@@ -14,7 +14,7 @@ RSpec.describe ROM::Relation, "#lock" do
   context "with hitting the database" do
     let(:latch) { Concurrent::CountDownLatch.new }
 
-    let(:timeout) { (defined? JRUBY_VERSION) ? 2 : 0.2 }
+    let(:timeout) { defined?(JRUBY_VERSION) ? 2 : 0.2 }
 
     let!(:start) { Time.now }
 
