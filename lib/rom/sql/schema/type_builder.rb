@@ -21,7 +21,7 @@ module ROM
 
         defines :ruby_type_mapping, :numeric_pk_type
 
-        DECIMAL_REGEX = /(?:decimal|numeric)\((\d+)(?:,\s*(\d+))?\)/
+        DECIMAL_REGEX = /(?:decimal|numeric)\((\d+)(?:,\s*(\d+))?\)/.freeze
 
         ruby_type_mapping(
           integer: Types::Integer,
