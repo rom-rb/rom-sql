@@ -144,6 +144,8 @@ module ROM
           # @return [Array<Hash>]
           #
           # @api public
+          #
+          # rubocop:disable Lint/UnusedMethodArgument
           def associate(tuples, curried_parent = nil, assoc:, keys:, parent: curried_parent)
             result_type = result
 
@@ -172,6 +174,7 @@ module ROM
 
             result_type == :one ? output_tuples[0] : output_tuples
           end
+          # rubocop:enable Lint/UnusedMethodArgument
 
           # Return a new command with the provided association
           #
