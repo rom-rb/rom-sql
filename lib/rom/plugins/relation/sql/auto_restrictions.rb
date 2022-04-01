@@ -40,7 +40,6 @@ module ROM
           end
 
           # @api private
-          # rubocop:disable Metrics/AbcSize
           def self.restriction_methods(schema)
             mod = Module.new
 
@@ -73,7 +72,6 @@ module ROM
 
             [methods, mod]
           end
-          # rubocop:enable Metrics/AbcSize
         end
       end
     end
