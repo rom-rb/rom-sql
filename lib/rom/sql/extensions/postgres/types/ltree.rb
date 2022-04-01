@@ -11,9 +11,7 @@ module ROM
 
         LTree = Type("ltree") do
           SQL::Types.define(ROM::Types::Values::TreePath) do
-            input do |label_path|
-              label_path.to_s
-            end
+            input(&:to_s)
 
             output do |label_path|
               ROM::Types::Values::TreePath.new(label_path.to_s) if label_path
