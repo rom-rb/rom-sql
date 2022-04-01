@@ -19,7 +19,7 @@ module ROM
           when :start then "UNBOUNDED PRECEDING"
           when :end then "UNBOUNDED FOLLOWING"
           else
-            if value > 0
+            if value.positive?
               "#{value} FOLLOWING"
             else
               "#{value.abs} PRECEDING"

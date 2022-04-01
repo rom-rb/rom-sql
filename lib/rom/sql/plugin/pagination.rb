@@ -55,7 +55,7 @@ module ROM
           # @api public
           def prev_page
             num = current_page - 1
-            num if num > 0
+            num if num.positive?
           end
 
           # Return total number of tuples

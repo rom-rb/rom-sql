@@ -724,7 +724,7 @@ module ROM
         # @api public
         def group(*args, &block)
           if block
-            if args.size > 0
+            if args.size.positive?
               group(*args).group_append(&block)
             else
               new(dataset.__send__(__method__, *schema.canonical.group(&block)))
@@ -763,7 +763,7 @@ module ROM
         # @api public
         def group_append(*args, &block)
           if block
-            if args.size > 0
+            if args.size.positive?
               group_append(*args).group_append(&block)
             else
               new(dataset.group_append(*schema.canonical.group(&block)))
