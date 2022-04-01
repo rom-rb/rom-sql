@@ -1086,6 +1086,8 @@ module ROM
         # Common join method used by other join methods
         #
         # @api private
+        #
+        # rubocop:disable Metrics/AbcSize
         def __join__(type, other, join_cond = EMPTY_HASH, opts = EMPTY_HASH, &block)
           if other.is_a?(Symbol) || other.is_a?(ROM::Relation::Name)
             if join_cond.equal?(EMPTY_HASH) && !block
@@ -1116,6 +1118,7 @@ module ROM
             raise ArgumentError, "+other+ must be either a symbol or a relation, #{other.class} given"
           end
         end
+        # rubocop:enable Metrics/AbcSize
       end
     end
   end
