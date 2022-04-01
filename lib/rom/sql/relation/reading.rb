@@ -1088,6 +1088,7 @@ module ROM
         # @api private
         #
         # rubocop:disable Metrics/AbcSize
+        # rubocop:disable Metrics/PerceivedComplexity
         def __join__(type, other, join_cond = EMPTY_HASH, opts = EMPTY_HASH, &block)
           if other.is_a?(Symbol) || other.is_a?(ROM::Relation::Name)
             if join_cond.equal?(EMPTY_HASH) && !block
@@ -1119,6 +1120,7 @@ module ROM
           end
         end
         # rubocop:enable Metrics/AbcSize
+        # rubocop:enable Metrics/PerceivedComplexity
       end
     end
   end
