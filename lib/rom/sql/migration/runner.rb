@@ -68,8 +68,7 @@ module ROM
                 when SchemaDiff::AttributeChanged
                   if attribute.type_changed?
                     from, to = attribute.current.unwrap, attribute.target.unwrap
-                    raise UnsupportedConversion,
-"Don't know how to convert #{from.inspect} to #{to.inspect}"
+                    raise UnsupportedConversion, "Don't know how to convert #{from.inspect} to #{to.inspect}"
                   end
 
                   if attribute.nullability_changed?
