@@ -209,8 +209,8 @@ module ROM
           }.map { |name, target_attr|
             [name, [target_attr, current[name]]]
           }.to_h
-          added_attributes = target.select { |name, _| !current.key?(name) }
-          removed_attributes = current.select { |name, _| !target.key?(name) }
+          added_attributes = target.reject { |name, _| current.key?(name) }
+          removed_attributes = current.reject { |name, _| target.key?(name) }
 
           map_attributes(removed_attributes, AttributeRemoved) +
             map_attributes(added_attributes, AttributeAdded) +
