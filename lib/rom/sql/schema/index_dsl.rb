@@ -6,7 +6,7 @@ module ROM
   module SQL
     class Schema < ROM::Schema
       # @api public
-      class IndexDSL # < BasicObject
+      class IndexDSL
         extend Initializer
 
         option :attr_class
