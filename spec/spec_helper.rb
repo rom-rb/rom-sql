@@ -151,8 +151,8 @@ RSpec.configure do |config|
     Object.send(:remove_const, :Test)
   end
 
-  Dir[root.join("shared/**/*.rb")].each { |f| require f }
-  Dir[root.join("support/**/*.rb")].each { |f| require f }
+  Dir[root.join("shared/**/*.rb")].sort.each { |f| require f }
+  Dir[root.join("support/**/*.rb")].sort.each { |f| require f }
 
   config.include(Helpers, helpers: true)
   config.include ENVHelper
