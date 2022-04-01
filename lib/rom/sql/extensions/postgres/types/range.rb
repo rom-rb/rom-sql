@@ -58,7 +58,7 @@ module ROM
             pg_range =
               if value.is_a?(Sequel::Postgres::PGRange)
                 value
-              elsif value&.respond_to?(:to_s)
+              elsif value.respond_to?(:to_s)
                 @range_parsers[name].(value.to_s)
               else
                 value
