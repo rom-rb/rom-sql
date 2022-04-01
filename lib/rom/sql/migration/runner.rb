@@ -54,6 +54,7 @@ module ROM
           end
         end
 
+        # rubocop:disable Metrics/AbcSize
         def alter_table(diff)
           return if diff.meta?
 
@@ -92,6 +93,7 @@ module ROM
             end
           end
         end
+        # rubocop:enable Metrics/AbcSize
 
         def alter_foreign_keys(diff, foreign_key_changes)
           return if foreign_key_changes.empty?
