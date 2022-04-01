@@ -113,15 +113,14 @@ module ROM
         #
         # @api public
         def import(other, options = EMPTY_HASH)
+          columns = other.schema.map { |a| a.alias || a.name }
+
           if other.gateway.eql?(gateway)
-            columns = other.schema.map { |a| a.alias || a.name }
             dataset.import(columns, other.dataset, options)
           else
-            columns = other.schema.map { |a| a.alias || a.name }
             keys = columns.map(&:to_sym)
-            dataset.import(columns, other.to_a.map { |record|
-                                      record.to_h.values_at(*keys)
-                                    }, options)
+
+            dataset.import(columns, other.to_a.map { |record| record.to_h.values_at(*keys) }, options)
           end
         end
       end
