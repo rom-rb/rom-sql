@@ -1113,8 +1113,7 @@ module ROM
               associations[other.name.key].join(type, self, other)
             end
           else
-            raise ArgumentError,
-"+other+ must be either a symbol or a relation, #{other.class} given"
+            raise ArgumentError, "+other+ must be either a symbol or a relation, #{other.class} given"
           end
         end
       end
