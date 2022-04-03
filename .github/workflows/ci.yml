@@ -17,7 +17,7 @@ on:
     - project.yml
   pull_request:
     branches:
-    - master
+    - main
   create:
 jobs:
   tests:
@@ -33,15 +33,15 @@ jobs:
         - ruby: '3.1'
           coverage: 'true'
           fail_on_warnings: 'true'
-          dry_types_from_master: 'true'
-          sequel_from_master: 'true'
+          dry_types_from_main: 'true'
+          sequel_from_main: 'true'
     env:
       COVERAGE: "${{matrix.coverage}}"
       COVERAGE_TOKEN: "${{secrets.CODACY_PROJECT_TOKEN}}"
       APT_DEPS: libpq-dev libmysqlclient-dev libsqlite3-dev
       FAIL_ON_WARNINGS: "${{matrix.fail_on_warnings}}"
-      DRY_TYPES_FROM_MASTER: "${{matrix.dry_types_from_master}}"
-      SEQUEL_FROM_MASTER: "${{matrix.sequel_from_master}}"
+      DRY_TYPES_FROM_MAIN: "${{matrix.dry_types_from_main}}"
+      SEQUEL_FROM_MAIN: "${{matrix.sequel_from_main}}"
     services:
       mysql:
         image: mysql:5.7

@@ -10,7 +10,7 @@
 [![CI Status](https://github.com/rom-rb/rom-sql/workflows/ci/badge.svg)][actions]
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/8e2cbaf78af44185876c8fa41540d7ea)][codacy]
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/8e2cbaf78af44185876c8fa41540d7ea)][codacy]
-[![Inline docs](http://inch-ci.org/github/rom-rb/rom-sql.svg?branch=master)][inchpages]
+[![Inline docs](http://inch-ci.org/github/rom-rb/rom-sql.svg?branch=main)][inchpages]
 
 ## Links
 
