@@ -34,6 +34,10 @@ rescue LoadError
   require "pry"
 end
 
+if ENV["ROM_COMPAT"] == "true"
+  require "rom/compat"
+end
+
 require "rom/sql"
 require "rom/sql/rake_task"
 
