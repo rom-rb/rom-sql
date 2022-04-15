@@ -31,7 +31,7 @@ module ROM
           if index_dsl
             opts = super
 
-            { **opts, indexes: index_dsl.(relation, opts[:attributes]) }
+            {**opts, indexes: index_dsl.(relation, opts[:attributes])}
           else
             super
           end
