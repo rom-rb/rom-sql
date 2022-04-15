@@ -6,9 +6,6 @@ eval_gemfile "Gemfile.devtools"
 
 gem "rom", github: "rom-rb/rom", branch: "main"
 
-gem "dry-configurable", "~> 0.14.0"
-gem "dry-container", github: "dry-rb/dry-container", branch: "main"
-
 if ENV["DRY_TYPES_FROM_MAIN"].eql?("true")
   gem "dry-types", github: "dry-rb/dry-types", branch: "main"
 end

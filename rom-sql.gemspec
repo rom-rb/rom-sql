@@ -21,11 +21,11 @@ Gem::Specification.new do |spec|
   spec.files         = Dir['CHANGELOG.md', 'LICENSE', 'README.md', 'lib/**/*']
   spec.require_paths = ['lib']
 
-  spec.required_ruby_version = ">= 2.4.0"
+  spec.required_ruby_version = ">= 2.7.0"
 
   spec.add_runtime_dependency 'sequel', '>= 4.49'
-  spec.add_runtime_dependency 'dry-types', '~> 1.0'
-  spec.add_runtime_dependency 'dry-core', '~> 0.5', '>= 0.5'
+  spec.add_runtime_dependency 'dry-types', '~> 1.5'
+  spec.add_runtime_dependency 'dry-core', '~> 0.7'
   spec.add_runtime_dependency 'rom', '~> 6.0'
 
   spec.add_development_dependency 'bundler'
