@@ -1,9 +1,9 @@
 ---
-- version: unreleased
-  summary: 
-  date: 
-  fixed: 
-  added: 
+- version: 4.0.0.alpha1
+  summary: See [rom 6.0 upgrade guide](https://github.com/rom-rb/rom/wiki/6.0-Upgrade-Guide).
+  date: '2022-04-15'
+  fixed:
+  added:
   changed:
   - "[internal] all plugins have been ported to the new API (via #402) (@solnic)"
   - "[internal] `:default_views` plugin was added and it's enabled by default (via
@@ -13,7 +13,7 @@
   - "[internal] `Gateway#command` is now used to instantiate sql-specific commands
     (via #402) (@solnic)"
 - version: 3.5.0
-  summary: 
+  summary:
   date: 2021-03-26
   fixed:
   - 'Restore the fix for #390 that was lost by an accident in 3.3.3 and 3.4.0 (@solnic)'
@@ -21,32 +21,32 @@
   - 'Support for using partial indixes in PG upsert commands (issue #394 fixed via
     #395) (@smaximov)'
 - version: 3.4.0
-  summary: 
+  summary:
   date: 2021-03-19
   added:
   - "`Relation#unordered` (@radar)"
 - version: 3.3.3
-  summary: 
+  summary:
   date: 2021-03-05
-  fixed: 
+  fixed:
   added:
   - Support for streaming composite relations (@ianks)
-  changed: 
+  changed:
 - version: 3.3.2
-  summary: 
+  summary:
   date: '2021-01-06'
   fixed:
   - 'Function qualification methods no longer lose options (issue #390 fixed via #391)
     (@solnic)'
-  added: 
-  changed: 
+  added:
+  changed:
 - version: 3.3.1
   date: '2020-12-29'
   fixed:
   - "`:pg_streaming` plugin no longer crashes when there's no sequel_pg and now you
     need to require the plugin explicitly (@solnic)"
 - version: 3.3.0
-  summary: 
+  summary:
   date: '2020-12-28'
   fixed:
   - "`Relation#join` no longer crashes when aliased relation is used with a block
@@ -65,7 +65,7 @@
     # => [{ title: 'A Tutorial about SQL', ... }]
     ```
   - Support for `:pg_streaming` extension (@ianks)
-  changed: 
+  changed:
 - version: 3.2.0
   date: '2020-01-11'
   fixed:
