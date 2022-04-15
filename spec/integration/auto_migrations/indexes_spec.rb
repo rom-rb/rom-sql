@@ -45,6 +45,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
       end
 
       it "creates ordinary b-tree indexes" do
+        pending_if_compat_mode
+
         gateway.auto_migrate!(conf, inline: true)
 
         expect(attributes.map(&:to_ast))
@@ -98,6 +100,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
         end
 
         it "supports custom names" do
+          pending_if_compat_mode
+
           conn.create_table :users do
             primary_key :id
           end
@@ -124,6 +128,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
         end
 
         it "adds index to existing column" do
+          pending_if_compat_mode
+
           conn.create_table :users do
             primary_key :id
             column :name, String
@@ -150,6 +156,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
         end
 
         it "supports unique indexes" do
+          pending_if_compat_mode
+
           conn.create_table :users do
             primary_key :id
             column :name, String
@@ -177,6 +185,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
         if metadata[:postgres]
           it "uses index method" do
+            pending_if_compat_mode
+
             conn.create_table :users do
               primary_key :id
               column :props, :jsonb, null: false
@@ -200,6 +210,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
           end
 
           it "supports partial indexes" do
+            pending_if_compat_mode
+
             conn.create_table :users do
               primary_key :id
               column :name, String

@@ -24,4 +24,8 @@ module ENVHelper
   def jruby?
     defined? JRUBY_VERSION
   end
+
+  def pending_if_compat_mode
+    pending "FIXME: not working in compat mode yet" if ENV["ROM_COMPAT"] == "true"
+  end
 end

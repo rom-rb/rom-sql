@@ -21,10 +21,10 @@ RSpec.describe "ROM.setup" do
       rom.gateways[:default].connection.drop_table(:dragons)
     end
 
-    it "creates tables within the setup block" do
-      pending "FIXME: restore access to gateways within the block?"
-
-      expect(rom.relations[:dragons]).to be_kind_of(ROM::SQL::Relation)
+    if ENV["ROM_COMPAT"] == "true"
+      it "creates tables within the setup block" do
+        expect(rom.relations[:dragons]).to be_kind_of(ROM::SQL::Relation)
+      end
     end
   end
 end
