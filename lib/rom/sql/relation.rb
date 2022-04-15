@@ -10,6 +10,7 @@ require "rom/sql/transaction"
 
 require "rom/sql/relation/reading"
 require "rom/sql/relation/writing"
+require "rom/sql/schema/dsl"
 
 module ROM
   module SQL
@@ -34,6 +35,7 @@ module ROM
         config.attr_class = SQL::Attribute
         config.inferrer = ROM::SQL::Schema::Inferrer.new.freeze
         config.plugins << :indexes
+        config.dsl_class = SQL::Schema::DSL
       end
 
       dataset(abstract: true) do |schema|
