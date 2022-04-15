@@ -72,6 +72,8 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, "#call" do
     end
 
     it "prepares joined relations using custom view in target relation" do
+      pending_if_compat_mode
+
       relation = assoc_inter.()
 
       expect(relation.schema.map(&:to_sql_name))

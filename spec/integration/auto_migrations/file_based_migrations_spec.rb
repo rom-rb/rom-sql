@@ -39,6 +39,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers, skip_tables: true do
     end
 
     it "creates migration files by schema definitions" do
+      pending_if_compat_mode
+
       gateway.auto_migrate!(conf, options)
       expect(migrations.size).to eql(1)
 
@@ -83,6 +85,8 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers, skip_tables: true do
       end
 
       it "creates migration files by schema definitions" do
+        pending_if_compat_mode
+
         gateway.auto_migrate!(conf, options)
         expect(migrations.size).to eql(1)
 

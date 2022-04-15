@@ -50,6 +50,8 @@ RSpec.describe ROM::SQL::Associations::OneToMany, "#call" do
     end
 
     it "prepares joined relations using custom view" do
+      pending_if_compat_mode
+
       relation = assoc.()
 
       expect(relation.schema.map(&:to_sql_name))

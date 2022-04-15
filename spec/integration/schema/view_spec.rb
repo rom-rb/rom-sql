@@ -23,6 +23,8 @@ RSpec.describe "Defining a view using schemas", seeds: false do
       end
 
       it "automatically projects a relation view" do
+        pending_if_compat_mode
+
         expect(relations[:users].names.to_a)
           .to eql([{name: "Jade"}, {name: "Jane"}, {name: "Joe"}])
       end

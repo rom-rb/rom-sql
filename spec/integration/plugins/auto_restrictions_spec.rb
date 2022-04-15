@@ -70,7 +70,9 @@ RSpec.describe "Plugins / :auto_restrictions", seeds: true do
 
       include_context "auto-generated restriction view"
 
-      it "generates restrictrions by a composite index" do
+      it "generates restrictions by a composite index" do
+        pending_if_compat_mode
+
         expect(tasks.by_user_id_and_title(1, "Jane's task").first).to eql(id: 2, user_id: 1, title: "Jane's task")
       end
     end
