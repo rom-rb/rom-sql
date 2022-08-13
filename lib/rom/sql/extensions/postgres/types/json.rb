@@ -135,9 +135,9 @@ module ROM
         #     #   Translates to ->> or #>> depending on the number of arguments
         #     #
         #     #   @example
-        #     #     people.select { data.get('age').as(:person_age) }
-        #     #     people.select { fields.get(0).as(:first_field) }
-        #     #     people.select { fields.get('0', 'value').as(:first_field_value) }
+        #     #     people.select { data.get_text('age').as(:person_age) }
+        #     #     people.select { fields.get_text(0).as(:first_field) }
+        #     #     people.select { fields.get_text('0', 'value').as(:first_field_value) }
         #     #
         #     #   @param [Array<Integer>,Array<String>] path Path to extract
         #     #
