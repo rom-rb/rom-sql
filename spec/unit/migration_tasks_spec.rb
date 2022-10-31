@@ -27,7 +27,7 @@ RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
     let(:task) { Rake::Task["db:reset"] }
 
     it "calls proper commands" do
-      expect(migrator).to receive(:run).with(target: 0)
+      expect(migrator).to receive(:run).with({ target: 0 })
       expect(migrator).to receive(:run)
 
       expect {
@@ -41,9 +41,9 @@ RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
       end
 
       it "calls proper commands" do
-        expect(migrator).to receive(:run).with(target: 0, table: :custom_table, column: :custom_column)
-        expect(migrator).to receive(:run).with(table: :custom_table, column: :custom_column)
-  
+        expect(migrator).to receive(:run).with({ target: 0, table: :custom_table, column: :custom_column })
+        expect(migrator).to receive(:run).with({ table: :custom_table, column: :custom_column })
+
         expect {
           task.invoke
         }.to output("<= db:reset executed\n").to_stdout
@@ -56,7 +56,7 @@ RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
 
     context "with VERSION" do
       it "calls proper commands" do
-        expect(migrator).to receive(:run).with(target: 1)
+        expect(migrator).to receive(:run).with({ target: 1 })
 
         expect {
           task.invoke(1)
@@ -89,8 +89,8 @@ RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
       end
 
       it "calls proper commands" do
-        expect(migrator).to receive(:run).with(table: :custom_table, column: :custom_column)
-  
+        expect(migrator).to receive(:run).with({ table: :custom_table, column: :custom_column })
+
         expect {
           task.invoke
         }.to output("<= db:migrate executed\n").to_stdout
@@ -102,7 +102,7 @@ RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
     let(:task) { Rake::Task["db:clean"] }
 
     it "calls proper commands" do
-      expect(migrator).to receive(:run).with(target: 0)
+      expect(migrator).to receive(:run).with({ target: 0 })
 
       expect {
         task.invoke
@@ -115,8 +115,8 @@ RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
       end
 
       it "calls proper commands" do
-        expect(migrator).to receive(:run).with(target: 0, table: :custom_table, column: :custom_column)
-  
+        expect(migrator).to receive(:run).with({ target: 0, table: :custom_table, column: :custom_column })
+
         expect {
           task.invoke
         }.to output("<= db:clean executed\n").to_stdout
