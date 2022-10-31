@@ -8,9 +8,12 @@ eval_gemfile "Gemfile.devtools"
 
 gem "rom", github: "rom-rb/rom", branch: "main"
 
-if ENV["DRY_TYPES_FROM_MAIN"].eql?("true")
-  gem "dry-types", github: "dry-rb/dry-types", branch: "main"
-end
+# if ENV["DRY_TYPES_FROM_MAIN"].eql?("true")
+#   gem "dry-types", github: "dry-rb/dry-types", branch: "main"
+# end
+
+gem "dry-core", github: "dry-rb/dry-core", branch: "main"
+gem "dry-types", github: "dry-rb/dry-types", branch: "main"
 
 if ENV["SEQUEL_FROM_MAIN"].eql?("true")
   gem "sequel", github: "jeremyevans/sequel", branch: "master"
