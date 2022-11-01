@@ -90,7 +90,12 @@ module ROM
 
       # @api private
       def new(&block)
-        meta(func: ::Sequel::SQL::Function.new!(func.name, func.args.map(&block), func.opts))
+        case func
+        when ::Sequel::SQL::Function
+          meta(func: ::Sequel::SQL::Function.new!(func.name, func.args.map(&block), func.opts))
+        else
+          meta(func: func)
+        end
       end
 
       # @see Attribute#qualified?
