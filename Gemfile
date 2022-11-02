@@ -13,6 +13,9 @@ gem "rom", github: "rom-rb/rom", branch: "main"
 # end
 
 gem "dry-core", github: "dry-rb/dry-core", branch: "main"
+gem "dry-configurable", github: "dry-rb/dry-configurable", branch: "main"
+gem "dry-inflector", github: "dry-rb/dry-inflector", branch: "main"
+gem "dry-logic", github: "dry-rb/dry-logic", branch: "main"
 gem "dry-types", github: "dry-rb/dry-types", branch: "main"
 
 if ENV["SEQUEL_FROM_MAIN"].eql?("true")
