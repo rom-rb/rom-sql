@@ -8,15 +8,11 @@ eval_gemfile "Gemfile.devtools"
 
 gem "rom", github: "rom-rb/rom", branch: "main"
 
-# if ENV["DRY_TYPES_FROM_MAIN"].eql?("true")
-#   gem "dry-types", github: "dry-rb/dry-types", branch: "main"
-# end
+if ENV["DRY_TYPES_FROM_MAIN"].eql?("true")
+  gem "dry-types", github: "dry-rb/dry-types", branch: "main"
+end
 
-gem "dry-core", github: "dry-rb/dry-core", branch: "main"
-gem "dry-configurable", github: "dry-rb/dry-configurable", branch: "main"
-gem "dry-inflector", github: "dry-rb/dry-inflector", branch: "main"
-gem "dry-logic", github: "dry-rb/dry-logic", branch: "main"
-gem "dry-types", github: "dry-rb/dry-types", branch: "main"
+gem "dry-transformer", github: "dry-rb/dry-transformer", branch: "main"
 
 if ENV["SEQUEL_FROM_MAIN"].eql?("true")
   gem "sequel", github: "jeremyevans/sequel", branch: "master"
