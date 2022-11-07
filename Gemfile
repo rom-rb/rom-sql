@@ -1,4 +1,4 @@
-# frozen_string_literals: true
+# frozen_string_literal: true
 
 source "https://rubygems.org"
 
@@ -21,16 +21,16 @@ else
 end
 
 group :test do
-  gem "pry-byebug", platforms: :ruby
-  gem "pry", platforms: :jruby
   gem "activesupport", "~> 5.0"
-  gem "pg", "~> 1.2", platforms: :ruby
-  gem "mysql2", "~> 0.5", platforms: :ruby
-  gem "jdbc-postgres", ">= 9.4.1212", platforms: :jruby
-  gem "jdbc-mysql", platforms: :jruby
-  gem "sqlite3", "~> 1.4", platforms: :ruby
-  gem "jdbc-sqlite3", platforms: :jruby
-  gem "ruby-oci8", platforms: :ruby if ENV["ROM_USE_ORACLE"]
   gem "dotenv", require: false
+  gem "jdbc-mysql", platforms: :jruby
+  gem "jdbc-postgres", ">= 9.4.1212", platforms: :jruby
+  gem "jdbc-sqlite3", platforms: :jruby
+  gem "mysql2", "~> 0.5", platforms: :ruby
+  gem "pg", "~> 1.2", platforms: :ruby
+  gem "pry", platforms: :jruby
+  gem "pry-byebug", platforms: :ruby
+  gem "ruby-oci8", platforms: :ruby if ENV["ROM_USE_ORACLE"]
   gem "sequel_pg", require: false, platforms: :ruby
+  gem "sqlite3", "~> 1.4", platforms: :ruby
 end
