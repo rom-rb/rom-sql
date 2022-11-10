@@ -11,7 +11,16 @@ See [rom 6.0 upgrade guide](https://github.com/rom-rb/rom/wiki/6.0-Upgrade-Guide
 - [internal] `indexes` schema DSL is now a plugin called `:schema_indexes` (via #402) (@solnic)
 - [internal] `Gateway#command` is now used to instantiate sql-specific commands (via #402) (@solnic)
 
-[Compare v3.5.0...v4.0.0.alpha1](https://github.com/rom-rb/rom-sql/compare/v3.5.0...v4.0.0.alpha1)
+[Compare v3.6.0...v4.0.0.alpha1](https://github.com/rom-rb/rom-sql/compare/v3.6.0...v4.0.0.alpha1)
+
+## 3.6.0 
+
+
+### Changed
+
+- Upgraded to the latest versions of dry-rb dependencies, compatible with rom 5.3 (@flash-gordon)
+
+[Compare v3.5.0...main](https://github.com/rom-rb/rom-sql/compare/v3.5.0...main)
 
 ## 3.5.0 2021-03-26
 
