@@ -1,4 +1,9 @@
 ---
+- version: 3.6.0
+  summary:
+  date:
+  changed:
+  - "Upgraded to the latest versions of dry-rb dependencies, compatible with rom 5.3 (@flash-gordon)"
 - version: 3.5.0
   summary:
   date: 2021-03-26
