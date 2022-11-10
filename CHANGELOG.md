@@ -2,6 +2,9 @@
 
 ## 3.6.0
 
+### Added
+
+- Add ROM::SQL::RakeSupport.migration_options for passing custom options to migrator (@wuarmin)
 
 ### Changed
 
