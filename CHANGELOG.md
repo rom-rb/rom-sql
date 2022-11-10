@@ -16,6 +16,10 @@ See [rom 6.0 upgrade guide](https://github.com/rom-rb/rom/wiki/6.0-Upgrade-Guide
 ## 3.6.0 
 
 
+### Added
+
+- Add ROM::SQL::RakeSupport.migration_options for passing custom options to migrator (@wuarmin)
+
 ### Changed
 
 - Upgraded to the latest versions of dry-rb dependencies, compatible with rom 5.3 (@flash-gordon)
