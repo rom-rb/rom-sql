@@ -14,7 +14,7 @@
     (via #402) (@solnic)"
 - version: 3.6.0
   summary:
-  date:
+  date: 2022-11-11
   added:
   - "Add ROM::SQL::RakeSupport.migration_options for passing custom options to migrator (@wuarmin)"
   changed:
