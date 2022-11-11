@@ -13,7 +13,7 @@ See [rom 6.0 upgrade guide](https://github.com/rom-rb/rom/wiki/6.0-Upgrade-Guide
 
 [Compare v3.6.0...v4.0.0.alpha1](https://github.com/rom-rb/rom-sql/compare/v3.6.0...v4.0.0.alpha1)
 
-## 3.6.0 
+## 3.6.0 2022-11-11
 
 
 ### Added
@@ -24,7 +24,7 @@ See [rom 6.0 upgrade guide](https://github.com/rom-rb/rom/wiki/6.0-Upgrade-Guide
 
 - Upgraded to the latest versions of dry-rb dependencies, compatible with rom 5.3 (@flash-gordon)
 
-[Compare v3.5.0...main](https://github.com/rom-rb/rom-sql/compare/v3.5.0...main)
+[Compare v3.5.0...v3.6.0](https://github.com/rom-rb/rom-sql/compare/v3.5.0...v3.6.0)
 
 ## 3.5.0 2021-03-26
 
