@@ -33,7 +33,7 @@ RSpec.describe "PostgreSQL extension", :postgres do
       let(:people) { commands[:people] }
 
       it "inserts array values" do
-        people.create.call(
+        people[:create].call(
           name: "John Doe",
           tags: ["foo"],
           allowed_subnets: [IPAddr.new("123.23.0.0/16")]
@@ -48,7 +48,7 @@ RSpec.describe "PostgreSQL extension", :postgres do
       end
 
       it "inserts empty arrays" do
-        people.create.call(name: "John Doe", tags: [], allowed_subnets: [])
+        people[:create].call(name: "John Doe", tags: [], allowed_subnets: [])
         expect(people_relation.to_a).to eql([
           id: 1, name: "John Doe", tags: [], allowed_subnets: []
         ])
@@ -56,7 +56,7 @@ RSpec.describe "PostgreSQL extension", :postgres do
       end
 
       it "inserts nil values" do
-        people.create.call(name: "John Doe", tags: nil)
+        people[:create].call(name: "John Doe", tags: nil)
         expect(people_relation.to_a).to eql([
           id: 1, name: "John Doe", tags: nil, allowed_subnets: nil
         ])
