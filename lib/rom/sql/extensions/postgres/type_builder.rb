@@ -20,7 +20,7 @@ module ROM
           'jsonb' => Types::JSONB,
           'xml' => Types::XML,
           'inet' => Types::IPAddress,
-          'cidr' => Types::IPAddress,
+          'cidr' => Types::IPNetwork,
           'macaddr' => SQL::Types::String,
           'point' => Types::Point,
           'hstore' => Types::HStore,
