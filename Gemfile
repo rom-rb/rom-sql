@@ -12,8 +12,6 @@ if ENV["DRY_TYPES_FROM_MAIN"].eql?("true")
   gem "dry-types", github: "dry-rb/dry-types", branch: "main"
 end
 
-gem "dry-transformer", github: "dry-rb/dry-transformer", branch: "main"
-
 if ENV["SEQUEL_FROM_MAIN"].eql?("true")
   gem "sequel", github: "jeremyevans/sequel", branch: "master"
 else
