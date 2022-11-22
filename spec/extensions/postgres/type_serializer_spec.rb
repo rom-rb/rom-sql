@@ -12,6 +12,7 @@ RSpec.describe ROM::SQL::TypeSerializer[:postgres] do
       "jsonb" => ROM::SQL::Postgres::Types::JSONB,
       "hstore" => ROM::SQL::Postgres::Types::HStore,
       "inet" => ROM::SQL::Postgres::Types::IPAddress,
+      "cidr" => ROM::SQL::Postgres::Types::IPNetwork,
       "xml" => ROM::SQL::Postgres::Types::XML,
       "point" => ROM::SQL::Postgres::Types::Point,
       "line" => ROM::SQL::Postgres::Types::Line,

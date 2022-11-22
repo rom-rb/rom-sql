@@ -96,7 +96,7 @@ RSpec.describe "ROM::SQL::Schema::PostgresInferrer", :postgres, :helpers do
         tag_ids: define_attribute(:tag_ids, ROM::SQL::Types::PG::Array("bigint").optional, source: source),
         ip: define_attribute(:ip, ROM::SQL::Types::PG::IPAddress.optional, source: source),
         color: define_attribute(:color, ROM::SQL::Types::String.enum(*colors).optional, source: source),
-        subnet: define_attribute(:subnet, ROM::SQL::Types::PG::IPAddress.optional, source: source),
+        subnet: define_attribute(:subnet, ROM::SQL::Types::PG::IPNetwork.optional, source: source),
         hw_address: define_attribute(:hw_address, ROM::SQL::Types::String.optional, source: source),
         center: define_attribute(:center, ROM::SQL::Types::PG::Point.optional, source: source),
         page: define_attribute(:page, ROM::SQL::Types::PG::XML.optional, source: source),

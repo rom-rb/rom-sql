@@ -16,6 +16,7 @@ module ROM
             Types::JSONB => "jsonb",
             Types::HStore => "hstore",
             Types::IPAddress => "inet",
+            Types::IPNetwork => "cidr",
             Types::Point => "point",
             Types::Line => "line",
             Types::Circle => "circle",

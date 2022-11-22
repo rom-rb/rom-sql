@@ -14,6 +14,7 @@ RSpec.describe "PostgreSQL extension", :postgres do
         primary_key :id
         String :name
         column :tags, "text[]"
+        column :allowed_subnets, "cidr[]"
       end
 
       conf.relation(:people) do
@@ -32,19 +33,33 @@ RSpec.describe "PostgreSQL extension", :postgres do
       let(:people) { commands[:people] }
 
       it "inserts array values" do
-        people[:create].call(name: "John Doe", tags: ["foo"])
-        expect(people_relation.to_a).to eql([id: 1, name: "John Doe", tags: ["foo"]])
+        people.create.call(
+          name: "John Doe",
+          tags: ["foo"],
+          allowed_subnets: [IPAddr.new("123.23.0.0/16")]
+        )
+
+        expect(people_relation.to_a).to eql([
+          id: 1,
+          name: "John Doe",
+          tags: ["foo"],
+          allowed_subnets: [IPAddr.new("123.23.0.0/16")]
+        ])
       end
 
       it "inserts empty arrays" do
-        people[:create].call(name: "John Doe", tags: [])
-        expect(people_relation.to_a).to eql([id: 1, name: "John Doe", tags: []])
+        people.create.call(name: "John Doe", tags: [], allowed_subnets: [])
+        expect(people_relation.to_a).to eql([
+          id: 1, name: "John Doe", tags: [], allowed_subnets: []
+        ])
         expect(people_relation.to_a[0][:tags].class).to be(Array)
       end
 
       it "inserts nil values" do
-        people[:create].call(name: "John Doe", tags: nil)
-        expect(people_relation.to_a).to eql([id: 1, name: "John Doe", tags: nil])
+        people.create.call(name: "John Doe", tags: nil)
+        expect(people_relation.to_a).to eql([
+          id: 1, name: "John Doe", tags: nil, allowed_subnets: nil
+        ])
       end
     end
 
