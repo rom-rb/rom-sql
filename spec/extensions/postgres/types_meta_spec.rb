@@ -7,6 +7,7 @@ RSpec.describe 'ROM::SQL::Postgres::Types' do
       'money' => ROM::SQL::Postgres::Types::Money,
       'xml' => ROM::SQL::Postgres::Types::XML,
       'inet' => ROM::SQL::Postgres::Types::IPAddress,
+      'cidr' => ROM::SQL::Postgres::Types::IPNetwork,
       'json' => ROM::SQL::Postgres::Types::JSON,
       'jsonb' => ROM::SQL::Postgres::Types::JSONB,
       'point' => ROM::SQL::Postgres::Types::Point,
