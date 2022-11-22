@@ -6,6 +6,8 @@
 
 - Mapping of cidr types in PostgreSQL to IPAddr values (@flash-gordon)
 
+[Compare v3.6.0...v3.6.1](https://github.com/rom-rb/rom-sql/compare/v3.6.0...v3.6.1)
+
 ## 3.6.0 2022-11-11
 
 ### Added
