@@ -1091,6 +1091,8 @@ module ROM
               assoc.join(type, self)
             elsif block
               __join__(type, other, JoinDSL.new(schema).(&block), opts)
+            elsif other.is_a?(Sequel::SQL::QualifiedIdentifier)
+              __join__(type, ROM::Relation::Name.new(other), join_cond.transform_keys(&:qualified), opts, &block)
             else
               new(dataset.__send__(type, other.to_sym, join_cond, opts, &block))
             end

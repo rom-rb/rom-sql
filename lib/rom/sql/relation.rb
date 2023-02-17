@@ -34,9 +34,10 @@ module ROM
         relation = event[:relation]
 
         relation.dataset do
+          inferrer_enabled = schema.options[:inferrer].enabled?
           table = opts[:from].first
 
-          if db.table_exists?(table)
+          if inferrer_enabled && db.table_exists?(table)
             select(*schema.qualified_projection).order(*schema.project(*schema.primary_key_names).qualified)
           else
             self
