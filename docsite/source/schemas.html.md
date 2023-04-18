@@ -43,6 +43,18 @@ posts.by_pk(1).one
 # => {:id => 1, :title => "Hello World", status: :draft }
 ```
 
+## Relation Alias
+
+If you want to refer to your relation by a different name you can use `:as`:
+
+```ruby
+require 'rom-sql'
+
+class Users < ROM::Relation[:sql]
+  schema(as: :legacy_users, infer: true) # that's it
+end
+```
+
 ## PostgreSQL Types
 
 When you define relation schema attributes using custom PG types, the values
