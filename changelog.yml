@@ -12,6 +12,11 @@
     #402) (@solnic)"
   - "[internal] `Gateway#command` is now used to instantiate sql-specific commands
     (via #402) (@solnic)"
+- version: 3.6.2
+  summary:
+  date: 2024-01-09
+  fixed:
+  - "Fix Hash.new warning in Ruby 3.3 (@flash-gordon)"
 - version: 3.6.1
   summary:
   date: 2022-11-22
