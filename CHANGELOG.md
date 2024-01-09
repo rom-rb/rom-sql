@@ -11,7 +11,17 @@ See [rom 6.0 upgrade guide](https://github.com/rom-rb/rom/wiki/6.0-Upgrade-Guide
 - [internal] `indexes` schema DSL is now a plugin called `:schema_indexes` (via #402) (@solnic)
 - [internal] `Gateway#command` is now used to instantiate sql-specific commands (via #402) (@solnic)
 
-[Compare v3.6.1...v4.0.0.alpha1](https://github.com/rom-rb/rom-sql/compare/v3.6.1...v4.0.0.alpha1)
+[Compare v3.6.2...v4.0.0.alpha1](https://github.com/rom-rb/rom-sql/compare/v3.6.2...v4.0.0.alpha1)
+
+## 3.6.2 2024-01-09
+
+
+### Fixed
+
+- Fix Hash.new warning in Ruby 3.3 (@flash-gordon)
+
+
+[Compare v3.6.1...v3.6.2](https://github.com/rom-rb/rom-sql/compare/v3.6.1...v3.6.2)
 
 ## 3.6.1 2022-11-22
 
