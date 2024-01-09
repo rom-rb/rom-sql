@@ -11,7 +11,7 @@ module ROM
       # @api public
       module Reading
         # Row-level lock modes
-        ROW_LOCK_MODES = Hash.new(update: 'FOR UPDATE'.freeze).update(
+        ROW_LOCK_MODES = Hash.new({ update: "FOR UPDATE" }).update(
           # https://www.postgresql.org/docs/current/static/sql-select.html#SQL-FOR-UPDATE-SHARE
           postgres: {
             update: 'FOR UPDATE'.freeze,
