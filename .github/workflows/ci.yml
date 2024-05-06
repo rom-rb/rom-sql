@@ -44,7 +44,7 @@ jobs:
       SEQUEL_FROM_MAIN: "${{matrix.sequel_from_main}}"
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:8.4
         ports:
         - 3306:3306
         env:
@@ -53,7 +53,7 @@ jobs:
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: rom-sql
       postgres:
-        image: postgres:14
+        image: postgres:16
         ports:
         - 5432:5432
         env:
