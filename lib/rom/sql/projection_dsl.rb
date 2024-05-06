@@ -37,7 +37,7 @@ module ROM
       #
       # @api public
       def function(name, *attrs)
-        ::ROM::SQL::Function.new(::ROM::Types::Any, schema: schema).public_send(name, *attrs)
+        ::ROM::SQL::Function.new(::ROM::Types::Any).meta(schema: schema).public_send(name, *attrs)
       end
       alias_method :f, :function
 
@@ -57,7 +57,7 @@ module ROM
 
           if type
             if args.empty?
-              ::ROM::SQL::Function.new(type, schema: schema)
+              ::ROM::SQL::Function.new(type).meta(schema: schema)
             else
               ::ROM::SQL::Attribute[type].value(args[0])
             end
