@@ -79,6 +79,14 @@ RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
 
     it 'supports functions with arg being a qualified attribute' do
       literals = dsl
+        .call { function(:count, :id).filter { id > 0 }.as(:count) }
+        .map { |attr| attr.sql_literal(ds) }
+
+      expect(literals).to eql([%(COUNT("id") FILTER (WHERE ("id" > 0)) AS "count")])
+    end
+
+    it 'supports functions with arg being a qualified attribute' do
+      literals = dsl
                    .call { integer::count(id.qualified).as(:count) }
                    .map { |attr| attr.sql_literal(ds) }
 
@@ -128,17 +136,25 @@ RSpec.describe ROM::SQL::ProjectionDSL, :postgres, helpers: true do
     end
 
     it 'responds to methods matching type identifiers' do
-      expect(dsl.integer).to eql(ROM::SQL::Types::Integer)
-      expect(dsl.string).to eql(ROM::SQL::Types::String)
-      expect(dsl.bool).to eql(ROM::SQL::Types::Bool)
+      expect(dsl.integer).to eql(ROM::SQL::Function.new(
+        ROM::SQL::Types::Integer
+      ).meta(schema: schema))
+      expect(dsl.string).to eql(ROM::SQL::Function.new(
+        ROM::SQL::Types::String
+      ).meta(schema: schema))
+      expect(dsl.bool).to eql(ROM::SQL::Function.new(
+        ROM::SQL::Types::Bool
+      ).meta(schema: schema))
     end
 
     it 'responds to methods matching type names' do
-      expect(dsl.DateTime).to eql(ROM::SQL::Types::DateTime)
+      expect(dsl.DateTime).to eql(
+        ROM::SQL::Function.new(ROM::SQL::Types::DateTime).meta(schema: schema)
+      )
     end
 
     it 'returns sql functions with return type specified' do
-      function = ROM::SQL::Function.new(ROM::SQL::Types::String).upper(schema[:name])
+      function = ROM::SQL::Function.new(ROM::SQL::Types::String).meta(schema: schema).upper(schema[:name])
 
       expect(dsl.string::upper(schema[:name])).to eql(function)
     end

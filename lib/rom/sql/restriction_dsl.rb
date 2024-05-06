@@ -27,7 +27,7 @@ module ROM
           type = type(meth)
 
           if type
-            ::ROM::SQL::Function.new(type)
+            ::ROM::SQL::Function.new(type).meta(schema: schema)
           else
             ::Sequel::VIRTUAL_ROW.__send__(meth, *args, &block)
           end

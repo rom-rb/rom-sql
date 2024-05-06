@@ -19,6 +19,12 @@ RSpec.describe ROM::SQL::RestrictionDSL, :sqlite, helpers: true do
     it 'evaluates the block and returns an SQL expression' do
       expect(conn[:users].literal(dsl.call { count(id) >= 3 })).to eql('(count(`id`) >= 3)')
     end
+
+    it "supports using blocks in filter clause" do
+      expect(conn[:users].literal(dsl.call { integer.count(id).filter { id > 0 } >= 3 })).to eql(
+        "(COUNT(`id`) FILTER (WHERE (`id` > 0)) >= 3)"
+      )
+    end
   end
 
   describe '#method_missing' do
