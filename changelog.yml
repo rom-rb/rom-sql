@@ -1,4 +1,9 @@
 ---
+- version: 3.6.3
+  summary:
+  date: 2024-05-06
+  fixed:
+  - "Fix using `.filter` with a block for aggregate functions (@flash-gordon)"
 - version: 3.6.2
   summary:
   date: 2024-01-09
