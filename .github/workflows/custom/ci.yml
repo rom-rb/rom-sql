@@ -2,7 +2,7 @@ jobs:
   tests:
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:8.4
         ports:
           - 3307:3306
         env:
@@ -11,7 +11,7 @@ jobs:
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: rom-sql
       postgres:
-        image: postgres:11
+        image: postgres:16
         ports:
           - 5433:5432
         env:
@@ -21,7 +21,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - ruby: "2.7"
+          - ruby: "3.3"
             coverage: "true"
             fail_on_warnings: "true"
             dry_types_from_master: "true"
