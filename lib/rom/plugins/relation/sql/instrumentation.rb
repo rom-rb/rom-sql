@@ -35,6 +35,8 @@ module ROM
             db_notifications = relations.values.map { |r| [r.dataset.db, r.notifications] }.uniq.to_h
 
             db_notifications.each do |db, notifications|
+              next if db.respond_to?(:rom_instrumentation?)
+
               instrumenter = Instrumenter.new(db.database_type, notifications)
               db.extend(instrumenter)
             end
@@ -56,6 +58,8 @@ module ROM
 
             # @api private
             def initialize(name, notifications)
+              super()
+
               @name = name
               @notifications = notifications
               define_log_connection_yield
@@ -67,6 +71,8 @@ module ROM
             def define_log_connection_yield
               name = self.name
               notifications = self.notifications
+
+              define_method(:rom_instrumentation?) { true }
 
               define_method(:log_connection_yield) do |*args, &block|
                 notifications.instrument(:sql, name: name, query: args[0]) do
