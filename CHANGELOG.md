@@ -11,7 +11,18 @@ See [rom 6.0 upgrade guide](https://github.com/rom-rb/rom/wiki/6.0-Upgrade-Guide
 - [internal] `indexes` schema DSL is now a plugin called `:schema_indexes` (via #402) (@solnic)
 - [internal] `Gateway#command` is now used to instantiate sql-specific commands (via #402) (@solnic)
 
-[Compare v3.6.3...v4.0.0.alpha1](https://github.com/rom-rb/rom-sql/compare/v3.6.3...v4.0.0.alpha1)
+[Compare v3.6.4...v4.0.0.alpha1](https://github.com/rom-rb/rom-sql/compare/v3.6.4...v4.0.0.alpha1)
+
+## 3.6.4 2024-07-01
+
+
+### Fixed
+
+- Excessive logging when same gateway is shared between multiple containers (@flash-gordon)
+- Warning about using color option from active-support log subscriber (@flash-gordon + @bendangelo)
+
+
+[Compare v3.6.3...v3.6.4](https://github.com/rom-rb/rom-sql/compare/v3.6.3...v3.6.4)
 
 ## 3.6.3 2024-05-06
 
