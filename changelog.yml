@@ -12,6 +12,12 @@
     #402) (@solnic)"
   - "[internal] `Gateway#command` is now used to instantiate sql-specific commands
     (via #402) (@solnic)"
+- version: 3.6.4
+  summary:
+  date: 2024-07-01
+  fixed:
+  - "Excessive logging when same gateway is shared between multiple containers (@flash-gordon)"
+  - "Warning about using color option from active-support log subscriber (@flash-gordon + @bendangelo)"
 - version: 3.6.3
   summary:
   date: 2024-05-06
