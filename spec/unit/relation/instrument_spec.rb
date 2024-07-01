@@ -66,4 +66,30 @@ RSpec.describe ROM::SQL::Relation, "#instrument", :sqlite do
     expect(notifications.logs)
       .to include([:sql, {name: :sqlite, query: "SELECT count(*) AS 'count' FROM `users` LIMIT 1"}])
   end
+
+  context "two containers with shared gateway" do
+    let(:conf_alt) { TestConfiguration.new(:sql, conn) }
+
+    let(:container_alt) { ROM.setup(conf_alt) }
+
+    before do
+      conf_alt.plugin(:sql, relations: :instrumentation)
+
+      conf_alt.relation(:users) do
+        schema(infer: true)
+      end
+
+      container_alt
+    end
+
+    it "instruments relation materialization but does it once" do
+      relation.to_a
+
+      entries = notifications.logs.count do |log|
+        log.eql?([:sql, {name: :sqlite, query: relation.dataset.sql}])
+      end
+
+      expect(entries).to be(1)
+    end
+  end
 end
