@@ -1107,6 +1107,8 @@ module ROM
               end
 
               new(dataset.__send__(type, other.name.dataset.to_sym, join_cond, join_opts))
+            elsif opts[:table_alias]
+              new(dataset.__send__( type, other.name.key, join_cond, opts))
             else
               associations[other.name.key].join(type, self, other)
             end
