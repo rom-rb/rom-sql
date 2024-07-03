@@ -1086,13 +1086,16 @@ module ROM
         # @api private
         def __join__(type, other, join_cond = EMPTY_HASH, opts = EMPTY_HASH, &block)
           if other.is_a?(Symbol) || other.is_a?(ROM::Relation::Name)
-            if join_cond.equal?(EMPTY_HASH) && !block
-              assoc = associations[other]
+            assoc = associations.key?(other) && associations[other]
+
+            if join_cond.eql?(EMPTY_HASH) && !block
               assoc.join(type, self)
             elsif block
               __join__(type, other, JoinDSL.new(schema).(&block), opts)
+            elsif assoc
+              new(dataset.__send__(type, assoc.target.name.to_sym, join_cond, opts, &block))
             else
-              new(dataset.__send__(type, other.to_sym, join_cond, opts, &block))
+              new(dataset.__send__(type, other, join_cond, opts, &block))
             end
           elsif other.is_a?(Sequel::SQL::AliasedExpression)
             new(dataset.__send__(type, other, join_cond, opts, &block))
@@ -1107,6 +1110,8 @@ module ROM
               end
 
               new(dataset.__send__(type, other.name.dataset.to_sym, join_cond, join_opts))
+            elsif opts[:table_alias]
+              new(dataset.__send__( type, other.name.key, join_cond, opts))
             else
               associations[other.name.key].join(type, self, other)
             end

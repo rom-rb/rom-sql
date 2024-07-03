@@ -38,7 +38,7 @@ RSpec.describe ROM::Relation, '#inner_join' do
                                  ])
     end
 
-    it 'allows specifying table_aliases' do
+    it 'allows specifying table_alias with table name' do
       relation.insert id: 3, name: 'Jade'
 
       result = relation
@@ -192,6 +192,45 @@ RSpec.describe ROM::Relation, '#inner_join' do
         result = puzzles.inner_join(users).select(users[:name], puzzles[:text])
 
         expect(result.to_a).to eql([name: 'Jane', text: 'solved by Jane'])
+      end
+
+      it 'allows specifying table_alias with association name' do
+        result = relation
+                .inner_join(:tasks, { user_id: :id }, table_alias: :t1)
+                .select(:name, tasks[:title].qualified(:t1))
+
+        expect(result.schema.map(&:name)).to eql(%i[name title])
+
+        expect(result.to_a).to eql([
+                                    { name: 'Jane', title: "Jane's task" },
+                                    { name: 'Joe', title: "Joe's task" }
+                                  ])
+      end
+
+      it 'allows specifying table_alias with relation' do
+        result = relation
+                .inner_join(tasks, { user_id: :id }, table_alias: :requirements)
+                .select(:name, tasks[:title].qualified(:requirements))
+
+        expect(result.schema.map(&:name)).to eql(%i[name title])
+
+        expect(result.to_a).to eql([
+                                    { name: 'Jane', title: "Jane's task" },
+                                    { name: 'Joe', title: "Joe's task" }
+                                  ])
+      end
+
+      it 'allows specifying table_alias with association name different from relation name' do
+        result = relation
+                .inner_join(:todos, {user_id: :id}, table_alias: :requirements)
+                .select(:name, tasks[:title].qualified(:requirements))
+
+        expect(result.schema.map(&:name)).to eql(%i[name title])
+
+        expect(result.to_a).to eql([
+                                    { name: 'Jane', title: "Jane's task" },
+                                    { name: 'Joe', title: "Joe's task" }
+                                  ])
       end
     end
   end
