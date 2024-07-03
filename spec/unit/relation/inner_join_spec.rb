@@ -219,6 +219,19 @@ RSpec.describe ROM::Relation, '#inner_join' do
                                     { name: 'Joe', title: "Joe's task" }
                                   ])
       end
+
+      it 'allows specifying table_alias with association name different from relation name' do
+        result = relation
+                .inner_join(:todos, {user_id: :id}, table_alias: :requirements)
+                .select(:name, tasks[:title].qualified(:requirements))
+
+        expect(result.schema.map(&:name)).to eql(%i[name title])
+
+        expect(result.to_a).to eql([
+                                    { name: 'Jane', title: "Jane's task" },
+                                    { name: 'Joe', title: "Joe's task" }
+                                  ])
+      end
     end
   end
 end
