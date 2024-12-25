@@ -41,9 +41,6 @@ RSpec.shared_context 'database setup' do
 
   after do
     conn.disconnect
-    # Prevent the auto-reconnect when the test completed
-    # This will save from hardly reproducible connection run outs
-    conn.pool.available_connections.freeze
   end
 
   after do
