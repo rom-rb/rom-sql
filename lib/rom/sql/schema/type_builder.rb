@@ -37,6 +37,10 @@ module ROM
 
         numeric_pk_type Types::Serial
 
+        TYPE_GUESSES = {
+          /datetime\((\d+)\)/ => :datetime
+        }.freeze
+
         def call(primary_key:, db_type:, type:, allow_null:, **rest)
           if primary_key
             map_pk_type(type, db_type, **rest)
@@ -64,7 +68,7 @@ module ROM
 
         # @api private
         def map_type(ruby_type, db_type, **kw)
-          type = self.class.ruby_type_mapping[ruby_type]
+          type = self.class.ruby_type_mapping[ruby_type || guess_type(db_type)]
 
           if db_type.is_a?(String) && db_type.include?('numeric') || db_type.include?('decimal')
             map_decimal_type(db_type)
@@ -72,6 +76,15 @@ module ROM
             type.meta(limit: kw[:max_length])
           else
             type
+          end
+        end
+
+        # @api private
+        def guess_type(db_type)
+          TYPE_GUESSES.find do |regex, type|
+            if db_type.is_a?(String) && db_type.match(regex)
+              break type
+            end
           end
         end
 
