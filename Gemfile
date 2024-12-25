@@ -24,6 +24,10 @@ end
 group :test do
   gem 'pry-byebug', platforms: :ruby
   gem 'pry', '~> 0.12.2', '<= 0.13'
+  if RUBY_VERSION.start_with?('3.4')
+    gem 'ostruct'
+    gem 'mutex_m'
+  end
   gem 'activesupport', '~> 5.0'
   gem 'pg', '~> 1.2', platforms: :ruby
   gem 'mysql2', '~> 0.5', platforms: :ruby
