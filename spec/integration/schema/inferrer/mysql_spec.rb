@@ -36,8 +36,6 @@ RSpec.describe "ROM::SQL::Schema::MysqlInferrer", :mysql do
   let(:source) { container.relations[:test_inferrence].name }
 
   it "can infer attributes for dataset" do
-    pending "This fails with Sequel > 5.something (possibly a regression in Sequel?)"
-
     expect(schema[:tiny].source).to be(source)
     expect(schema[:tiny].unwrap.type.primitive).to be(Integer)
 
