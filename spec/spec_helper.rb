@@ -33,10 +33,11 @@ require 'rom/sql/rake_task'
 require 'logger'
 require 'tempfile'
 
-begin
-  require ENV['DEBUGGER'] || 'byebug'
+[ENV["DEBUGGER"], "byebug", "debug", "pry"].compact.each do |debugger|
+  require debugger
 rescue LoadError
-  require 'pry'
+else
+  break
 end
 
 LOGGER = Logger.new(File.open('./log/test.log', 'a'))
