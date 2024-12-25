@@ -29,10 +29,11 @@ end
 
 require "dotenv/load"
 
-begin
-  require ENV["DEBUGGER"] || "byebug"
+[ENV["DEBUGGER"], "byebug", "debug", "pry"].compact.each do |debugger|
+  require debugger
 rescue LoadError
-  require "pry"
+else
+  break
 end
 
 if ENV["ROM_COMPAT"] == "true"
