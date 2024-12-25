@@ -41,7 +41,7 @@ module ROM
       WINDOW_FRAMES[nil] = nil
       WINDOW_FRAMES[:all] = WINDOW_FRAMES[rows: %i[start end]]
       WINDOW_FRAMES[:rows] = WINDOW_FRAMES[rows: %i[start current]]
-      WINDOW_FRAMES[range: :current] = WINDOW_FRAMES[range: %i[current current]]
+      WINDOW_FRAMES[{ range: :current }] = WINDOW_FRAMES[range: %i[current current]]
 
       # Return a new attribute with an alias
       #
