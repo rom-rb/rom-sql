@@ -33,4 +33,9 @@ group :test do
   gem "ruby-oci8", platforms: :ruby if ENV["ROM_USE_ORACLE"]
   gem "sequel_pg", require: false, platforms: :ruby
   gem "sqlite3", "~> 1.4", platforms: :ruby
+
+  if RUBY_VERSION.start_with?("3.4")
+    gem "mutex_m"
+    gem "ostruct"
+  end
 end
