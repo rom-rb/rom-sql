@@ -1,4 +1,9 @@
----
+
+- version: 3.6.5
+  summary:
+  date: 2024-12-25
+  fixed:
+  - "Fix syntax error under Ruby 3.4 (@flash-gordon)"
 - version: 3.6.4
   summary:
   date: 2024-07-01
