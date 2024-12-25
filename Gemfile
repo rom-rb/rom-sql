@@ -18,16 +18,22 @@ end
 if ENV['SEQUEL_FROM_MASTER'].eql?('true')
   gem 'sequel', github: 'jeremyevans/sequel', branch: 'master'
 else
-  gem 'sequel', '5.31.0'
+  gem 'sequel', '5.87.0'
 end
 
 group :test do
-  gem 'pry-byebug', platforms: :ruby
-  gem 'pry', '~> 0.12.2', '<= 0.13'
-  if RUBY_VERSION.start_with?('3.4')
+  if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.3')
+    gem 'debug', platforms: :ruby
+  else
+    gem 'pry', '~> 0.12.2', '<= 0.13'
+    gem 'pry-byebug', platforms: :ruby
+  end
+
+  if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.4')
     gem 'ostruct'
     gem 'mutex_m'
   end
+
   gem 'activesupport', '~> 5.0'
   gem 'pg', '~> 1.2', platforms: :ruby
   gem 'mysql2', '~> 0.5', platforms: :ruby
