@@ -13,6 +13,14 @@ See [rom 6.0 upgrade guide](https://github.com/rom-rb/rom/wiki/6.0-Upgrade-Guide
 
 [Compare v3.6.4...v4.0.0.alpha1](https://github.com/rom-rb/rom-sql/compare/v3.6.4...v4.0.0.alpha1)
 
+## 3.6.5 2024-12-25
+
+### Fixed
+
+- Fix syntax error under Ruby 3.4 (@flash-gordon)
+
+[Compare v3.6.4...v3.6.5](https://github.com/rom-rb/rom-sql/compare/v3.6.4...v3.6.5)
+
 ## 3.6.4 2024-07-01
 
 
