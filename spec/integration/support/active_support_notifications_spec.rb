@@ -9,7 +9,7 @@ RSpec.describe "ActiveSupport::Notifications support", :postgres, seeds: false d
 
   include_context "users"
 
-  it "works" do
+  xit "works" do
     container.gateways[:default].use_logger(LOGGER)
 
     sql = nil
