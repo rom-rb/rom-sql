@@ -178,6 +178,22 @@ RSpec.describe "Commands / Create", :postgres, seeds: false do
       ])
     end
 
+    context "with json notes" do
+      include_context "json_notes"
+
+      before do
+        conf.commands(:json_notes) do
+          define(:create)
+        end
+      end
+
+      it "writes and reads back custom type" do
+        json_notes = commands[:json_notes]
+
+        expect(json_notes[:create].call(note: "this is my note")).to eq([{id: 1, note: "this is my note"}])
+      end
+    end
+
     it "re-raises not-null constraint violation error" do
       expect {
         create_user.call(name: nil)

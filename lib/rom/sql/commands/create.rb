@@ -46,7 +46,7 @@ module ROM
         # @api private
         def insert(tuples)
           pks = tuples.map { |tuple| relation.insert(tuple) }
-          relation.where(relation.primary_key => pks).to_a
+          relation.dataset.where(relation.primary_key => pks).to_a
         end
 
         # Executes multi_insert statement and returns inserted tuples
@@ -54,7 +54,7 @@ module ROM
         # @api private
         def multi_insert(tuples)
           pks = relation.multi_insert(tuples, return: :primary_key)
-          relation.where(relation.primary_key => pks).to_a
+          relation.dataset.where(relation.primary_key => pks).to_a
         end
 
         # Yields tuples for insertion or return an enumerator
