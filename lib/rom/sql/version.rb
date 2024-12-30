@@ -2,6 +2,6 @@
 
 module ROM
   module SQL
-    VERSION = "3.6.5"
+    VERSION = "3.7.0"
   end
 end
