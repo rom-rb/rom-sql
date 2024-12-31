@@ -14,14 +14,13 @@ module ROM
         attr_reader :registry
 
         # @api private
-        def initialize(*, &block)
+        def initialize(*, **, &block)
           super
 
           @registry = []
 
           instance_exec(&block)
         end
-        ruby2_keywords(:initialize) if respond_to?(:ruby2_keywords, true)
 
         # @api public
         def index(*attributes, **options)

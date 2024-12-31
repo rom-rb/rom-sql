@@ -22,12 +22,11 @@ module Helpers
     ROM::SQL::Attribute.new(type.meta(opts), name: name)
   end
 
-  def build_assoc(type, *args)
+  def build_assoc(type, *args, **kwargs)
     klass = ROM::Inflector.classify(type)
-    definition = ROM::Associations::Definitions.const_get(klass).new(*args)
+    definition = ROM::Associations::Definitions.const_get(klass).new(*args, **kwargs)
     ROM::SQL::Associations.const_get(definition.type).new(definition, relations)
   end
-  ruby2_keywords(:build_assoc) if respond_to?(:ruby2_keywords, true)
 
   def attributes(schema)
     schema.each_with_object({}) do |(key, type), acc|
