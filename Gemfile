@@ -8,7 +8,7 @@ if ENV['DRY_TYPES_FROM_MASTER'].eql?('true')
   gem 'dry-types', github: 'dry-rb/dry-types', branch: 'main'
 end
 
-git 'https://github.com/rom-rb/rom.git', branch: 'release-5.3' do
+git 'https://github.com/rom-rb/rom.git', branch: 'release-5.4' do
   gem 'rom-core'
   gem 'rom-changeset'
   gem 'rom-repository'
