@@ -1,7 +1,8 @@
 # this file is managed by rom-rb/devtools project
 
 AllCops:
-  TargetRubyVersion: 2.7
+  NewCops: enable
+  TargetRubyVersion: 3.1
   Exclude:
     - spec/support/coverage.rb
     - spec/support/warnings.rb
@@ -9,31 +10,44 @@ AllCops:
     - Gemfile.devtools
     - "*.gemspec"
 
-Layout/SpaceAroundMethodCallOperator:
-  Enabled: false
-
-Layout/SpaceInLambdaLiteral:
-  Enabled: false
-
-Layout/MultilineMethodCallIndentation:
-  Enabled: true
-  EnforcedStyle: indented
 
 Layout/FirstArrayElementIndentation:
   EnforcedStyle: consistent
-
-Layout/SpaceInsideHashLiteralBraces:
-  Enabled: true
-  EnforcedStyle: no_space
-  EnforcedStyleForEmptyBraces: no_space
 
 Layout/LineLength:
   Max: 100
   Exclude:
     - "spec/**/*_spec.rb"
 
+Layout/MultilineMethodCallIndentation:
+  Enabled: true
+  EnforcedStyle: indented
+
+Layout/SpaceAroundMethodCallOperator:
+  Enabled: false
+
+Layout/SpaceInLambdaLiteral:
+  Enabled: false
+
+Layout/SpaceInsideHashLiteralBraces:
+  Enabled: true
+  EnforcedStyle: no_space
+  EnforcedStyleForEmptyBraces: no_space
+
 Lint/BooleanSymbol:
   Enabled: false
+
+Lint/ConstantDefinitionInBlock:
+  Exclude:
+    - "spec/**/*.rb"
+
+Lint/EmptyBlock:
+  Exclude:
+    - "spec/**/*.rb"
+
+Lint/EmptyClass:
+  Exclude:
+    - "spec/**/*.rb"
 
 Lint/RaiseException:
   Enabled: false
@@ -45,49 +59,43 @@ Lint/SuppressedException:
   Exclude:
     - "spec/spec_helper.rb"
 
-Naming/PredicateName:
+Metrics/AbcSize:
+  Max: 20
+
+Metrics/BlockLength:
   Enabled: false
+
+Metrics/ClassLength:
+  Max: 150
+
+Metrics/CyclomaticComplexity:
+  Enabled: true
+  Max: 10
+
+Metrics/MethodLength:
+  Max: 22
 
 Naming/FileName:
   Exclude:
     - "lib/*-*.rb"
 
-Naming/MethodName:
-  Enabled: false
-
 Naming/MemoizedInstanceVariableName:
   Enabled: false
 
-Metrics/MethodLength:
+Naming/MethodName:
   Enabled: false
 
-Metrics/ClassLength:
+Naming/MethodParameterName:
   Enabled: false
 
-Metrics/BlockLength:
-  Enabled: false
-
-Metrics/AbcSize:
-  Max: 25
-
-Metrics/CyclomaticComplexity:
-  Enabled: true
-  Max: 12
-
-Style/ExponentialNotation:
-  Enabled: false
-
-Style/HashEachMethods:
-  Enabled: false
-
-Style/HashTransformKeys:
-  Enabled: false
-
-Style/HashTransformValues:
+Naming/PredicateName:
   Enabled: false
 
 Style/AccessModifierDeclarations:
   Enabled: false
+
+Style/AccessorGrouping:
+  EnforcedStyle: separated
 
 Style/Alias:
   Enabled: true
@@ -115,10 +123,25 @@ Style/Documentation:
 Style/EachWithObject:
   Enabled: false
 
+Style/ExponentialNotation:
+  Enabled: false
+
 Style/FormatString:
   Enabled: false
 
 Style/GuardClause:
+  Enabled: false
+
+Style/HashAsLastArrayItem:
+  EnforcedStyle: no_braces
+
+Style/HashEachMethods:
+  Enabled: false
+
+Style/HashTransformKeys:
+  Enabled: false
+
+Style/HashTransformValues:
   Enabled: false
 
 Style/IfUnlessModifier:
@@ -130,6 +153,12 @@ Style/Lambda:
 Style/LambdaCall:
   Enabled: false
 
+Style/MultipleComparison:
+  Enabled: false
+
+Style/NumberedParametersLimit:
+  Max: 2
+
 Style/ParallelAssignment:
   Enabled: false
 
@@ -138,7 +167,7 @@ Style/StabbyLambdaParentheses:
 
 Style/StringLiterals:
   Enabled: true
-  EnforcedStyle: double_quotes
+  EnforcedStyle: single_quotes
   ConsistentQuotesInMultiline: false
 
 Style/StringLiteralsInInterpolation:
@@ -150,7 +179,4 @@ Style/SymbolArray:
     - "spec/**/*_spec.rb"
 
 Style/TrailingUnderscoreVariable:
-  Enabled: false
-
-Style/MultipleComparison:
   Enabled: false
