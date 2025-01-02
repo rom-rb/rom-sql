@@ -5,14 +5,14 @@
 git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
 group :test do
-  gem "simplecov", require: false, platforms: :ruby
-  gem "simplecov-cobertura", require: false, platforms: :ruby
-  gem "rexml", require: false
+  gem 'simplecov', require: false, platforms: :ruby
+  gem 'simplecov-cobertura', require: false, platforms: :ruby
+  gem 'rexml', require: false
 
-  gem "warning"
+  gem 'warning'
 end
 
 group :tools do
   # this is the same version that we use on codacy
-  gem "rubocop", "1.69.2"
+  gem 'rubocop', '1.69.2'
 end

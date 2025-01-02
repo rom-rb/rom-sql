@@ -1,13 +1,15 @@
-require "spec_helper"
+# frozen_string_literal: true
+
+require 'spec_helper'
 
 namespace :db do
   task :setup do
-    #noop
+    # noop
   end
 end
 
-RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
-  include_context "database setup"
+RSpec.describe 'MigrationTasks', :postgres, skip_tables: true do
+  include_context 'database setup'
 
   let(:migrator) { container.gateways[:default].migrator }
   let(:task) { nil }
@@ -23,10 +25,10 @@ RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
     task.reenable
   end
 
-  context "db:reset" do
-    let(:task) { Rake::Task["db:reset"] }
+  context 'db:reset' do
+    let(:task) { Rake::Task['db:reset'] }
 
-    it "calls proper commands" do
+    it 'calls proper commands' do
       expect(migrator).to receive(:run).with({ target: 0 })
       expect(migrator).to receive(:run)
 
@@ -35,12 +37,12 @@ RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
       }.to output("<= db:reset executed\n").to_stdout
     end
 
-    context "with custom migration_options" do
+    context 'with custom migration_options' do
       before do
         ROM::SQL::RakeSupport.migration_options = { table: :custom_table, column: :custom_column }
       end
 
-      it "calls proper commands" do
+      it 'calls proper commands' do
         expect(migrator).to receive(:run).with({ target: 0, table: :custom_table, column: :custom_column })
         expect(migrator).to receive(:run).with({ table: :custom_table, column: :custom_column })
 
@@ -51,11 +53,11 @@ RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
     end
   end
 
-  context "db:migrate" do
-    let(:task) { Rake::Task["db:migrate"] }
+  context 'db:migrate' do
+    let(:task) { Rake::Task['db:migrate'] }
 
-    context "with VERSION" do
-      it "calls proper commands" do
+    context 'with VERSION' do
+      it 'calls proper commands' do
         expect(migrator).to receive(:run).with({ target: 1 })
 
         expect {
@@ -64,8 +66,8 @@ RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
       end
     end
 
-    context "without VERSION" do
-      it "calls proper commands" do
+    context 'without VERSION' do
+      it 'calls proper commands' do
         expect(migrator).to receive(:run)
 
         expect {
@@ -74,7 +76,7 @@ RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
       end
     end
 
-    it "raises an error on missing both env and Gateway.instance" do
+    it 'raises an error on missing both env and Gateway.instance' do
       ROM::SQL::RakeSupport.env = nil
       ROM::SQL::Gateway.instance = nil
 
@@ -83,12 +85,12 @@ RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
       }.to raise_error(ROM::SQL::RakeSupport::MissingEnv)
     end
 
-    context "with custom migration_options" do
+    context 'with custom migration_options' do
       before do
         ROM::SQL::RakeSupport.migration_options = { table: :custom_table, column: :custom_column }
       end
 
-      it "calls proper commands" do
+      it 'calls proper commands' do
         expect(migrator).to receive(:run).with({ table: :custom_table, column: :custom_column })
 
         expect {
@@ -98,10 +100,10 @@ RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
     end
   end
 
-  context "db:clean" do
-    let(:task) { Rake::Task["db:clean"] }
+  context 'db:clean' do
+    let(:task) { Rake::Task['db:clean'] }
 
-    it "calls proper commands" do
+    it 'calls proper commands' do
       expect(migrator).to receive(:run).with({ target: 0 })
 
       expect {
@@ -109,12 +111,12 @@ RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
       }.to output("<= db:clean executed\n").to_stdout
     end
 
-    context "with custom migration_options" do
+    context 'with custom migration_options' do
       before do
         ROM::SQL::RakeSupport.migration_options = { table: :custom_table, column: :custom_column }
       end
 
-      it "calls proper commands" do
+      it 'calls proper commands' do
         expect(migrator).to receive(:run).with({ target: 0, table: :custom_table, column: :custom_column })
 
         expect {
@@ -124,11 +126,11 @@ RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
     end
   end
 
-  context "db:create_migration" do
-    let(:task) { Rake::Task["db:create_migration"] }
+  context 'db:create_migration' do
+    let(:task) { Rake::Task['db:create_migration'] }
 
-    context "without NAME" do
-      it "exit without creating any file" do
+    context 'without NAME' do
+      it 'exit without creating any file' do
         expect(File).to_not receive(:write)
 
         expect {
@@ -139,28 +141,30 @@ RSpec.describe "MigrationTasks", :postgres, skip_tables: true do
       end
     end
 
-    context "with NAME" do
-      let(:dirname) { "tmp/db/migrate" }
-      let(:name) { "foo_bar" }
-      let(:version) { "001" }
+    context 'with NAME' do
+      let(:dirname) { 'tmp/db/migrate' }
+      let(:name) { 'foo_bar' }
+      let(:version) { '001' }
       let(:filename) { "#{version}_#{name}.rb" }
       let(:path) { File.join(dirname, filename) }
 
-      it "calls proper commands with default VERSION" do
+      it 'calls proper commands with default VERSION' do
         expect(migrator).to receive(:create_file).with(name).and_return(path)
 
         expect {
           task.execute(
-            Rake::TaskArguments.new([:name], [name]))
+            Rake::TaskArguments.new([:name], [name])
+          )
         }.to output("<= migration file created #{path}\n").to_stdout
       end
 
-      it "calls proper commands with manualy set VERSION" do
+      it 'calls proper commands with manualy set VERSION' do
         expect(migrator).to receive(:create_file).with(name, version).and_return(path)
 
         expect {
           task.execute(
-            Rake::TaskArguments.new([:name, :version], [name, version]))
+            Rake::TaskArguments.new([:name, :version], [name, version])
+          )
         }.to output("<= migration file created #{path}\n").to_stdout
       end
     end

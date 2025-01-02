@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::Relation, '#import' do
   subject(:relation) { relations[:users] }
 
@@ -26,11 +28,12 @@ RSpec.describe ROM::Relation, '#import' do
       it 'inserts data from another relation' do
         relation.import(source.project { [(id + 10).as(:id), full_name.as(:name)] })
 
-        expect(relation.to_a).
-          to eql([ { id: 1, name: 'Jane' },
-                   { id: 2, name: 'Joe' },
-                   { id: 11, name: 'Jack' },
-                   { id: 12, name: 'John' }])
+        expect(relation.to_a).to eql([
+          { id: 1, name: 'Jane' },
+          { id: 2, name: 'Joe' },
+          { id: 11, name: 'Jack' },
+          { id: 12, name: 'John' }
+        ])
       end
     end
 
@@ -56,11 +59,12 @@ RSpec.describe ROM::Relation, '#import' do
       it 'inserts data' do
         relation.import(source.new(source_dataset).project(source[:id], source[:name]))
 
-        expect(relation.to_a).
-          to eql([ { id: 1, name: 'Jane' },
-                   { id: 2, name: 'Joe' },
-                   { id: 11, name: 'Jack' },
-                   { id: 12, name: 'John' }])
+        expect(relation.to_a).to eql([
+          { id: 1, name: 'Jane' },
+          { id: 2, name: 'Joe' },
+          { id: 11, name: 'Jack' },
+          { id: 12, name: 'John' }
+        ])
       end
     end
   end

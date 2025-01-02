@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::Relation, '#having' do
   subject(:relation) do
     relations[:users]
@@ -15,8 +17,9 @@ RSpec.describe ROM::Relation, '#having' do
     end
 
     it 'restricts a relation using HAVING clause' do
-      expect(relation.having { count(id.qualified) >= 2 }.to_a).
-        to eq([{ id: 2, name: 'Joe', task_count: 2 }])
+      expect(relation.having { count(id.qualified) >= 2 }.to_a).to eql([
+        { id: 2, name: 'Joe', task_count: 2 }
+      ])
     end
   end
 end

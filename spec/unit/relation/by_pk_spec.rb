@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::Relation, '#by_pk' do
   include_context 'users and tasks'
 
@@ -55,7 +57,8 @@ RSpec.describe ROM::Relation, '#by_pk' do
         expect { relation.by_pk(1) }.to \
           raise_error(
             ROM::SQL::MissingPrimaryKeyError,
-            'Missing primary key for :people')
+            'Missing primary key for :people'
+          )
       end
     end
   end

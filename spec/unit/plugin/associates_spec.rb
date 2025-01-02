@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ostruct'
 require 'rom/sql/commands'
 
@@ -48,11 +50,10 @@ RSpec.describe ROM::SQL::Plugin::Associates do
 
       result = command.associate(post_tuples, tag_tuples, assoc: tags_assoc, keys: {})
 
-      expect(result).
-        to match_array([
-                         { title: 'post 1', tag: 'red' }, { title: 'post 1', tag: 'green'},
-                         { title: 'post 2', tag: 'red' }, { title: 'post 2', tag: 'green'}
-                       ])
+      expect(result).to match_array([
+        { title: 'post 1', tag: 'red' }, { title: 'post 1', tag: 'green' },
+        { title: 'post 2', tag: 'red' }, { title: 'post 2', tag: 'green' }
+      ])
     end
   end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rom/sql/commands/create'
 
 RSpec.describe ROM::SQL::Commands::Create do

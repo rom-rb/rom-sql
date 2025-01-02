@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::Relation, '#associations' do
   subject(:relation) { container.relations.users }
 

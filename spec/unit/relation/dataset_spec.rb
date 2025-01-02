@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::Relation, '#dataset' do
   subject(:relation) { container.relations.users }
 
@@ -17,8 +19,9 @@ RSpec.describe ROM::Relation, '#dataset' do
       end
 
       it 'uses schema to infer default dataset' do
-        expect(relation.dataset.sql).
-          to eql(dataset.select(Sequel.qualify(:users, :id), Sequel.qualify(:users, :name)).order(Sequel.qualify(:users, :id)).sql)
+        expect(relation.dataset.sql).to eql(
+          dataset.select(Sequel.qualify(:users, :id), Sequel.qualify(:users, :name)).order(Sequel.qualify(:users, :id)).sql
+        )
       end
     end
 
@@ -32,8 +35,9 @@ RSpec.describe ROM::Relation, '#dataset' do
       end
 
       it 'uses schema to infer default dataset' do
-        expect(relation.dataset.sql).
-          to eql(dataset.select(Sequel.qualify(:users, :id)).order(Sequel.qualify(:users, :id)).sql)
+        expect(relation.dataset.sql).to eql(
+          dataset.select(Sequel.qualify(:users, :id)).order(Sequel.qualify(:users, :id)).sql
+        )
       end
     end
 

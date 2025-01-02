@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::Relation, '#distinct' do
   subject(:relation) { relations[:users] }
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rom/sql/gateway'
 
 RSpec.describe ROM::SQL::Gateway, '#initialize' do

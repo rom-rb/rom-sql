@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
 gemspec
@@ -9,10 +11,10 @@ if ENV['DRY_TYPES_FROM_MASTER'].eql?('true')
 end
 
 git 'https://github.com/rom-rb/rom.git', branch: 'release-5.4' do
-  gem 'rom-core'
-  gem 'rom-changeset'
-  gem 'rom-repository'
   gem 'rom'
+  gem 'rom-changeset'
+  gem 'rom-core'
+  gem 'rom-repository'
 end
 
 if ENV['SEQUEL_FROM_MASTER'].eql?('true')
@@ -30,18 +32,18 @@ group :test do
   end
 
   if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.4')
-    gem 'ostruct'
     gem 'mutex_m'
+    gem 'ostruct'
   end
 
   gem 'activesupport', '~> 5.0'
-  gem 'pg', '~> 1.2', platforms: :ruby
-  gem 'mysql2', '~> 0.5', platforms: :ruby
-  gem 'jdbc-postgres', '>= 9.4.1212', platforms: :jruby
-  gem 'jdbc-mysql', platforms: :jruby
-  gem 'sqlite3', '~> 1.4', platforms: :ruby
-  gem 'jdbc-sqlite3', platforms: :jruby
-  gem 'ruby-oci8', platforms: :ruby if ENV['ROM_USE_ORACLE']
   gem 'dotenv', require: false
+  gem 'jdbc-mysql', platforms: :jruby
+  gem 'jdbc-postgres', '>= 9.4.1212', platforms: :jruby
+  gem 'jdbc-sqlite3', platforms: :jruby
+  gem 'mysql2', '~> 0.5', platforms: :ruby
+  gem 'pg', '~> 1.2', platforms: :ruby
+  gem 'ruby-oci8', platforms: :ruby if ENV['ROM_USE_ORACLE']
   gem 'sequel_pg', require: false, platforms: :ruby
+  gem 'sqlite3', '~> 1.4', platforms: :ruby
 end

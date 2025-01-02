@@ -31,7 +31,7 @@ Layout/SpaceInLambdaLiteral:
 
 Layout/SpaceInsideHashLiteralBraces:
   Enabled: true
-  EnforcedStyle: no_space
+  EnforcedStyle: space
   EnforcedStyleForEmptyBraces: no_space
 
 Lint/BooleanSymbol:
@@ -108,6 +108,10 @@ Style/BlockDelimiters:
   Enabled: false
 
 Style/ClassAndModuleChildren:
+  Exclude:
+    - "spec/**/*_spec.rb"
+
+Style/ColonMethodCall:
   Exclude:
     - "spec/**/*_spec.rb"
 

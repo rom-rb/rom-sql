@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rom/sql/type_serializer'
 
 RSpec.describe ROM::SQL::TypeSerializer do

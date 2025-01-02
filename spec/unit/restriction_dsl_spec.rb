@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe ROM::SQL::RestrictionDSL, :sqlite, helpers: true do
@@ -20,9 +22,9 @@ RSpec.describe ROM::SQL::RestrictionDSL, :sqlite, helpers: true do
       expect(conn[:users].literal(dsl.call { count(id) >= 3 })).to eql('(count(`id`) >= 3)')
     end
 
-    it "supports using blocks in filter clause" do
+    it 'supports using blocks in filter clause' do
       expect(conn[:users].literal(dsl.call { integer.count(id).filter { id > 0 } >= 3 })).to eql(
-        "(COUNT(`id`) FILTER (WHERE (`id` > 0)) >= 3)"
+        '(COUNT(`id`) FILTER (WHERE (`id` > 0)) >= 3)'
       )
     end
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::Relation, '#fetch' do
   subject(:relation) { container.relations.users }
 
@@ -10,11 +12,15 @@ RSpec.describe ROM::Relation, '#fetch' do
       end
 
       it 'raises when tuple was not found' do
-        expect { relation.fetch(535315412) }.to raise_error(ROM::TupleCountMismatchError)
+        expect {
+          relation.fetch(535_315_412)
+        }.to raise_error(ROM::TupleCountMismatchError)
       end
 
       it 'raises when more tuples were returned' do
-        expect { relation.fetch([1, 2]) }.to raise_error(ROM::TupleCountMismatchError)
+        expect {
+          relation.fetch([1, 2])
+        }.to raise_error(ROM::TupleCountMismatchError)
       end
     end
   end

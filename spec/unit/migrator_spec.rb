@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::SQL::Migration::Migrator, :postgres, skip_tables: true do
   include_context 'database setup'
 

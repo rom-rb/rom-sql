@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::Relation, '#left_join' do
   subject(:relation) { relations[:users] }
 
@@ -7,9 +9,9 @@ RSpec.describe ROM::Relation, '#left_join' do
     it 'joins relations using left outer join' do
       relation.insert id: 3, name: 'Jade'
 
-      result = relation.
-                 left_join(:tasks, user_id: :id).
-                 select(:name, tasks[:title])
+      result = relation
+        .left_join(:tasks, user_id: :id)
+        .select(:name, tasks[:title])
 
       expect(result.schema.map(&:name)).to eql(%i[name title])
 
@@ -38,17 +40,17 @@ RSpec.describe ROM::Relation, '#left_join' do
       end
 
       it 'joins relation with join keys inferred' do
-        result = relation.
-                   left_join(tasks).
-                   select(:name, tasks[:title])
+        result = relation
+          .left_join(tasks)
+          .select(:name, tasks[:title])
 
         expect(result.schema.map(&:name)).to eql(%i[name title])
 
         expect(result.to_a).to eql([
-                                     { name: 'Jane', title: "Jane's task" },
-                                     { name: 'Joe', title: "Joe's task" },
-                                     { name: 'Jade', title: nil }
-                                   ])
+          { name: 'Jane', title: "Jane's task" },
+          { name: 'Joe', title: "Joe's task" },
+          { name: 'Jade', title: nil }
+        ])
       end
     end
   end

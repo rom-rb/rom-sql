@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::Relation, '#pluck' do
   subject(:relation) { container.relations.users }
 
@@ -9,7 +11,7 @@ RSpec.describe ROM::Relation, '#pluck' do
     end
 
     it 'returns a list of hashes containing values from multiple specified columns' do
-      expect(relation.pluck(:id, :name)).to eql([[1, "Jane"], [2, "Joe"]])
+      expect(relation.pluck(:id, :name)).to eql([[1, 'Jane'], [2, 'Joe']])
     end
   end
 end

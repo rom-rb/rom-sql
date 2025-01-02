@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::Relation, '#right_join' do
   subject(:relation) { relations[:tasks] }
 
@@ -8,9 +10,9 @@ RSpec.describe ROM::Relation, '#right_join' do
       users.insert id: 3, name: 'Jade'
       relation.insert id: 3, title: 'Unassigned'
 
-      result = relation.
-                 right_join(:users, id: :user_id).
-                 select(:title, users[:name])
+      result = relation
+        .right_join(:users, id: :user_id)
+        .select(:title, users[:name])
 
       expect(result.schema.map(&:name)).to eql(%i[title name])
 
@@ -40,17 +42,17 @@ RSpec.describe ROM::Relation, '#right_join' do
         users.insert id: 3, name: 'Jade'
         relation.insert id: 3, title: 'Unassigned'
 
-        result = relation.
-                   right_join(users).
-                   select(:title, users[:name])
+        result = relation
+          .right_join(users)
+          .select(:title, users[:name])
 
         expect(result.schema.map(&:name)).to eql(%i[title name])
 
         expect(result.to_a).to match_array([
-                                             { name: 'Joe', title: "Joe's task" },
-                                             { name: 'Jane', title: "Jane's task" },
-                                             { name: 'Jade', title: nil }
-                                           ])
+          { name: 'Joe', title: "Joe's task" },
+          { name: 'Jane', title: "Jane's task" },
+          { name: 'Jade', title: nil }
+        ])
       end
     end
   end

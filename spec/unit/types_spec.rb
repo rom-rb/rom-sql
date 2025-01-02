@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rom/sql/types'
 
 RSpec.describe ROM::SQL::Types, :postgres do
@@ -57,8 +59,8 @@ RSpec.describe ROM::SQL::Types, :postgres do
       let(:func) { Sequel::SQL::Function.new(:count, :age) }
 
       specify do
-        expect { sql_literal }.
-          to raise_error(ROM::SQL::Attribute::QualifyError, "can't qualify :age (#{func.inspect})")
+        expect { sql_literal }
+          .to raise_error(ROM::SQL::Attribute::QualifyError, "can't qualify :age (#{func.inspect})")
       end
     end
   end

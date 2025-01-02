@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::Relation, '#invert' do
   subject(:relation) { relations[:users] }
 
