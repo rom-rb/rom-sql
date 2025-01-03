@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe 'Plugins / :auto_restrictions', seeds: true do
   include_context 'users and tasks'
 

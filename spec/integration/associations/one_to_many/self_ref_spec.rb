@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe ROM::SQL::Associations::OneToMany, '#call' do
   include_context 'database setup'
 
   before do
-    inferrable_relations.concat %i(categories)
+    inferrable_relations.push(:categories)
   end
 
   subject(:assoc) do
@@ -38,17 +40,17 @@ RSpec.describe ROM::SQL::Associations::OneToMany, '#call' do
     it 'prepares joined relations using custom FK for a self-ref association' do
       relation = assoc.()
 
-      expect(relation.schema.map(&:to_sql_name)).
-        to eql([Sequel.qualify(:categories, :id),
-                Sequel.qualify(:categories, :parent_id),
-                Sequel.qualify(:categories, :name)])
+      expect(relation.schema.map(&:to_sql_name)).to eql([
+        Sequel.qualify(:categories, :id),
+        Sequel.qualify(:categories, :parent_id),
+        Sequel.qualify(:categories, :name)
+      ])
 
-      expect(relation.to_a).
-        to eql([
-                 { id: 3, parent_id: 2, name: 'C3' },
-                 { id: 4, parent_id: 1, name: 'C4' },
-                 { id: 5, parent_id: 1, name: 'C5' }
-               ])
+      expect(relation.to_a).to eql([
+        { id: 3, parent_id: 2, name: 'C3' },
+        { id: 4, parent_id: 1, name: 'C4' },
+        { id: 5, parent_id: 1, name: 'C5' }
+      ])
     end
   end
 end

@@ -44,6 +44,7 @@ Lint/ConstantDefinitionInBlock:
 Lint/EmptyBlock:
   Exclude:
     - "spec/**/*.rb"
+    - "tmp/**/*.rb"
 
 Lint/EmptyClass:
   Exclude:
@@ -87,6 +88,10 @@ Naming/MethodName:
 
 Naming/MethodParameterName:
   Enabled: false
+
+Style/MutableConstant:
+  Exclude:
+    - "spec/**/*.rb"
 
 Naming/PredicateName:
   Enabled: false
@@ -162,6 +167,10 @@ Style/MultipleComparison:
 
 Style/NumberedParametersLimit:
   Max: 2
+
+Style/OpenStructUse:
+  Exclude:
+    - "spec/**/*.rb"
 
 Style/ParallelAssignment:
   Enabled: false

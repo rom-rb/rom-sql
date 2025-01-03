@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'dry-struct'
 
 RSpec.describe 'Commands / Create', :postgres, seeds: false do
@@ -26,7 +28,7 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
     if sqlite?(ex)
       conn.add_index :tasks, :title, unique: true
     else
-      conn.execute "ALTER TABLE tasks add CONSTRAINT tasks_title_key UNIQUE (title)"
+      conn.execute 'ALTER TABLE tasks add CONSTRAINT tasks_title_key UNIQUE (title)'
     end
 
     conf.relation(:profiles) do
@@ -95,7 +97,7 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
             }
           rescue ROM::SQL::Error
           end
-        }.to_not change { container.relations.users.count }
+        }.to_not(change { container.relations.users.count })
       end
 
       it 'creates nothing if rollback was raised' do
@@ -107,7 +109,7 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
           }
 
           expect(result).to be(nil)
-        }.to_not change { container.relations.users.count }
+        }.to_not(change { container.relations.users.count })
       end
 
       it 'creates nothing if constraint error was raised' do
@@ -120,11 +122,11 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
               create_user.call(name: 'Jane')
               passed = true
             }
-          rescue => error
-            expect(error).to be_instance_of(ROM::SQL::UniqueConstraintError)
+          rescue StandardError => e
+            expect(e).to be_instance_of(ROM::SQL::UniqueConstraintError)
             expect(passed).to be(false)
           end
-        }.to_not change { container.relations.users.count }
+        }.to_not(change { container.relations.users.count })
       end
 
       it 'creates nothing if anything was raised in any nested transaction' do
@@ -139,7 +141,7 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
               }
             }
           }.to raise_error(Exception)
-        }.to_not change { container.relations.users.count }
+        }.to_not(change { container.relations.users.count })
       end
     end
 
@@ -185,7 +187,7 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
     end
 
     # Because Oracle doesn't have boolean in SQL
-    if !metadata[:oracle]
+    unless metadata[:oracle]
       context 'with puppies' do
         include_context 'puppies'
 
@@ -193,7 +195,6 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
           conf.relation(:puppies) do
             schema(infer: true)
           end
-
 
           conf.commands(:puppies) do
             define(:create)
@@ -203,8 +204,9 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
         it 're-raises not-null constraint violation error with nil boolean' do
           puppies = commands[:puppies]
 
-          expect { puppies.create.call(name: 'Charlie', cute: nil) }.
-            to raise_error(ROM::SQL::NotNullConstraintError)
+          expect {
+            puppies.create.call(name: 'Charlie', cute: nil)
+          }.to raise_error(ROM::SQL::NotNullConstraintError)
         end
       end
     end
@@ -216,9 +218,10 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
       }.to raise_error(ROM::SQL::UniqueConstraintError)
     end
 
-    it 're-raises fk constraint violation error' do |ex|
-      expect { create_task.call(user_id: 918_273_645) }.
-        to raise_error(ROM::SQL::ForeignKeyConstraintError)
+    it 're-raises fk constraint violation error' do |_ex|
+      expect {
+        create_task.call(user_id: 918_273_645)
+      }.to raise_error(ROM::SQL::ForeignKeyConstraintError)
     end
 
     it 're-raises database errors' do
@@ -237,7 +240,7 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
 
         it 'materializes aliased results' do
           result = create_profile.execute(name: 'Joe')
-          expect(result).to eq([{id: 1, login: 'Joe'}])
+          expect(result).to eq([{ id: 1, login: 'Joe' }])
         end
       end
 
@@ -254,7 +257,7 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
 
       context 'with a composite pk' do
         before do
-          inferrable_relations.concat %i(user_group)
+          inferrable_relations.push(:user_group)
         end
 
         before do
@@ -274,7 +277,7 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
         end
 
         # with a composite pk sequel returns 0 when inserting for MySQL
-        if !metadata[:mysql]
+        unless metadata[:mysql]
           it 'materializes the result' do |ex|
             command = container.commands[:user_group][:create]
             result = command.call(user_id: 1, group_id: 2)
@@ -289,8 +292,9 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
 
   describe '#call' do
     it 'raises check constraint violation error' do
-      expect { create_user.call(name: 'J') }.
-        to raise_error(ROM::SQL::CheckConstraintError, /name/)
+      expect {
+        create_user.call(name: 'J')
+      }.to raise_error(ROM::SQL::CheckConstraintError, /name/)
     end
 
     it 'raises constraint violation error' do
@@ -318,5 +322,5 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
         id: 1, user_id: nil, title: 'task 1'
       ])
     end
-  end if PG_LTE_95
+  end
 end

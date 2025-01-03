@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe 'Plugins / :associates', seeds: false do
   include_context 'relations'
 
@@ -46,21 +48,23 @@ RSpec.describe 'Plugins / :associates', seeds: false do
         it 'returns a command prepared for the given association' do
           command = tasks[:create].with_association(:user, key: %i[user_id id])
 
-          expect(command.call(task, user)).
-            to eql(id: 1, title: 'Task one', user_id: user[:id])
+          expect(command.call(task, user)).to eql(
+            id: 1, title: 'Task one', user_id: user[:id]
+          )
         end
 
         it 'allows passing a parent explicitly' do
           command = tasks[:create].with_association(:user, key: %i[user_id id], parent: user)
 
-          expect(command.call(task)).
-            to eql(id: 1, title: 'Task one', user_id: user[:id])
+          expect(command.call(task)).to eql(
+            id: 1, title: 'Task one', user_id: user[:id]
+          )
         end
 
         it 'allows setting up multiple associations' do
-          command = tasks[:create].
-                      with_association(:user, key: %i[user_id id], parent: user).
-                      with_association(:other, key: %i[other_id id])
+          command = tasks[:create]
+            .with_association(:user, key: %i[user_id id], parent: user)
+            .with_association(:other, key: %i[other_id id])
 
           expect(command.configured_associations).to eql(%i[user other])
         end
@@ -69,7 +73,9 @@ RSpec.describe 'Plugins / :associates', seeds: false do
       shared_context 'automatic FK setting' do
         it 'sets foreign key prior execution for many tuples' do
           create_user = users[:create].curry(name: 'Jade')
-          create_task = tasks[:create_many].curry([{ title: 'Task one' }, { title: 'Task two' }])
+          create_task = tasks[:create_many].curry([
+            { title: 'Task one' }, { title: 'Task two' }
+          ])
 
           command = create_user >> create_task
 
@@ -242,8 +248,9 @@ RSpec.describe 'Plugins / :associates', seeds: false do
       end
 
       it 'automatically sets FK prior execution' do
-        expect(command.curry(title: 'Another John task').call(john)).
-          to eql(id: jane_task[:id], user_id: john[:id], title: 'Another John task')
+        expect(command.curry(title: 'Another John task').call(john)).to eql(
+          id: jane_task[:id], user_id: john[:id], title: 'Another John task'
+        )
       end
     end
   end

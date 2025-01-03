@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'dry-struct'
 
 RSpec.describe 'Commands / Update', seeds: false do
@@ -82,7 +84,7 @@ RSpec.describe 'Commands / Update', seeds: false do
         expect(result.to_a).to match_array([{ id: 1, name: 'Peter' }])
       end
 
-      it 're-raises database errors' do |example|
+      it 're-raises database errors' do |_example|
         expect {
           update_user.by_id(piotr[:id]).call(name: nil)
         }.to raise_error(ROM::SQL::NotNullConstraintError, /name/i)
@@ -98,11 +100,11 @@ RSpec.describe 'Commands / Update', seeds: false do
       it 'materializes aliased results' do
         result = update_profile.by_name('Piotr').call(name: 'Pete')
 
-        expect(result).to eq([{login: 'Pete', id: 1}])
+        expect(result).to eq([{ login: 'Pete', id: 1 }])
       end
 
       it 'materializes multiple results' do
-        result = update_user.by_name(%w(Piotr Jane)).call(name: 'Josie')
+        result = update_user.by_name(%w[Piotr Jane]).call(name: 'Josie')
         expect(result).to eq([
           { id: 1, name: 'Josie' },
           { id: 2, name: 'Josie' }

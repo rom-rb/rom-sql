@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 RSpec.shared_context 'accounts' do
   let(:accounts) { container.relations[:accounts] }
   let(:cards) { container.relations[:cards] }
 
   before do
-    inferrable_relations.concat %i(accounts cards subscriptions)
+    inferrable_relations.push(:accounts, :cards, :subscriptions)
   end
 
   before do |example|

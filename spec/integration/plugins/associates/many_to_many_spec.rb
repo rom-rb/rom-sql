@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe 'Plugins / :associates / with many-to-many', :sqlite, seeds: false do
   include_context 'users and tasks'
 
@@ -60,10 +62,9 @@ RSpec.describe 'Plugins / :associates / with many-to-many', :sqlite, seeds: fals
 
     result = command.call
 
-    expect(result).
-      to eql([
-               { id: 1, user_id: jane[:id], title: "Jade's task", tag_id: 1 },
-               { id: 1, user_id: jane[:id], title: "Jade's task", tag_id: 2 }
-             ])
+    expect(result).to eql([
+      { id: 1, user_id: jane[:id], title: "Jade's task", tag_id: 1 },
+      { id: 1, user_id: jane[:id], title: "Jade's task", tag_id: 2 }
+    ])
   end
 end

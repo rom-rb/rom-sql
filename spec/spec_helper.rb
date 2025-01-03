@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'support/coverage'
 
 require 'warning'
@@ -11,9 +13,8 @@ Warning.ignore(/__FILE__/)
 Warning.ignore(/__LINE__/)
 Warning.ignore(/codacy/)
 Warning.ignore(/zeitwerk/)
-Warning.ignore(/dry\/core\/equalizer/)
-Warning.ignore(/dry\/equalizer/)
-Warning.process { |w| raise RuntimeError, w } if ENV['FAIL_ON_WARNINGS'].eql?('true')
+Warning.ignore(%r{dry/core/equalizer})
+Warning.process { |w| raise w.to_s } if ENV['FAIL_ON_WARNINGS'].eql?('true')
 
 require 'fileutils'
 
@@ -33,7 +34,7 @@ require 'rom/sql/rake_task'
 require 'logger'
 require 'tempfile'
 
-[ENV["DEBUGGER"], "byebug", "debug", "pry"].compact.each do |debugger|
+[ENV.fetch('DEBUGGER', nil), 'byebug', 'debug', 'pry'].compact.each do |debugger|
   require debugger
 rescue LoadError
 else
@@ -46,24 +47,22 @@ ENV['TZ'] ||= 'UTC'
 
 DB_URIS = {
   sqlite: is_jruby ? 'jdbc:sqlite:' : 'sqlite::memory',
-  postgres: ENV['POSTGRES_DSN'],
-  mysql: ENV['MYSQL_DSN']
+  postgres: ENV.fetch('POSTGRES_DSN', nil),
+  mysql: ENV.fetch('MYSQL_DSN', nil)
 }
 
-if (oracle_dsn = ENV['ORACLE_DSN'])
+if (oracle_dsn = ENV.fetch('ORACLE_DSN', nil))
   DB_URIS[:oracle] = oracle_dsn
 end
 
-require 'pp'
-
 puts "\n"
-puts "*"*80
+puts '*' * 80
 puts "\n"
 puts "Running tests with the following database config:\n"
 puts "\n"
 pp DB_URIS
 puts "\n"
-puts "*"*80
+puts '*' * 80
 puts "\n"
 
 puts "Connections check...\n\n"
@@ -72,7 +71,7 @@ conn_test = DB_URIS.map do |type, uri|
   result =
     begin
       [Sequel.connect(uri).test_connection]
-    rescue => e
+    rescue StandardError => e
       [false, e.message]
     end
 
@@ -90,17 +89,16 @@ end
 puts "\n"
 
 if conn_test.all?
-  puts "All connections successful"
+  puts 'All connections successful'
 else
-  puts "Some connections failed. Make sure you started database containers via `docker-compose up`!"
-  puts "*"*80
+  puts 'Some connections failed. Make sure you started database containers via `docker-compose up`!'
+  puts '*' * 80
   puts "\n"
 
   exit(1)
 end
 
 ADAPTERS = DB_URIS.keys
-PG_LTE_95 = ENV.fetch('PG_LTE_95', 'true') == 'true'
 
 SPEC_ROOT = root = Pathname(__FILE__).dirname
 

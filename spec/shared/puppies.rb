@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 RSpec.shared_context 'puppies' do
   before do
-    inferrable_relations.concat %i(puppies)
+    inferrable_relations.push(:puppies)
   end
 
   before do

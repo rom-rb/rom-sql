@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe 'Relation / Default views' do
   include_context 'database setup'
 

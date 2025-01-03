@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
   include_context 'database setup'
 
@@ -45,25 +47,25 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
       it 'creates ordinary b-tree indexes' do
         gateway.auto_migrate!(conf, inline: true)
 
-        expect(attributes.map(&:to_ast))
-          .to eql([
-                    [:attribute,
-                     [:id,
-                      [:nominal, [Integer, {}]],
-                      primary_key: true, source: :users, alias: nil]],
-                    [:attribute,
-                     [:name,
-                      [:nominal, [String, {}]],
-                      index: true,
-                      source: :users, alias: nil]],
-                  ])
+        expect(attributes.map(&:to_ast)).to eql([
+          [:attribute,
+           [:id,
+            [:nominal, [Integer, {}]],
+            primary_key: true, source: :users, alias: nil]],
+          [:attribute,
+           [:name,
+            [:nominal, [String, {}]],
+            index: true,
+            source: :users, alias: nil]]
+        ])
 
-        expect(migrated_schema.indexes.first).
-          to eql(ROM::SQL::Index.new(
-                   [define_attribute(:name, :String, source: relation_name)],
-                   name: :unique_name,
-                   unique: true
-                 ))
+        expect(migrated_schema.indexes.first).to eql(
+          ROM::SQL::Index.new(
+            [define_attribute(:name, :String, source: relation_name)],
+            name: :unique_name,
+            unique: true
+          )
+        )
       end
     end
   end
@@ -93,7 +95,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
           expect(migrated_schema.attributes[1].name).to eql(:name)
           expect(migrated_schema.indexes.size).to eql(1)
           expect(name_index.name).to eql(:users_name_index)
-          expect(name_index.attributes.map(&:name)).to eql(%i(name))
+          expect(name_index.attributes.map(&:name)).to eql(%i[name])
         end
 
         it 'supports custom names' do
@@ -119,7 +121,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
           expect(migrated_schema.attributes[1].name).to eql(:name)
           expect(migrated_schema.indexes.size).to eql(1)
           expect(name_index.name).to eql(:custom_idx)
-          expect(name_index.attributes.map(&:name)).to eql(%i(name))
+          expect(name_index.attributes.map(&:name)).to eql(%i[name])
         end
 
         it 'adds index to existing column' do
@@ -144,7 +146,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
           name_index = migrated_schema.indexes.first
 
           expect(name_index.name).to eql(:users_name_index)
-          expect(name_index.attributes.map(&:name)).to eql(%i(name))
+          expect(name_index.attributes.map(&:name)).to eql(%i[name])
           expect(name_index).not_to be_unique
         end
 
@@ -170,7 +172,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
           name_index = migrated_schema.indexes.first
 
           expect(name_index.name).to eql(:users_name_index)
-          expect(name_index.attributes.map(&:name)).to eql(%i(name))
+          expect(name_index.attributes.map(&:name)).to eql(%i[name])
           expect(name_index).to be_unique
         end
 
@@ -194,8 +196,9 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
             gateway.auto_migrate!(conf, inline: true)
 
-            expect(indexdef('users_props_index')).
-              to eql('CREATE INDEX users_props_index ON public.users USING gin (props)')
+            expect(indexdef('users_props_index')).to eql(
+              'CREATE INDEX users_props_index ON public.users USING gin (props)'
+            )
           end
 
           it 'supports partial indexes' do
@@ -217,8 +220,9 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
             gateway.auto_migrate!(conf, inline: true)
 
-            expect(indexdef('long_names_only')).
-              to eql('CREATE INDEX long_names_only ON public.users USING btree (name) WHERE (length(name) > 10)')
+            expect(indexdef('long_names_only')).to eql(
+              'CREATE INDEX long_names_only ON public.users USING btree (name) WHERE (length(name) > 10)'
+            )
           end
         end
       end

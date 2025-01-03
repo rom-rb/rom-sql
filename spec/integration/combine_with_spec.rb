@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe 'Eager loading' do
   include_context 'users and tasks'
 
@@ -49,10 +51,15 @@ RSpec.describe 'Eager loading' do
         conf.relation(:users) do
           schema infer: true do
             associations do
-              has_many :articles, override: true, view: :for_users,
+              has_many :articles,
+                       override: true,
+                       view: :for_users,
                        combine_keys: { name: :author_name }
 
-              has_many :articles, as: :drafts, override: true, view: :with_drafts,
+              has_many :articles,
+                       as: :drafts,
+                       override: true,
+                       view: :with_drafts,
                        combine_keys: { name: :author_name }
             end
           end
@@ -93,7 +100,7 @@ RSpec.describe 'Eager loading' do
 
         authors = users.combine_with(users.node(:drafts)).to_a
 
-        expect(authors.map { |a| a[:name] }).to eql(['Jane', 'Joe', 'John'])
+        expect(authors.map { |a| a[:name] }).to eql(%w[Jane Joe John])
         expect(authors.map { |a| a[:drafts].size }).to eql([0, 1, 0])
       end
     end

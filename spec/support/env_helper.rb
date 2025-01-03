@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ENVHelper
   def db?(type, example)
     example.metadata[type]

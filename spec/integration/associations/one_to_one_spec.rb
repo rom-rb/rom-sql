@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::SQL::Associations::OneToOne, helpers: true do
   include_context 'users'
   include_context 'accounts'
@@ -37,13 +39,15 @@ RSpec.describe ROM::SQL::Associations::OneToOne, helpers: true do
         # TODO: this if clause should be removed when (and if) https://github.com/xerial/sqlite-jdbc/issues/112
         # will be resolved. See https://github.com/rom-rb/rom-sql/issues/49 for details
         if jruby? && sqlite?(example)
-          expect(relation.to_a).
-            to eql([{ id: 1, user_id: 1, number: '42', balance: 10_000 },
-                    { id: 2, user_id: 1, number: '43', balance: -273.15 }])
+          expect(relation.to_a).to eql([
+            { id: 1, user_id: 1, number: '42', balance: 10_000 },
+            { id: 2, user_id: 1, number: '43', balance: -273.15 }
+          ])
         else
-          expect(relation.to_a).
-            to eql([{ id: 1, user_id: 1, number: '42', balance: 10_000.to_d },
-                    { id: 2, user_id: 1, number: '43', balance: -273.15.to_d }])
+          expect(relation.to_a).to eql([
+            { id: 1, user_id: 1, number: '42', balance: 10_000.to_d },
+            { id: 2, user_id: 1, number: '43', balance: -273.15.to_d }
+          ])
         end
       end
     end
@@ -55,13 +59,15 @@ RSpec.describe ROM::SQL::Associations::OneToOne, helpers: true do
         # TODO: this if caluse should be removed when (and if) https://github.com/xerial/sqlite-jdbc/issues/112
         # will be resolved. See https://github.com/rom-rb/rom-sql/issues/49 for details
         if jruby? && sqlite?(example)
-          expect(relation.to_a).
-            to eql([{ id: 1, user_id: 1, number: '42', balance: 10_000 },
-                    { id: 2, user_id: 1, number: '43', balance: -273.15 }])
+          expect(relation.to_a).to eql([
+            { id: 1, user_id: 1, number: '42', balance: 10_000 },
+            { id: 2, user_id: 1, number: '43', balance: -273.15 }
+          ])
         else
-          expect(relation.to_a).
-            to eql([{ id: 1, user_id: 1, number: '42', balance: 10_000.to_d },
-                    { id: 2, user_id: 1, number: '43', balance: -273.15.to_d }])
+          expect(relation.to_a).to eql([
+            { id: 1, user_id: 1, number: '42', balance: 10_000.to_d },
+            { id: 2, user_id: 1, number: '43', balance: -273.15.to_d }
+          ])
         end
       end
     end

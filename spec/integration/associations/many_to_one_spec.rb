@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::SQL::Associations::ManyToOne, helpers: true do
   with_adapters do
     context 'common name conventions' do
@@ -32,20 +34,20 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, helpers: true do
         it 'prepares joined relations' do
           relation = assoc.(preload: false)
 
-          expect(relation.schema.map(&:to_sql_name)).
-            to eql([Sequel.qualify(:users, :id),
-                    Sequel.qualify(:users, :name),
-                    Sequel.qualify(:tasks, :id).as(:task_id)])
+          expect(relation.schema.map(&:to_sql_name)).to eql([
+            Sequel.qualify(:users, :id),
+            Sequel.qualify(:users, :name),
+            Sequel.qualify(:tasks, :id).as(:task_id)
+          ])
 
           expect(relation.where(user_id: 1).one).to eql(id: 1, task_id: 2, name: 'Jane')
 
           expect(relation.where(user_id: 2).one).to eql(id: 2, task_id: 1, name: 'Joe')
 
-          expect(relation.to_a).
-            to eql([
-                     { id: 1, task_id: 2, name: 'Jane' },
-                     { id: 2, task_id: 1, name: 'Joe' }
-                   ])
+          expect(relation.to_a).to eql([
+            { id: 1, task_id: 2, name: 'Jane' },
+            { id: 2, task_id: 1, name: 'Joe' }
+          ])
         end
       end
 
@@ -59,15 +61,16 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, helpers: true do
         it 'maintains original relation' do
           users.accounts.insert(user_id: 2, number: '31', balance: 0)
 
-          relation = users.
-                       join(:accounts, user_id: :id).
-                       select_append(users.accounts[:number].as(:account_num)).
-                       order(:account_num).
-                       eager_load(assoc).call(tasks.call)
+          relation = users
+            .join(:accounts, user_id: :id)
+            .select_append(users.accounts[:number].as(:account_num))
+            .order(:account_num)
+            .eager_load(assoc).call(tasks.call)
 
-          expect(relation.to_a).
-            to eql([{ id: 2, name: 'Joe', account_num: '31' },
-                    { id: 1, name: 'Jane', account_num: '42' }])
+          expect(relation.to_a).to eql([
+            { id: 2, name: 'Joe', account_num: '31' },
+            { id: 1, name: 'Jane', account_num: '42' }
+          ])
         end
       end
     end
@@ -93,10 +96,11 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, helpers: true do
         it 'prepares joined relations' do
           relation = assoc.()
 
-          expect(relation.schema.map(&:to_sql_name)).
-            to eql([Sequel.qualify(:users, :id),
-                    Sequel.qualify(:users, :name),
-                    Sequel.qualify(:posts, :post_id)])
+          expect(relation.schema.map(&:to_sql_name)).to eql([
+            Sequel.qualify(:users, :id),
+            Sequel.qualify(:users, :name),
+            Sequel.qualify(:posts, :post_id)
+          ])
 
           expect(relation.order(:id).to_a).to eql([
             { id: 1, name: 'Jane', post_id: 2 },

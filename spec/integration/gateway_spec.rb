@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::SQL::Gateway, :postgres do
   include_context 'database setup'
 
   describe 'migration' do
     before do
-      inferrable_relations.concat %i(rabbits carrots)
+      inferrable_relations.push(:rabbits, :carrots)
     end
 
     context 'creating migrations inline' do
@@ -38,7 +40,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
 
     context 'running migrations from a file system' do
       before do
-        inferrable_relations.concat %i(schema_migrations)
+        inferrable_relations.push(:schema_migrations)
       end
 
       let(:migration_dir) do
@@ -65,7 +67,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
 
     context 'running migrations from a file system with custom path' do
       before do
-        inferrable_relations.concat %i(schema_migrations)
+        inferrable_relations.push(:schema_migrations)
       end
 
       let(:migration_dir) do
@@ -83,7 +85,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
 
   describe 'transactions' do
     before do
-      inferrable_relations.concat %i(names)
+      inferrable_relations.push(:names)
     end
 
     before do
@@ -112,7 +114,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
       gw = container.gateways[:default]
       names = gw.dataset(:names)
 
-      gw.transaction do |t|
+      gw.transaction do |_t|
         names.insert name: 'John'
         concurrent_names = nil
         Thread.new { concurrent_names = names.to_a }.join

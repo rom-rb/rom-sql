@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 RSpec.describe 'Commands / Postgres / Upsert', :postgres, seeds: false do
   subject(:command) { task_commands[:create_or_update] }
 
   include_context 'relations'
 
   before do
-    conn.execute "ALTER TABLE tasks add CONSTRAINT tasks_title_key UNIQUE (title)"
+    conn.execute 'ALTER TABLE tasks add CONSTRAINT tasks_title_key UNIQUE (title)'
 
     conn[:users].insert id: 1, name: 'Jane'
     conn[:users].insert id: 2, name: 'Joe'
@@ -31,7 +33,7 @@ RSpec.describe 'Commands / Postgres / Upsert', :postgres, seeds: false do
     before { command.relation.upsert(task) }
 
     context 'on conflict do nothing' do
-      let(:command_config) { -> { } }
+      let(:command_config) { -> {} }
 
       it 'returns nil' do
         expect(command.call(excluded)).to be nil
@@ -115,4 +117,4 @@ RSpec.describe 'Commands / Postgres / Upsert', :postgres, seeds: false do
       end
     end
   end
-end if PG_LTE_95
+end

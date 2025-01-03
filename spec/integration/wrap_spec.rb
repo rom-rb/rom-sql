@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::SQL::Wrap do
   with_adapters do
     include_context 'users and tasks'
@@ -11,18 +13,19 @@ RSpec.describe ROM::SQL::Wrap do
             .one
 
           expect(task_with_user).to eql(
-            id: 2, user_id: 1, title: "Jane's task", users_name: "Jane", users_id: 1
+            id: 2, user_id: 1, title: "Jane's task", users_name: 'Jane', users_id: 1
           )
         end
 
         it 'works with by_pk' do
           task_with_user = tasks
-                             .wrap(name)
-                             .by_pk(1)
-                             .one
+            .wrap(name)
+            .by_pk(1)
+            .one
 
-          expect(task_with_user).
-            to eql(id: 1, user_id: 2, title: "Joe's task", users_name: "Joe", users_id: 2)
+          expect(task_with_user).to eql(
+            id: 1, user_id: 2, title: "Joe's task", users_name: 'Joe', users_id: 2
+          )
         end
       end
 
@@ -144,7 +147,7 @@ RSpec.describe ROM::SQL::Wrap do
           result = tasks.wrap(:with_renamed_attribute).to_a
           values = result.map { |item| item[:with_renamed_attribute][:new_name] }
 
-          expect(values).to contain_exactly("Jane", "Joe")
+          expect(values).to contain_exactly('Jane', 'Joe')
         end
       end
     end

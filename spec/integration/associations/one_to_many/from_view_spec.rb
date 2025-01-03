@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe ROM::SQL::Associations::OneToMany, '#call' do
   include_context 'users'
 
   before do
-    inferrable_relations.concat %i(puzzles)
+    inferrable_relations.push(:puzzles)
   end
 
   subject(:assoc) do
@@ -44,11 +46,12 @@ RSpec.describe ROM::SQL::Associations::OneToMany, '#call' do
     it 'prepares joined relations using custom view' do
       relation = assoc.()
 
-      expect(relation.schema.map(&:to_sql_name)).
-        to eql([Sequel.qualify(:puzzles, :id),
-                Sequel.qualify(:puzzles, :user_id),
-                Sequel.qualify(:puzzles, :text),
-                Sequel.qualify(:puzzles, :solved)])
+      expect(relation.schema.map(&:to_sql_name)).to eql([
+        Sequel.qualify(:puzzles, :id),
+        Sequel.qualify(:puzzles, :user_id),
+        Sequel.qualify(:puzzles, :text),
+        Sequel.qualify(:puzzles, :solved)
+      ])
 
       expect(relation.count).to be(1)
       expect(relation.first).to eql(id: 2, user_id: 2, solved: db_true, text: 'P2')

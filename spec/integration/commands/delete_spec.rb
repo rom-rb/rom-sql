@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe 'Commands / Delete' do
   include_context 'users and tasks'
 
@@ -36,7 +38,7 @@ RSpec.describe 'Commands / Delete' do
             delete_user.by_name('Jade').call
             t.rollback!
           end
-        }.to_not change { users.count }
+        }.to_not(change { users.count })
       end
     end
 
@@ -63,7 +65,7 @@ RSpec.describe 'Commands / Delete' do
     describe '#execute' do
       context 'with a single record' do
         it 'materializes the result' do
-          result = container.commands[:users].delete.by_name(%w(Jade)).execute
+          result = container.commands[:users].delete.by_name(%w[Jade]).execute
           expect(result).to eq([
             { id: 3, name: 'Jade' }
           ])
@@ -72,7 +74,7 @@ RSpec.describe 'Commands / Delete' do
 
       context 'with multiple records' do
         it 'materializes the results' do
-          result = container.commands[:users].delete.by_name(%w(Jade John)).execute
+          result = container.commands[:users].delete.by_name(%w[Jade John]).execute
           expect(result).to eq([
             { id: 3, name: 'Jade' },
             { id: 4, name: 'John' }

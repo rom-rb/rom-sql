@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 RSpec.shared_context 'users' do
   include_context 'database setup'
 
   before do
-    inferrable_relations.concat %i(users)
+    inferrable_relations.push(:users)
   end
 
   let(:users) { container.relations[:users] }

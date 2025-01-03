@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
   include_context 'database setup'
 
   before do
-    inferrable_relations.concat %i(destinations flights)
+    inferrable_relations.push(:destinations, :flights)
   end
 
   let(:assoc_inter) { relations[:flights].associations[:inter_destination] }
@@ -60,22 +62,24 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
     it 'prepares joined relations using custom view in target relation' do
       relation = assoc_inter.()
 
-      expect(relation.schema.map(&:to_sql_name)).
-        to eql([Sequel.qualify(:destinations, :id),
-                Sequel.qualify(:destinations, :name),
-                Sequel.qualify(:destinations, :intermediate),
-                Sequel.qualify(:flights, :id).as(:flight_id)])
+      expect(relation.schema.map(&:to_sql_name)).to eql([
+        Sequel.qualify(:destinations, :id),
+        Sequel.qualify(:destinations, :name),
+        Sequel.qualify(:destinations, :intermediate),
+        Sequel.qualify(:flights, :id).as(:flight_id)
+      ])
 
       expect(relation.first).to eql(id: 2, intermediate: db_true, name: 'Intermediate', flight_id: 1)
       expect(relation.count).to be(1)
 
       relation = assoc_final.()
 
-      expect(relation.schema.map(&:to_sql_name)).
-        to eql([Sequel.qualify(:destinations, :id),
-                Sequel.qualify(:destinations, :name),
-                Sequel.qualify(:destinations, :intermediate),
-                Sequel.qualify(:flights, :id).as(:flight_id)])
+      expect(relation.schema.map(&:to_sql_name)).to eql([
+        Sequel.qualify(:destinations, :id),
+        Sequel.qualify(:destinations, :name),
+        Sequel.qualify(:destinations, :intermediate),
+        Sequel.qualify(:flights, :id).as(:flight_id)
+      ])
 
       expect(relation.first).to eql(id: 1, intermediate: db_false, name: 'Final', flight_id: 2)
       expect(relation.count).to be(1)

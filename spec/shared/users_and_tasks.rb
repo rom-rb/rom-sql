@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.shared_context 'users and tasks' do
   include_context 'users'
 
@@ -8,7 +10,7 @@ RSpec.shared_context 'users and tasks' do
   let(:tag_commands) { container.commands[:tags] }
 
   before do
-    inferrable_relations.concat %i(tasks tags task_tags)
+    inferrable_relations.push(:tasks, :tags, :task_tags)
   end
 
   before do |example|
@@ -29,7 +31,7 @@ RSpec.shared_context 'users and tasks' do
     end
 
     conn.create_table :task_tags do
-      primary_key [:tag_id, :task_id]
+      primary_key %i[tag_id task_id]
       Integer :tag_id
       Integer :task_id
     end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
@@ -37,17 +39,17 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
     it 'prepares joined relations using custom FK for a self-ref association' do
       relation = assoc.()
 
-      expect(relation.schema.map(&:to_sql_name)).
-        to eql([Sequel.qualify(:categories, :id),
-                Sequel.qualify(:categories, :parent_id),
-                Sequel.qualify(:categories, :name)])
+      expect(relation.schema.map(&:to_sql_name)).to eql([
+        Sequel.qualify(:categories, :id),
+        Sequel.qualify(:categories, :parent_id),
+        Sequel.qualify(:categories, :name)
+      ])
 
-      expect(relation.to_a).
-        to eql([
-                 { id: 1, parent_id: nil, name: 'P1' },
-                 { id: 1, parent_id: nil, name: 'P1' },
-                 { id: 2, parent_id: nil, name: 'P2' }
-               ])
+      expect(relation.to_a).to eql([
+        { id: 1, parent_id: nil, name: 'P1' },
+        { id: 1, parent_id: nil, name: 'P1' },
+        { id: 2, parent_id: nil, name: 'P2' }
+      ])
     end
   end
 end

@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 RSpec.describe 'Inferring schema from database' do
   include_context 'users'
   include_context 'posts'
 
   with_adapters do
-    context "when database schema exists" do
-      it "infers the schema from the database relations" do
+    context 'when database schema exists' do
+      it 'infers the schema from the database relations' do
         conf.relation(:users)
 
         expect(container.relations.users.to_a)
@@ -12,8 +14,8 @@ RSpec.describe 'Inferring schema from database' do
       end
     end
 
-    context "for empty database schemas" do
-      it "returns an empty schema" do
+    context 'for empty database schemas' do
+      it 'returns an empty schema' do
         expect { container.users }.to raise_error(NoMethodError)
       end
     end
@@ -44,7 +46,7 @@ RSpec.describe 'Inferring schema from database' do
         container.relations[:tags].associations
       end
 
-      it "allows defining a one-to-many" do
+      it 'allows defining a one-to-many' do
         class Test::Posts < ROM::Relation[:sql]
           schema(:posts) do
             associations do
@@ -58,7 +60,7 @@ RSpec.describe 'Inferring schema from database' do
         expect(post_associations[:tags].definition).to eql(assoc)
       end
 
-      it "allows defining a one-to-many using has_many shortcut" do
+      it 'allows defining a one-to-many using has_many shortcut' do
         class Test::Posts < ROM::Relation[:sql]
           schema(:posts) do
             associations do
@@ -72,7 +74,7 @@ RSpec.describe 'Inferring schema from database' do
         expect(post_associations[:tags].definition).to eql(assoc)
       end
 
-      it "allows defining a one-to-one" do
+      it 'allows defining a one-to-one' do
         class Test::Users < ROM::Relation[:sql]
           schema(:users) do
             associations do
@@ -86,7 +88,7 @@ RSpec.describe 'Inferring schema from database' do
         expect(user_associations[:accounts].definition).to eql(assoc)
       end
 
-      it "allows defining a one-to-one using has_one shortcut" do
+      it 'allows defining a one-to-one using has_one shortcut' do
         class Test::Users < ROM::Relation[:sql]
           schema(:users) do
             associations do
@@ -101,7 +103,7 @@ RSpec.describe 'Inferring schema from database' do
         expect(user_associations[:account].definition.target).to be_aliased
       end
 
-      it "allows defining a one-to-one using has_one shortcut with an alias" do
+      it 'allows defining a one-to-one using has_one shortcut with an alias' do
         class Test::Users < ROM::Relation[:sql]
           schema(:users) do
             associations do
@@ -116,7 +118,7 @@ RSpec.describe 'Inferring schema from database' do
         expect(user_associations[:user_account].definition.target).to be_aliased
       end
 
-      it "allows defining a one-to-one-through" do
+      it 'allows defining a one-to-one-through' do
         class Test::Users < ROM::Relation[:sql]
           schema(:users) do
             associations do
@@ -130,7 +132,7 @@ RSpec.describe 'Inferring schema from database' do
         expect(user_associations[:cards].definition).to eql(assoc)
       end
 
-      it "allows defining a many-to-one" do
+      it 'allows defining a many-to-one' do
         class Test::Tags < ROM::Relation[:sql]
           schema(:tags) do
             attribute :post_id, Types::Integer
@@ -146,7 +148,7 @@ RSpec.describe 'Inferring schema from database' do
         expect(tag_associations[:posts].definition).to eql(assoc)
       end
 
-      it "allows defining a many-to-one using belongs_to shortcut" do
+      it 'allows defining a many-to-one using belongs_to shortcut' do
         class Test::Tags < ROM::Relation[:sql]
           schema(:tags) do
             attribute :post_id, Types::Integer
@@ -162,7 +164,7 @@ RSpec.describe 'Inferring schema from database' do
         expect(tag_associations[:post].definition).to eql(assoc)
       end
 
-      it "allows defining a many-to-one using belongs_to shortcut" do
+      it 'allows defining a many-to-one using belongs_to shortcut' do
         class Test::Tags < ROM::Relation[:sql]
           schema(:tags) do
             attribute :post_id, Types::Integer
@@ -178,7 +180,7 @@ RSpec.describe 'Inferring schema from database' do
         expect(tag_associations[:post_tag].definition).to eql(assoc)
       end
 
-      it "allows defining a many-to-many" do
+      it 'allows defining a many-to-many' do
         class Test::Posts < ROM::Relation[:sql]
           schema(:posts) do
             associations do
@@ -192,7 +194,7 @@ RSpec.describe 'Inferring schema from database' do
         expect(post_associations[:tags].definition).to eql(assoc)
       end
 
-      it "allows defining a many-to-one with a custom name" do
+      it 'allows defining a many-to-one with a custom name' do
         class Test::Tags < ROM::Relation[:sql]
           schema(:tags) do
             attribute :post_id, Types::Integer
@@ -208,7 +210,7 @@ RSpec.describe 'Inferring schema from database' do
         expect(tag_associations[:published_posts].definition).to eql(assoc)
       end
 
-      it "adds foreign keys to the schema" do
+      it 'adds foreign keys to the schema' do
         class Test::Tags < ROM::Relation[:sql]
           schema(:tags) do
             attribute :id,      Types::Serial
@@ -231,7 +233,7 @@ RSpec.describe 'Inferring schema from database' do
       end
     end
 
-    context 'defining indexes', :helpers do |ctx|
+    context 'defining indexes', :helpers do |_ctx|
       it 'allows defining indexes' do
         class Test::Tags < ROM::Relation[:sql]
           schema(:tags) do
@@ -252,23 +254,22 @@ RSpec.describe 'Inferring schema from database' do
         conf.register_relation(Test::Tags)
         schema = container.relations[:tags].schema
 
-        expect(schema.indexes.to_a).
-          to contain_exactly(
-               ROM::SQL::Index.new([define_attribute(:name, :String, source: schema.name)]),
-               ROM::SQL::Index.new(
-                 [define_attribute(:created_at, :Time, source: schema.name),
-                  define_attribute(:name, :String, source: schema.name)]
-               ),
-               ROM::SQL::Index.new(
-                 [define_attribute(:updated_at, :Time, source: schema.name)],
-                 name: :recently_idx
-               ),
-               ROM::SQL::Index.new(
-                 [define_attribute(:created_at, :Time, source: schema.name)],
-                 name: :unique_date,
-                 unique: true
-               )
-             )
+        expect(schema.indexes.to_a).to contain_exactly(
+          ROM::SQL::Index.new([define_attribute(:name, :String, source: schema.name)]),
+          ROM::SQL::Index.new(
+            [define_attribute(:created_at, :Time, source: schema.name),
+             define_attribute(:name, :String, source: schema.name)]
+          ),
+          ROM::SQL::Index.new(
+            [define_attribute(:updated_at, :Time, source: schema.name)],
+            name: :recently_idx
+          ),
+          ROM::SQL::Index.new(
+            [define_attribute(:created_at, :Time, source: schema.name)],
+            name: :unique_date,
+            unique: true
+          )
+        )
       end
 
       if metadata[:postgres]
@@ -289,10 +290,11 @@ RSpec.describe 'Inferring schema from database' do
           index = schema.indexes.first
 
           expect(index).to eql(
-                             ROM::SQL::Index.new(
-                               [define_attribute(:name, :String, source: schema.name)],
-                               type: :gist)
-                           )
+            ROM::SQL::Index.new(
+              [define_attribute(:name, :String, source: schema.name)],
+              type: :gist
+            )
+          )
 
           expect(index.type).to eql(:gist)
         end

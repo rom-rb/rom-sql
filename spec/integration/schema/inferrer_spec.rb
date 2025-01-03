@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 RSpec.describe 'Schema inference for common datatypes', seeds: false do
   include_context 'users and tasks'
 
   before do
-    inferrable_relations.concat %i(test_characters test_inferrence test_numeric)
+    inferrable_relations.push(:test_characters, :test_inferrence, :test_numeric)
   end
 
   let(:schema) { container.relations[dataset].schema }
@@ -16,7 +18,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
     indexes.find { |idx| idx.name == name }
   end
 
-  with_adapters do |adapter|
+  with_adapters do |_adapter|
     describe 'inferring attributes' do
       before do
         dataset = self.dataset
@@ -43,7 +45,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         let(:dataset) { :tasks }
         let(:source) { ROM::Relation::Name[:tasks] }
 
-        it 'can infer attributes for dataset' do |ex|
+        it 'can infer attributes for dataset' do |_ex|
           expect(schema[:id].source).to eql(source)
           expect(schema[:id].type.primitive).to be(Integer)
 
@@ -214,7 +216,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
 
     describe 'using commands with inferred schema' do
       before do
-        inferrable_relations.concat %i(people)
+        inferrable_relations.push(:people)
       end
 
       let(:relation) { container.relations[:people] }
@@ -385,14 +387,15 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
           index :baz, name: :baz1_idx
           index :baz, name: :baz2_idx
 
-          index %i(bar baz), name: :composite_idx
-          index %i(foo bar), name: :unique_idx, unique: true
+          index %i[bar baz], name: :composite_idx
+          index %i[foo bar], name: :unique_idx, unique: true
         end
 
         conf.relation(:test_inferrence) { schema(infer: true) }
 
-        expect(schema.indexes.map(&:name)).
-          to match_array(%i(foo_idx bar_idx baz1_idx baz2_idx composite_idx unique_idx))
+        expect(schema.indexes.map(&:name)).to match_array(
+          %i[foo_idx bar_idx baz1_idx baz2_idx composite_idx unique_idx]
+        )
 
         unique_idx = index_by_name(schema.indexes, :unique_idx)
 
