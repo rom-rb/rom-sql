@@ -96,6 +96,7 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
               create_user.call(name: nil)
             }
           rescue ROM::SQL::Error
+            # ignore
           end
         }.to_not(change { container.relations.users.count })
       end

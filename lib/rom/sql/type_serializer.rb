@@ -29,7 +29,7 @@ module ROM
         Types::Date => 'date',
         Types::Bool => 'boolean',
         Types::Decimal => 'numeric',
-        Types::Float => 'float',
+        Types::Float => 'float'
       )
 
       def call(type)
@@ -40,7 +40,7 @@ module ROM
         self.class.mapping.fetch(type.with(meta: meta)) {
           if block_given?
             yield(type)
-          end or raise "Cannot serialize #{ type }"
+          end or raise "Cannot serialize #{type}"
         }
       end
     end

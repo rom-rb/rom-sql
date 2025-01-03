@@ -6,7 +6,7 @@ module ROM
   module SQL
     class Schema < ROM::Schema
       # @api public
-      class IndexDSL # < BasicObject
+      class IndexDSL
         extend Initializer
 
         option :attr_class
@@ -14,12 +14,12 @@ module ROM
         attr_reader :registry
 
         # @api private
-        def initialize(*, **, &block)
+        def initialize(*, **, &)
           super
 
           @registry = []
 
-          instance_exec(&block)
+          instance_exec(&)
         end
 
         # @api public

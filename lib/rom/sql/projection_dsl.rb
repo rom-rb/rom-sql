@@ -49,7 +49,7 @@ module ROM
       private
 
       # @api private
-      def method_missing(meth, *args, &block)
+      def method_missing(meth, *args, &)
         if schema.key?(meth)
           schema[meth]
         else

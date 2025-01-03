@@ -61,9 +61,9 @@ module ROM
           #   @return [SQL::Relation]
           #
           #   @api public
-          class_eval <<-RUBY, __FILE__, __LINE__ + 1
-            def by_pk(#{schema.primary_key.map(&:name).join(', ')})
-              where(#{schema.primary_key.map { |attr| "schema.canonical[:#{attr.name}] => #{attr.name}" }.join(', ')})
+          class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
+            def by_pk(#{schema.primary_key.map(&:name).join(", ")})
+              where(#{schema.primary_key.map { |attr| "schema.canonical[:#{attr.name}] => #{attr.name}" }.join(", ")})
             end
           RUBY
         else
@@ -75,7 +75,7 @@ module ROM
           #   @return [SQL::Relation]
           #
           #   @api public
-          class_eval <<-RUBY, __FILE__, __LINE__ + 1
+          class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
             def by_pk(pk)
               if primary_key.nil?
                 raise MissingPrimaryKeyError.new(
@@ -139,8 +139,8 @@ module ROM
       # @return [Mixed]
       #
       # @api public
-      def transaction(opts = EMPTY_HASH, &block)
-        Transaction.new(dataset.db).run(opts, &block)
+      def transaction(opts = EMPTY_HASH, &)
+        Transaction.new(dataset.db).run(opts, &)
       end
 
       # Return raw column names

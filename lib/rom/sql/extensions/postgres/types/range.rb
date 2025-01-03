@@ -9,8 +9,8 @@ module ROM
     module Postgres
       module Values
         Range = ::Struct.new(:lower, :upper, :bounds) do
-          PAREN_LEFT  = '('.freeze
-          PAREN_RIGHT = ')'.freeze
+          PAREN_LEFT  = '('
+          PAREN_RIGHT = ')'
 
           def initialize(lower, upper, bounds = :'[)')
             super
@@ -38,10 +38,10 @@ module ROM
           int8range: Sequel::Postgres::PGRange::Parser.new(
             'int8range', SQL::Types::Coercible::Integer
           ),
-          numrange:  Sequel::Postgres::PGRange::Parser.new(
+          numrange: Sequel::Postgres::PGRange::Parser.new(
             'numrange', SQL::Types::Coercible::Integer
           ),
-          tsrange:   Sequel::Postgres::PGRange::Parser.new(
+          tsrange: Sequel::Postgres::PGRange::Parser.new(
             'tsrange', ::Time.method(:parse)
           ),
           tstzrange: Sequel::Postgres::PGRange::Parser.new(

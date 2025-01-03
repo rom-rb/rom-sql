@@ -13,8 +13,8 @@ module ROM
           gateway.run_migrations(migration_options.merge(options))
         end
 
-        def create_migration(*args)
-          gateway.migrator.create_file(*args)
+        def create_migration(...)
+          gateway.migrator.create_file(...)
         end
 
         # Global environment used for running migrations. You normally
@@ -24,8 +24,7 @@ module ROM
         # @api public
         attr_accessor :env
 
-
-        # Migration options, which are passed to `ROM::SQL::RakeSupport.run_migrations`. You can 
+        # Migration options, which are passed to `ROM::SQL::RakeSupport.run_migrations`. You can
         # set them in the `db:setup` task with `ROM::SQL::RakeSupport.migration_options = { ... }`
         #
         # @api public
@@ -84,7 +83,7 @@ namespace :db do
   end
 
   desc 'Create a migration (parameters: NAME, VERSION)'
-  task :create_migration, [:name, :version] => :rom_configuration do |_, args|
+  task :create_migration, %i[name version] => :rom_configuration do |_, args|
     name, version = args.values_at(:name, :version)
 
     if name.nil?

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe 'PostgreSQL extension', :postgres do
   include_context 'database setup'
 
@@ -11,8 +13,8 @@ RSpec.describe 'PostgreSQL extension', :postgres do
       conn.create_table :pg_people do
         primary_key :id
         String :name
-        column :tags, "text[]"
-        column :allowed_subnets, "cidr[]"
+        column :tags, 'text[]'
+        column :allowed_subnets, 'cidr[]'
       end
 
       conf.relation(:people) do

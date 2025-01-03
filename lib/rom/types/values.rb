@@ -6,7 +6,7 @@ module ROM
   module Types
     module Values
       class TreePath < ::Struct.new(:value, :separator)
-        DEFAULT_SEPARATOR = '.'.freeze
+        DEFAULT_SEPARATOR = '.'
 
         # @api public
         def self.new(value, separator = DEFAULT_SEPARATOR)

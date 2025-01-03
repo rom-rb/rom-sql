@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::SQL::TypeSerializer[:postgres] do
   subject(:serializer) { ROM::SQL::TypeSerializer[:postgres] }
 
   it 'serializes PG types' do
     types = {
-      'uuid'  => ROM::SQL::Postgres::Types::UUID,
+      'uuid' => ROM::SQL::Postgres::Types::UUID,
       'money' => ROM::SQL::Postgres::Types::Money,
       'bytea' => ROM::SQL::Postgres::Types::Bytea,
-      'json'  => ROM::SQL::Postgres::Types::JSON,
+      'json' => ROM::SQL::Postgres::Types::JSON,
       'jsonb' => ROM::SQL::Postgres::Types::JSONB,
       'hstore' => ROM::SQL::Postgres::Types::HStore,
       'inet' => ROM::SQL::Postgres::Types::IPAddress,

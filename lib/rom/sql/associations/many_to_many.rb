@@ -17,10 +17,10 @@ module ROM
 
           schema =
             if left.schema.key?(foreign_key)
-              if target != self.target
-                target.schema.merge(join_schema)
-              else
+              if target == self.target
                 left.schema.uniq.project(*columns)
+              else
+                target.schema.merge(join_schema)
               end
             else
               target_schema

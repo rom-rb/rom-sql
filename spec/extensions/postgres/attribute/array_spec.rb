@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe 'ROM::SQL::Attribute / PG array', :postgres do
   subject(:relation) { relations[:pg_arrays] }
 

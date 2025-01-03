@@ -11,18 +11,18 @@ module ROM
       # @api public
       module Reading
         # Row-level lock modes
-        ROW_LOCK_MODES = Hash.new({ update: "FOR UPDATE" }).update(
+        ROW_LOCK_MODES = Hash.new({ update: 'FOR UPDATE' }).update(
           # https://www.postgresql.org/docs/current/static/sql-select.html#SQL-FOR-UPDATE-SHARE
           postgres: {
-            update: 'FOR UPDATE'.freeze,
-            no_key_update: 'FOR NO KEY UPDATE'.freeze,
-            share: 'FOR SHARE'.freeze,
-            key_share: 'FOR KEY SHARE'.freeze
+            update: 'FOR UPDATE',
+            no_key_update: 'FOR NO KEY UPDATE',
+            share: 'FOR SHARE',
+            key_share: 'FOR KEY SHARE'
           },
           # https://dev.mysql.com/doc/refman/5.7/en/innodb-locking-reads.html
           mysql: {
-            update: 'FOR UPDATE'.freeze,
-            share: 'LOCK IN SHARE MODE'.freeze
+            update: 'FOR UPDATE',
+            share: 'LOCK IN SHARE MODE'
           }
         ).freeze
 
@@ -140,11 +140,11 @@ module ROM
         #                     from tuples
         #
         # @api public
-        def map(key = nil, &block)
+        def map(key = nil, &)
           if key
-            dataset.map(key, &block)
+            dataset.map(key, &)
           else
-            dataset.map(&block)
+            dataset.map(&)
           end
         end
 
@@ -235,8 +235,8 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def select(*args, &block)
-          schema.project(*args, &block).(self)
+        def select(...)
+          schema.project(...).(self)
         end
         alias_method :project, :select
 
@@ -247,8 +247,8 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def select_append(*args, &block)
-          schema.merge(schema.canonical.project(*args, &block)).(self)
+        def select_append(...)
+          schema.merge(schema.canonical.project(...)).(self)
         end
 
         # Returns a copy of the relation with a SQL DISTINCT clause.
@@ -271,8 +271,8 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def distinct(*args, &block)
-          new(dataset.__send__(__method__, *args, &block))
+        def distinct(...)
+          new(dataset.__send__(__method__, ...))
         end
 
         # Returns a result of SQL SUM clause.
@@ -381,8 +381,8 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def exclude(*args, &block)
-          new(dataset.__send__(__method__, *args, &block))
+        def exclude(...)
+          new(dataset.__send__(__method__, ...))
         end
 
         # Restrict a relation to match grouping criteria
@@ -501,8 +501,8 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def reverse(*args, &block)
-          new(dataset.__send__(__method__, *args, &block))
+        def reverse(...)
+          new(dataset.__send__(__method__, ...))
         end
 
         # Limit a relation to a specific number of tuples
@@ -590,8 +590,8 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def join(*args, &block)
-          __join__(__method__, *args, &block)
+        def join(...)
+          __join__(__method__, ...)
         end
         alias_method :inner_join, :join
 
@@ -640,8 +640,8 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def left_join(*args, &block)
-          __join__(__method__, *args, &block)
+        def left_join(...)
+          __join__(__method__, ...)
         end
 
         # Join with another relation using RIGHT JOIN
@@ -689,8 +689,8 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def right_join(*args, &block)
-          __join__(__method__, *args, &block)
+        def right_join(...)
+          __join__(__method__, ...)
         end
 
         # Group by specific columns
@@ -784,8 +784,8 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def group_and_count(*args, &block)
-          new(dataset.__send__(__method__, *args, &block))
+        def group_and_count(...)
+          new(dataset.__send__(__method__, ...))
         end
 
         # Select and group by specific columns
@@ -799,8 +799,8 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def select_group(*args, &block)
-          new_schema = schema.project(*args, &block)
+        def select_group(...)
+          new_schema = schema.project(...)
           new_schema.(self).group(*new_schema)
         end
 
@@ -814,13 +814,13 @@ module ROM
         #
         # @param [Hash] options Options for union
         # @option options [Symbol] :alias Use the given value as the #from_self alias
-        # @option options [TrueClass, FalseClass] :all Set to true to use UNION ALL instead of UNION, so duplicate rows can occur
-        # @option options [TrueClass, FalseClass] :from_self Set to false to not wrap the returned dataset in a #from_self, use with care.
+        # @option options [true, false] :all Set to true to use UNION ALL instead of UNION, so duplicate rows can occur
+        # @option options [true, false] :from_self Set to false to not wrap the returned dataset in a #from_self, use with care.
         #
         # @returRelation]
         #
         # @api public
-        def union(relation, options = EMPTY_HASH, &block)
+        def union(relation, options = EMPTY_HASH, &)
           # We use the original relation name here if both relations have the
           # same name. This makes it so if the user at some point references
           # the relation directly by name later on things won't break in
@@ -830,7 +830,7 @@ module ROM
           opts = { alias: alias_name.to_sym, **options }
 
           new_schema = schema.qualified(opts[:alias])
-          new_schema.(new(dataset.__send__(__method__, relation.dataset, opts, &block)))
+          new_schema.(new(dataset.__send__(__method__, relation.dataset, opts, &)))
         end
 
         # Checks whether a relation has at least one tuple
@@ -848,8 +848,8 @@ module ROM
         # @return [TrueClass, FalseClass]
         #
         # @api public
-        def exist?(*args, &block)
-          !where(*args, &block).limit(1).count.zero?
+        def exist?(...)
+          !where(...).limit(1).count.zero?
         end
 
         # Return if a restricted relation has 0 tuples
@@ -1050,7 +1050,7 @@ module ROM
           stmt << ' OF ' << Array(of).join(', ') if of
 
           if skip_locked
-            raise ArgumentError, 'SKIP LOCKED cannot be used with (NO)WAIT clause' if !wait.nil?
+            raise ArgumentError, 'SKIP LOCKED cannot be used with (NO)WAIT clause' unless wait.nil?
 
             stmt << ' SKIP LOCKED'
           else
@@ -1111,7 +1111,8 @@ module ROM
               associations[other.name.key].join(type, self, other)
             end
           else
-            raise ArgumentError, "+other+ must be either a symbol or a relation, #{other.class} given"
+            raise ArgumentError,
+                  "+other+ must be either a symbol or a relation, #{other.class} given"
           end
         end
       end

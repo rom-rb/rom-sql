@@ -121,8 +121,8 @@ module ROM
       # @see ROM::SQL.migration
       #
       # @api public
-      def migration(&block)
-        migrator.migration(&block)
+      def migration(&)
+        migrator.migration(&)
       end
 
       # Run migrations

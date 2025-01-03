@@ -263,8 +263,8 @@ module ROM
       # @return [SQL::Function]
       #
       # @api public
-      def func(&block)
-        ProjectionDSL.new(name => self).call(&block).first
+      def func(&)
+        ProjectionDSL.new(name => self).call(&).first
       end
 
       # Create a CONCAT function from the attribute
@@ -380,19 +380,19 @@ module ROM
       #
       # @api private
       def sql_expr
-        @sql_expr ||= (meta[:sql_expr] || to_sql_name)
+        @sql_expr ||= meta[:sql_expr] || to_sql_name
       end
 
       # Delegate to sql expression if it responds to a given method
       #
       # @api private
-      def method_missing(meth, *args, &block)
+      def method_missing(meth, *args, &)
         if OPERATORS.include?(meth)
           __cmp__(meth, args[0])
         elsif extensions.key?(meth)
-          extensions[meth].(type, sql_expr, *args, &block)
+          extensions[meth].(type, sql_expr, *args, &)
         elsif sql_expr.respond_to?(meth)
-          meta(sql_expr: sql_expr.__send__(meth, *args, &block))
+          meta(sql_expr: sql_expr.__send__(meth, *args, &))
         else
           super
         end

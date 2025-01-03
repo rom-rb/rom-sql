@@ -6,7 +6,11 @@ module ROM
     #
     # @api public
     class TypeDSL
-      attr_reader :definition, :input_constructor, :output_constructor
+      attr_reader :definition
+
+      attr_reader :input_constructor
+
+      attr_reader :output_constructor
 
       # @api private
       def initialize(value_type)
@@ -18,8 +22,8 @@ module ROM
       end
 
       # @api private
-      def call(&block)
-        instance_exec(&block)
+      def call(&)
+        instance_exec(&)
 
         definition.constructor(input_constructor)
           .meta(read: definition.constructor(output_constructor))

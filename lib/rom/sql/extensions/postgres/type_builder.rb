@@ -6,17 +6,17 @@ module ROM
       class TypeBuilder < Schema::TypeBuilder
         defines :db_numeric_types, :db_type_mapping, :db_array_type_matcher
 
-        db_numeric_types %w[
-          smallint integer bigint
-          decimal numeric real
-          double\ precision serial bigserial
+        db_numeric_types [
+          'smallint', 'integer', 'bigint',
+          'decimal', 'numeric', 'real',
+          'double precision', 'serial', 'bigserial'
         ].to_set.freeze
 
         db_type_mapping(
-          'uuid'  => Types::UUID,
+          'uuid' => Types::UUID,
           'money' => Types::Money,
           'bytea' => Types::Bytea,
-          'json'  => Types::JSON,
+          'json' => Types::JSON,
           'jsonb' => Types::JSONB,
           'xml' => Types::XML,
           'inet' => Types::IPAddress,
@@ -39,7 +39,7 @@ module ROM
           'ltree' => Types::LTree
         ).freeze
 
-        db_array_type_matcher '[]'.freeze
+        db_array_type_matcher '[]'
 
         def map_pk_type(type, db_type, **options)
           if numeric?(type, db_type)

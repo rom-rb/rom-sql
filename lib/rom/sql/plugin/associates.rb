@@ -10,7 +10,11 @@ module ROM
       # @api private
       module Associates
         class AssociateOptions
-          attr_reader :name, :assoc, :opts
+          attr_reader :name
+
+          attr_reader :assoc
+
+          attr_reader :opts
 
           # @api private
           def initialize(name, relation, opts)
@@ -37,7 +41,7 @@ module ROM
 
             defines :associations
 
-            associations Hash.new
+            associations({})
 
             option :associations, default: -> { self.class.associations }
             option :configured_associations, default: -> { EMPTY_ARRAY }
@@ -57,16 +61,17 @@ module ROM
 
             associate_options = command.associations.map { |(name, opts)|
               next if configured_assocs.include?(name)
+
               AssociateOptions.new(name, relation, opts)
             }.compact
 
             before_hooks = associate_options.reject(&:after?).map(&:to_hash)
             after_hooks = associate_options.select(&:after?).map(&:to_hash)
 
-            command.
-              with(configured_associations: configured_assocs + associate_options.map(&:name)).
-              before(*before_hooks).
-              after(*after_hooks)
+            command
+              .with(configured_associations: configured_assocs + associate_options.map(&:name))
+              .before(*before_hooks)
+              .after(*after_hooks)
           end
 
           # Set command to associate tuples with a parent tuple using provided keys

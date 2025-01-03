@@ -32,8 +32,8 @@ module ROM
       # @return [Mixed] Result of the block call
       #
       # @api public
-      def restriction(&block)
-        RestrictionDSL.new(self).call(&block)
+      def restriction(&)
+        RestrictionDSL.new(self).call(&)
       end
 
       # Open Order DSL for setting ORDER clause in queries
@@ -43,8 +43,8 @@ module ROM
       # @return [Mixed] Result of the block call
       #
       # @api public
-      def order(&block)
-        OrderDSL.new(self).call(&block)
+      def order(&)
+        OrderDSL.new(self).call(&)
       end
 
       # Open Group DSL for setting GROUP BY clause in queries
@@ -54,8 +54,8 @@ module ROM
       # @return [Mixed] Result of the block call
       #
       # @api public
-      def group(&block)
-        GroupDSL.new(self).call(&block)
+      def group(&)
+        GroupDSL.new(self).call(&)
       end
 
       # Return a new schema with attributes marked as qualified
@@ -141,7 +141,7 @@ module ROM
       #
       # @api public
       def call(relation)
-        relation.new(relation.dataset.select(*self.qualified_projection), schema: self)
+        relation.new(relation.dataset.select(*qualified_projection), schema: self)
       end
 
       # Return an empty schema

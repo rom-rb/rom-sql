@@ -13,7 +13,7 @@ module ROM
 
             class StreamingNotSupportedError < StandardError; end
 
-            subscribe("configuration.gateway.connected") do |opts|
+            subscribe('configuration.gateway.connected') do |opts|
               conn = opts[:connection]
 
               next unless conn.database_type.to_sym == :postgres
@@ -21,13 +21,13 @@ module ROM
               next if defined?(JRUBY_VERSION)
 
               begin
-                require "sequel_pg"
+                require 'sequel_pg'
               rescue LoadError
-                raise StreamingNotSupportedError, "add sequel_pg to Gemfile to use pg_streaming"
+                raise StreamingNotSupportedError, 'add sequel_pg to Gemfile to use pg_streaming'
               end
 
               unless Sequel::Postgres.supports_streaming?
-                raise StreamingNotSupportedError, "postgres version does not support streaming"
+                raise StreamingNotSupportedError, 'postgres version does not support streaming'
               end
 
               conn.extension(:pg_streaming)
@@ -52,7 +52,7 @@ module ROM
               #
               # @api publicY_VERSION
               def stream_each
-                raise StreamingNotSupportedError, "not supported on jruby"
+                raise StreamingNotSupportedError, 'not supported on jruby'
               end
             else
               # Allows you to stream returned rows one at a time, instead of
@@ -80,7 +80,7 @@ module ROM
 
               module Combined
                 def stream_each
-                  raise StreamingNotSupportedError, "not supported on combined relations"
+                  raise StreamingNotSupportedError, 'not supported on combined relations'
                 end
               end
 

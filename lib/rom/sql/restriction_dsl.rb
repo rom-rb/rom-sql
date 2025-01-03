@@ -20,7 +20,7 @@ module ROM
       private
 
       # @api private
-      def method_missing(meth, *args, &block)
+      def method_missing(meth, ...)
         if schema.key?(meth)
           schema[meth]
         else
@@ -29,7 +29,7 @@ module ROM
           if type
             ::ROM::SQL::Function.new(type).meta(schema: schema)
           else
-            ::Sequel::VIRTUAL_ROW.__send__(meth, *args, &block)
+            ::Sequel::VIRTUAL_ROW.__send__(meth, ...)
           end
         end
       end

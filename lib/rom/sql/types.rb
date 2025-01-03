@@ -37,8 +37,8 @@ module ROM
       # @return [Dry::Types::Nominal]
       #
       # @api public
-      def self.define(value_type, &block)
-        TypeDSL.new(value_type).call(&block)
+      def self.define(value_type, &)
+        TypeDSL.new(value_type).call(&)
       end
 
       Serial = Integer.meta(primary_key: true)

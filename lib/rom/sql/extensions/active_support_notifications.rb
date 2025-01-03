@@ -24,4 +24,4 @@ module ROM
   end
 end
 
-Sequel::Database.send(:prepend, ROM::SQL::ActiveSupportInstrumentation)
+Sequel::Database.prepend ROM::SQL::ActiveSupportInstrumentation

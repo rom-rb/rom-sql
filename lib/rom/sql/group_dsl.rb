@@ -9,11 +9,11 @@ module ROM
       private
 
       # @api private
-      def method_missing(meth, *args, &block)
+      def method_missing(meth, ...)
         if schema.key?(meth)
           schema[meth].canonical
         else
-          ::Sequel::VIRTUAL_ROW.__send__(meth.to_s, *args, &block)
+          ::Sequel::VIRTUAL_ROW.__send__(meth.to_s, ...)
         end
       end
     end

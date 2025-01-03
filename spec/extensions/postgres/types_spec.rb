@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'securerandom'
 
 RSpec.describe 'ROM::SQL::Postgres::Types' do
@@ -170,7 +172,7 @@ RSpec.describe 'ROM::SQL::Postgres::Types' do
   end
 
   describe ROM::SQL::Types::PG::HStore do
-    let(:mapping) { Hash['hot' => 'cold'] }
+    let(:mapping) { { 'hot' => 'cold' } }
     let(:read_type) { described_class.meta[:read] }
 
     it 'covertss data to Sequel::Postgres::HStore' do
@@ -241,7 +243,7 @@ RSpec.describe 'ROM::SQL::Postgres::Types' do
 
   describe ROM::SQL::Types::PG::Polygon do
     let(:first) { values::Point.new(8.5, 30.5) }
-    let(:second) {values::Point.new(7.5, 20.5) }
+    let(:second) { values::Point.new(7.5, 20.5) }
     let(:third) { values::Point.new(6.5, 10.5) }
 
     let(:polygon) { [first, second, third] }
@@ -292,7 +294,7 @@ RSpec.describe 'ROM::SQL::Postgres::Types' do
 
     it 'read an empty value' do
       expect(described_class.meta[:read]['empty']).to eql(
-        values::Range.new(nil, nil, :'[]')
+        values::Range.new(nil, nil, :[])
       )
     end
 

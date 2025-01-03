@@ -36,8 +36,8 @@ module ROM
             # @see https://www.postgresql.org/docs/current/textsearch.html PostgreSQL docs
             #
             # @api public
-            def full_text_search(*args, &block)
-              new dataset.__send__(__method__, *args, &block)
+            def full_text_search(...)
+              new dataset.__send__(__method__, ...)
             end
           end
         end
@@ -48,6 +48,8 @@ end
 
 ROM.plugins do
   adapter :sql do
-    register :pg_full_text_search, ROM::Plugins::Relation::SQL::Postgres::FullTextSearch, type: :relation
+    register :pg_full_text_search,
+             ROM::Plugins::Relation::SQL::Postgres::FullTextSearch,
+             type: :relation
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe 'ROM::SQL::Types' do
   describe 'ROM::SQL::Types::SQLite::Object' do
     let(:type) { ROM::SQL::Types::SQLite::Object }

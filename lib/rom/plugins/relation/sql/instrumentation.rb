@@ -31,8 +31,12 @@ module ROM
           subscribe('configuration.relations.registry.created') do |event|
             registry = event[:registry]
 
-            relations = registry.select { |_, r| r.adapter == :sql && r.respond_to?(:notifications) }.to_h
-            db_notifications = relations.values.map { |r| [r.dataset.db, r.notifications] }.uniq.to_h
+            relations = registry.select { |_, r|
+              r.adapter == :sql && r.respond_to?(:notifications)
+            }.to_h
+            db_notifications = relations.values.map { |r|
+              [r.dataset.db, r.notifications]
+            }.uniq.to_h
 
             db_notifications.each do |db, notifications|
               next if db.respond_to?(:rom_instrumentation?)

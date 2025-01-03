@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe 'ROM::SQL::Attribute', :postgres do
   include_context 'database setup'
 
@@ -115,7 +117,7 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
 
       let(:values) do
         {
-          containing: range_value.new(3, 9, :'[]'),
+          containing: range_value.new(3, 9, :[]),
           contained: range_value.new(5, 7, :'[)'),
           empty: range_value.new(0, 0, :'()'),
           left: range_value.new(nil, 3, :'(]'),
@@ -136,7 +138,7 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
           containing: range_value.new(
             Time.parse('2017-09-25 03:00:00'),
             Time.parse('2017-09-25 09:00:00'),
-            :'[]'
+            :[]
           ),
           contained: range_value.new(
             Time.parse('2017-09-25 05:00:00'),
@@ -165,7 +167,7 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
           containing: range_value.new(
             Date.parse('2017-10-03'),
             Date.parse('2017-10-09'),
-            :'[]'
+            :[]
           ),
           contained: range_value.new(
             Date.parse('2017-10-05'),

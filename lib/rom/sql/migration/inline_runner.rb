@@ -13,8 +13,8 @@ module ROM
           yield(connection)
         end
 
-        def method_missing(m, *args, &block)
-          connection.public_send(m, *args, &block)
+        def method_missing(m, ...)
+          connection.public_send(m, ...)
         end
       end
     end

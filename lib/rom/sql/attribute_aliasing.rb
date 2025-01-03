@@ -19,8 +19,7 @@ module ROM
           sql_expr: alias_sql_expr(sql_expr, new_alias_name)
         )
       end
-      alias as aliased
-
+      alias_method :as, :aliased
 
       # Return true if this attribute is an aliased projection
       #
@@ -46,7 +45,7 @@ module ROM
       #
       # @api private
       def aliased_projection?
-        self.meta[:sql_expr].is_a?(Sequel::SQL::AliasedExpression)
+        meta[:sql_expr].is_a?(::Sequel::SQL::AliasedExpression)
       end
 
       private
@@ -54,8 +53,10 @@ module ROM
       # @api private
       def alias_sql_expr(sql_expr, new_alias)
         case sql_expr
-        when Sequel::SQL::AliasedExpression
-          Sequel::SQL::AliasedExpression.new(sql_expr.expression, new_alias, sql_expr.columns)
+        when ::Sequel::SQL::AliasedExpression
+          ::Sequel::SQL::AliasedExpression.new(
+            sql_expr.expression, new_alias, sql_expr.columns
+          )
         else
           sql_expr.as(new_alias)
         end
@@ -70,7 +71,7 @@ module ROM
           # attribute in a way that will map the the requested alias name.
           # Without this, the attribute will silently ignore the requested alias
           # name and default to the pre-existing name.
-          new_name = "#{meta[:wrapped]}_#{options[:alias]}".to_sym
+          new_name = :"#{meta[:wrapped]}_#{options[:alias]}"
 
           # Essentially, this makes it so "wrapped" attributes aren't true
           # aliases, in that we actually alias the wrapped attribute, we use

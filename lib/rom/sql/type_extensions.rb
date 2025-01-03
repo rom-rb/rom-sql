@@ -30,13 +30,13 @@ module ROM
         # @param [Dry::Types::Type] type Type
         #
         # @api public
-        def register(type, &block)
+        def register(type, &)
           extensions = @types[type.meta[:database]]
           db_type = type.meta[:db_type]
 
-          mod = Module.new(&block)
-          ctx = Object.new.extend(mod)
-          functions = mod.public_instance_methods.each_with_object({}) { |m, ms| ms[m] = ctx.method(m) }
+          mod = ::Module.new(&)
+          ctx = ::Object.new.extend(mod)
+          functions = mod.public_instance_methods.to_h { |m| [m, ctx.method(m)] }
           extensions[db_type] = (extensions[db_type] || {}).merge(functions)
         end
       end

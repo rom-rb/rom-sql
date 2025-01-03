@@ -89,6 +89,10 @@ Naming/MethodName:
 Naming/MethodParameterName:
   Enabled: false
 
+Style/MultilineBlockChain:
+  Exclude:
+    - "spec/**/*.rb"
+
 Style/MutableConstant:
   Exclude:
     - "spec/**/*.rb"

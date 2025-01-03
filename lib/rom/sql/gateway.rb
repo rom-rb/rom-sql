@@ -81,7 +81,7 @@ module ROM
       def initialize(uri, options = EMPTY_HASH)
         @connection = connect(uri, options)
         load_extensions(Array(options[:extensions]))
-        Notifications.trigger("configuration.gateway.connected", connection: @connection)
+        Notifications.trigger('configuration.gateway.connected', connection: @connection)
 
         @options = options
 
@@ -152,15 +152,15 @@ module ROM
       # Create a table using the configured connection
       #
       # @api public
-      def create_table(*args, &block)
-        connection.create_table(*args, &block)
+      def create_table(...)
+        connection.create_table(...)
       end
 
       # Drops a table
       #
       # @api public
-      def drop_table(*args, &block)
-        connection.drop_table(*args, &block)
+      def drop_table(...)
+        connection.drop_table(...)
       end
 
       # Returns a list of datasets inferred from table names
@@ -249,5 +249,5 @@ module ROM
     end
   end
 
-  Configuration.register_event("configuration.gateway.connected")
+  Configuration.register_event('configuration.gateway.connected')
 end

@@ -7,15 +7,15 @@ module ROM
     class RailsLogSubscriber < ActiveSupport::LogSubscriber
       as_version =
         begin
-          require "active_support/gem_version"
+          require 'active_support/gem_version'
           ActiveSupport.gem_version
         rescue LoadError
           nil
         end
 
       COLOR_OPTION =
-        if as_version && as_version >= Gem::Version.new("7.2")
-          {color: true}
+        if as_version && as_version >= ::Gem::Version.new('7.2')
+          { color: true }
         else
           true
         end

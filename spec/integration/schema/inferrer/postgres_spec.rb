@@ -177,22 +177,22 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
     let(:values) { ROM::SQL::Postgres::Values }
 
     let(:point) { ROM::SQL::Postgres::Values::Point.new(7.5, 30.5) }
-    let(:point_2) { ROM::SQL::Postgres::Values::Point.new(8.5, 35.5) }
+    let(:point2) { ROM::SQL::Postgres::Values::Point.new(8.5, 35.5) }
     let(:line) { ROM::SQL::Postgres::Values::Line.new(2.3, 4.9, 3.1415) }
     let(:dns) { IPAddr.new('8.8.8.8') }
     let(:mapping) { { 'hot' => 'cold' } }
     let(:circle) { ROM::SQL::Postgres::Values::Circle.new(point, 1.0) }
-    let(:lseg) { ROM::SQL::Postgres::Values::LineSegment.new(point, point_2) }
-    let(:box_corrected) { ROM::SQL::Postgres::Values::Box.new(point_2, point) }
+    let(:lseg) { ROM::SQL::Postgres::Values::LineSegment.new(point, point2) }
+    let(:box_corrected) { ROM::SQL::Postgres::Values::Box.new(point2, point) }
     let(:box) do
-      upper_left = ROM::SQL::Postgres::Values::Point.new(point.x, point_2.y)
-      lower_right = ROM::SQL::Postgres::Values::Point.new(point_2.x, point.y)
+      upper_left = ROM::SQL::Postgres::Values::Point.new(point.x, point2.y)
+      lower_right = ROM::SQL::Postgres::Values::Point.new(point2.x, point.y)
 
       ROM::SQL::Postgres::Values::Box.new(upper_left, lower_right)
     end
-    let(:polygon) { [point, point_2] }
-    let(:closed_path) { ROM::SQL::Postgres::Values::Path.new([point, point_2], :closed) }
-    let(:open_path) { ROM::SQL::Postgres::Values::Path.new([point, point_2], :open) }
+    let(:polygon) { [point, point2] }
+    let(:closed_path) { ROM::SQL::Postgres::Values::Path.new([point, point2], :closed) }
+    let(:open_path) { ROM::SQL::Postgres::Values::Path.new([point, point2], :open) }
     let(:ltree) { ROM::Types::Values::TreePath.new('Top.Countries.Europe.Russia') }
 
     let(:int4range) { values::Range.new(0, 2, :'[)') }

@@ -38,8 +38,8 @@ module ROM
           else
             infer_from_attributes(gateway, schema, **super)
           end
-        rescue Sequel::Error => error
-          on_error(schema.name, error)
+        rescue Sequel::Error => e
+          on_error(schema.name, e)
           { **FALLBACK_SCHEMA, indexes: schema.indexes }
         end
 
@@ -49,10 +49,14 @@ module ROM
           indexes = indexes_from_database(gateway, schema, idx)
           foreign_keys = foreign_keys_from_database(gateway, schema, idx)
 
-          { **rest,
-            attributes: attributes.map { |attr| mark_fk(mark_indexed(attr, indexes), foreign_keys) },
+          {
+            **rest,
+            attributes: attributes.map { |attr|
+              mark_fk(mark_indexed(attr, indexes), foreign_keys)
+            },
             foreign_keys: foreign_keys,
-            indexes: indexes }
+            indexes: indexes
+          }
         end
 
         # @api private
@@ -60,10 +64,12 @@ module ROM
           indexes = schema.indexes | indexes_from_attributes(attributes)
           foreign_keys = foreign_keys_from_attributes(attributes)
 
-          { **rest,
+          {
+            **rest,
             attributes: attributes.map { |attr| mark_indexed(attr, indexes) },
             foreign_keys: foreign_keys,
-            indexes: indexes }
+            indexes: indexes
+          }
         end
 
         # @api private
@@ -96,18 +102,16 @@ module ROM
 
         # @api private
         def indexes_from_attributes(attributes)
-          attributes.
-            select(&:indexed?).
-            map { |attr| SQL::Index.new([attr.unwrap]) }.
-            to_set
+          attributes
+            .select(&:indexed?)
+            .to_set { |attr| SQL::Index.new([attr.unwrap]) }
         end
 
         # @api private
         def foreign_keys_from_attributes(attributes)
-          attributes.
-            select(&:foreign_key?).
-            map { |attr| SQL::ForeignKey.new([attr.unwrap], attr.target) }.
-            to_set
+          attributes
+            .select(&:foreign_key?)
+            .to_set { |attr| SQL::ForeignKey.new([attr.unwrap], attr.target) }
         end
 
         # @api private
