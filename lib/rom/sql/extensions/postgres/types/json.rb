@@ -77,11 +77,15 @@ module ROM
           end
         else
           JSON = Type('json') do
-            (SQL::Types::Array | SQL::Types::Hash).constructor(Sequel.method(:pg_json)).meta(read: JSONRead)
+            (SQL::Types::Array | SQL::Types::Hash).constructor(
+              ::Sequel.method(:pg_json)
+            ).meta(read: JSONRead)
           end
 
           JSONB = Type('jsonb') do
-            (SQL::Types::Array | SQL::Types::Hash).constructor(Sequel.method(:pg_jsonb)).meta(read: JSONRead)
+            (SQL::Types::Array | SQL::Types::Hash).constructor(
+              ::Sequel.method(:pg_jsonb)
+            ).meta(read: JSONRead)
           end
         end
 
@@ -265,7 +269,9 @@ module ROM
           end
 
           def has_key(_type, expr, key)
-            Attribute[SQL::Types::Bool].meta(sql_expr: wrap(expr).has_key?(key))
+            Attribute[SQL::Types::Bool].meta(
+              sql_expr: wrap(expr).has_key?(key) # rubocop:disable Style/PreferredHashMethods
+            )
           end
 
           def has_any_key(_type, expr, *keys)

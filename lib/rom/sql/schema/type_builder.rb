@@ -67,6 +67,8 @@ module ROM
         end
 
         # @api private
+        #
+        # rubocop:disable Metrics/PerceivedComplexity
         def map_type(ruby_type, db_type, **kw)
           type = self.class.ruby_type_mapping[ruby_type || guess_type(db_type)]
 
@@ -78,6 +80,7 @@ module ROM
             type
           end
         end
+        # rubocop:enable Metrics/PerceivedComplexity
 
         # @api private
         def guess_type(db_type)

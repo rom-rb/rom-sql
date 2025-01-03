@@ -13,6 +13,12 @@ module ROM
           instance_exec(&block) if block
         end
 
+        private
+
+        def respond_to_missing?(_m, _include_private = false)
+          true
+        end
+
         def method_missing(m, *args, &block)
           nested = block ? Recorder.new(&block).operations : EMPTY_ARRAY
           @operations << [m, args, nested]

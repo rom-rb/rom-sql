@@ -12,6 +12,8 @@ module ROM
         include Associations::SelfRef
 
         # @api public
+        #
+        # rubocop:disable Metrics/AbcSize
         def call(target: self.target)
           left = join_assoc.(target: target)
 
@@ -34,6 +36,7 @@ module ROM
             schema.(relation)
           end
         end
+        # rubocop:enable Metrics/AbcSize
 
         # @api public
         def join(type, source = self.source, target = self.target)

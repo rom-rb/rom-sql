@@ -43,6 +43,7 @@ Lint/ConstantDefinitionInBlock:
 
 Lint/EmptyBlock:
   Exclude:
+    - "lib/rom/sql/migration/template.rb"
     - "spec/**/*.rb"
     - "tmp/**/*.rb"
 
@@ -178,6 +179,9 @@ Style/OpenStructUse:
 
 Style/ParallelAssignment:
   Enabled: false
+
+Style/SafeNavigation:
+  MaxChainLength: 1
 
 Style/StabbyLambdaParentheses:
   Enabled: false

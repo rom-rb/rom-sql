@@ -75,7 +75,8 @@ module ROM
       #
       # @return [SQL::Gateway]
       #
-      # @see https://github.com/jeremyevans/sequel/blob/master/doc/opening_databases.rdoc Sequel connection docs
+      # @see https://github.com/jeremyevans/sequel/blob/master/doc/opening_databases.rdoc
+      #      Sequel connection docs
       #
       # @api public
       def initialize(uri, options = EMPTY_HASH)

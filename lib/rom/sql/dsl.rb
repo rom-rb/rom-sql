@@ -59,7 +59,9 @@ module ROM
       #
       # @example
       #   users.where { exists(users.where(name: 'John')) }
-      #   users.select_append { |r| exists(r[:posts].where(r[:posts][:user_id] => id)).as(:has_posts) }
+      #   users.select_append { |r|
+      #     exists(r[:posts].where(r[:posts][:user_id] => id)).as(:has_posts)
+      #   }
       #
       # @api public
       def exists(relation)

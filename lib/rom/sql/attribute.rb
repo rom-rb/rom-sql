@@ -15,6 +15,8 @@ module ROM
     # Extended schema attributes tailored for SQL databases
     #
     # @api public
+    #
+    # rubocop:disable Metrics/ClassLength
     class Attribute < ROM::Attribute
       include AttributeWrapping
       include AttributeAliasing
@@ -59,7 +61,9 @@ module ROM
         return meta(qualified: false) unless qualifiable?
 
         case sql_expr
-        when Sequel::SQL::AliasedExpression, Sequel::SQL::Identifier, Sequel::SQL::QualifiedIdentifier
+        when ::Sequel::SQL::AliasedExpression,
+             ::Sequel::SQL::Identifier,
+             ::Sequel::SQL::QualifiedIdentifier
           attr = meta(qualified: table_alias || true)
           attr.meta(sql_expr: attr.to_sql_name)
         else
@@ -334,7 +338,7 @@ module ROM
       #
       # @api private
       def unwrap
-        cleaned_meta = meta.reject { |k, _| META_KEYS.include?(k) }
+        cleaned_meta = meta.except(*META_KEYS)
         type = optional? ? right : self.type
 
         self.class.new(type.with(meta: cleaned_meta), **options)
@@ -381,6 +385,15 @@ module ROM
       # @api private
       def sql_expr
         @sql_expr ||= meta[:sql_expr] || to_sql_name
+      end
+
+      # @api private
+      def respond_to_missing?(meth, _include_private = false)
+        if OPERATORS.include?(meth) || extensions.key?(meth) || sql_expr.respond_to?(meth)
+          true
+        else
+          super
+        end
       end
 
       # Delegate to sql expression if it responds to a given method
@@ -436,5 +449,6 @@ module ROM
 
       memoize :joined, :to_sql_name, :table_name, :canonical
     end
+    # rubocop:enable Metrics/ClassLength
   end
 end

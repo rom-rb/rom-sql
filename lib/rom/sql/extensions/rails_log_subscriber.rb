@@ -25,7 +25,7 @@ module ROM
 
         payload = event.payload
 
-        name = format('%s (%.1fms)', payload[:name], event.duration)
+        name = format('%<name>s (%<duration>.1fms)', name: payload[:name], duration: event.duration)
         sql  = payload[:sql].squeeze(' ')
         binds = payload[:binds].to_a.inspect if payload[:binds]
 

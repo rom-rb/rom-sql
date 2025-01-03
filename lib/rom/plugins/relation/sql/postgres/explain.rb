@@ -26,7 +26,7 @@ module ROM
             #
             # @api public
             def explain(format: :text, **options)
-              bool_options = options.map { |opt, value| "#{opt.to_s.upcase} #{!!value}" }
+              bool_options = options.map { "#{_1.to_s.upcase} #{!!_2}" } # rubocop:disable Style/DoubleNegation
               format_option = "FORMAT #{format.to_s.upcase}"
               explain_value = [format_option, *bool_options].join(', ')
 

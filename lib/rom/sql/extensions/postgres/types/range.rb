@@ -9,19 +9,16 @@ module ROM
     module Postgres
       module Values
         Range = ::Struct.new(:lower, :upper, :bounds) do
-          PAREN_LEFT  = '('
-          PAREN_RIGHT = ')'
-
           def initialize(lower, upper, bounds = :'[)')
             super
           end
 
           def exclude_begin?
-            bounds[0] == PAREN_LEFT
+            bounds[0] == '('
           end
 
           def exclude_end?
-            bounds[1] == PAREN_RIGHT
+            bounds[1] == ')'
           end
         end
       end
@@ -56,20 +53,21 @@ module ROM
         def self.range_read_type(name)
           SQL::Types.Constructor(Values::Range) do |value|
             pg_range =
-              if value.is_a?(Sequel::Postgres::PGRange)
+              if value.is_a?(::Sequel::Postgres::PGRange)
                 value
-              elsif value && value.respond_to?(:to_s)
+              elsif value && value.respond_to?(:to_s) # rubocop:disable Style/SafeNavigation
                 @range_parsers[name].(value.to_s)
-              else
+              else # rubocop:disable Lint/DuplicateBranch
                 value
               end
 
             Values::Range.new(
               pg_range.begin,
               pg_range.end,
-              [pg_range.exclude_begin? ? :'(' : :'[',
-               pg_range.exclude_end? ? :')' : :']']
-              .join('').to_sym
+              [
+                pg_range.exclude_begin? ? :'(' : :'[',
+                pg_range.exclude_end? ? :')' : :']'
+              ].join.to_sym
             )
           end
         end
@@ -78,11 +76,13 @@ module ROM
         def self.range(name, read_type)
           Type(name) do
             type = SQL::Types.Nominal(Values::Range).constructor do |range|
-              format('%s%s,%s%s',
-                     range.exclude_begin? ? :'(' : :'[',
-                     range.lower,
-                     range.upper,
-                     range.exclude_end? ? :')' : :']')
+              format(
+                '%<begin>s%<lower>s,%<upper>s%<end>s',
+                begin: range.exclude_begin? ? :'(' : :'[',
+                lower: range.lower,
+                upper: range.upper,
+                end: range.exclude_end? ? :')' : :']'
+              )
             end
 
             type.meta(read: read_type)

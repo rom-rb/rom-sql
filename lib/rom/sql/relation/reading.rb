@@ -9,6 +9,8 @@ module ROM
       # Query API for SQL::Relation
       #
       # @api public
+      #
+      # rubocop:disable Metrics/ModuleLength
       module Reading
         # Row-level lock modes
         ROW_LOCK_MODES = Hash.new({ update: 'FOR UPDATE' }).update(
@@ -724,7 +726,7 @@ module ROM
         # @api public
         def group(*args, &block)
           if block
-            if args.size > 0
+            if args.size.positive?
               group(*args).group_append(&block)
             else
               new(dataset.__send__(__method__, *schema.canonical.group(&block)))
@@ -763,7 +765,7 @@ module ROM
         # @api public
         def group_append(*args, &block)
           if block
-            if args.size > 0
+            if args.size.positive?
               group_append(*args).group_append(&block)
             else
               new(dataset.group_append(*schema.canonical.group(&block)))
@@ -813,9 +815,12 @@ module ROM
         # @param [Relation] relation Another relation
         #
         # @param [Hash] options Options for union
-        # @option options [Symbol] :alias Use the given value as the #from_self alias
-        # @option options [true, false] :all Set to true to use UNION ALL instead of UNION, so duplicate rows can occur
-        # @option options [true, false] :from_self Set to false to not wrap the returned dataset in a #from_self, use with care.
+        # @option options [Symbol] :alias
+        #         Use the given value as the #from_self alias
+        # @option options [true, false] :all
+        #         Set to true to use UNION ALL instead of UNION, so duplicate rows can occur
+        # @option options [true, false] :from_self
+        #         Set to false to not wrap the returned dataset in a #from_self, use with care.
         #
         # @returRelation]
         #
@@ -1068,6 +1073,8 @@ module ROM
         # Apply input types to condition values
         #
         # @api private
+        #
+        # rubocop:disable Metrics/AbcSize
         def coerce_conditions(conditions)
           conditions.each_with_object({}) { |(k, v), h|
             if k.is_a?(Symbol) && schema.canonical.key?(k)
@@ -1080,10 +1087,13 @@ module ROM
             end
           }
         end
+        # rubocop:enable Metrics/AbcSize
 
         # Common join method used by other join methods
         #
         # @api private
+        #
+        # rubocop:disable Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/CyclomaticComplexity
         def __join__(type, other, join_cond = EMPTY_HASH, opts = EMPTY_HASH, &block)
           if other.is_a?(Symbol) || other.is_a?(ROM::Relation::Name)
             if join_cond.equal?(EMPTY_HASH) && !block
@@ -1116,6 +1126,7 @@ module ROM
           end
         end
       end
+      # rubocop:enable Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/ModuleLength
     end
   end
 end

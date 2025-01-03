@@ -77,12 +77,12 @@ module ROM
           if gateway.connection.respond_to?(:indexes)
             dataset = schema.name.dataset
 
-            gateway.connection.indexes(dataset).map { |index_name, definition|
+            gateway.connection.indexes(dataset).to_set do |index_name, definition|
               columns, unique = definition.values_at(:columns, :unique)
               attrs = columns.map { |name| attributes[name] }
 
               SQL::Index.new(attrs, name: index_name, unique: unique)
-            }.to_set
+            end
           else
             EMPTY_SET
           end
@@ -92,12 +92,12 @@ module ROM
         def foreign_keys_from_database(gateway, schema, attributes)
           dataset = schema.name.dataset
 
-          gateway.connection.foreign_key_list(dataset).map { |definition|
+          gateway.connection.foreign_key_list(dataset).to_set do |definition|
             columns, table, key = definition.values_at(:columns, :table, :key)
             attrs = columns.map { |name| attributes[name] }
 
             SQL::ForeignKey.new(attrs, table, parent_keys: key)
-          }.to_set
+          end
         end
 
         # @api private

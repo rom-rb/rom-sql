@@ -33,9 +33,9 @@ module ROM
             attr_class.new(attr[:type], **(attr[:options] || {})).meta(source: schema_name)
           end
 
-          registry.map { |attr_names, options|
+          registry.to_set do |attr_names, options|
             build_index(attributes, attr_names, options)
-          }.to_set
+          end
         end
 
         private

@@ -9,6 +9,11 @@ module ROM
       private
 
       # @api private
+      def respond_to_missing?(_meth, _include_private = false)
+        true
+      end
+
+      # @api private
       def method_missing(meth, ...)
         if schema.key?(meth)
           schema[meth].canonical

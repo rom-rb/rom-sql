@@ -6,14 +6,14 @@ module ROM
   module SQL
     module Postgres
       # @api public
+      #
+      # rubocop:disable Metrics/ModuleLength
       module Types
         # @see https://www.postgresql.org/docs/current/static/ltree.html
 
         LTree = Type('ltree') do
           SQL::Types.define(ROM::Types::Values::TreePath) do
-            input do |label_path|
-              label_path.to_s
-            end
+            input(&:to_s)
 
             output do |label_path|
               ROM::Types::Values::TreePath.new(label_path.to_s) if label_path
@@ -41,8 +41,12 @@ module ROM
         #     #   Translates to the ? operator
         #     #
         #     #   @example
-        #     #     people.select(:name).where { ltree_tags.match_any(['Bottom', 'Bottom.Cities.*']) }
-        #     #     people.select(:name).where { ltree_tags.match_any('Bottom,Bottom.Cities.*') }
+        #     #     people.select(:name).where {
+        #     #       ltree_tags.match_any(['Bottom', 'Bottom.Cities.*'])
+        #     #     }
+        #     #     people.select(:name).where {
+        #     #       ltree_tags.match_any('Bottom,Bottom.Cities.*')
+        #     #     }
         #     #
         #     #   @param [Array,String] value
         #     #
@@ -69,7 +73,9 @@ module ROM
         #     #
         #     #   @example
         #     #     people.select(:name).where { ltree_tags.contain_descendant(['Bottom.Cities']) }
-        #     #     people.select(:name).where { ltree_tags.contain_descendant('Bottom.Cities, Bottom.Parks') }
+        #     #     people.select(:name).where {
+        #     #       ltree_tags.contain_descendant('Bottom.Cities, Bottom.Parks')
+        #     #     }
         #     #
         #     #   @param [Array<String>, String] value
         #     #
@@ -96,7 +102,9 @@ module ROM
         #     #
         #     #   @example
         #     #     people.select(:name).where { ltree_tags.contain_ascendant(['Bottom.Cities']) }
-        #     #     people.select(:name).where { ltree_tags.contain_ascendant('Bottom.Cities, Bottom.Parks') }
+        #     #     people.select(:name).where {
+        #     #       ltree_tags.contain_ascendant('Bottom.Cities, Bottom.Parks')
+        #     #     }
         #     #
         #     #   @param [Array<String>, String] value
         #     #
@@ -122,8 +130,12 @@ module ROM
         #     #   Translates to ||
         #     #
         #     #   @example
-        #     #     people.select { (ltree_tags + ROM::Types::Values::TreePath.new('Moscu')).as(:ltree_tags) }.where { name.is('Jade Doe') }
-        #     #     people.select { (ltree_tags + 'Moscu').as(:ltree_tags) }.where { name.is('Jade Doe') }
+        #     #     people.select {
+        #     #       (ltree_tags + ROM::Types::Values::TreePath.new('Moscu')).as(:ltree_tags)
+        #     #     }.where { name.is('Jade Doe') }
+        #     #     people.select {
+        #     #       (ltree_tags + 'Moscu').as(:ltree_tags)
+        #     #     }.where { name.is('Jade Doe') }
         #     #
         #     #   @param [LTree, String] keys
         #     #
@@ -149,7 +161,9 @@ module ROM
         #     #   Translates to @>
         #     #
         #     #   @example
-        #     #     people.select(:name).where { parents_tags.contain_ancestor('Top.Building.EmpireState.381')}
+        #     #     people.select(:name).where {
+        #     #       parents_tags.contain_ancestor('Top.Building.EmpireState.381')
+        #     #     }
         #     #
         #     #   @param [String] value
         #     #
@@ -162,7 +176,9 @@ module ROM
         #     #   Translates to <@
         #     #
         #     #   @example
-        #     #     people.select(:name).where { parents_tags.contain_descendant('Top.Building.EmpireState.381')}
+        #     #     people.select(:name).where {
+        #     #       parents_tags.contain_descendant('Top.Building.EmpireState.381')
+        #     #     }
         #     #
         #     #   @param [String] value
         #     #
@@ -175,7 +191,9 @@ module ROM
         #     #   Translates to ?@>
         #     #
         #     #   @example
-        #     #     people.select(:name).where { parents_tags.find_ancestor('Left.Parks').not(nil)}
+        #     #     people.select(:name).where {
+        #     #       parents_tags.find_ancestor('Left.Parks').not(nil)
+        #     #     }
         #     #
         #     #   @param [String] value
         #     #
@@ -188,7 +206,9 @@ module ROM
         #     #   Translates to ?<@
         #     #
         #     #   @example
-        #     #     people.select(:name).where { parents_tags.find_descendant('Left.Parks').not(nil)}
+        #     #     people.select(:name).where {
+        #     #       parents_tags.find_descendant('Left.Parks').not(nil)
+        #     #     }
         #     #
         #     #   @param [String] value
         #     #
@@ -201,7 +221,9 @@ module ROM
         #     #   Translates to ?~
         #     #
         #     #   @example
-        #     #     people.select(:name).where { parents_tags.match_any_lquery('Right.*').not(nil)}
+        #     #     people.select(:name).where {
+        #     #       parents_tags.match_any_lquery('Right.*').not(nil)
+        #     #     }
         #     #
         #     #   @param [String] value
         #     #
@@ -214,7 +236,9 @@ module ROM
         #     #   Translates to ?@
         #     #
         #     #   @example
-        #     #     people.select(:name).where { parents_tags.match_any_ltextquery('EmpireState').not(nil)}
+        #     #     people.select(:name).where {
+        #     #       parents_tags.match_any_ltextquery('EmpireState').not(nil)
+        #     #     }
         #     #
         #     #   @param [String] value
         #     #
@@ -372,5 +396,6 @@ module ROM
         end
       end
     end
+    # rubocop:enable Metrics/ModuleLength
   end
 end

@@ -114,7 +114,15 @@ module ROM
           # @return [Array<Hash>]
           #
           # @api public
-          def associate(tuples, curried_parent = nil, assoc:, keys:, parent: curried_parent)
+          #
+          # rubocop:disable Metrics/PerceivedComplexity, Metrics/AbcSize
+          def associate(
+            tuples,
+            curried_parent = nil,
+            assoc:,
+            keys:, # rubocop:disable Lint/UnusedMethodArgument
+            parent: curried_parent
+          )
             result_type = result
 
             output_tuples =
@@ -142,6 +150,7 @@ module ROM
 
             result_type == :one ? output_tuples[0] : output_tuples
           end
+          # rubocop:enable Metrics/PerceivedComplexity, Metrics/AbcSize
 
           # Return a new command with the provided association
           #

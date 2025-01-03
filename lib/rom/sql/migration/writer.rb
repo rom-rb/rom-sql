@@ -39,7 +39,7 @@ module ROM
             next if nested.empty?
 
             buffer << ' do'
-            write(nested, buffer, indent + '  ')
+            write(nested, buffer, "#{indent}  ")
             buffer << indent << 'end'
           end
         end

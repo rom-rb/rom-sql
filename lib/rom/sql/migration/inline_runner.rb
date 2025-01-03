@@ -13,8 +13,14 @@ module ROM
           yield(connection)
         end
 
+        private
+
         def method_missing(m, ...)
           connection.public_send(m, ...)
+        end
+
+        def respond_to_missing?(meth, include_private = false)
+          connection.respond_to?(meth, include_private)
         end
       end
     end

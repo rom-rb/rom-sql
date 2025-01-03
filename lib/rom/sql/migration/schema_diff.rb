@@ -132,6 +132,7 @@ module ROM
         end
 
         class IndexAdded < IndexDiff
+          # rubocop:disable Metrics/AbcSize
           def options
             options = {}
             options[:name] = index.name unless index.name.nil?
@@ -140,6 +141,7 @@ module ROM
             options[:where] = index.predicate unless index.predicate.nil?
             options
           end
+          # rubocop:enable Metrics/AbcSize
         end
 
         class IndexRemoved < IndexDiff
@@ -176,6 +178,7 @@ module ROM
         class ForeignKeyRemoved < ForeignKeyDiff
         end
 
+        # rubocop:disable Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/MethodLength
         def call(current, target)
           if current.empty?
             TableCreated.new(
@@ -202,21 +205,23 @@ module ROM
             end
           end
         end
+        # rubocop:enable Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/MethodLength
 
+        # rubocop:disable Style/MultilineBlockChain
         def compare_attributes(current, target)
           changed_attributes = target.select { |name, attr|
             current.key?(name) && !attributes_equal?(current[name], attr)
-          }.map { |name, target_attr|
-            [name, [target_attr, current[name]]]
-          }.to_h
-          added_attributes = target.select { |name, _| !current.key?(name) }
-          removed_attributes = current.select { |name, _| !target.key?(name) }
+          }.to_h { |name, target_attr| [name, [target_attr, current[name]]] }
+          added_attributes = target.reject { |name, _| current.key?(name) }
+          removed_attributes = current.reject { |name, _| target.key?(name) }
 
           map_attributes(removed_attributes, AttributeRemoved) +
             map_attributes(added_attributes, AttributeAdded) +
             map_attributes(changed_attributes, AttributeChanged)
         end
+        # rubocop:enable Style/MultilineBlockChain
 
+        # rubocop:disable Metrics/AbcSize
         def compare_indexes(current, target)
           added_indexes = target.indexes.reject { |idx|
             current.indexes.any? { |curr_idx| curr_idx.attributes == idx.attributes }
@@ -228,6 +233,7 @@ module ROM
           removed_indexes.map { |idx| IndexRemoved.new(idx) } +
             added_indexes.map { |idx| IndexAdded.new(idx) }
         end
+        # rubocop:enable Metrics/AbcSize
 
         def compare_foreign_key_constraints(current, target)
           target_fks = target.foreign_keys

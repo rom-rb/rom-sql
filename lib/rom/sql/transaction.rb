@@ -8,6 +8,7 @@ module ROM
       private :connection
 
       def initialize(connection)
+        super()
         @connection = connection
       end
 
