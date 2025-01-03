@@ -5,11 +5,9 @@ require 'rom/sql/types'
 module ROM
   module Types
     module Values
-      class TreePath < ::Struct.new(:value, :separator)
-        DEFAULT_SEPARATOR = '.'
-
+      class TreePath < ::Struct.new(:value, :separator) # rubocop:disable Style/StructInheritance
         # @api public
-        def self.new(value, separator = DEFAULT_SEPARATOR)
+        def self.new(value, separator = '.')
           super
         end
 
