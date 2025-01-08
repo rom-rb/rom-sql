@@ -10,12 +10,12 @@ if ENV['DRY_TYPES_FROM_MASTER'].eql?('true')
   gem 'dry-types', github: 'dry-rb/dry-types', branch: 'main'
 end
 
-git 'https://github.com/rom-rb/rom.git', branch: 'release-5.4' do
-  gem 'rom'
-  gem 'rom-changeset'
-  gem 'rom-core'
-  gem 'rom-repository'
-end
+# git 'https://github.com/rom-rb/rom.git', branch: 'release-5.4' do
+#   gem 'rom'
+#   gem 'rom-changeset'
+#   gem 'rom-core'
+#   gem 'rom-repository'
+# end
 
 if ENV['SEQUEL_FROM_MASTER'].eql?('true')
   gem 'sequel', github: 'jeremyevans/sequel', branch: 'master'
