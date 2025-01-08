@@ -7,10 +7,10 @@ module ROM
       class Recorder
         attr_reader :operations
 
-        def initialize(&block)
+        def initialize(&)
           @operations = []
 
-          instance_exec(&block) if block
+          instance_exec(&) if block_given?
         end
 
         private
@@ -19,8 +19,8 @@ module ROM
           true
         end
 
-        def method_missing(m, *args, &block)
-          nested = block ? Recorder.new(&block).operations : EMPTY_ARRAY
+        def method_missing(m, *args, &)
+          nested = block_given? ? Recorder.new(&).operations : EMPTY_ARRAY
           @operations << [m, args, nested]
         end
       end

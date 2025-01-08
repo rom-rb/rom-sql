@@ -87,9 +87,9 @@ module ROM
       # @return [Schema] A new schema with projected attributes
       #
       # @api public
-      def project(*names, &block)
-        if block
-          super(*(names + ProjectionDSL.new(self).(&block)))
+      def project(*names, &)
+        if block_given?
+          super(*(names + ProjectionDSL.new(self).(&)))
         else
           super
         end

@@ -221,9 +221,9 @@ module ROM
       # @return [SQL::Function]
       #
       # @api public
-      def filter(condition = Undefined, &block)
-        if block
-          conditions = schema.restriction(&block)
+      def filter(condition = Undefined, &)
+        if block_given?
+          conditions = schema.restriction(&)
           conditions &= condition unless condition.equal?(Undefined)
         else
           conditions = condition
@@ -246,9 +246,9 @@ module ROM
       # @return [SQL::Function]
       #
       # @api public
-      def within_group(*args, &block)
-        if block
-          group = args + ::ROM::SQL::OrderDSL.new(schema).(&block)
+      def within_group(*args, &)
+        if block_given?
+          group = args + ::ROM::SQL::OrderDSL.new(schema).(&)
         else
           group = args
         end

@@ -15,9 +15,9 @@ RSpec.describe ROM::SQL::Relation, '#instrument', :sqlite do
         @logs = []
       end
 
-      def instrument(*args, &block)
+      def instrument(*args, &)
         logs << args
-        block.call
+        yield
       end
     end.new
   end

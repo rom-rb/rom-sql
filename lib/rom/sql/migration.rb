@@ -54,12 +54,12 @@ module ROM
       #   @param [Symbol] gateway The gateway name, :default by default
       #
       # @api public
-      def migration(*args, &block)
+      def migration(*args, &)
         if args.any?
           container, gateway, * = args
-          with_gateway(container.gateways[gateway || :default]) { migration(&block) }
+          with_gateway(container.gateways[gateway || :default]) { migration(&) }
         else
-          current_gateway.migration(&block)
+          current_gateway.migration(&)
         end
       end
 

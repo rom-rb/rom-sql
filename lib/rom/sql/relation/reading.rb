@@ -361,9 +361,9 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def where(*args, &block)
-          if block
-            where(*args).where(schema.canonical.restriction(&block))
+        def where(*args, &)
+          if block_given?
+            where(*args).where(schema.canonical.restriction(&))
           elsif args.size == 1 && args[0].is_a?(Hash)
             new(dataset.where(coerce_conditions(args[0])))
           elsif !args.empty?
@@ -420,9 +420,9 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def having(*args, &block)
-          if block
-            new(dataset.having(*args, *schema.canonical.restriction(&block)))
+        def having(*args, &)
+          if block_given?
+            new(dataset.having(*args, *schema.canonical.restriction(&)))
           else
             new(dataset.__send__(__method__, *args))
           end
@@ -475,11 +475,11 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def order(*args, &block)
-          if block
-            new(dataset.order(*args, *schema.canonical.order(&block)))
+        def order(*args, &)
+          if block_given?
+            new(dataset.order(*args, *schema.canonical.order(&)))
           else
-            new(dataset.__send__(__method__, *args, &block))
+            new(dataset.__send__(__method__, *args, &))
           end
         end
 
@@ -724,12 +724,12 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def group(*args, &block)
-          if block
+        def group(*args, &)
+          if block_given?
             if args.size.positive?
-              group(*args).group_append(&block)
+              group(*args).group_append(&)
             else
-              new(dataset.__send__(__method__, *schema.canonical.group(&block)))
+              new(dataset.__send__(__method__, *schema.canonical.group(&)))
             end
           else
             new(dataset.__send__(__method__, *schema.canonical.project(*args)))
@@ -763,12 +763,12 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def group_append(*args, &block)
-          if block
+        def group_append(*args, &)
+          if block_given?
             if args.size.positive?
-              group_append(*args).group_append(&block)
+              group_append(*args).group_append(&)
             else
-              new(dataset.group_append(*schema.canonical.group(&block)))
+              new(dataset.group_append(*schema.canonical.group(&)))
             end
           else
             new(dataset.group_append(*args))
@@ -910,12 +910,12 @@ module ROM
         #   @yieldparam relation [Array]
         #
         # @api public
-        def lock(**options, &block)
+        def lock(**options, &)
           clause = lock_clause(**options)
 
-          if block
+          if block_given?
             transaction do
-              block.call(dataset.lock_style(clause).to_a)
+              yield(dataset.lock_style(clause).to_a)
             end
           else
             new(dataset.lock_style(clause))
@@ -1094,21 +1094,21 @@ module ROM
         # @api private
         #
         # rubocop:disable Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/CyclomaticComplexity
-        def __join__(type, other, join_cond = EMPTY_HASH, opts = EMPTY_HASH, &block)
+        def __join__(type, other, join_cond = EMPTY_HASH, opts = EMPTY_HASH, &)
           if other.is_a?(Symbol) || other.is_a?(ROM::Relation::Name)
-            if join_cond.equal?(EMPTY_HASH) && !block
+            if join_cond.equal?(EMPTY_HASH) && !block_given?
               assoc = associations[other]
               assoc.join(type, self)
-            elsif block
-              __join__(type, other, JoinDSL.new(schema).(&block), opts)
+            elsif block_given?
+              __join__(type, other, JoinDSL.new(schema).(&), opts)
             else
-              new(dataset.__send__(type, other.to_sym, join_cond, opts, &block))
+              new(dataset.__send__(type, other.to_sym, join_cond, opts, &))
             end
-          elsif other.is_a?(Sequel::SQL::AliasedExpression)
-            new(dataset.__send__(type, other, join_cond, opts, &block))
+          elsif other.is_a?(::Sequel::SQL::AliasedExpression)
+            new(dataset.__send__(type, other, join_cond, opts, &))
           elsif other.respond_to?(:name) && other.name.is_a?(Relation::Name)
             if block
-              join_cond = JoinDSL.new(schema).(&block)
+              join_cond = JoinDSL.new(schema).(&)
 
               if other.name.aliaz
                 join_opts = { table_alias: other.name.aliaz }

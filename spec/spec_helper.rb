@@ -117,12 +117,12 @@ module Types
   include Dry.Types(default: :strict)
 end
 
-def with_adapters(*args, &block)
+def with_adapters(*args, &)
   reset_adapter = Hash[*ADAPTERS.flat_map { |a| [a, false] }]
   adapters = args.empty? || args[0] == :all ? ADAPTERS : (args & ADAPTERS)
 
   adapters.each do |adapter|
-    context("with #{adapter}", **reset_adapter, adapter => true, &block)
+    context("with #{adapter}", **reset_adapter, adapter => true, &)
   end
 end
 
