@@ -1,4 +1,8 @@
-
+- version: 3.7.0
+  summary:
+  date: 2025-01-08
+  changed:
+  - "Minimum Ruby version is now 3.1 (@flash-gordon)"
 - version: 3.6.5
   summary:
   date: 2024-12-25
