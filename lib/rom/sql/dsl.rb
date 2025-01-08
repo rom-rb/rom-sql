@@ -28,13 +28,13 @@ module ROM
       end
 
       # @api private
-      def call(&)
+      def call(&block)
         arg, kwargs = select_relations(block.parameters)
 
         if kwargs.nil?
-          result = instance_exec(arg, &)
+          result = instance_exec(arg, &block)
         else
-          result = instance_exec(**kwargs, &)
+          result = instance_exec(**kwargs, &block)
         end
 
         if result.is_a?(::Array)
