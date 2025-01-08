@@ -18,4 +18,4 @@ services:
     environment:
       POSTGRES_USER: rom-sql
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: rom-sql
+      POSTGRES_DB: rom_sql

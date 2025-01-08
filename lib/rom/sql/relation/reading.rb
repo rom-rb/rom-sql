@@ -1107,7 +1107,7 @@ module ROM
           elsif other.is_a?(::Sequel::SQL::AliasedExpression)
             new(dataset.__send__(type, other, join_cond, opts, &))
           elsif other.respond_to?(:name) && other.name.is_a?(Relation::Name)
-            if block
+            if block_given?
               join_cond = JoinDSL.new(schema).(&)
 
               if other.name.aliaz
