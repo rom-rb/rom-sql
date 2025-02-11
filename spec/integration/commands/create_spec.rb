@@ -187,6 +187,22 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
       }.to raise_error(ROM::SQL::NotNullConstraintError)
     end
 
+    context 'with json notes' do
+      include_context 'json_notes'
+
+      before do
+        conf.commands(:json_notes) do
+          define(:create)
+        end
+      end
+
+      it 'writes and reads back custom type' do
+        json_notes = commands[:json_notes]
+
+        expect(json_notes[:create].call(note: 'this is my note')).to eq([{id: 1, note: 'this is my note'}])
+      end
+    end
+
     # Because Oracle doesn't have boolean in SQL
     unless metadata[:oracle]
       context 'with puppies' do
