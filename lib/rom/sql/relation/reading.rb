@@ -627,7 +627,7 @@ module ROM
         #
         #   @param [Relation] relation A relation for left_join
         #
-        # @overload join(relation, &block)
+        # @overload left_join(relation, &block)
         #   Join with another relation using DSL
         #
         #   @example
@@ -676,7 +676,7 @@ module ROM
         #
         #   @param [Relation] relation A relation for right_join
         #
-        # @overload join(relation, &block)
+        # @overload right_join(relation, &block)
         #   Join with another relation using DSL
         #
         #   @example
