@@ -1,3 +1,8 @@
+- version: 3.8.0
+  summary:
+  date: unreleased
+  fixed:
+  - "Use dataset to fetch record after insert so that read types are properly applied in Create command (@katafrakt)"
 - version: 3.7.0
   summary:
   date: 2025-01-08
