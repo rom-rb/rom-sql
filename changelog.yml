@@ -3,6 +3,8 @@
   date: unreleased
   fixed:
   - "Use dataset to fetch record after insert so that read types are properly applied in Create command (@katafrakt)"
+  changed:
+  - "Minimum Ruby version is now 3.2 (@flash-gordon)"
 - version: 3.7.0
   summary:
   date: 2025-01-08
