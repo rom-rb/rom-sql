@@ -287,8 +287,8 @@ module ROM
         # @return [Integer]
         #
         # @api public
-        def sum(*args)
-          dataset.__send__(__method__, *args)
+        def sum(*)
+          dataset.__send__(__method__, *)
         end
 
         # Returns a result of SQL MIN clause.
@@ -301,8 +301,8 @@ module ROM
         # @return Number
         #
         # @api public
-        def min(*args)
-          dataset.__send__(__method__, *args)
+        def min(*)
+          dataset.__send__(__method__, *)
         end
 
         # Returns a result of SQL MAX clause.
@@ -315,8 +315,8 @@ module ROM
         # @return Number
         #
         # @api public
-        def max(*args)
-          dataset.__send__(__method__, *args)
+        def max(*)
+          dataset.__send__(__method__, *)
         end
 
         # Returns a result of SQL AVG clause.
@@ -329,8 +329,8 @@ module ROM
         # @return Number
         #
         # @api public
-        def avg(*args)
-          dataset.__send__(__method__, *args)
+        def avg(*)
+          dataset.__send__(__method__, *)
         end
 
         # Restrict a relation to match criteria
@@ -420,11 +420,11 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def having(*args, &)
+        def having(*, &)
           if block_given?
-            new(dataset.having(*args, *schema.canonical.restriction(&)))
+            new(dataset.having(*, *schema.canonical.restriction(&)))
           else
-            new(dataset.__send__(__method__, *args))
+            new(dataset.__send__(__method__, *))
           end
         end
 
@@ -475,11 +475,11 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def order(*args, &)
+        def order(*, &)
           if block_given?
-            new(dataset.order(*args, *schema.canonical.order(&)))
+            new(dataset.order(*, *schema.canonical.order(&)))
           else
-            new(dataset.__send__(__method__, *args, &))
+            new(dataset.__send__(__method__, *, &))
           end
         end
 
@@ -529,8 +529,8 @@ module ROM
         # @return [Relation]
         #
         # @api public
-        def limit(*args)
-          new(dataset.__send__(__method__, *args))
+        def limit(*)
+          new(dataset.__send__(__method__, *))
         end
 
         # Set offset for the relation
@@ -910,8 +910,8 @@ module ROM
         #   @yieldparam relation [Array]
         #
         # @api public
-        def lock(**options, &)
-          clause = lock_clause(**options)
+        def lock(**, &)
+          clause = lock_clause(**)
 
           if block_given?
             transaction do

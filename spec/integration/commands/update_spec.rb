@@ -111,8 +111,8 @@ RSpec.describe 'Commands / Update', seeds: false do
         ])
       end
 
-      context "with json notes" do
-        include_context "json_notes"
+      context 'with json notes' do
+        include_context 'json_notes'
 
         before do
           conf.commands(:json_notes) do
@@ -122,11 +122,11 @@ RSpec.describe 'Commands / Update', seeds: false do
 
         let(:json_notes) { container.relations[:json_notes] }
 
-        it "writes and reads back custom type" do
-          note_id = conn[:json_notes].insert(note: "note version 1")
-          result = json_notes.by_pk(note_id).command(:update).call(note: "note version 2")
+        it 'writes and reads back custom type' do
+          note_id = conn[:json_notes].insert(note: 'note version 1')
+          result = json_notes.by_pk(note_id).command(:update).call(note: 'note version 2')
 
-          expect(result).to eq([{id: 1, note: "note version 2"}])
+          expect(result).to eq([{ id: 1, note: 'note version 2' }])
         end
       end
     end

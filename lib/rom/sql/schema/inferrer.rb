@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'set'
-
 require 'rom/sql/schema/type_builder'
 require 'rom/sql/schema/attributes_inferrer'
 require 'rom/sql/attribute'

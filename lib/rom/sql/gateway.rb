@@ -193,8 +193,8 @@ module ROM
       # @return [Object]
       #
       # @api public
-      def call(function, *args)
-        connection[Sequel.function(function, *args)].first.values.first
+      def call(function, *)
+        connection[Sequel.function(function, *)].first.values.first
       end
 
       # Execute a statement
@@ -213,14 +213,14 @@ module ROM
       # @return [Database::Sequel] a connection instance
       #
       # @api private
-      def connect(uri, *args)
+      def connect(uri, *)
         case uri
         when ::Sequel::Database
           uri
         when Hash
-          ::Sequel.connect(uri, *args)
+          ::Sequel.connect(uri, *)
         else
-          ::Sequel.connect(uri.to_s, *args)
+          ::Sequel.connect(uri.to_s, *)
         end
       end
 

@@ -278,15 +278,15 @@ module ROM
       end
 
       # @api private
-      def method_missing(meth, *args)
+      def method_missing(meth, *)
         if func
           if func.respond_to?(meth)
-            meta(func: func.__send__(meth, *args))
+            meta(func: func.__send__(meth, *))
           else
             super
           end
         else
-          meta(func: Sequel::SQL::Function.new(meth.to_s.upcase, *args))
+          meta(func: Sequel::SQL::Function.new(meth.to_s.upcase, *))
         end
       end
     end

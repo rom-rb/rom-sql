@@ -199,7 +199,7 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
       it 'writes and reads back custom type' do
         json_notes = commands[:json_notes]
 
-        expect(json_notes[:create].call(note: 'this is my note')).to eq([{id: 1, note: 'this is my note'}])
+        expect(json_notes[:create].call(note: 'this is my note')).to eq([{ id: 1, note: 'this is my note' }])
       end
     end
 

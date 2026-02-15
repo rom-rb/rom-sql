@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'set'
-
 module ROM
   module SQL
     class Schema < ROM::Schema

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Helpers
-  def assoc_name(*args)
-    ROM::Relation::Name[*args]
+  def assoc_name(*)
+    ROM::Relation::Name[*]
   end
 
   def define_schema(name, attrs = [])
@@ -24,9 +24,9 @@ module Helpers
     ROM::SQL::Attribute.new(type.meta(opts), name: name)
   end
 
-  def build_assoc(type, *args, **kwargs)
+  def build_assoc(type, *, **)
     klass = ROM::Inflector.classify(type)
-    definition = ROM::Associations::Definitions.const_get(klass).new(*args, **kwargs)
+    definition = ROM::Associations::Definitions.const_get(klass).new(*, **)
     ROM::SQL::Associations.const_get(definition.type).new(definition, relations)
   end
 
