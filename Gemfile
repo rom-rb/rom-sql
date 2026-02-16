@@ -20,7 +20,7 @@ end
 if ENV['SEQUEL_FROM_MASTER'].eql?('true')
   gem 'sequel', github: 'jeremyevans/sequel', branch: 'master'
 else
-  gem 'sequel', '5.87.0'
+  gem 'sequel', '5.101.0'
 end
 
 group :test do
