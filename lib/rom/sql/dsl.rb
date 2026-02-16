@@ -89,7 +89,7 @@ module ROM
       # @api private
       def select_relations(parameters)
         @picked_relations.fetch_or_store(parameters.hash) do
-          keys = parameters.slice(:keyreq)
+          keys = parameters.select { |type, _| type.equal?(:keyreq) }
 
           if keys.empty?
             [relations, nil]
