@@ -51,6 +51,10 @@ Lint/EmptyClass:
   Exclude:
     - "spec/**/*.rb"
 
+Lint/NestedMethodDefinition:
+  Exclude:
+    - "spec/**/*.rb"
+
 Lint/RaiseException:
   Enabled: false
 
@@ -63,6 +67,8 @@ Lint/SuppressedException:
 
 Metrics/AbcSize:
   Max: 20
+  Exclude:
+    - "spec/**/*.rb"
 
 Metrics/BlockLength:
   Enabled: false
@@ -76,6 +82,8 @@ Metrics/CyclomaticComplexity:
 
 Metrics/MethodLength:
   Max: 22
+  Exclude:
+    - "spec/**/*.rb"
 
 Naming/FileName:
   Exclude:

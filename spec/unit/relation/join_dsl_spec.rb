@@ -1,25 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe ROM::Relation, '#join_dsl', relations: false do
+RSpec.describe ROM::Relation, '#join_dsl' do
   subject(:relation) { relations[:tasks] }
-
-  before do
-    conf.relation(:users) do
-      schema(infer: true) do
-        associations do
-          has_many :tasks
-        end
-      end
-    end
-
-    conf.relation(:tasks) do
-      schema(infer: true) do
-        associations do
-          belongs_to :user
-        end
-      end
-    end
-  end
 
   include_context 'users and tasks'
 

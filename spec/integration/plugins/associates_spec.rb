@@ -9,7 +9,7 @@ RSpec.describe 'Plugins / :associates', seeds: false do
       let(:tasks) { container.commands[:tasks] }
       let(:tags) { container.commands[:tags] }
 
-      before do
+      setup_relations do
         conf.relation(:tasks) do
           schema(infer: true) do
             associations do
@@ -35,7 +35,7 @@ RSpec.describe 'Plugins / :associates', seeds: false do
           { title: 'Task one' }
         end
 
-        before do
+        setup_relations do
           conf.commands(:users) do
             define(:create) { result :one }
           end
@@ -61,12 +61,28 @@ RSpec.describe 'Plugins / :associates', seeds: false do
           )
         end
 
-        it 'allows setting up multiple associations' do
-          command = tasks[:create]
-            .with_association(:user, key: %i[user_id id], parent: user)
-            .with_association(:other, key: %i[other_id id])
+        context 'with multiple associations' do
+          setup_relations do
+            conf.relation(:users) do
+              schema(infer: true)
+            end
 
-          expect(command.configured_associations).to eql(%i[user other])
+            conf.relation(:task_tags) do
+              schema(infer: true)
+            end
+
+            conf.relation(:tags) do
+              schema(infer: true)
+            end
+          end
+
+          it 'allows setting up multiple associations' do
+            command = tasks[:create]
+              .with_association(:user, key: %i[user_id id], parent: user)
+              .with_association(:other, key: %i[other_id id])
+
+            expect(command.configured_associations).to eql(%i[user other])
+          end
         end
       end
 
@@ -102,7 +118,7 @@ RSpec.describe 'Plugins / :associates', seeds: false do
       context 'with a schema' do
         include_context 'automatic FK setting'
 
-        before do
+        setup_relations do
           conf.relation(:tasks) do
             schema(infer: true) do
               associations do
@@ -128,7 +144,9 @@ RSpec.describe 'Plugins / :associates', seeds: false do
         end
 
         context 'with many-to-many association' do
-          before do
+          setup_relations do
+            conf.relation(:users) { schema(infer: true) }
+
             conf.relation(:tags) do
               schema(infer: true) do
                 associations do
@@ -221,15 +239,7 @@ RSpec.describe 'Plugins / :associates', seeds: false do
         container.commands[:tasks][:create].call(user_id: john[:id], title: 'John Task')
       end
 
-      before do
-        conf.relation(:tasks) do
-          schema(infer: true) do
-            associations do
-              belongs_to :user
-            end
-          end
-        end
-
+      setup_relations do
         conf.commands(:users) do
           define(:create) do
             result :one

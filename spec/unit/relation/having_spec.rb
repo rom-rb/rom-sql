@@ -12,7 +12,7 @@ RSpec.describe ROM::Relation, '#having' do
   include_context 'users and tasks'
 
   with_adapters :postgres do
-    before do
+    seed do
       conn[:tasks].insert(id: 3, user_id: 2, title: "Joe's another task")
     end
 

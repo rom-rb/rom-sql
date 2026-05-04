@@ -6,7 +6,7 @@ RSpec.describe ROM::Relation, '#each_batch', seeds: false do
   context 'single-column PK' do
     subject(:relation) { relations[:users] }
 
-    before do
+    seed do
       7.times do |i|
         conn[:users].insert name: "User #{i + 1}"
       end

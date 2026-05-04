@@ -3,13 +3,13 @@
 RSpec.describe ROM::Relation, '#dataset' do
   subject(:relation) { container.relations.users }
 
-  include_context 'users and tasks'
+  include_context 'users'
 
   let(:dataset) { container.gateways[:default].dataset(:users) }
 
   with_adapters do
     context 'with schema' do
-      before do
+      setup_relations do
         conf.relation(:users) do
           schema do
             attribute :id, ROM::SQL::Types::Serial
@@ -26,7 +26,7 @@ RSpec.describe ROM::Relation, '#dataset' do
     end
 
     context 'with cherry-picked attributes in schema' do
-      before do
+      setup_relations do
         conf.relation(:users) do
           schema do
             attribute :id, ROM::SQL::Types::Serial
@@ -42,10 +42,6 @@ RSpec.describe ROM::Relation, '#dataset' do
     end
 
     context 'with inferred schema' do
-      before do
-        conf.relation(:users) { schema(infer: true) }
-      end
-
       it 'selects all qualified columns and sorts by pk' do
         expect(relation.dataset.sql).to eql(dataset.select(*relation.schema.qualified).order(Sequel.qualify(:users, :id)).sql)
       end

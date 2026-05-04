@@ -13,7 +13,7 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
   let(:assoc_final) { relations[:flights].associations[:final_destination] }
 
   with_adapters do
-    before do
+    setup_tables do
       conn.create_table(:destinations) do
         primary_key :id
         column :name, String, null: false
@@ -25,7 +25,9 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
         foreign_key :destination_id, :destinations, null: false
         column :code, String, null: false
       end
+    end
 
+    setup_relations do
       conf.relation(:destinations) do
         schema(infer: true)
 
@@ -46,7 +48,9 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
           end
         end
       end
+    end
 
+    seed do
       final_id = relations[:destinations].insert(name: 'Final')
       inter_id = relations[:destinations].insert(name: 'Intermediate', intermediate: true)
 
@@ -55,8 +59,8 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
     end
 
     after do
-      conn.drop_table(:flights)
-      conn.drop_table(:destinations)
+      conn.drop_table?(:flights)
+      conn.drop_table?(:destinations)
     end
 
     it 'prepares joined relations using custom view in target relation' do

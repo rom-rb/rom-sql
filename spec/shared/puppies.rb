@@ -5,13 +5,15 @@ RSpec.shared_context 'puppies' do
     inferrable_relations.push(:puppies)
   end
 
-  before do
+  setup_tables do
     conn.create_table :puppies do
       primary_key :id
       String :name, null: false
       boolean :cute, null: false, default: true
     end
+  end
 
+  setup_relations do
     conf.relation(:puppies) { schema(infer: true) }
   end
 end

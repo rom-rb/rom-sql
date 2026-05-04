@@ -3,10 +3,12 @@
 RSpec.describe 'ROM::SQL::Attribute', :postgres do
   include_context 'database setup'
 
-  before do
+  setup_tables do
     conn.drop_table?(:pg_people)
     conn.drop_table?(:people)
+  end
 
+  setup_relations do
     conf.relation(:people) do
       schema(:pg_people, infer: true)
     end
@@ -17,18 +19,22 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
 
   %i[json jsonb].each do |type|
     describe "using arrays in #{type}" do
-      before do
+      setup_tables do
         conn.create_table :pg_people do
           primary_key :id
           String :name
           column :fields, type
         end
+      end
 
+      setup_relations do
         conf.commands(:people) do
           define(:create)
           define(:update)
         end
+      end
 
+      seed do
         create_person.(
           name: 'John Doe',
           fields: [
@@ -100,18 +106,22 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
     next unless type == :jsonb
 
     describe "using maps in #{type}" do
-      before do
+      setup_tables do
         conn.create_table :pg_people do
           primary_key :id
           String :name
           column :data, type
         end
+      end
 
+      setup_relations do
         conf.commands(:people) do
           define(:create)
           define(:update)
         end
+      end
 
+      seed do
         create_person.(name: 'John Doe', data: { age: 30, height: 180 })
         create_person.(name: 'Jade Doe', data: { age: 25 })
       end
@@ -160,19 +170,23 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
   end
 
   describe 'using array types' do
-    before do
+    setup_tables do
       conn.create_table :pg_people do
         primary_key :id
         String :name
         column :emails, 'text[]'
         column :bigids, 'bigint[]'
       end
+    end
 
+    setup_relations do
       conf.commands(:people) do
         define(:create)
         define(:update)
       end
+    end
 
+    seed do
       create_person.(name: 'John Doe', emails: %w[john@doe.com john@example.com], bigids: [84])
       create_person.(name: 'Jade Doe', emails: %w[jade@hotmail.com], bigids: [42])
     end
@@ -253,7 +267,7 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
   end
 
   describe 'using ltree types' do
-    before do
+    setup_tables do
       conn.execute('create extension if not exists ltree')
 
       conn.create_table :pg_people do
@@ -262,12 +276,16 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
         column :ltree_tags, :ltree
         column :parents_tags, 'ltree[]', default: []
       end
+    end
 
+    setup_relations do
       conf.commands(:people) do
         define(:create)
         define(:update)
       end
+    end
 
+    seed do
       create_person.(name: 'John Wilkson', ltree_tags: ltree('Bottom'), parents_tags: [ltree('Top'), ltree('Top.Building')])
       create_person.(name: 'John Wayne', ltree_tags: ltree('Bottom.Countries'), parents_tags: [ltree('Left'), ltree('Left.Parks')])
       create_person.(name: 'John Fake', ltree_tags: ltree('Bottom.Cities'), parents_tags: [ltree('Top.Building.EmpireState'), ltree('Top.Building.EmpireState.381')])

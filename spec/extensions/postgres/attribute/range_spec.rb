@@ -3,27 +3,6 @@
 RSpec.describe 'ROM::SQL::Attribute', :postgres do
   include_context 'database setup'
 
-  def create_ranges_table(db_type, values)
-    conn.create_table :pg_ranges do
-      primary_key :id
-      text :name
-
-      send(db_type, :range)
-    end
-
-    conf.relation(:pg_ranges) do
-      schema(:pg_ranges, infer: true)
-    end
-
-    conf.commands(:pg_ranges) do
-      define(:create)
-    end
-
-    values.each do |key, value|
-      commands[:pg_ranges].create.(name: key.to_s, range: value)
-    end
-  end
-
   shared_examples 'range type' do
     let(:rel) { pg_ranges.select { [name] } }
 
@@ -106,10 +85,33 @@ RSpec.describe 'ROM::SQL::Attribute', :postgres do
     let(:pg_ranges) { relations[:pg_ranges] }
     let(:range_value) { ROM::SQL::Postgres::Values::Range }
 
-    before do
+    setup_tables do
       conn.extension(:pg_range)
       conn.drop_table?(:pg_ranges)
-      create_ranges_table(db_type, values)
+
+      ctx = self
+      conn.create_table :pg_ranges do
+        primary_key :id
+        text :name
+
+        send(ctx.db_type, :range)
+      end
+    end
+
+    setup_relations do
+      conf.relation(:pg_ranges) do
+        schema(:pg_ranges, infer: true)
+      end
+
+      conf.commands(:pg_ranges) do
+        define(:create)
+      end
+    end
+
+    seed do
+      values.each do |key, value|
+        commands[:pg_ranges].create.(name: key.to_s, range: value)
+      end
     end
 
     describe 'numrange' do

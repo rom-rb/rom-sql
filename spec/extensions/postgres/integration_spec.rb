@@ -3,20 +3,22 @@
 RSpec.describe 'PostgreSQL extension', :postgres do
   include_context 'database setup'
 
-  before do
+  setup_tables do
     conn.drop_table?(:pg_people)
     conn.drop_table?(:people)
   end
 
   context 'with arrays' do
-    before do
+    setup_tables do
       conn.create_table :pg_people do
         primary_key :id
         String :name
         column :tags, 'text[]'
         column :allowed_subnets, 'cidr[]'
       end
+    end
 
+    setup_relations do
       conf.relation(:people) do
         schema(:pg_people, infer: true)
       end
@@ -85,13 +87,15 @@ RSpec.describe 'PostgreSQL extension', :postgres do
   end
 
   context 'with jsonb' do
-    before do
+    setup_tables do
       conn.create_table :pg_people do
         primary_key :id
         String :name
         column :attributes, 'jsonb'
       end
+    end
 
+    setup_relations do
       conf.relation(:people) do
         schema(:pg_people, infer: true)
       end

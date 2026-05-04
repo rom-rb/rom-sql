@@ -15,13 +15,15 @@ RSpec.describe ROM::SQL::Commands::Create do
     end
 
     describe '#call' do
-      before do
+      setup_tables do
         conn.create_table :books do
           primary_key :id
           column :author, String
           column :title, String
         end
+      end
 
+      setup_relations do
         conf.relation(:books) do
           schema do
             attribute :id, ROM::SQL::Types::Serial

@@ -39,13 +39,15 @@ RSpec.describe ROM::Relation, '#by_pk' do
     context 'without PK' do
       subject(:relation) { relations[:people] }
 
-      before do
+      setup_tables(people: :db) do
         conn.drop_table?(:people)
 
         conn.create_table(:people) do
           column :name, String
         end
+      end
 
+      setup_relations do
         conf.relation(:people) do
           schema do
             attribute :name, ROM::SQL::Types::String

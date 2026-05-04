@@ -5,7 +5,7 @@ RSpec.describe ROM::Relation, '#prefix' do
 
   include_context 'users and tasks'
 
-  before do
+  setup_relations do
     conf.relation(:users) do
       schema(infer: true)
 

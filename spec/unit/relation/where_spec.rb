@@ -121,7 +121,7 @@ RSpec.describe ROM::Relation, '#where' do
     end
 
     context 'with :read types' do
-      before do
+      setup_relations do
         conf.relation(:tasks) do
           schema(infer: true) do
             attribute :id, ROM::SQL::Types::Serial.constructor(&:to_i)

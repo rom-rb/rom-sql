@@ -5,7 +5,7 @@ require 'yaml'
 RSpec.describe 'Plugins / :explain', :postgres do
   include_context 'users and tasks'
 
-  before do
+  setup_relations do
     conf.plugin(:sql, relations: :pg_explain)
   end
 

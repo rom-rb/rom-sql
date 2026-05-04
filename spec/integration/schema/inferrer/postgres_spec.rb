@@ -9,7 +9,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
 
   colors = %w[red orange yellow green blue purple]
 
-  before do
+  setup_tables do
     conn.execute('create extension if not exists hstore')
     conn.execute('create extension if not exists ltree')
 
@@ -68,7 +68,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
   end
 
   context 'when pg_enum in primary key' do
-    before do
+    setup_tables do
       conn.drop_table?(:test_inferrence)
       conn.create_table(:test_inferrence) do
         column :colours, :rainbow
@@ -77,9 +77,11 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
     end
 
     it 'can infer primary key on enum column' do
-      expect(schema.to_h).to eql(attributes(
-                                   colours: ROM::SQL::Types::String.enum(*colors).meta(primary_key: true)
-                                 ))
+      expect(schema.to_h).to eql(
+        attributes(
+          colours: ROM::SQL::Types::String.enum(*colors).meta(primary_key: true)
+        )
+      )
     end
   end
 
@@ -129,8 +131,11 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
   end
 
   context 'with a table without columns' do
-    before do
+    setup_tables do
       conn.create_table(:dummy) unless conn.table_exists?(:dummy)
+    end
+
+    setup_relations do
       conf.relation(:dummy) { schema(infer: true) }
     end
 
@@ -140,7 +145,7 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
   end
 
   context 'with a column with bi-directional mapping' do
-    before do
+    setup_tables do
       conn.execute('create extension if not exists hstore')
       conn.execute('create extension if not exists ltree')
 
@@ -164,7 +169,9 @@ RSpec.describe 'ROM::SQL::Schema::PostgresInferrer', :postgres, :helpers do
         daterange :daterange
         ltree :ltree_path
       end
+    end
 
+    setup_relations do
       conf.relation(:test_bidirectional) { schema(infer: true) }
 
       conf.commands(:test_bidirectional) do

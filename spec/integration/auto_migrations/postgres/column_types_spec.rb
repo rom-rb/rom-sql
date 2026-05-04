@@ -3,7 +3,7 @@
 RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
   include_context 'database setup'
 
-  before do
+  setup_tables do
     conn.drop_table?(:test_pg_types)
 
     conn.execute('create extension if not exists hstore')
@@ -24,7 +24,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
   end
 
   describe 'common types' do
-    before do
+    setup_relations do
       conf.relation(:test_pg_types) do
         schema do
           attribute :id,              ROM::SQL::Types::Serial

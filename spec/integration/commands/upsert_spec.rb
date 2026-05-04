@@ -5,9 +5,11 @@ RSpec.describe 'Commands / Postgres / Upsert', :postgres, seeds: false do
 
   include_context 'relations'
 
-  before do
+  setup_tables do
     conn.execute 'ALTER TABLE tasks add CONSTRAINT tasks_title_key UNIQUE (title)'
+  end
 
+  seed do
     conn[:users].insert id: 1, name: 'Jane'
     conn[:users].insert id: 2, name: 'Joe'
     conn[:users].insert id: 3, name: 'Jean'
@@ -17,7 +19,7 @@ RSpec.describe 'Commands / Postgres / Upsert', :postgres, seeds: false do
     let(:task) { { title: 'task 1', user_id: 1 } }
     let(:excluded) { task.merge(user_id: 3) }
 
-    before do
+    setup_relations do
       command_config = self.command_config
 
       conf.commands(:tasks) do
@@ -30,7 +32,7 @@ RSpec.describe 'Commands / Postgres / Upsert', :postgres, seeds: false do
       end
     end
 
-    before { command.relation.upsert(task) }
+    seed { command.relation.upsert(task) }
 
     context 'on conflict do nothing' do
       let(:command_config) { -> {} }
@@ -54,9 +56,9 @@ RSpec.describe 'Commands / Postgres / Upsert', :postgres, seeds: false do
         end
 
         context 'with index predicate' do
-          before do
+          setup_tables do
             conn.execute <<~SQL
-              ALTER TABLE tasks DROP CONSTRAINT tasks_title_key;
+              ALTER TABLE tasks DROP CONSTRAINT IF EXISTS tasks_title_key;
 
               CREATE UNIQUE INDEX tasks_title_partial_index ON tasks (title)
                             WHERE user_id = 1;
@@ -74,7 +76,7 @@ RSpec.describe 'Commands / Postgres / Upsert', :postgres, seeds: false do
           context 'when predicate matches' do
             let(:excluded) { task }
 
-            it 'returns updated data', :aggregate_failures do
+            it 'returns updated data' do
               expect(command.call(excluded)).to eql(id: 1, user_id: 2, title: 'task 1')
             end
           end
@@ -82,7 +84,7 @@ RSpec.describe 'Commands / Postgres / Upsert', :postgres, seeds: false do
           context 'when predicate does not match' do
             let(:excluded) { task.update(user_id: 2) }
 
-            it 'creates new task', :aggregate_failures do
+            it 'creates new task' do
               expect(command.call(excluded)).to eql(id: 2, user_id: 2, title: 'task 1')
             end
           end

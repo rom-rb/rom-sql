@@ -12,7 +12,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers, skip_tables: true do
 
   let(:options) { { path: path } }
 
-  before do
+  setup_tables do
     conn.drop_table?(:posts)
     conn.drop_table?(:users)
     conn.drop_table?(:schema_migrations)
@@ -25,7 +25,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers, skip_tables: true do
   end
 
   context 'creating from scratch' do
-    before do
+    setup_relations do
       conf.relation(:users) do
         schema do
           attribute :id,    ROM::SQL::Types::Serial
@@ -61,13 +61,15 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers, skip_tables: true do
 
   context 'alter table' do
     context 'changing columns' do
-      before do
+      setup_tables do
         conn.create_table(:users) do
           primary_key :id
           column :name, String
           column :age, Integer
         end
+      end
 
+      setup_relations do
         conf.relation(:users) do
           schema do
             attribute :id,          ROM::SQL::Types::Serial
@@ -105,12 +107,14 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers, skip_tables: true do
     end
 
     context 'managing foreign keys' do
-      before do
+      setup_tables do
         conn.create_table(:users) do
           primary_key :id
           column :name, String, null: false
         end
+      end
 
+      setup_relations do
         conf.relation(:users) do
           schema do
             attribute :id,   ROM::SQL::Types::Serial

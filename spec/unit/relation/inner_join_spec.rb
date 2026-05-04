@@ -60,13 +60,15 @@ RSpec.describe ROM::Relation, '#inner_join' do
         inferrable_relations.push(:puzzles)
       end
 
-      before do
+      setup_tables(puzzles: :users) do
         conn.create_table(:puzzles) do
           primary_key :id
           foreign_key :author_id, :users, null: false
           column :text, String, null: false
         end
+      end
 
+      setup_relations do
         conf.relation(:users) do
           schema(infer: true) do
             associations do
@@ -95,6 +97,14 @@ RSpec.describe ROM::Relation, '#inner_join' do
           end
         end
 
+        conf.relation(:tags) do
+          schema(infer: true) do
+            associations do
+              has_many :task_tags
+            end
+          end
+        end
+
         conf.relation(:puzzles) do
           schema(infer: true) do
             associations do
@@ -102,7 +112,9 @@ RSpec.describe ROM::Relation, '#inner_join' do
             end
           end
         end
+      end
 
+      seed do
         relation.insert id: 3, name: 'Jade'
         puzzles.insert id: 1, author_id: 1, text: 'solved by Jane'
       end
@@ -142,7 +154,7 @@ RSpec.describe ROM::Relation, '#inner_join' do
       end
 
       describe 'joined relation with join keys inferred for m:m-through' do
-        before do
+        seed do
           tags.insert(id: 2, name: 'postponed')
           tasks.task_tags.insert(tag_id: 2, task_id: 2)
         end

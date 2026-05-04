@@ -30,7 +30,7 @@ RSpec.describe ROM::SQL::Wrap do
       end
 
       context 'using association with inferred relation name' do
-        before do
+        setup_relations do
           conf.relation(:tasks) do
             auto_map false
 
@@ -48,7 +48,7 @@ RSpec.describe ROM::SQL::Wrap do
       end
 
       context 'using association with an alias' do
-        before do
+        setup_relations do
           conf.relation(:tasks) do
             auto_map false
 
@@ -66,7 +66,7 @@ RSpec.describe ROM::SQL::Wrap do
       end
 
       context 'using association with an aliased relation' do
-        before do
+        setup_relations do
           conf.relation(:tasks) do
             auto_map false
 
@@ -91,7 +91,7 @@ RSpec.describe ROM::SQL::Wrap do
       end
 
       context 'using association with a view' do
-        before do
+        setup_relations do
           conf.relation(:users) do
             auto_map false
 

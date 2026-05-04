@@ -3,7 +3,7 @@
 RSpec.describe ROM::Relation, '#map' do
   subject(:relation) { container.relations.users }
 
-  include_context 'users and tasks'
+  include_context 'users'
 
   with_adapters do
     it 'yields tuples' do

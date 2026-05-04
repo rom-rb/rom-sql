@@ -8,13 +8,15 @@ RSpec.describe 'Relation / Default views' do
       subject(:users) { relations[:users] }
 
       context 'when dataset is overridden' do
-        before do
+        setup_tables do
           conn.create_table(:users) do
             primary_key :id
             column :name, String
             column :email, String
           end
+        end
 
+        setup_relations do
           conf.relation(:users) do
             dataset { select(:name) }
             schema(infer: true)

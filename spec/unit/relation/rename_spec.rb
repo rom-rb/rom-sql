@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-RSpec.describe ROM::Relation, '#rename' do
+RSpec.describe ROM::Relation, '#rename', relations: false do
   subject(:relation) { container.relations.users }
 
   include_context 'users and tasks'
 
-  before do
+  setup_relations do
     conf.relation(:users) do
       schema(infer: true)
 

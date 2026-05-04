@@ -5,7 +5,7 @@ RSpec.shared_context 'articles' do
     inferrable_relations.push(:articles)
   end
 
-  before do
+  setup_tables do
     conn.create_table :articles do
       primary_key :article_id
       String :author_name
@@ -16,13 +16,13 @@ RSpec.shared_context 'articles' do
       index :author_name
       index :status
     end
+  end
 
+  setup_relations do
     conf.relation(:articles) { schema(infer: true) }
   end
 
-  before do |example|
-    next if example.metadata[:seeds] == false
-
+  seed do
     conn[:users].insert(name: 'John')
 
     conn[:articles].insert(

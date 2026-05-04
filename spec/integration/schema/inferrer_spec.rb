@@ -20,7 +20,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
 
   with_adapters do |_adapter|
     describe 'inferring attributes' do
-      before do
+      setup_relations do
         dataset = self.dataset
         conf.relation(dataset) do
           schema(dataset, infer: true)
@@ -63,7 +63,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
       end
 
       context 'for complex table' do
-        before do |example|
+        setup_tables do |example|
           ctx = self
 
           conn.create_table :test_inferrence do
@@ -118,7 +118,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
       end
 
       context 'character datatypes' do
-        before do
+        setup_tables do
           conn.create_table :test_characters do
             String :text1, text: false, null: false
             String :text2, size: 100, null: false
@@ -163,7 +163,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
       end
 
       context 'numeric datatypes' do
-        before do
+        setup_tables do
           conn.create_table :test_numeric do
             primary_key :id
             decimal :dec, null: false
@@ -221,7 +221,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
 
       let(:relation) { container.relations[:people] }
 
-      before do
+      setup_relations do
         conf.relation(:people) do
           schema(infer: true)
         end
@@ -237,7 +237,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         let(:create) { commands[:people].create }
 
         context "Sequel's types" do
-          before do
+          setup_tables do
             conn.create_table :people do
               primary_key :id
               String :name, null: false
@@ -252,7 +252,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         end
 
         context 'nullable columns' do
-          before do
+          setup_tables do
             conn.create_table :people do
               primary_key :id
               String :name, null: false
@@ -274,7 +274,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
         end
 
         context 'columns with default value' do
-          before do
+          setup_tables do
             conn.create_table :people do
               primary_key :id
               String :name, null: false
@@ -295,7 +295,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
 
         context 'coercions' do
           context 'date' do
-            before do
+            setup_tables do
               conn.create_table :people do
                 primary_key :id
                 String :name, null: false
@@ -315,7 +315,7 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
 
           unless metadata[:sqlite] && defined? JRUBY_VERSION
             context 'timestamp' do
-              before do |ex|
+              setup_tables do |ex|
                 ctx = self
 
                 conn.create_table :people do
@@ -375,48 +375,63 @@ RSpec.describe 'Schema inference for common datatypes', seeds: false do
       let(:dataset) { :test_inferrence }
       let(:source) { ROM::Relation::Name[dataset] }
 
-      it 'infers types with indices' do
-        conn.create_table :test_inferrence do
-          primary_key :id
-          Integer :foo
-          Integer :bar, null: false
-          Integer :baz, null: false
-
-          index :foo, name: :foo_idx
-          index :bar, name: :bar_idx
-          index :baz, name: :baz1_idx
-          index :baz, name: :baz2_idx
-
-          index %i[bar baz], name: :composite_idx
-          index %i[foo bar], name: :unique_idx, unique: true
-        end
-
-        conf.relation(:test_inferrence) { schema(infer: true) }
-
-        expect(schema.indexes.map(&:name)).to match_array(
-          %i[foo_idx bar_idx baz1_idx baz2_idx composite_idx unique_idx]
-        )
-
-        unique_idx = index_by_name(schema.indexes, :unique_idx)
-
-        expect(unique_idx).to be_unique
-      end
-
-      if metadata[:postgres]
-        it 'infers cutsom index types' do
-          pending 'Sequel not returning index type'
+      context 'inferring types with indices' do
+        setup_tables do
           conn.create_table :test_inferrence do
             primary_key :id
             Integer :foo
-            index :foo, name: :foo_idx, type: :gist
+            Integer :bar, null: false
+            Integer :baz, null: false
+
+            index :foo, name: :foo_idx
+            index :bar, name: :bar_idx
+            index :baz, name: :baz1_idx
+            index :baz, name: :baz2_idx
+
+            index %i[bar baz], name: :composite_idx
+            index %i[foo bar], name: :unique_idx, unique: true
+          end
+        end
+
+        setup_relations do
+          conf.relation(:test_inferrence) { schema(infer: true) }
+        end
+
+        it 'infers types with indices' do
+          expect(schema.indexes.map(&:name)).to match_array(
+            %i[foo_idx bar_idx baz1_idx baz2_idx composite_idx unique_idx]
+          )
+
+          unique_idx = index_by_name(schema.indexes, :unique_idx)
+
+          expect(unique_idx).to be_unique
+        end
+      end
+
+      if metadata[:postgres]
+        context 'infers cutsom index types' do
+          setup_tables do
+            conn.execute('create extension if not exists btree_gist')
+
+            conn.create_table :test_inferrence do
+              primary_key :id
+              Integer :foo
+              index :foo, name: :foo_idx, type: :gist
+            end
           end
 
-          conf.relation(:test_inferrence) { schema(infer: true) }
+          setup_relations do
+            conf.relation(:test_inferrence) { schema(infer: true) }
+          end
 
-          index = schema.indexes.first
+          it 'infers cutsom index types' do
+            pending 'Sequel not returning index type'
 
-          expect(index.name).to eql(:foo_idx)
-          expect(index.type).to eql(:gist)
+            index = schema.indexes.first
+
+            expect(index.name).to eql(:foo_idx)
+            expect(index.type).to eql(:gist)
+          end
         end
       end
     end

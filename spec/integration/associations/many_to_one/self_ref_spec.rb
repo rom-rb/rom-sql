@@ -10,13 +10,15 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
   include_context 'database setup'
 
   with_adapters do
-    before do
+    setup_tables do
       conn.create_table(:categories) do
         primary_key :id
         foreign_key :parent_id, :categories, null: true
         column :name, String, null: false
       end
+    end
 
+    setup_relations do
       conf.relation(:categories) do
         schema(infer: true) do
           associations do
@@ -24,7 +26,9 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
           end
         end
       end
+    end
 
+    seed do
       p1_id = relations[:categories].insert(name: 'P1')
       p2_id = relations[:categories].insert(name: 'P2')
       relations[:categories].insert(name: 'C3', parent_id: p2_id)

@@ -9,20 +9,24 @@ RSpec.describe ROM::Relation, '#import' do
 
   with_adapters(:postgres) do
     context 'within a single gateway' do
-      before do
+      setup_tables(users_for_loading: :db) do
         conn.drop_table?(:users_for_loading)
 
         conn.create_table(:users_for_loading) do
           primary_key :id
           column :full_name, String, null: false
         end
+      end
 
-        conn[:users_for_loading].insert(full_name: 'Jack')
-        conn[:users_for_loading].insert(full_name: 'John')
-
+      setup_relations do
         conf.relation(:users_for_loading) do
           schema(:users_for_loading, infer: true)
         end
+      end
+
+      seed do
+        conn[:users_for_loading].insert(full_name: 'Jack')
+        conn[:users_for_loading].insert(full_name: 'John')
       end
 
       it 'inserts data from another relation' do
@@ -44,7 +48,7 @@ RSpec.describe ROM::Relation, '#import' do
         ROM::Memory::Dataset.new(data)
       end
 
-      before do
+      setup_relations do
         conf.relation(:users_for_loading, adapter: :memory) do
           gateway :other
 

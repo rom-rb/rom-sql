@@ -5,11 +5,11 @@ RSpec.shared_context 'database setup' do
                   accounts cards subscriptions notes
                   destinations flights categories user_group
                   test_inferrence test_bidirectional people dragons
-                  rabbits carrots names schema_migrations]
+                  rabbits carrots names schema_migrations puzzles]
 
   cleared_dbs = []
 
-  before do
+  setup_tables(:db) do
     unless cleared_dbs.include?(conn.database_type)
       all_tables.reverse.each { |table| conn.drop_table?(table) }
       cleared_dbs << conn.database_type
@@ -32,7 +32,6 @@ RSpec.shared_context 'database setup' do
   let(:database_type) { conn.database_type }
   let(:inferrable_relations) { [] }
   let(:conf) { TestConfiguration.new(:sql, conn) }
-  let(:container) { ROM.container(conf) }
   let(:relations) { container.relations }
   let(:commands) { container.commands }
 

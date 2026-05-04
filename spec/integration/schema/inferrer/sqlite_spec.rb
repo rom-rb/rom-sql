@@ -7,7 +7,7 @@ RSpec.describe 'ROM::SQL::Schema::SqliteInferrer', :sqlite, helpers: true do
     inferrable_relations.push(:test_inferrence)
   end
 
-  before do
+  setup_tables do
     conn.create_table :test_inferrence do
       tinyint :tiny
       int8 :big
@@ -17,7 +17,7 @@ RSpec.describe 'ROM::SQL::Schema::SqliteInferrer', :sqlite, helpers: true do
     end
   end
 
-  before do
+  setup_relations do
     conf.relation(:test_inferrence) do
       schema(infer: true)
     end

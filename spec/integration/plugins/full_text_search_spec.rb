@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe 'Plugins / :pg_full_text_search', :postgres do
   include_context 'users and tasks'
 
-  before do
+  setup_tables do
     conf.plugin(:sql, relations: :pg_full_text_search)
   end
 
@@ -23,16 +23,12 @@ RSpec.describe 'Plugins / :pg_full_text_search', :postgres do
     expect(result).to contain_exactly(task)
   end
 
-  it 'handles complex queries' do
-    conf.relation(:tasks) do
-      schema(infer: true) do
-        associations { belongs_to :user }
-      end
+  context 'when handling complex queries' do
+    specify do
+      searched_users = users.full_text_search([:name], 'Joe', language: 'simple')
+      result = tasks.exists(searched_users).pluck(:id)
+
+      expect(result).to contain_exactly(1)
     end
-
-    searched_users = users.full_text_search([:name], 'Joe', language: 'simple')
-    result = tasks.exists(searched_users).pluck(:id)
-
-    expect(result).to contain_exactly(1)
   end
 end

@@ -3,7 +3,7 @@
 require 'concurrent/atomic/count_down_latch'
 
 RSpec.describe ROM::Relation, '#lock' do
-  include_context 'users and tasks'
+  include_context 'users'
 
   subject(:relation) { users }
 

@@ -4,7 +4,7 @@ RSpec.describe 'Eager loading' do
   include_context 'users and tasks'
 
   with_adapters do
-    before do
+    setup_relations do
       conf.relation(:users) do
         auto_map false
 
@@ -47,7 +47,7 @@ RSpec.describe 'Eager loading' do
     include_context 'articles'
 
     with_adapters do
-      before do
+      setup_relations do
         conf.relation(:users) do
           schema infer: true do
             associations do

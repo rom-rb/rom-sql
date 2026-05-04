@@ -7,7 +7,7 @@ RSpec.describe ROM::Relation, '#associations' do
 
   with_adapters do
     context 'with schema' do
-      it 'returns configured primary key from the schema' do
+      setup_relations do
         conf.relation(:users) do
           schema(infer: true) do
             associations do
@@ -15,12 +15,18 @@ RSpec.describe ROM::Relation, '#associations' do
             end
           end
         end
-
+      end
+      it 'returns configured primary key from the schema' do
         expect(relation.associations[:tasks]).to be(container.relations.users.schema.associations[:tasks])
       end
     end
 
     context 'without schema' do
+      setup_relations do
+        conf.relation(:users) do
+          schema(infer: true)
+        end
+      end
       it 'returns an empty association set' do
         expect(relation.associations.elements).to be_empty
       end

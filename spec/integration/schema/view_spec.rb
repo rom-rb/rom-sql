@@ -7,7 +7,7 @@ RSpec.describe 'Defining a view using schemas', seeds: false do
 
   with_adapters do
     describe 'defining a projected view' do
-      before do
+      setup_relations do
         conf.relation(:users) do
           schema(infer: true)
 
@@ -16,7 +16,9 @@ RSpec.describe 'Defining a view using schemas', seeds: false do
             relation { order(:name, :id) }
           end
         end
+      end
 
+      seed do
         container.relations[:users].insert(name: 'Joe')
         container.relations[:users].insert(name: 'Jane')
         container.relations[:users].insert(name: 'Jade')

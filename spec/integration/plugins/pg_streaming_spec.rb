@@ -6,7 +6,7 @@ RSpec.describe 'Plugins / :pg_streaming', seeds: true do
   with_adapters(:postgres) do
     include_context 'users and tasks'
 
-    before do
+    setup_tables do
       skip 'it is not supported by jruby' if jruby?
       conf.plugin(:sql, relations: :pg_streaming)
     end
@@ -25,10 +25,8 @@ RSpec.describe 'Plugins / :pg_streaming', seeds: true do
 
         tasks.with(auto_struct: true).stream_each { |task| result << task }
 
-        aggregate_failures do
-          tasks.dataset.to_a.each_with_index do |task_attrs, i|
-            expect(result[i]).to have_attributes(task_attrs)
-          end
+        tasks.dataset.to_a.each_with_index do |task_attrs, i|
+          expect(result[i]).to have_attributes(task_attrs)
         end
       end
 

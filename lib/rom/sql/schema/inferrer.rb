@@ -36,7 +36,7 @@ module ROM
           else
             infer_from_attributes(gateway, schema, **super)
           end
-        rescue Sequel::Error => e
+        rescue ::Sequel::Error => e
           on_error(schema.name, e)
           { **FALLBACK_SCHEMA, indexes: schema.indexes }
         end

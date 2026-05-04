@@ -16,7 +16,7 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, '#call' do
   end
 
   with_adapters do
-    before do
+    setup_tables(hr: :db) do
       conn.create_table :employees do
         primary_key :id, Integer
         column :name, String
@@ -27,7 +27,9 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, '#call' do
         foreign_key :manager_id, :employees
         foreign_key :participant_id, :employees
       end
+    end
 
+    setup_relations do
       conf.relation(:employees) do
         schema(:employees, infer: true) do
           associations do
@@ -46,17 +48,19 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, '#call' do
       end
     end
 
+    seed do
+      jane = employees.insert(name: 'Jane')
+      fred = employees.insert(name: 'Fred')
+
+      positions.insert(manager_id: jane, participant_id: fred)
+    end
+
     after do
       conn.drop_table?(:positions)
       conn.drop_table?(:employees)
     end
 
     it 'preloads self-referenced tuples' do
-      jane = employees.insert(name: 'Jane')
-      fred = employees.insert(name: 'Fred')
-
-      positions.insert(manager_id: jane, participant_id: fred)
-
       expect(assoc.().to_a).to eql([{ id: 1, name: 'Jane', participant_id: 2 }])
     end
   end

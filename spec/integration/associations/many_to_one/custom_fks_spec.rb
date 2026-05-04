@@ -13,7 +13,7 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
   let(:assoc_to) { relations[:flights].associations[:to] }
 
   with_adapters do
-    before do
+    setup_tables do
       conn.create_table(:destinations) do
         primary_key :id
         column :name, String, null: false
@@ -25,7 +25,9 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
         foreign_key :to_id, :destinations, null: false
         column :code, String, null: false
       end
+    end
 
+    setup_relations do
       conf.relation(:destinations) { schema(infer: true) }
 
       conf.relation(:flights) do
@@ -36,10 +38,11 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, '#call' do
           end
         end
       end
+    end
 
+    seed do
       from_id = relations[:destinations].insert(name: 'FROM')
       to_id = relations[:destinations].insert(name: 'TO')
-
       relations[:flights].insert(code: 'F1', from_id: from_id, to_id: to_id)
     end
 

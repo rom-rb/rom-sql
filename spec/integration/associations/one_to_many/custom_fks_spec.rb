@@ -14,14 +14,16 @@ RSpec.describe ROM::SQL::Associations::OneToMany, '#call' do
   end
 
   with_adapters do
-    before do
+    setup_tables do
       conn.create_table(:puzzles) do
         primary_key :id
         foreign_key :author_id, :users, null: false
         foreign_key :solver_id, :users, null: true
         column :text, String, null: false
       end
+    end
 
+    setup_relations do
       conf.relation(:puzzles) { schema(infer: true) }
 
       conf.relation(:users) do
@@ -32,7 +34,9 @@ RSpec.describe ROM::SQL::Associations::OneToMany, '#call' do
           end
         end
       end
+    end
 
+    seed do
       relations[:puzzles].insert(author_id: joe_id, text: 'P1')
       relations[:puzzles].insert(author_id: joe_id, solver_id: jane_id, text: 'P2')
     end

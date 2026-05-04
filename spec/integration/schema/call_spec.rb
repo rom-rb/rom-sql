@@ -6,12 +6,6 @@ RSpec.describe ROM::SQL::Schema, '#call' do
   include_context 'users'
 
   with_adapters :postgres do
-    before do
-      conf.relation(:users) do
-        schema(infer: true)
-      end
-    end
-
     let(:schema) { relations[:users].schema }
 
     it 'auto-projects a relation' do

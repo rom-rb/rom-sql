@@ -2,14 +2,8 @@
 
 require 'spec_helper'
 
-RSpec.describe ROM::SQL::Schema, '#prefix', :postgres, seeds: false do
+RSpec.describe ROM::SQL::Schema, '#prefix', :postgres do
   include_context 'users'
-
-  before do
-    conf.relation(:users) do
-      schema(infer: true)
-    end
-  end
 
   it 'auto-projects a relation with renamed columns using provided prefix' do
     expect(relations[:users].schema.prefix(:user).(relations[:users]).dataset.sql)

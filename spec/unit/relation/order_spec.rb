@@ -5,7 +5,7 @@ RSpec.describe ROM::Relation, '#order' do
 
   include_context 'users and tasks'
 
-  before do
+  seed do
     relation.insert(id: 3, name: 'Jade')
   end
 
