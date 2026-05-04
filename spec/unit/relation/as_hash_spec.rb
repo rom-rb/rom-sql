@@ -3,13 +3,7 @@
 RSpec.describe ROM::Relation, '#as_hash' do
   subject(:relation) { container.relations.users }
 
-  include_context 'users and tasks'
-
-  before do
-    conf.relation(:users) do
-      schema(infer: true)
-    end
-  end
+  include_context 'users'
 
   with_adapters do
     it 'returns a hash with all tuples been the key the primary key' do

@@ -11,26 +11,6 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
 
       let(:tags) { relations[:tags] }
 
-      before do
-        conf.relation(:task_tags) do
-          schema(infer: true) do
-            associations do
-              belongs_to :task
-              belongs_to :tag
-            end
-          end
-        end
-
-        conf.relation(:tasks) do
-          schema(infer: true) do
-            associations do
-              has_many :task_tags
-              has_many :tags, through: :task_tags
-            end
-          end
-        end
-      end
-
       describe '#result' do
         specify { expect(assoc.result).to be(:many) }
       end
@@ -105,13 +85,15 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, helpers: true do
         inferrable_relations.push(:users_tasks)
       end
 
-      before do
+      setup_tables do
         conn.create_table(:users_tasks) do
           foreign_key :user_id, :users
           foreign_key :task_id, :tasks
           primary_key [:user_id, :task_id]
         end
+      end
 
+      setup_relations do
         conf.relation(:users) do
           schema(infer: true) do
             associations do

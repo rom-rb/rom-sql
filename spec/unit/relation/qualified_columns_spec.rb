@@ -5,7 +5,7 @@ RSpec.describe ROM::Relation, '#qualified_columns' do
 
   include_context 'users and tasks'
 
-  before do
+  setup_relations do
     conf.relation(:users) do
       schema(infer: true)
 
@@ -19,8 +19,10 @@ RSpec.describe ROM::Relation, '#qualified_columns' do
     it 'returns qualified column names' do
       columns = relation.sorted.prefix(:user).qualified_columns
 
-      expect(columns).to eql([Sequel.qualify(:users, :id).as(:user_id),
-                              Sequel.qualify(:users, :name).as(:user_name)])
+      expect(columns).to eql([
+        Sequel.qualify(:users, :id).as(:user_id),
+        Sequel.qualify(:users, :name).as(:user_name)
+      ])
     end
 
     it 'returns projected qualified column names' do

@@ -5,10 +5,6 @@ RSpec.describe ROM::Relation, '#select' do
 
   include_context 'users and tasks'
 
-  before do
-    conf.relation(:tasks) { schema(infer: true) }
-  end
-
   with_adapters do
     it 'projects a relation using a list of symbols' do
       expect(relation.select(:id, :title).to_a).to eql(

@@ -151,4 +151,6 @@ RSpec.configure do |config|
 
   config.include(Helpers, helpers: true)
   config.include ENVHelper
+
+  ContainerHelper.install(config)
 end

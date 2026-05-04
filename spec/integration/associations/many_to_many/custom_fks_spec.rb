@@ -15,7 +15,7 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, '#call' do
   let(:puzzle_solvers) { relations[:puzzle_solvers] }
 
   with_adapters do
-    before do
+    setup_tables do
       conn.create_table(:puzzles) do
         primary_key :id
         column :text, String, null: false
@@ -26,7 +26,9 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, '#call' do
         foreign_key :puzzle_id, :puzzles, null: false
         primary_key [:solver_id, :puzzle_id]
       end
+    end
 
+    setup_relations do
       conf.relation(:puzzles) { schema(infer: true) }
 
       conf.relation(:puzzle_solvers) do
@@ -46,7 +48,9 @@ RSpec.describe ROM::SQL::Associations::ManyToMany, '#call' do
           end
         end
       end
+    end
 
+    seed do
       p1_id = relations[:puzzles].insert(text: 'P1')
       p2_id = relations[:puzzles].insert(text: 'P2')
       p3_id = relations[:puzzles].insert(text: 'P3')

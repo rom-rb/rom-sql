@@ -2,23 +2,13 @@
 
 require 'spec_helper'
 
-RSpec.describe ROM::SQL::Relation do
+RSpec.describe ROM::SQL::Relation, 'associations' do
   include_context 'users and tasks'
 
   context 'with has_many' do
     subject(:users) { relations[:users] }
 
     let(:tasks) { relations[:tasks] }
-
-    before do
-      conf.relation(:users) do
-        schema(infer: true) do
-          associations do
-            has_many :tasks
-          end
-        end
-      end
-    end
 
     with_adapters do
       it 'returns child tuples for a relation' do
@@ -32,24 +22,7 @@ RSpec.describe ROM::SQL::Relation do
   context 'with has_many-through' do
     subject(:tasks) { relations[:tasks] }
 
-    before do
-      conf.relation(:task_tags) do
-        schema(infer: true) do
-          associations do
-            belongs_to :tasks
-            belongs_to :tags
-          end
-        end
-      end
-
-      conf.relation(:tasks) do
-        schema(infer: true) do
-          associations do
-            has_many :tags, through: :task_tags
-          end
-        end
-      end
-
+    seed do
       conn[:tags].insert id: 2, name: 'whatevah'
       conn[:task_tags].insert(tag_id: 2, task_id: 2)
     end
@@ -72,16 +45,6 @@ RSpec.describe ROM::SQL::Relation do
 
   context 'with belongs_to' do
     subject(:tasks) { relations[:tasks] }
-
-    before do
-      conf.relation(:tasks) do
-        schema(infer: true) do
-          associations do
-            belongs_to :users, as: :user
-          end
-        end
-      end
-    end
 
     with_adapters do
       it 'returns parent tuples for a relation' do

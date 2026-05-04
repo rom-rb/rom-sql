@@ -14,7 +14,7 @@ RSpec.describe 'Commands / Update', seeds: false do
   let(:peter) { { name: 'Peter' } }
 
   with_adapters do
-    before do
+    setup_relations do
       Test::User = Class.new(Dry::Struct) {
         attribute :id, Types::Strict::Integer
         attribute :name, Types::Strict::String
@@ -53,7 +53,9 @@ RSpec.describe 'Commands / Update', seeds: false do
       conf.mappers do
         register :users, entity: -> tuples { tuples.map { |tuple| Test::User.new(tuple) } }
       end
+    end
 
+    seed do
       users.insert(name: 'Piotr')
       users.insert(name: 'Jane')
     end
@@ -114,7 +116,7 @@ RSpec.describe 'Commands / Update', seeds: false do
       context 'with json notes' do
         include_context 'json_notes'
 
-        before do
+        setup_relations do
           conf.commands(:json_notes) do
             define(:update)
           end

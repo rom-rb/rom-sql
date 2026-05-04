@@ -3,11 +3,11 @@
 RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
   include_context 'database setup'
 
-  before do
+  setup_tables do
     conn.drop_table?(:users)
   end
 
-  before do
+  setup_relations do
     conf.relation(:users) do
       schema do
         attribute :id,    ROM::SQL::Types::Serial
@@ -37,16 +37,16 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
       expect(attributes.map(&:to_ast)).to eql([
         [:attribute,
          [:id,
-          [:nominal, [Integer, {}]],
+          [:nominal, [Integer, {}, {}]],
           primary_key: true, source: :users, alias: nil]],
-        [:attribute, [:name, [:nominal, [String, {}]], source: :users, alias: nil]],
+        [:attribute, [:name, [:nominal, [String, {}, {}]], source: :users, alias: nil]],
         [:attribute,
          [:email,
           [:sum,
            [[:constrained,
-             [[:nominal, [NilClass, {}]],
+             [[:nominal, [NilClass, {}, {}]],
               [:predicate, [:type?, [[:type, NilClass], [:input, ROM::Undefined]]]]]],
-            [:nominal, [String, {}]],
+            [:nominal, [String, {}, {}]],
             {}]],
           source: :users, alias: nil]]
       ])
@@ -54,7 +54,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
   end
 
   describe 'adding columns' do
-    before do
+    setup_tables do
       conn.create_table :users do
         primary_key :id
       end
@@ -64,16 +64,16 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
       gateway.auto_migrate!(conf, inline: true)
 
       expect(attributes[1].to_ast).to eql(
-        [:attribute, [:name, [:nominal, [String, {}]], source: :users, alias: nil]]
+        [:attribute, [:name, [:nominal, [String, {}, {}]], source: :users, alias: nil]]
       )
       expect(attributes[2].to_ast).to eql(
         [:attribute,
          [:email,
           [:sum,
            [[:constrained,
-             [[:nominal, [NilClass, {}]],
+             [[:nominal, [NilClass, {}, {}]],
               [:predicate, [:type?, [[:type, NilClass], [:input, ROM::Undefined]]]]]],
-            [:nominal, [String, {}]],
+            [:nominal, [String, {}, {}]],
             {}]],
           source: :users, alias: nil]]
       )
@@ -81,7 +81,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
   end
 
   describe 'removing columns' do
-    before do
+    setup_tables do
       conn.create_table :users do
         primary_key :id
         column :name, String, null: false
@@ -98,7 +98,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
   end
 
   describe 'empty diff' do
-    before do
+    setup_tables do
       conn.create_table :users do
         primary_key :id
         column :name, String, null: false
@@ -117,7 +117,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
   describe 'changing NOTNULL' do
     describe 'adding' do
-      before do
+      setup_tables do
         conn.create_table :users do
           primary_key :id
           column :name, String
@@ -134,7 +134,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
     end
 
     describe 'removing' do
-      before do
+      setup_tables do
         conn.create_table :users do
           primary_key :id
           column :name, String, null: false

@@ -13,7 +13,7 @@ RSpec.shared_context 'users and tasks' do
     inferrable_relations.push(:tasks, :tags, :task_tags)
   end
 
-  before do |example|
+  setup_tables(tasks: :users) do |example|
     ctx = self
 
     conn.create_table :tasks do
@@ -35,21 +35,53 @@ RSpec.shared_context 'users and tasks' do
       Integer :tag_id
       Integer :task_id
     end
+  end
 
+  setup_relations(tasks: :users) do |example|
     if example.metadata[:relations] != false
-      conf.relation(:tasks) { schema(infer: true) }
-      conf.relation(:task_tags) { schema(infer: true) }
-      conf.relation(:tags) { schema(infer: true) }
+      conf.relation(:users) do
+        schema(infer: true) do
+          associations do
+            has_many :tasks
+          end
+        end
+      end
+
+      conf.relation(:tasks) do
+        schema(infer: true) do
+          associations do
+            belongs_to :user
+            has_many :tags, through: :task_tags
+          end
+        end
+      end
+
+      conf.relation(:task_tags) do
+        schema(infer: true) do
+          associations do
+            belongs_to :task
+            belongs_to :tag
+          end
+        end
+      end
+
+      conf.relation(:tags) do
+        schema(infer: true) do
+          associations do
+            has_many :tasks, through: :task_tags
+          end
+        end
+      end
     end
   end
 
-  before do |example|
-    next if example.metadata[:seeds] == false
+  seed(tasks: :users) do |example|
+    if example.metadata[:seeds] != false
+      conn[:tasks].insert id: 1, user_id: 2, title: "Joe's task"
+      conn[:tasks].insert id: 2, user_id: 1, title: "Jane's task"
 
-    conn[:tasks].insert id: 1, user_id: 2, title: "Joe's task"
-    conn[:tasks].insert id: 2, user_id: 1, title: "Jane's task"
-
-    conn[:tags].insert id: 1, name: 'important'
-    conn[:task_tags].insert(tag_id: 1, task_id: 1)
+      conn[:tags].insert id: 1, name: 'important'
+      conn[:task_tags].insert(tag_id: 1, task_id: 1)
+    end
   end
 end

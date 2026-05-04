@@ -7,9 +7,13 @@ RSpec.describe ROM::SQL, '.migration' do
     inferrable_relations.push(:dragons, :schema_migrations)
   end
 
-  with_adapters do
-    before { conf }
+  setup_tables do
+    %i[dragons turtles].each do |table|
+      conn.drop_table?(table)
+    end
+  end
 
+  with_adapters do
     it 'creates a migration for a specific gateway' do
       migration = ROM::SQL.migration(container) do
         change do
@@ -36,6 +40,12 @@ RSpec.describe ROM::SQL, '.migration' do
       end
 
       let(:in_memory_connection) { container.gateways[:in_memory].connection }
+
+      before do
+        %i[dragons turtles].each do |table|
+          in_memory_connection.drop_table?(table)
+        end
+      end
 
       it 'creates a migration for a specific gateway' do
         in_memory_migration = ROM::SQL.migration(container, :in_memory) do

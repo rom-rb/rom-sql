@@ -9,9 +9,7 @@ RSpec.describe ROM::SQL::Associations::OneToOne, helpers: true do
   end
 
   with_adapters do
-    before do
-      conn[:accounts].insert user_id: 1, number: '43', balance: -273.15.to_d
-
+    setup_relations do
       conf.relation(:accounts) do
         schema do
           attribute :id, ROM::SQL::Types::Serial
@@ -20,6 +18,10 @@ RSpec.describe ROM::SQL::Associations::OneToOne, helpers: true do
           attribute :balance, ROM::SQL::Types::Decimal
         end
       end
+    end
+
+    seed do
+      conn[:accounts].insert user_id: 1, number: '43', balance: -273.15.to_d
     end
 
     describe '#result' do

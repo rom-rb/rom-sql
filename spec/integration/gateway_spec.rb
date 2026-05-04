@@ -12,7 +12,6 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
       subject(:gateway) { container.gateways[:default] }
 
       let(:conf) { ROM::Configuration.new(:sql, conn) }
-      let(:container) { ROM.container(conf) }
 
       it 'allows creating and running migrations' do
         migration = gateway.migration do
@@ -49,7 +48,6 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
 
       let(:migrator) { ROM::SQL::Migration::Migrator.new(conn, path: migration_dir) }
       let(:conf) { ROM::Configuration.new(:sql, [conn, migrator: migrator]) }
-      let(:container) { ROM.container(conf) }
 
       it 'returns true for pending migrations' do
         expect(container.gateways[:default].pending_migrations?).to be_truthy
@@ -75,7 +73,6 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
       end
 
       let(:conf) { ROM::Configuration.new(:sql, [conn, migrator: { path: migration_dir }]) }
-      let(:container) { ROM.container(conf) }
 
       it 'runs migrations from a specified directory' do
         container.gateways[:default].run_migrations
@@ -88,7 +85,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres do
       inferrable_relations.push(:names)
     end
 
-    before do
+    setup_tables do
       conn.create_table(:names) do
         String :name
       end

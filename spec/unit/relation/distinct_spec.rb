@@ -5,7 +5,7 @@ RSpec.describe ROM::Relation, '#distinct' do
 
   include_context 'users and tasks'
 
-  before do
+  seed do
     relation.insert id: 3, name: 'Jane'
   end
 

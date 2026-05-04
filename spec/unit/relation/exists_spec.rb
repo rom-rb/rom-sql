@@ -1,26 +1,10 @@
 # frozen_string_literal: true
 
-RSpec.describe ROM::Relation, '#exists', relations: false do
+RSpec.describe ROM::Relation, '#exists' do
   include_context 'users and tasks'
 
-  before do
+  seed do
     conn[:users].insert name: 'Jack'
-
-    conf.relation(:users) do
-      schema(infer: true) do
-        associations do
-          has_many :tasks
-        end
-      end
-    end
-
-    conf.relation(:tasks) do
-      schema(infer: true) do
-        associations do
-          belongs_to :user
-        end
-      end
-    end
   end
 
   with_adapters do

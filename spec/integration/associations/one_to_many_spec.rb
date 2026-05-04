@@ -8,7 +8,7 @@ RSpec.describe ROM::SQL::Associations::OneToMany, helpers: true do
   end
 
   with_adapters do
-    before do
+    setup_relations do
       conf.relation(:tasks) do
         schema do
           attribute :id, ROM::SQL::Types::Serial

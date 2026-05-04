@@ -12,7 +12,7 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
   let(:create_task) { task_commands.create }
   let(:create_profile) { profile_commands.create }
 
-  before do |ex|
+  setup_relations do
     module Test
       class Params < Dry::Struct
         attribute :name, Types::Strict::String.optional
@@ -22,7 +22,9 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
         end
       end
     end
+  end
 
+  setup_tables do |ex|
     conn.add_index :users, :name, unique: true
 
     if sqlite?(ex)
@@ -30,7 +32,9 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
     else
       conn.execute 'ALTER TABLE tasks add CONSTRAINT tasks_title_key UNIQUE (title)'
     end
+  end
 
+  setup_relations do
     conf.relation(:profiles) do
       schema(:users, infer: true) do
         attribute :name, Types::String, alias: :login
@@ -146,25 +150,29 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
       end
     end
 
-    it 'uses relation schema for the default input handler' do
-      conf.relation(:users_with_schema) do
-        schema(:users) do
-          attribute :id, ROM::SQL::Types::Serial
-          attribute :name, ROM::SQL::Types::String
+    context 'when using relation schema for the default input handler' do
+      setup_relations do
+        conf.relation(:users_with_schema) do
+          schema(:users) do
+            attribute :id, ROM::SQL::Types::Serial
+            attribute :name, ROM::SQL::Types::String
+          end
+        end
+
+        conf.commands(:users_with_schema) do
+          define(:create) do
+            result :one
+          end
         end
       end
 
-      conf.commands(:users_with_schema) do
-        define(:create) do
-          result :one
-        end
+      specify do
+        create = container.commands[:users_with_schema][:create]
+
+        expect(create.input[foo: 'bar', id: 1, name: 'Jane']).to eql(
+          id: 1, name: 'Jane'
+        )
       end
-
-      create = container.commands[:users_with_schema][:create]
-
-      expect(create.input[foo: 'bar', id: 1, name: 'Jane']).to eql(
-        id: 1, name: 'Jane'
-      )
     end
 
     it 'returns a single tuple when result is set to :one' do
@@ -190,7 +198,7 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
     context 'with json notes' do
       include_context 'json_notes'
 
-      before do
+      setup_relations do
         conf.commands(:json_notes) do
           define(:create)
         end
@@ -208,7 +216,7 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
       context 'with puppies' do
         include_context 'puppies'
 
-        before do
+        setup_relations do
           conf.relation(:puppies) do
             schema(infer: true)
           end
@@ -277,13 +285,15 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
           inferrable_relations.push(:user_group)
         end
 
-        before do
+        setup_tables do
           conn.create_table(:user_group) do
             primary_key [:user_id, :group_id]
             column :user_id, Integer, null: false
             column :group_id, Integer, null: false
           end
+        end
 
+        setup_relations do
           conf.relation(:user_group) do
             schema(infer: true)
           end
@@ -322,7 +332,7 @@ RSpec.describe 'Commands / Create', :postgres, seeds: false do
   describe '#upsert' do
     let(:task) { { title: 'task 1' } }
 
-    before { create_task.call(task) }
+    seed { create_task.call(task) }
 
     it 'raises error without upsert marker' do
       expect {

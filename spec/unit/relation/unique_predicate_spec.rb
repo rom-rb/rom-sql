@@ -6,7 +6,7 @@ RSpec.describe ROM::Relation, '#unique?' do
   include_context 'users and tasks'
 
   with_adapters do
-    before { relation.delete }
+    seed { relation.delete }
 
     it 'returns true when there is only one tuple matching criteria' do
       expect(relation.unique?(title: 'Task One')).to be(true)

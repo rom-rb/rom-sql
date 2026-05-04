@@ -5,7 +5,7 @@ RSpec.shared_context 'notes' do
     inferrable_relations.push(:notes)
   end
 
-  before do |example|
+  setup_tables(notes: :users) do |example|
     ctx = self
 
     conn.create_table :notes do
@@ -18,7 +18,11 @@ RSpec.shared_context 'notes' do
       DateTime :completed_at
       Date :written
     end
+  end
 
-    conf.relation(:notes) { schema(infer: true) }
+  setup_relations do |example|
+    if example.metadata[:relations] != false
+      conf.relation(:notes) { schema(infer: true) }
+    end
   end
 end

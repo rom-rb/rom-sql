@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe 'ActiveSupport::Notifications support', :postgres, seeds: false do
+RSpec.describe 'ActiveSupport::Notifications support', :postgres do
   before do
     ROM::SQL.load_extensions(:active_support_notifications, :rails_log_subscriber)
   end

@@ -13,7 +13,7 @@ RSpec.shared_context 'users' do
   let(:jane_id) { 1 }
   let(:joe_id) { 2 }
 
-  before do |example|
+  setup_tables(users: :db) do |example|
     ctx = self
 
     conn.create_table :users do
@@ -21,16 +21,18 @@ RSpec.shared_context 'users' do
       String :name, text: false, null: false
       check { char_length(name) > 2 } if ctx.postgres?(example)
     end
+  end
 
+  setup_relations(:users) do |example|
     if example.metadata[:relations] != false
       conf.relation(:users) { schema(infer: true) }
     end
   end
 
-  before do |example|
-    next if example.metadata[:seeds] == false
-
-    conn[:users].insert name: 'Jane'
-    conn[:users].insert name: 'Joe'
+  seed(:users) do |example|
+    if example.metadata[:seeds] != false
+      conn[:users].insert name: 'Jane'
+      conn[:users].insert name: 'Joe'
+    end
   end
 end

@@ -1,12 +1,25 @@
 # frozen_string_literal: true
 
 RSpec.describe 'Commands / Delete' do
-  include_context 'users and tasks'
+  include_context 'database setup'
 
   let(:delete_user) { user_commands.delete }
 
+  let(:user_commands) { container.commands[:users] }
+
   with_adapters do
-    before do
+    setup_tables do
+      conn.drop_table?(:users)
+
+      conn.create_table(:users) do
+        primary_key :id
+        String :name, null: false
+      end
+    end
+
+    let(:users) { container.relations[:users] }
+
+    setup_relations do
       conf.relation(:users) do
         def by_name(name)
           where(name: name)
@@ -18,7 +31,9 @@ RSpec.describe 'Commands / Delete' do
           result :one
         end
       end
+    end
 
+    seed do
       users.insert(id: 3, name: 'Jade')
       users.insert(id: 4, name: 'John')
     end

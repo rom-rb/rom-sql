@@ -22,7 +22,7 @@ RSpec.describe ROM::SQL::Relation, '#instrument', :sqlite do
     end.new
   end
 
-  before do
+  setup_tables do
     conn.create_table :users do
       primary_key :id
       column :name, String
@@ -31,7 +31,9 @@ RSpec.describe ROM::SQL::Relation, '#instrument', :sqlite do
     conf.plugin(:sql, relations: :instrumentation) do |p|
       p.notifications = notifications
     end
+  end
 
+  setup_relations do
     conf.relation(:users) do
       schema(infer: true)
     end
@@ -76,13 +78,15 @@ RSpec.describe ROM::SQL::Relation, '#instrument', :sqlite do
 
     let(:container_alt) { ROM.container(conf_alt) }
 
-    before do
+    setup_relations do
       conf_alt.plugin(:sql, relations: :instrumentation)
 
       conf_alt.relation(:users) do
         schema(infer: true)
       end
+    end
 
+    before do
       container_alt
     end
 

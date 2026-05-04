@@ -4,7 +4,7 @@ require 'spec_helper'
 
 require 'active_support/log_subscriber/test_helper'
 
-RSpec.describe 'Rails log subscriber', :postgres, seeds: false do
+RSpec.describe 'Rails log subscriber', :postgres do
   before do
     ROM::SQL.load_extensions(:active_support_notifications, :rails_log_subscriber)
   end

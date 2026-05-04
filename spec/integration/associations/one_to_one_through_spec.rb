@@ -9,7 +9,7 @@ RSpec.describe ROM::SQL::Associations::OneToOneThrough, helpers: true do
   end
 
   with_adapters do
-    before do
+    setup_relations do
       conf.relation(:accounts) do
         schema do
           attribute :id, ROM::SQL::Types::Serial

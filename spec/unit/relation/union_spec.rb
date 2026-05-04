@@ -5,19 +5,11 @@ RSpec.describe ROM::Relation, '#union' do
 
   include_context 'users and tasks'
 
-  before do
+  setup_relations do
     conf.relation(:tasks) do
       schema(infer: true) do
         associations do
           has_many :task_tags
-        end
-      end
-    end
-
-    conf.relation(:task_tags) do
-      schema(infer: true) do
-        associations do
-          belongs_to :task
         end
       end
     end

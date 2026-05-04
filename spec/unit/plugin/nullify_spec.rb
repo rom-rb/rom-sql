@@ -5,7 +5,7 @@ require 'rom/sql/plugin/nullify'
 RSpec.describe ROM::Relation, '#nullify' do
   include_context 'users'
 
-  before do
+  setup_relations do
     conf.relation(:users) do
       use :nullify
     end

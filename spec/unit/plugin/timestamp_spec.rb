@@ -5,7 +5,7 @@ RSpec.describe 'Plugin / Timestamp' do
   include_context 'notes'
 
   with_adapters do
-    before do
+    setup_relations do
       conf.commands(:notes) do
         define :create do
           result :one

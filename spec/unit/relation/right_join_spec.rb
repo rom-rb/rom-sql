@@ -24,20 +24,6 @@ RSpec.describe ROM::Relation, '#right_join' do
     end
 
     context 'with associations' do
-      before do
-        conf.relation(:users) do
-          schema(infer: true) do
-            associations { has_many :tasks }
-          end
-        end
-
-        conf.relation(:tasks) do
-          schema(infer: true) do
-            associations { belongs_to :user }
-          end
-        end
-      end
-
       it 'joins relation with join keys inferred' do
         users.insert id: 3, name: 'Jade'
         relation.insert id: 3, title: 'Unassigned'

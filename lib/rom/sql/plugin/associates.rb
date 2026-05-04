@@ -162,7 +162,7 @@ module ROM
           def with_association(name, opts = EMPTY_HASH)
             self.class.build(
               relation,
-              **options, associations: associations.merge(name => opts)
+              **options, associations: { **associations, name => opts }
             )
           end
         end

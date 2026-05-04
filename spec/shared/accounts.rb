@@ -8,7 +8,7 @@ RSpec.shared_context 'accounts' do
     inferrable_relations.push(:accounts, :cards, :subscriptions)
   end
 
-  before do |example|
+  setup_tables do |example|
     ctx = self
 
     conn.create_table :accounts do
@@ -34,15 +34,15 @@ RSpec.shared_context 'accounts' do
       Integer :card_id
       String :service
     end
+  end
 
+  setup_relations do
     conf.relation(:accounts) { schema(infer: true) }
     conf.relation(:cards) { schema(infer: true) }
     conf.relation(:subscriptions) { schema(infer: true) }
   end
 
-  before do |example|
-    next if example.metadata[:seeds] == false
-
+  seed do
     conn[:accounts].insert user_id: 1, number: '42', balance: 10_000.to_d
     conn[:cards].insert id: 1, account_id: 1, pan: '*6789'
     conn[:subscriptions].insert id: 1, card_id: 1, service: 'aws'

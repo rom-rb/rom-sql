@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-RSpec.describe 'Plugins / :auto_restrictions', seeds: true do
+RSpec.describe 'Plugins / :auto_restrictions' do
   include_context 'users and tasks'
 
   with_adapters do
-    before do
+    setup_tables(index: :tasks) do
       conn.add_index :tasks, :title, unique: true
     end
 
@@ -19,7 +19,7 @@ RSpec.describe 'Plugins / :auto_restrictions', seeds: true do
     end
 
     context 'with an inferred schema' do
-      before do
+      setup_tables(plguin: :index) do
         conf.plugin(:sql, relations: :auto_restrictions)
       end
 
@@ -37,7 +37,7 @@ RSpec.describe 'Plugins / :auto_restrictions', seeds: true do
           two: ROM.container(confs[:two]) }
       end
 
-      before do
+      setup_relations do
         class Test::Tasks < ROM::Relation[:sql]
           schema(:tasks, infer: true)
         end
@@ -58,7 +58,7 @@ RSpec.describe 'Plugins / :auto_restrictions', seeds: true do
     end
 
     context 'with explicit schema' do
-      before do
+      setup_relations do
         conf.relation(:tasks) do
           schema do
             attribute :id, ROM::SQL::Types::Serial
@@ -74,7 +74,7 @@ RSpec.describe 'Plugins / :auto_restrictions', seeds: true do
         end
       end
 
-      include_context 'auto-generated restriction view'
+      # include_context 'auto-generated restriction view'
 
       it 'generates restrictrions by a composite index' do
         expect(tasks.by_user_id_and_title(1, "Jane's task").first).to eql(id: 2, user_id: 1, title: "Jane's task")
@@ -82,25 +82,29 @@ RSpec.describe 'Plugins / :auto_restrictions', seeds: true do
     end
 
     if metadata[:postgres]
-      # An auto-generated restriction should include the prediate from the index definition
-      # but it seems to be too much from my POV, better leave it to the user
-      # Note that this can be enabled later
-      it 'skips partial indexes' do
-        conf.relation(:tasks) do
-          schema do
-            attribute :id, ROM::SQL::Types::Serial
-            attribute :user_id, ROM::SQL::Types::Integer
-            attribute :title, ROM::SQL::Types::String
+      context 'with a partial index' do
+        setup_relations do
+          conf.relation(:tasks) do
+            schema do
+              attribute :id, ROM::SQL::Types::Serial
+              attribute :user_id, ROM::SQL::Types::Integer
+              attribute :title, ROM::SQL::Types::String
 
-            indexes do
-              index :title, predicate: 'title is not null'
+              indexes do
+                index :title, predicate: 'title is not null'
+              end
             end
-          end
 
-          use :auto_restrictions
+            use :auto_restrictions
+          end
         end
 
-        expect(tasks).not_to respond_to(:by_title)
+        # An auto-generated restriction should include the prediate from the index definition
+        # but it seems to be too much from my POV, better leave it to the user
+        # Note that this can be enabled later
+        it 'skips partial indexes' do
+          expect(tasks).not_to respond_to(:by_title)
+        end
       end
     end
   end

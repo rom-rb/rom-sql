@@ -14,32 +14,7 @@ RSpec.describe 'Plugins / :associates / with many-to-many', :sqlite, seeds: fals
     users.by_pk(users.insert(name: 'John')).one
   end
 
-  before do
-    conf.relation(:tasks) do
-      schema(infer: true) do
-        associations do
-          has_many :tags, through: :task_tags
-        end
-      end
-    end
-
-    conf.relation(:task_tags) do
-      schema(infer: true) do
-        associations do
-          belongs_to :tasks, as: :task
-          belongs_to :tags, as: :tag
-        end
-      end
-    end
-
-    conf.relation(:tags) do
-      schema(infer: true) do
-        associations do
-          has_many :tasks, through: :task_tags
-        end
-      end
-    end
-
+  setup_relations do
     conf.commands(:tags) do
       define(:create) do
         result :many

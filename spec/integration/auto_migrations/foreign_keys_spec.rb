@@ -3,7 +3,7 @@
 RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
   include_context 'database setup'
 
-  before do
+  setup_tables do
     conn.drop_table?(:posts)
     conn.drop_table?(:users)
   end
@@ -24,13 +24,17 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
   let(:attributes) { migrated_schema.to_a }
 
+  before { container }
+
   describe 'create table' do
-    before do
+    setup_tables do
       conn.create_table(:users) do
         primary_key :id
         column :name, String, null: false
       end
+    end
 
+    setup_relations do
       conf.relation(:posts) do
         schema do
           attribute :id,       ROM::SQL::Types::Serial
@@ -58,7 +62,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
 
   describe 'alter table' do
     context 'adding' do
-      before do
+      setup_tables do
         conn.create_table(:users) do
           primary_key :id
           column :name, String, null: false
@@ -68,7 +72,9 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
           primary_key :id
           column :user_id, Integer, null: false
         end
+      end
 
+      setup_relations do
         conf.relation(:posts) do
           schema do
             attribute :id,       ROM::SQL::Types::Serial
@@ -96,7 +102,7 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
   end
 
   context 'removing' do
-    before do
+    setup_tables do
       conn.create_table(:users) do
         primary_key :id
         column :name, String, null: false
@@ -106,7 +112,9 @@ RSpec.describe ROM::SQL::Gateway, :postgres, :helpers do
         primary_key :id
         foreign_key :user_id, :users
       end
+    end
 
+    setup_relations do
       conf.relation(:posts) do
         schema do
           attribute :id,       ROM::SQL::Types::Serial

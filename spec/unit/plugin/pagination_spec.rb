@@ -6,9 +6,11 @@ RSpec.describe 'Plugin / Pagination', seeds: false do
   include_context 'users'
 
   with_adapters do
-    before do
+    seed do
       9.times { |i| conn[:users].insert(name: "User #{i}") }
+    end
 
+    setup_relations do
       conf.relation(:users) do
         use :pagination
 

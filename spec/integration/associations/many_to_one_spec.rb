@@ -10,7 +10,7 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, helpers: true do
         build_assoc(:many_to_one, :tasks, :users)
       end
 
-      before do
+      setup_relations do
         conf.relation(:tasks) do
           schema(infer: true)
         end
@@ -86,7 +86,7 @@ RSpec.describe ROM::SQL::Associations::ManyToOne, helpers: true do
         build_assoc(:many_to_one, articles_name, :users)
       end
 
-      before do
+      setup_relations do
         conf.relation(:articles) do
           schema(:posts, infer: true)
         end

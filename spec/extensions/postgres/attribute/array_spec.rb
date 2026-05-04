@@ -5,7 +5,7 @@ RSpec.describe 'ROM::SQL::Attribute / PG array', :postgres do
 
   include_context 'database setup'
 
-  before do
+  setup_relations do
     conf.relation(:pg_arrays) do
       schema(infer: true)
     end
@@ -16,7 +16,7 @@ RSpec.describe 'ROM::SQL::Attribute / PG array', :postgres do
   end
 
   context 'with a primitive type' do
-    before do
+    setup_tables do
       conn.create_table :pg_arrays do
         column :numbers, 'int[]'
       end
@@ -34,7 +34,7 @@ RSpec.describe 'ROM::SQL::Attribute / PG array', :postgres do
   end
 
   context 'with a custom json type' do
-    before do
+    setup_tables do
       conn.create_table :pg_arrays do
         column :meta, 'json[]'
       end

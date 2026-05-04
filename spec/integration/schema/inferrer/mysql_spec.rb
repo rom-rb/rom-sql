@@ -7,7 +7,7 @@ RSpec.describe 'ROM::SQL::Schema::MysqlInferrer', :mysql do
     inferrable_relations.push(:test_inferrence)
   end
 
-  before do
+  setup_tables do
     conn.create_table :test_inferrence do
       tinyint :tiny
       mediumint :medium
@@ -26,7 +26,7 @@ RSpec.describe 'ROM::SQL::Schema::MysqlInferrer', :mysql do
     end
   end
 
-  before do
+  setup_relations do
     conf.relation(:test_inferrence) do
       schema(infer: true)
     end
