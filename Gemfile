@@ -47,3 +47,5 @@ group :test do
   gem 'sequel_pg', require: false, platforms: :ruby
   gem 'sqlite3', '~> 1.4', platforms: :ruby
 end
+
+gem 'dry-initializer', github: 'dry-rb/dry-initializer', branch: 'ractor-compatibility'
